@@ -25,22 +25,8 @@ public class GameDbSynchronizer @Inject constructor(private val gateway: Respons
     }
 
     /**
-     * Blocks until all database gateway services have completed their fast-forward shutdown or
-     * until a watchdog timeout is reached.
-     *
-     * This function must be invoked before the game begins its fast-forwarded tick loop during
-     * pre-shutdown. It ensures that all pending database operations are either processed or
-     * explicitly rejected, and that any required in-game responses are safely enqueued while the
-     * game thread is still active and able to process them.
-     *
-     * Each service is expected to handle its own shutdown timeout to avoid indefinite hangs. This
-     * method additionally applies a long-duration watchdog timeout as a safeguard against
-     * misbehavior or oversight.
-     *
-     * This method must be called exactly once during shutdown. Failure to invoke it before shutdown
-     * ticks may result in lost or orphaned database responses.
-     *
-     * @see [ResponseDbGatewayService.fastForwardShutdown]
+     * Run exactly once before shutdown ticks while the game thread can still dispatch pending
+     * database responses.
      */
     public fun blockingFastForwardShutdown(): Unit = runBlocking {
         val timeout = TimeUnit.MINUTES.toMillis(WATCHDOG_TIMEOUT_MINS.toLong())

@@ -27,15 +27,12 @@ class NpcInteractionProcessorUnderTargetTest {
         ) {
             val npcCoord = CoordGrid(0, 1, 1, 3, 3)
 
-            // Add blocking crate locs around the npc coords.
             val expectedDir = Direction.South
             val deleteCrate = placeMapLoc(npcCoord.translate(expectedDir), crate)
             placeMapLoc(npcCoord.translate(Direction.North), crate)
             placeMapLoc(npcCoord.translate(Direction.West), crate)
             placeMapLoc(npcCoord.translate(Direction.East), crate)
 
-            // Set the static random value for CoreRandom, which is used by the npc processor to
-            // pick a random direction to route towards when under the target.
             val expectedDirRandom = Direction.CARDINAL.indexOf(expectedDir)
             it.setStaticRandom(expectedDirRandom)
             val checkDir = it.random.pick(Direction.CARDINAL)
@@ -52,28 +49,20 @@ class NpcInteractionProcessorUnderTargetTest {
             advance(ticks = 1)
             assertMessageSent("Receive attack.")
 
-            // Teleport player under npc; as the npc is surrounded by blocking locs, it cannot move
-            // to attack player.
             player.teleport(npcCoord)
             advance(ticks = 1)
             assertMessageNotSent("Receive attack.")
 
-            // Delete one of the blocking locs so that the npc can step away from under target.
             locDel(deleteCrate)
-            // Set the random direction pick to an unexpected value to verify that the npc does
-            // not move when choosing a random, blocked destination.
             it.setStaticRandom(expectedDirRandom + 1)
             advance(ticks = 1)
             assertEquals(npcCoord, npc.coords)
             assertMessageNotSent("Receive attack.")
 
-            // Ensure npc has not moved or attacked the player one cycle later, just in case.
             advance(ticks = 1)
             assertEquals(npcCoord, npc.coords)
             assertMessageNotSent("Receive attack.")
 
-            // Now set the static random to the expected direction, which should lead to the npc
-            // routing properly and stepping away from the player.
             it.setStaticRandom(expectedDirRandom)
             advance(ticks = 1)
             assertEquals(npcCoord.translate(expectedDir), npc.coords)
@@ -82,12 +71,10 @@ class NpcInteractionProcessorUnderTargetTest {
             // "attack."
             assertMessageNotSent("Receive attack.")
 
-            // Now, the npc should be able to attack their target.
             advance(ticks = 1)
             assertMessageSent("Receive attack.")
         }
 
-    /** Ensures that the Red-X mechanic works as expected. */
     @Test
     fun GameTestState.`skip interaction turn when under player target and they are busy`() =
         runInjectedGameTest(
@@ -97,15 +84,12 @@ class NpcInteractionProcessorUnderTargetTest {
         ) {
             val npcCoord = CoordGrid(0, 1, 1, 3, 3)
 
-            // Add blocking crate locs around the npc coords.
             val expectedDir = Direction.South
             val deleteCrate = placeMapLoc(npcCoord.translate(expectedDir), crate)
             val northCrate = placeMapLoc(npcCoord.translate(Direction.North), crate)
             placeMapLoc(npcCoord.translate(Direction.West), crate)
             placeMapLoc(npcCoord.translate(Direction.East), crate)
 
-            // Set the static random value for CoreRandom, which is used by the npc processor to
-            // pick a random direction to route towards when under the target.
             val expectedDirRandom = Direction.CARDINAL.indexOf(expectedDir)
             it.setStaticRandom(expectedDirRandom)
             val checkDir = it.random.pick(Direction.CARDINAL)
@@ -122,14 +106,10 @@ class NpcInteractionProcessorUnderTargetTest {
             advance(ticks = 1)
             assertMessageSent("Receive attack.")
 
-            // Teleport player under npc; as the npc is surrounded by blocking locs, it cannot move
-            // to attack player.
             player.teleport(npcCoord)
             advance(ticks = 1)
             assertMessageNotSent("Receive attack.")
 
-            // Delete one of the blocking locs so that the npc could step away from under target
-            // if they were not busy.
             locDel(deleteCrate)
             player.opLoc1(northCrate)
             advance(ticks = 1)
@@ -145,8 +125,6 @@ class NpcInteractionProcessorUnderTargetTest {
                 assertMessageNotSent("Receive attack.")
             }
 
-            // Now that the player is not actively interacting with something, the npc should be
-            // able to step away.
             advance(ticks = 1)
             assertEquals(npcCoord.translate(expectedDir), npc.coords)
             // Stepping away from the target while under them forces the npc to skip their
@@ -154,7 +132,6 @@ class NpcInteractionProcessorUnderTargetTest {
             // "attack."
             assertMessageNotSent("Receive attack.")
 
-            // The npc should be able to attack their target.
             advance(ticks = 1)
             assertMessageSent("Receive attack.")
         }
@@ -165,7 +142,6 @@ class NpcInteractionProcessorUnderTargetTest {
         }
 
         private fun combatOp(target: Player) {
-            // Npc interactions automatically persist and repeat without `opX` calls.
             target.mes("Receive attack.")
         }
     }

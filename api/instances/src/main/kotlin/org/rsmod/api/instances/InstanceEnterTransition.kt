@@ -10,10 +10,6 @@ public data class InstanceEnterTransition(
     val closeOverlayCycles: Int = 3,
 )
 
-/**
- * Runs a minimal enter cinematic: optional mesbox, fade to black, hide minimap, then [block]
- * (typically telejump + [InstanceManager.finalizeEntry]).
- */
 public suspend fun ProtectedAccess.withInstanceEnterTransition(
     transition: InstanceEnterTransition = InstanceEnterTransition(),
     block: suspend ProtectedAccess.() -> Unit,
@@ -37,7 +33,6 @@ public suspend fun ProtectedAccess.withInstanceEnterTransition(
     minimapReset()
 }
 
-/** Same fade/minimap flow as [withInstanceEnterTransition]; [block] is typically [InstanceScript.defaultLeaveFlow]. */
 public suspend fun ProtectedAccess.withInstanceLeaveTransition(
     transition: InstanceEnterTransition = InstanceEnterTransition(),
     block: suspend ProtectedAccess.() -> Unit,

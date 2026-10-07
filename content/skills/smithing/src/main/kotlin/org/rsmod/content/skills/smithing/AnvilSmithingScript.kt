@@ -11,26 +11,33 @@ import org.rsmod.api.script.onOpLocCategory1
 import org.rsmod.api.script.onOpLocCategoryU
 import org.rsmod.api.script.onPlayerQueueWithArgs
 import org.rsmod.api.stats.xpmod.XpModifiers
-import org.rsmod.api.table.smithing.SmithingBarsRow
-import org.rsmod.content.skills.crafting.interfaces.MakeQuantity
-import org.rsmod.content.skills.crafting.interfaces.MakeQuantityColumn
-import org.rsmod.content.skills.crafting.interfaces.makeQuantity
-import org.rsmod.content.skills.crafting.interfaces.selectMakeQuantity
-import org.rsmod.content.skills.crafting.interfaces.setMakeQuantity
+import org.rsmod.content.skills.smithing.configs.SmithingParams
+import org.rsmod.content.skills.smithing.table.SmithingBar
 import org.rsmod.content.skills.smithing.util.SmithingData
 import org.rsmod.content.skills.smithing.util.SmithingProductMeta
 import org.rsmod.content.skills.smithing.util.SmithingUtils
 import org.rsmod.content.skills.smithing.util.SmithingUtils.hasHammer
+import org.rsmod.map.CoordGrid
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
 class AnvilSmithingScript @Inject constructor(private val xpMods: XpModifiers) : PluginScript() {
 
-    private val hammers = setOf(
-        "obj.hammer",
-        "obj.imcando_hammer",
-        "obj.imcando_hammer_offhand"
-    )
+    private val hammers = setOf("obj.hammer", "obj.imcando_hammer", "obj.imcando_hammer_offhand")
+
+    // Doric's anvil type is reused elsewhere; gate only his hut coordinates.
+    private fun ProtectedAccess.isDoricsAnvil(coords: CoordGrid): Boolean = coords in DoricsAnvils
+
+    private fun ProtectedAccess.completedDoricsQuest(): Boolean =
+        player.vars[DoricsQuestVarp] >= DoricsQuestComplete
+
+    private fun ProtectedAccess.blockedByDorics(coords: CoordGrid): Boolean {
+        if (isDoricsAnvil(coords) && !completedDoricsQuest()) {
+            mes(DoricsRefusal)
+            return true
+        }
+        return false
+    }
 
     private var ProtectedAccess.smithingBarType by intVarBit(SmithingData.SMITHING_BAR_TYPE_VARBIT)
 
@@ -38,21 +45,27 @@ class AnvilSmithingScript @Inject constructor(private val xpMods: XpModifiers) :
         hammers.forEach { hammer ->
             onOpLocCategoryU(SmithingData.ANVIL_CATEGORY, hammer) {
                 mes(
-                    "To smith a metal bar, click on the anvil while you have the bar in your inventory.",
+                    "To smith a metal bar, click on the anvil while you have the bar in your inventory."
                 )
             }
         }
 
         SmithingData.barOutputInternals.forEach { barInternal ->
             onOpLocCategoryU(SmithingData.ANVIL_CATEGORY, barInternal) {
+                if (blockedByDorics(it.loc.coords)) {
+                    return@onOpLocCategoryU
+                }
                 SmithingData.barsByOutput[barInternal]?.let { queueOpenSmithing(it) }
             }
         }
 
         onOpLocCategory1(SmithingData.ANVIL_CATEGORY) {
+            if (blockedByDorics(it.loc.coords)) {
+                return@onOpLocCategory1
+            }
             val bar = selectedBar()
             if (bar == null) {
-                mesbox("You need a bronze bar and a hammer to smith equipment on this anvil.")
+                mesbox("You should select an item from your inventory and use it on the anvil.")
                 return@onOpLocCategory1
             }
             queueOpenSmithing(bar)
@@ -62,23 +75,23 @@ class AnvilSmithingScript @Inject constructor(private val xpMods: XpModifiers) :
             onIfModalButton(component) { handleSmithingInterfaceClick(it.component.packed) }
         }
 
-        MakeQuantity.entries.forEach { quantity ->
-            onIfModalButton(smithingComponent(quantity.button)) {
-                selectMakeQuantity(makeQuantityColumn(), quantity)
-            }
-        }
-        onIfModalButton(smithingComponent("make_some")) {}
+        // TODO: Identify the quantity-selection varbit so the client can highlight the selected button.
+        onIfModalButton("component.smithing:make_1") { selectQuantity(1) }
+        onIfModalButton("component.smithing:make_5") { selectQuantity(5) }
+        onIfModalButton("component.smithing:make_10") { selectQuantity(10) }
+        onIfModalButton("component.smithing:make_all") { selectQuantity(QUANTITY_ALL) }
+        onIfModalButton("component.smithing:make_x") { selectCustomQuantity() }
 
         onPlayerQueueWithArgs<OpenAnvilTask>("queue.smithing_anvil_open") {
             openAnvilSmithing(it.args.barInternal)
         }
 
-        onPlayerQueueWithArgs<AnvilSmithTask>("queue.smithing_anvil") {
+        onPlayerQueueWithArgs<AnvilSmithTask>(SmithingParams.ANVIL_QUEUE) {
             processSmithTask(it.args)
         }
     }
 
-    private fun ProtectedAccess.queueOpenSmithing(bar: SmithingBarsRow) {
+    private fun ProtectedAccess.queueOpenSmithing(bar: SmithingBar) {
         weakQueue("queue.smithing_anvil_open", 1, OpenAnvilTask(bar.output.internalName))
     }
 
@@ -97,51 +110,49 @@ class AnvilSmithingScript @Inject constructor(private val xpMods: XpModifiers) :
         val meta = SmithingData.metaForName(bar, itemName) ?: return
 
         ifCloseSub(SmithingData.SMITHING_INTERFACE)
-        startSmithing(meta, makeQuantity())
+        val quantity = SmithingState.quantity(player)
+        startSmithing(meta, amount = if (quantity == QUANTITY_ALL) Int.MAX_VALUE else quantity)
     }
 
-    private fun ProtectedAccess.makeQuantityColumn(): MakeQuantityColumn {
-        val bar = SmithingData.barAtIndex(smithingBarType)
-        return MakeQuantityColumn(
-            component = ::smithingComponent,
-            countedObj = bar?.output?.internalName ?: SmithingData.barOutputInternals.first(),
-            stepX = MAKEX_STEP_X,
-            stepY = MAKEX_STEP_Y,
-        )
+    private fun ProtectedAccess.selectQuantity(quantity: Int) {
+        SmithingState.setQuantity(player, quantity)
     }
 
-    private suspend fun ProtectedAccess.canSmithBar(bar: SmithingBarsRow): Boolean {
+    // TODO: Verify whether the quantity prompt should leave the smithing interface open.
+    private suspend fun ProtectedAccess.selectCustomQuantity() {
+        val count = countDialog()
+        if (count > 0) {
+            SmithingState.setQuantity(player, count)
+        }
+    }
+
+    private suspend fun ProtectedAccess.canSmithBar(bar: SmithingBar): Boolean {
         if (!hasHammer()) {
             mes("You need a hammer to work metal with an anvil.")
             return false
         }
         val barName = SmithingUtils.itemName(bar.output, "bar").lowercase()
-        return SmithingUtils.requireSmithingLevel(
-            this,
-            bar.statReq.first().t1,
-            "work $barName",
-        )
+        return SmithingUtils.requireSmithingLevel(this, bar.levelReq, "work $barName")
     }
 
-    private suspend fun ProtectedAccess.openSmithingInterface(bar: SmithingBarsRow) {
+    private suspend fun ProtectedAccess.openSmithingInterface(bar: SmithingBar) {
         SmithingData.barIndexFor(bar)?.let { smithingBarType = it }
-        setMakeQuantity(inv.count(bar.output.internalName))
         ifOpenMainModal(SmithingData.SMITHING_INTERFACE)
     }
 
-    private fun ProtectedAccess.selectedBar(): SmithingBarsRow? {
+    private fun ProtectedAccess.selectedBar(): SmithingBar? {
         val smithingLevel = player.smithingLvl
 
         SmithingData.barAtIndex(smithingBarType)
-            ?.takeIf { inv.contains(it.output.internalName) && smithingLevel >= it.statReq.first().t1 }
+            ?.takeIf { inv.contains(it.output.internalName) && smithingLevel >= it.levelReq }
             ?.let {
                 return it
             }
 
         val bestBar =
             SmithingData.allBars
-                .filter { inv.contains(it.output.internalName) && smithingLevel >= it.statReq.first().t1 }
-                .maxByOrNull { it.statReq.first().t1 }
+                .filter { inv.contains(it.output.internalName) && smithingLevel >= it.levelReq }
+                .maxByOrNull { it.levelReq }
 
         if (bestBar != null) {
             SmithingData.barIndexFor(bestBar)?.let { smithingBarType = it }
@@ -154,76 +165,64 @@ class AnvilSmithingScript @Inject constructor(private val xpMods: XpModifiers) :
         if (!canSmithProduct(meta)) {
             return
         }
-
         val maxAmount = inv.count(meta.bar.output.internalName) / meta.barCount
         val craftAmount = amount.coerceAtMost(maxAmount)
         if (craftAmount <= 0) {
             return
         }
+        // Re-confirming replaces a still-running chain instead of stacking a second one.
+        clearWeakQueue(SmithingParams.ANVIL_QUEUE)
+        scheduleSmithCycle(AnvilSmithTask(meta, craftAmount, completed = 0))
+    }
 
-        anim("seq.human_smithing")
-        soundSynth(3771)
-        strongQueue(
-            "queue.smithing_anvil",
-            ANVIL_FIRST_DELAY,
-            AnvilSmithTask(meta, craftAmount, completed = 0),
-        )
+    private fun ProtectedAccess.scheduleSmithCycle(task: AnvilSmithTask) {
+        // Anvil strikes are baked into the animation; an extra synth would double them.
+        anim(SmithingParams.ANVIL_ANIM)
+        smithQueue(SmithingParams.ANVIL_QUEUE, anvilCadenceTicks(), task)
     }
 
     private suspend fun ProtectedAccess.processSmithTask(task: AnvilSmithTask) {
-        if (!canSmithProduct(task.meta)) {
+        val meta = task.meta
+        if (!canSmithProduct(meta)) {
             resetAnim()
             return
         }
 
-        performSmith(task.meta)
+        if (!trySmith(meta)) {
+            resetAnim()
+            return
+        }
+
+        val xp = meta.barCount * meta.bar.smithXp * xpMods.get(player, "stat.smithing")
+        statAdvance("stat.smithing", xp)
 
         val completed = task.completed + 1
-        if (completed >= task.amount) {
-            return
-        }
-
-        if (!canSmithProduct(task.meta)) {
+        if (completed < task.amount && hasBarsFor(meta)) {
+            scheduleSmithCycle(task.copy(completed = completed))
+        } else {
+            // Stop the looping animation after the final production cadence.
             resetAnim()
-            return
         }
+    }
 
-        anim("seq.human_smithing")
-        soundSynth(3771)
-        weakQueue(
-            "queue.smithing_anvil",
-            SmithingUtils.anvilActionDelay(player),
-            task.copy(completed = completed),
+    // Inputs free enough slots for every recipe; a pre-delete free-space check would reject valid batches.
+    private fun ProtectedAccess.trySmith(meta: SmithingProductMeta): Boolean =
+        tryProduce(
+            inputs = listOf(meta.bar.output.internalName to meta.barCount),
+            output = meta.product.internalName,
+            outputCount = meta.numProduced,
         )
-    }
 
-    private fun ProtectedAccess.performSmith(meta: SmithingProductMeta) {
-        val barRemoved =
-            invDel(inv, meta.bar.output.internalName, meta.barCount, strict = true).success
-        if (!barRemoved) {
-            resetAnim()
-            return
-        }
-
-        if (invAdd(inv, meta.product.internalName, meta.numProduced).success) {
-            spam(forgedMessage(meta))
-            val xp = meta.barCount * meta.bar.smithxp * xpMods.get(player, "stat.smithing")
-            statAdvance("stat.smithing", xp.toDouble())
-        }
-    }
-
-    private fun forgedMessage(meta: SmithingProductMeta): String {
-        val item = meta.name.removePrefix("${meta.bar.prefix} ")
-        val made = if (meta.numProduced > 1) "some $item" else SmithingUtils.prefixAn(item)
-        return "You hammer the ${meta.bar.prefix} and make $made."
-    }
+    private fun ProtectedAccess.hasBarsFor(meta: SmithingProductMeta): Boolean =
+        inv.count(meta.bar.output.internalName) >= meta.barCount
 
     private suspend fun ProtectedAccess.canSmithProduct(meta: SmithingProductMeta): Boolean {
         if (!canSmithBar(meta.bar)) {
             return false
         }
 
-        if (!SmithingUtils.requireSmithingLevel(
+        if (
+            !SmithingUtils.requireSmithingLevel(
                 this,
                 meta.level,
                 "make ${SmithingUtils.prefixAn(meta.name)}",
@@ -236,7 +235,8 @@ class AnvilSmithingScript @Inject constructor(private val xpMods: XpModifiers) :
             val barName = SmithingUtils.itemName(meta.bar.output, "bar").lowercase()
             mesbox(
                 "You don't have enough ${SmithingUtils.pluralize(barName, meta.barCount)} to make " +
-                    SmithingUtils.prefixAn(meta.name) + ".",
+                    SmithingUtils.prefixAn(meta.name) +
+                    "."
             )
             return false
         }
@@ -244,9 +244,7 @@ class AnvilSmithingScript @Inject constructor(private val xpMods: XpModifiers) :
         return true
     }
 
-    private data class OpenAnvilTask(
-        val barInternal: String,
-    )
+    private data class OpenAnvilTask(val barInternal: String)
 
     private data class AnvilSmithTask(
         val meta: SmithingProductMeta,
@@ -255,10 +253,15 @@ class AnvilSmithingScript @Inject constructor(private val xpMods: XpModifiers) :
     )
 
     private companion object {
-        private const val ANVIL_FIRST_DELAY = 3
-        private const val MAKEX_STEP_X = 0
-        private const val MAKEX_STEP_Y = 45
+        /** Sentinel for the All button; resolved against the carried bars per product click. */
+        private const val QUANTITY_ALL = -1
+
+        private val DoricsAnvils = setOf(CoordGrid(2950, 3451, 0), CoordGrid(2950, 3452, 0))
+
+        private const val DoricsQuestVarp = "varp.doricquest"
+
+        private const val DoricsQuestComplete = 100
+
+        private const val DoricsRefusal = "You should probably ask before using that."
     }
 }
-
-private fun smithingComponent(name: String): String = "component.smithing:$name"

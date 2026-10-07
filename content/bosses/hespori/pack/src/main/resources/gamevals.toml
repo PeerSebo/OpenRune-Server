@@ -1,0 +1,11 @@
+[gamevals.varp]
+hespori_state = 63400
+hespori_planted_minute = 63401
+
+[gamevals.varbit]
+hespori_rake_progress = 63400
+hespori_defeated = 63401
+hespori_in_arena = 63402
+hespori_reclaim_paid = 63403
+hespori_planted = 63404
+hespori_state_migrated = 63405

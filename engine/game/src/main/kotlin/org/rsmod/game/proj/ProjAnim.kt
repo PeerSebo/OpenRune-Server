@@ -55,26 +55,30 @@ public data class ProjAnim(
             return type.delay + type.lengthAdjustment + (type.stepMultiplier * distance)
         }
 
+        /**
+         * Projectile distance ignores plane differences intentionally: the planar Bounds helper
+         * rejects them, but projectile timing still needs x/z separation.
+         */
         private fun calculateEndTime(source: Bounds, target: CoordGrid, type: ProjAnimType): Int =
-            calculateEndTime(type, source.distanceTo(Bounds(target)))
+            calculateEndTime(type, Bounds.maxDistanceBetween(source, Bounds(target)))
 
         private fun calculateEndTime(
             source: Bounds,
             target: PathingEntity,
             type: ProjAnimType,
-        ): Int = calculateEndTime(type, source.distanceTo(target.bounds()))
+        ): Int = calculateEndTime(type, Bounds.maxDistanceBetween(source, target.bounds()))
 
         private fun calculateEndTime(
             source: PathingEntity,
             target: CoordGrid,
             type: ProjAnimType,
-        ): Int = calculateEndTime(type, source.distanceTo(target))
+        ): Int = calculateEndTime(type, Bounds.maxDistanceBetween(source.bounds(), Bounds(target)))
 
         private fun calculateEndTime(
             source: PathingEntity,
             target: PathingEntity,
             type: ProjAnimType,
-        ): Int = calculateEndTime(type, source.distanceTo(target))
+        ): Int = calculateEndTime(type, Bounds.maxDistanceBetween(source.bounds(), target.bounds()))
 
         public fun fromBoundsToCoord(
             source: Bounds,
@@ -83,8 +87,9 @@ public data class ProjAnim(
             internal: String,
         ): ProjAnim {
 
-            val type = ServerCacheManager.getProjectile(internal.asRSCM(RSCMType.PROJANIM))
-                ?: error("Projectile not found: $internal")
+            val type =
+                ServerCacheManager.getProjectile(internal.asRSCM(RSCMType.PROJANIM))
+                    ?: error("Projectile not found: $internal")
 
             return ProjAnim(
                 spotanim = spotanim,
@@ -106,10 +111,11 @@ public data class ProjAnim(
             target: Npc,
             spotanim: Int,
             internal: String,
-        ): ProjAnim  {
+        ): ProjAnim {
 
-            val type = ServerCacheManager.getProjectile(internal.asRSCM(RSCMType.PROJANIM))
-                ?: error("Projectile not found: $internal")
+            val type =
+                ServerCacheManager.getProjectile(internal.asRSCM(RSCMType.PROJANIM))
+                    ?: error("Projectile not found: $internal")
 
             return ProjAnim(
                 spotanim = spotanim,
@@ -131,10 +137,11 @@ public data class ProjAnim(
             target: Player,
             spotanim: Int,
             internal: String,
-        ): ProjAnim  {
+        ): ProjAnim {
 
-            val type = ServerCacheManager.getProjectile(internal.asRSCM(RSCMType.PROJANIM))
-                ?: error("Projectile not found: $internal")
+            val type =
+                ServerCacheManager.getProjectile(internal.asRSCM(RSCMType.PROJANIM))
+                    ?: error("Projectile not found: $internal")
 
             return ProjAnim(
                 spotanim = spotanim,
@@ -216,10 +223,11 @@ public data class ProjAnim(
             target: CoordGrid,
             spotanim: Int,
             internal: String,
-        ): ProjAnim  {
+        ): ProjAnim {
 
-            val type = ServerCacheManager.getProjectile(internal.asRSCM(RSCMType.PROJANIM))
-                ?: error("Projectile not found: $internal")
+            val type =
+                ServerCacheManager.getProjectile(internal.asRSCM(RSCMType.PROJANIM))
+                    ?: error("Projectile not found: $internal")
 
             return ProjAnim(
                 spotanim = spotanim,
@@ -243,8 +251,9 @@ public data class ProjAnim(
             internal: String,
         ): ProjAnim {
 
-            val type = ServerCacheManager.getProjectile(internal.asRSCM(RSCMType.PROJANIM))
-                ?: error("Projectile not found: $internal")
+            val type =
+                ServerCacheManager.getProjectile(internal.asRSCM(RSCMType.PROJANIM))
+                    ?: error("Projectile not found: $internal")
 
             return ProjAnim(
                 spotanim = spotanim,
@@ -266,10 +275,11 @@ public data class ProjAnim(
             target: Player,
             spotanim: Int,
             internal: String,
-        ): ProjAnim  {
+        ): ProjAnim {
 
-            val type = ServerCacheManager.getProjectile(internal.asRSCM(RSCMType.PROJANIM))
-                ?: error("Projectile not found: $internal")
+            val type =
+                ServerCacheManager.getProjectile(internal.asRSCM(RSCMType.PROJANIM))
+                    ?: error("Projectile not found: $internal")
 
             return ProjAnim(
                 spotanim = spotanim,

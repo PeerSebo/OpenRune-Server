@@ -44,7 +44,6 @@ class PlayerMovementMapFlagTest {
         val stepFactory = StepFactory(collision)
         collision.allocateIfAbsent(0, 0, 0)
 
-        // Move 1 tile north.
         withPlayer {
             val startCoords = CoordGrid(0, 0, 0, 0, 0)
             val captured = attachClientCapture()
@@ -58,7 +57,6 @@ class PlayerMovementMapFlagTest {
                 movement.process(this)
             }
 
-            // Walk to destination.
             varMoveSpeed = MoveSpeed.Walk
 
             val expectedDestination = startCoords.translateZ(1)
@@ -71,7 +69,6 @@ class PlayerMovementMapFlagTest {
             assertTrue(captured.anyOf(SetMapFlag::isNotReset))
             assertTrue(captured.anyOf(SetMapFlag::isReset))
 
-            // Run to destination.
             coords = startCoords
             varMoveSpeed = MoveSpeed.Run
 
@@ -85,7 +82,6 @@ class PlayerMovementMapFlagTest {
             assertTrue(captured.anyOf(SetMapFlag::isReset))
         }
 
-        // Move 2 tile norths.
         withPlayer {
             val startCoords = CoordGrid(0, 0, 0, 0, 0)
             val captured = attachClientCapture()
@@ -99,7 +95,6 @@ class PlayerMovementMapFlagTest {
                 movement.process(this)
             }
 
-            // Walk to destination.
             varMoveSpeed = MoveSpeed.Walk
 
             val expectedDestination = startCoords.translateZ(2)
@@ -117,7 +112,6 @@ class PlayerMovementMapFlagTest {
             assertEquals(1, captured.countOf<SetMapFlag>())
             assertTrue(captured.singlePredicate(SetMapFlag::isReset))
 
-            // Run to destination.
             coords = startCoords
             varMoveSpeed = MoveSpeed.Run
 
@@ -131,7 +125,6 @@ class PlayerMovementMapFlagTest {
             assertTrue(captured.anyOf(SetMapFlag::isReset))
         }
 
-        // Move 3 tile norths.
         withPlayer {
             val startCoords = CoordGrid(0, 0, 0, 0, 0)
             val captured = attachClientCapture()
@@ -145,7 +138,6 @@ class PlayerMovementMapFlagTest {
                 movement.process(this)
             }
 
-            // Walk to destination.
             varMoveSpeed = MoveSpeed.Walk
 
             val expectedDestination = startCoords.translateZ(3)
@@ -159,7 +151,6 @@ class PlayerMovementMapFlagTest {
 
             process()
 
-            // No set map flag message is sent in this step.
             assertEquals(startCoords.translateZ(2), coords)
             assertEquals(0, captured.countOf<SetMapFlag>())
 
@@ -169,7 +160,6 @@ class PlayerMovementMapFlagTest {
             assertEquals(1, captured.countOf<SetMapFlag>())
             assertTrue(captured.singlePredicate(SetMapFlag::isReset))
 
-            // Run to destination.
             coords = startCoords
             varMoveSpeed = MoveSpeed.Run
 
@@ -188,7 +178,6 @@ class PlayerMovementMapFlagTest {
             assertTrue(captured.singlePredicate(SetMapFlag::isReset))
         }
 
-        // Move 4 tile norths.
         withPlayer {
             val startCoords = CoordGrid(0, 0, 0, 0, 0)
             val captured = attachClientCapture()
@@ -202,7 +191,6 @@ class PlayerMovementMapFlagTest {
                 movement.process(this)
             }
 
-            // Walk to destination.
             varMoveSpeed = MoveSpeed.Walk
 
             val expectedDestination = startCoords.translateZ(4)
@@ -216,13 +204,11 @@ class PlayerMovementMapFlagTest {
 
             process()
 
-            // No set map flag message is sent in this step.
             assertEquals(startCoords.translateZ(2), coords)
             assertEquals(0, captured.countOf<SetMapFlag>())
 
             process()
 
-            // No set map flag message is sent in this step.
             assertEquals(startCoords.translateZ(3), coords)
             assertEquals(0, captured.countOf<SetMapFlag>())
 
@@ -232,7 +218,6 @@ class PlayerMovementMapFlagTest {
             assertEquals(1, captured.countOf<SetMapFlag>())
             assertTrue(captured.singlePredicate(SetMapFlag::isReset))
 
-            // Run to destination.
             coords = startCoords
             varMoveSpeed = MoveSpeed.Run
 
@@ -287,23 +272,19 @@ class PlayerMovementMapFlagTest {
             return xInBuildArea == 47 && zInBuildArea == 43
         }
 
-        // Route player to destination.
         player.move(expectedCoordinates.last())
 
-        // Ensure the map flag is set on the first process.
         process()
         assertEquals(expectedCoordinates[1], player.coords)
         assertEquals(1, captured.countOf<SetMapFlag>())
         assertTrue(captured.allOf(SetMapFlag::isExpectedDestination))
 
-        // None of these coordinates should transmit a map flag message.
         for (i in 2 until expectedCoordinates.size - 1) {
             process()
             assertEquals(expectedCoordinates[i], player.coords)
             assertEquals(0, captured.countOf<SetMapFlag>())
         }
 
-        // The map flag should be reset once the last step has been consumed.
         process()
         assertEquals(expectedCoordinates.last(), player.coords)
         assertEquals(1, captured.countOf<SetMapFlag>())

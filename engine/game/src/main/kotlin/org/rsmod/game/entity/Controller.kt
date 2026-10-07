@@ -2,7 +2,6 @@ package org.rsmod.game.entity
 
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
-import dev.openrune.types.ControllerType
 import kotlin.coroutines.startCoroutine
 import org.rsmod.coroutine.GameCoroutine
 import org.rsmod.coroutine.suspension.GameCoroutineSimpleCompletion
@@ -108,26 +107,11 @@ public class Controller(public val type: String, public val coords: CoordGrid) {
 
     public fun bounds(): Bounds = Bounds(coords)
 
-    /**
-     * @throws IllegalArgumentException if [target]'s [Bounds.level] is not equal to this
-     *   [CoordGrid.level].
-     */
     public fun distanceTo(target: Bounds): Int = bounds().distanceTo(target)
 
-    /**
-     * @return true if the [target] is within [distance] tiles from [coords] _and_ the [target]'s
-     *   [Bounds.level] is equal to this [CoordGrid.level].
-     *
-     * This takes into account the width and length dimensions of [target].
-     */
     public fun isWithinDistance(target: Bounds, distance: Int): Boolean =
         coords.level == target.level && bounds().isWithinDistance(target, distance)
 
-    /**
-     * This method is responsible for cleaning up any ongoing tasks that the controller may be
-     * responsible for. This includes things such as coroutines; ex: [activeCoroutine]. If these
-     * coroutines are not cancelled properly they may linger in memory and run indefinitely.
-     */
     public fun destroy() {
         cancelActiveCoroutine()
     }

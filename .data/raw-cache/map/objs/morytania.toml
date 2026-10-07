@@ -250,7 +250,6 @@ coords = "0_54_53_5_21"
 obj = "obj.swamp_tar"
 coords = "0_54_53_9_40"
 
-## Barrows
 
 [[spawn]]
 obj = "obj.barrows_book_history"
@@ -264,7 +263,6 @@ coords = "0_55_51_51_46"
 obj = "obj.spade"
 coords = "0_55_51_52_48"
 
-## Burgh De Rott
 
 [[spawn]]
 obj = "obj.bronze_pickaxe"
@@ -286,13 +284,11 @@ coords = "0_54_49_55_53"
 obj = "obj.pot_empty"
 coords = "1_54_50_23_21"
 
-## Canifis Bar Floor
 
 [[spawn]]
 obj = "obj.fenk_brain"
 coords = "0_54_54_36_18"
 
-## Crombwick Manor
 
 [[spawn]]
 obj = "obj.broken_glass"
@@ -314,13 +310,11 @@ coords = "1_58_52_6_29"
 obj = "obj.slepe_book_sister1"
 coords = "1_58_52_18_26"
 
-## Darkmeyer
 
 [[spawn]]
 obj = "obj.bowl_water"
 coords = "0_56_52_37_50"
 
-## Darkmeyer Lower
 
 [[spawn]]
 obj = "obj.bucket_empty"
@@ -346,7 +340,6 @@ coords = "0_56_52_58_9"
 obj = "obj.tinderbox"
 coords = "0_56_52_60_31"
 
-## Darkmeyer Middle
 
 [[spawn]]
 obj = "obj.blood_pint"
@@ -396,7 +389,6 @@ coords = "0_56_52_18_50"
 obj = "obj.thread"
 coords = "0_56_52_15_51"
 
-## Darkmeyer Upper
 
 [[spawn]]
 obj = "obj.blood_pint"
@@ -422,13 +414,11 @@ coords = "0_56_51_26_60"
 obj = "obj.pot_of_not_garlic_butter"
 coords = "0_56_51_26_61"
 
-## Darkmeyer Upper House Roofs
 
 [[spawn]]
 obj = "obj.blood_pint"
 coords = "1_56_52_23_9"
 
-## Meiyerditch
 
 [[spawn]]
 obj = "obj.bucket_empty"
@@ -586,7 +576,6 @@ coords = "1_56_50_55_58"
 obj = "obj.knife"
 coords = "1_56_50_42_48"
 
-## Mortton
 
 [[spawn]]
 obj = "obj.smashed_glass"
@@ -608,7 +597,6 @@ coords = "0_54_51_25_14"
 obj = "obj.vial_empty"
 coords = "0_54_51_25_15"
 
-## Slepe
 
 [[spawn]]
 obj = "obj.bones"
@@ -678,13 +666,11 @@ coords = "0_58_52_56_54"
 obj = "obj.vial_empty"
 coords = "0_58_52_4_30"
 
-## Slepe Church
 
 [[spawn]]
 obj = "obj.slepe_book_sister2"
 coords = "2_58_51_22_54"
 
-## Slepe Houses
 
 [[spawn]]
 obj = "obj.bowl_garlic"
@@ -721,6 +707,3 @@ coords = "1_58_52_37_11"
 [[spawn]]
 obj = "obj.raw_shrimp"
 coords = "0_58_51_8_39"
-
-## Slepe Houses End
-

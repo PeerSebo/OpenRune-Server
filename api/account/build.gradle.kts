@@ -23,4 +23,15 @@ dependencies {
     implementation(projects.engine.map)
     implementation(projects.engine.module)
     implementation(projects.server.services)
+    testImplementation(kotlin("test"))
+    testImplementation(libs.jackson.module.kotlin)
+    testImplementation(libs.embedded.postgres)
+}
+
+tasks.test {
+    doFirst {
+        systemProperty("account.test.classpath", sourceSets["test"].runtimeClasspath.asPath)
+    }
+    workingDir(rootProject.projectDir)
+    inputs.dir(rootProject.file(".data/cache/SERVER"))
 }

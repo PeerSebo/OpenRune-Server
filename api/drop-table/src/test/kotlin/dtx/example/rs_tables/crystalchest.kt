@@ -1,13 +1,12 @@
 package dtx.example.rs_tables
 
-import dtx.rs.*
 import dtx.example.Gender
 import dtx.example.Item
 import dtx.example.Player
+import dtx.rs.*
 import kotlin.random.Random
 
 val dragonstoneTable = guaranteedSingle<Player, Item>(Item("uncut_dragonstone"))
-
 
 val crystalChestMain = rsWeightedTable<Player, Item> {
 

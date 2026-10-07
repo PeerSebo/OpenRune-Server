@@ -6,6 +6,7 @@ import org.rsmod.server.services.Service
 
 public object AccountSavingModule : ExtendedModule() {
     override fun bind() {
+        newSetBinding<PlayerSavePreparationHook>()
         bindInstance<AccountSavingService>()
         bindInstance<PlayerAutosaveOrchestrator>()
         addSetBinding<Service>(AccountSavingService::class.java)

@@ -29,7 +29,6 @@ constructor(
             extra("A Ghostspeak Amulet")
         },
         ItemRewardDisplay("obj.ghostskull"),
-        questVarbit = "varbit.restless_ghost_progress",
     ) {
 
     private val cutscene = TheRestlessGhostCutscene(quest, regionRepo, npcRepo, locRepo, worldRepo)

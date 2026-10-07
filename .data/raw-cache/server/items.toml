@@ -741,6 +741,48 @@ contentGroup = 37
 
 
 [[item]]
+id = "obj.feather"
+inherit = "obj.feather"
+# Coloured feathers belong to fletching only; fly-fishing still requires obj.feather.
+contentGroup = 87
+
+[[item]]
+id = "obj.hunting_stripy_bird_feather"
+inherit = "obj.hunting_stripy_bird_feather"
+contentGroup = 87
+
+[[item]]
+id = "obj.hunting_jungle_feather"
+inherit = "obj.hunting_jungle_feather"
+contentGroup = 87
+
+[[item]]
+id = "obj.hunting_polar_feather"
+inherit = "obj.hunting_polar_feather"
+contentGroup = 87
+
+[[item]]
+id = "obj.hunting_desert_feather"
+inherit = "obj.hunting_desert_feather"
+contentGroup = 87
+
+[[item]]
+id = "obj.hunting_woodland_feather"
+inherit = "obj.hunting_woodland_feather"
+contentGroup = 87
+
+[[item]]
+id = "obj.gryphon_feather"
+inherit = "obj.gryphon_feather"
+contentGroup = 87
+
+[[item]]
+id = "obj.stymphike_feather"
+inherit = "obj.stymphike_feather"
+contentGroup = 87
+
+
+[[item]]
 id = "obj.rcu_pouch_small"
 inherit = "obj.rcu_pouch_small"
 [item.params]
@@ -3491,7 +3533,7 @@ id = "obj.br_mithril_platebody"
 inherit = "obj.br_mithril_platebody"
 [item.params]
 "param.spell_telecoord"=26758910
-"param.spell_castxp"=100
+"param.spell_castxp"=95
 
 
 [[item]]
@@ -4018,7 +4060,7 @@ inherit = "obj.xmas16_blue_partyhat"
 "param.prayer_unlock_state"=8
 "param.prayer_unlock_varbit"=3909
 "param.prayer_varbit"=4128
-"param.prayer_drain_effect"=24
+"param.prayer_drain_effect"=12
 
 
 [[item]]
@@ -4170,6 +4212,8 @@ weaponCategory="Axe"
 "param.attack_sound_stance4"=2498
 "param.defend_anim"="seq.human_axe_block"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=5
 
 
 [[item]]
@@ -4191,6 +4235,8 @@ weaponCategory="Axe"
 "param.attack_sound_stance4"=2498
 "param.defend_anim"="seq.human_axe_block"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=10
 
 
 [[item]]
@@ -4212,6 +4258,8 @@ weaponCategory="Axe"
 "param.attack_sound_stance4"=2498
 "param.defend_anim"="seq.human_axe_block"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=20
 
 
 [[item]]
@@ -4233,6 +4281,8 @@ weaponCategory="Axe"
 "param.attack_sound_stance4"=2498
 "param.defend_anim"="seq.human_axe_block"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=30
 
 
 [[item]]
@@ -4276,6 +4326,8 @@ weaponCategory="Axe"
 "param.attack_sound_stance4"=2498
 "param.defend_anim"="seq.human_axe_block"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=40
 
 
 [[item]]
@@ -4297,6 +4349,8 @@ weaponCategory="Axe"
 "param.attack_sound_stance4"=2498
 "param.defend_anim"="seq.human_axe_block"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=40
 
 
 [[item]]
@@ -4318,6 +4372,8 @@ weaponCategory="Axe"
 "param.attack_sound_stance4"=2498
 "param.defend_anim"="seq.human_axe_block"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -4340,6 +4396,8 @@ tradeable = false
 "param.attack_sound_stance4"=2498
 "param.defend_anim"="seq.human_axe_block"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -4361,6 +4419,8 @@ weaponCategory="Axe"
 "param.attack_sound_stance4"=2498
 "param.defend_anim"="seq.human_axe_block"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=65
 
 
 [[item]]
@@ -4383,6 +4443,8 @@ tradeable = false
 "param.attack_sound_stance4"=2498
 "param.defend_anim"="seq.human_axe_block"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -4405,6 +4467,8 @@ tradeable = false
 "param.attack_sound_stance4"=2498
 "param.defend_anim"="seq.human_axe_block"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -4427,54 +4491,52 @@ tradeable = false
 "param.attack_sound_stance4"=2498
 "param.defend_anim"="seq.human_axe_block"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=70
+"param.statreq2_skill"="stat.agility"
+"param.statreq2_level"=50
 
 
 [[item]]
 id = "obj.ramble_lumberjack_hat"
 inherit = "obj.ramble_lumberjack_hat"
 [item.params]
-"param.xpmod_percent"=4
-"param.xpmod_stat"=8
+"param.xpmod_percent"=0
 
 
 [[item]]
 id = "obj.forestry_lumberjack_hat"
 inherit = "obj.forestry_lumberjack_hat"
 [item.params]
-"param.xpmod_percent"=4
-"param.xpmod_stat"=8
+"param.xpmod_percent"=0
 
 
 [[item]]
 id = "obj.ramble_lumberjack_top"
 inherit = "obj.ramble_lumberjack_top"
 [item.params]
-"param.xpmod_percent"=8
-"param.xpmod_stat"=8
+"param.xpmod_percent"=0
 
 
 [[item]]
 id = "obj.forestry_lumberjack_top"
 inherit = "obj.forestry_lumberjack_top"
 [item.params]
-"param.xpmod_percent"=8
-"param.xpmod_stat"=8
+"param.xpmod_percent"=0
 
 
 [[item]]
 id = "obj.ramble_lumberjack_legs"
 inherit = "obj.ramble_lumberjack_legs"
 [item.params]
-"param.xpmod_percent"=6
-"param.xpmod_stat"=8
+"param.xpmod_percent"=0
 
 
 [[item]]
 id = "obj.forestry_lumberjack_legs"
 inherit = "obj.forestry_lumberjack_legs"
 [item.params]
-"param.xpmod_percent"=6
-"param.xpmod_stat"=8
+"param.xpmod_percent"=0
 
 
 [[item]]
@@ -4482,8 +4544,7 @@ id = "obj.ramble_lumberjack_boots"
 inherit = "obj.ramble_lumberjack_boots"
 tradeable = false
 [item.params]
-"param.xpmod_percent"=2
-"param.xpmod_stat"=8
+"param.xpmod_percent"=0
 "param.equipment_sound"=2237
 
 
@@ -4492,8 +4553,7 @@ id = "obj.forestry_lumberjack_boots"
 inherit = "obj.forestry_lumberjack_boots"
 tradeable = false
 [item.params]
-"param.xpmod_percent"=2
-"param.xpmod_stat"=8
+"param.xpmod_percent"=0
 "param.equipment_sound"=2237
 
 
@@ -6193,6 +6253,8 @@ contentGroup = "content.mining_pickaxe"
 "param.skill_action_delay"=6
 "param.skill_anim"="seq.human_mining_steel_pickaxe"
 "param.skill_wall_anim"="seq.human_mining_steel_pickaxe_wall"
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=5
 [[item]]
 id = "obj.adamant_pickaxe"
 inherit = "obj.adamant_pickaxe"
@@ -6214,6 +6276,8 @@ contentGroup = "content.mining_pickaxe"
 "param.skill_action_delay"=4
 "param.skill_anim"="seq.human_mining_adamant_pickaxe"
 "param.skill_wall_anim"="seq.human_mining_adamant_pickaxe_wall"
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=30
 [[item]]
 id = "obj.mithril_pickaxe"
 inherit = "obj.mithril_pickaxe"
@@ -6235,6 +6299,8 @@ contentGroup = "content.mining_pickaxe"
 "param.skill_action_delay"=5
 "param.skill_anim"="seq.human_mining_mithril_pickaxe"
 "param.skill_wall_anim"="seq.human_mining_mithril_pickaxe_wall"
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=20
 [[item]]
 id = "obj.rune_pickaxe"
 inherit = "obj.rune_pickaxe"
@@ -6256,6 +6322,8 @@ contentGroup = "content.mining_pickaxe"
 "param.skill_action_delay"=3
 "param.skill_anim"="seq.human_mining_rune_pickaxe"
 "param.skill_wall_anim"="seq.human_mining_rune_pickaxe_wall"
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=40
 [[item]]
 id = "obj.bronze_sword"
 inherit = "obj.bronze_sword"
@@ -8978,6 +9046,7 @@ weaponCategory="SlashSword"
 id = "obj.blackjack_oak"
 inherit = "obj.blackjack_oak"
 weaponCategory="Blunt"
+contentGroup = "content.blackjack"
 tradeable = false
 [item.params]
 "param.attack_anim_stance1"="seq.human_blunt_pound"
@@ -8993,6 +9062,7 @@ tradeable = false
 id = "obj.blackjack_willow"
 inherit = "obj.blackjack_willow"
 weaponCategory="Blunt"
+contentGroup = "content.blackjack"
 [item.params]
 "param.attack_anim_stance1"="seq.human_blunt_pound"
 "param.attack_sound_stance1"=2512
@@ -11078,6 +11148,7 @@ weaponCategory="SlashSword"
 id = "obj.roguetrader_bj_assault_oak"
 inherit = "obj.roguetrader_bj_assault_oak"
 weaponCategory="Blunt"
+contentGroup = "content.blackjack"
 [item.params]
 "param.attack_anim_stance1"="seq.human_blunt_pound"
 "param.attack_sound_stance1"=2512
@@ -11092,6 +11163,7 @@ weaponCategory="Blunt"
 id = "obj.roguetrader_bj_defend_oak"
 inherit = "obj.roguetrader_bj_defend_oak"
 weaponCategory="Blunt"
+contentGroup = "content.blackjack"
 [item.params]
 "param.attack_anim_stance1"="seq.human_blunt_pound"
 "param.attack_sound_stance1"=2512
@@ -11106,6 +11178,7 @@ weaponCategory="Blunt"
 id = "obj.roguetrader_bj_assault_willow"
 inherit = "obj.roguetrader_bj_assault_willow"
 weaponCategory="Blunt"
+contentGroup = "content.blackjack"
 [item.params]
 "param.attack_anim_stance1"="seq.human_blunt_pound"
 "param.attack_sound_stance1"=2512
@@ -11120,6 +11193,7 @@ weaponCategory="Blunt"
 id = "obj.roguetrader_bj_defend_willow"
 inherit = "obj.roguetrader_bj_defend_willow"
 weaponCategory="Blunt"
+contentGroup = "content.blackjack"
 [item.params]
 "param.attack_anim_stance1"="seq.human_blunt_pound"
 "param.attack_sound_stance1"=2512
@@ -11134,6 +11208,7 @@ weaponCategory="Blunt"
 id = "obj.roguetrader_bj_maple"
 inherit = "obj.roguetrader_bj_maple"
 weaponCategory="Blunt"
+contentGroup = "content.blackjack"
 [item.params]
 "param.attack_anim_stance1"="seq.human_blunt_pound"
 "param.attack_sound_stance1"=2512
@@ -11148,6 +11223,7 @@ weaponCategory="Blunt"
 id = "obj.roguetrader_bj_assault_maple"
 inherit = "obj.roguetrader_bj_assault_maple"
 weaponCategory="Blunt"
+contentGroup = "content.blackjack"
 [item.params]
 "param.attack_anim_stance1"="seq.human_blunt_pound"
 "param.attack_sound_stance1"=2512
@@ -11162,6 +11238,7 @@ weaponCategory="Blunt"
 id = "obj.roguetrader_bj_defend_maple"
 inherit = "obj.roguetrader_bj_defend_maple"
 weaponCategory="Blunt"
+contentGroup = "content.blackjack"
 [item.params]
 "param.attack_anim_stance1"="seq.human_blunt_pound"
 "param.attack_sound_stance1"=2512
@@ -13489,10 +13566,21 @@ tradeable = false
 
 
 [[item]]
+id = "obj.harpoon"
+inherit = "obj.harpoon"
+contentGroup = "content.fishing_harpoon"
+[item.params]
+"param.skill_anim"="seq.human_harpoon"
+"param.levelrequire"=35
+
+[[item]]
 id = "obj.hunting_barbed_harpoon"
 inherit = "obj.hunting_barbed_harpoon"
 weaponCategory="StabSword"
+contentGroup = "content.fishing_harpoon"
 [item.params]
+"param.skill_anim"="seq.human_harpoon_barbed"
+"param.levelrequire"=33
 "param.attack_anim_stance1"="seq.human_sword_stab"
 "param.attack_sound_stance1"=2549
 "param.attack_anim_stance2"="seq.human_sword_stab"
@@ -15612,6 +15700,8 @@ contentGroup = "content.mining_pickaxe"
 "param.skill_action_delay"=3
 "param.skill_anim"="seq.human_mining_dragon_pickaxe"
 "param.skill_wall_anim"="seq.human_mining_dragon_pickaxe_wall"
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 [[item]]
 id = "obj.smoke_battlestaff"
 inherit = "obj.smoke_battlestaff"
@@ -15766,6 +15856,8 @@ contentGroup = "content.mining_pickaxe"
 "param.skill_action_delay"=5
 "param.skill_anim"="seq.human_mining_black_pickaxe"
 "param.skill_wall_anim"="seq.human_mining_black_pickaxe_wall"
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=10
 [[item]]
 id = "obj.katana"
 inherit = "obj.katana"
@@ -16167,6 +16259,8 @@ tradeable = false
 "param.skill_action_delay"=3
 "param.skill_anim"="seq.human_mining_dragon_pickaxe_pretty"
 "param.skill_wall_anim"="seq.human_mining_dragon_pickaxe_pretty_wall"
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -16899,9 +16993,12 @@ tradeable = false
 [[item]]
 id = "obj.infernal_axe_empty"
 inherit = "obj.infernal_axe_empty"
+contentGroup = 26
 weaponCategory="Axe"
 tradeable = false
 [item.params]
+"param.skill_anim"="seq.human_woodcutting_infernal_axe"
+"param.levelrequire"=61
 "param.equipment_sound"=2229
 "param.attack_anim_stance1"="seq.human_axe_hack"
 "param.attack_sound_stance1"=2498
@@ -16913,6 +17010,8 @@ tradeable = false
 "param.attack_sound_stance4"=2498
 "param.defend_anim"="seq.human_axe_block"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -16937,6 +17036,8 @@ tradeable = false
 "param.skill_action_delay"=3
 "param.skill_anim"="seq.human_mining_infernal_pickaxe"
 "param.skill_wall_anim"="seq.human_mining_infernal_pickaxe_wall"
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 [[item]]
 id = "obj.infernal_pickaxe_empty"
 inherit = "obj.infernal_pickaxe_empty"
@@ -16959,6 +17060,8 @@ tradeable = false
 "param.skill_action_delay"=3
 "param.skill_anim"="seq.human_mining_dragon_pickaxe"
 "param.skill_wall_anim"="seq.human_mining_dragon_pickaxe_wall"
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -17239,6 +17342,8 @@ contentGroup = "content.mining_pickaxe"
 "param.skill_action_delay"=3
 "param.skill_anim"="seq.human_mining_3a_pickaxe"
 "param.skill_wall_anim"="seq.human_mining_3a_pickaxe_wall"
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=65
 [[item]]
 id = "obj.ale_gods"
 inherit = "obj.ale_gods"
@@ -18304,7 +18409,10 @@ weaponCategory="Bulwark"
 id = "obj.dragon_harpoon"
 inherit = "obj.dragon_harpoon"
 weaponCategory="StabSword"
+contentGroup = "content.fishing_harpoon"
 [item.params]
+"param.skill_anim"="seq.human_harpoon_dragon"
+"param.levelrequire"=61
 "param.attack_anim_stance1"="seq.human_sword_stab"
 "param.attack_sound_stance1"=2549
 "param.attack_anim_stance2"="seq.human_sword_stab"
@@ -18315,6 +18423,8 @@ weaponCategory="StabSword"
 "param.attack_sound_stance4"=2549
 "param.defend_anim"="seq.human_sword_def"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -18322,7 +18432,10 @@ id = "obj.infernal_harpoon"
 inherit = "obj.infernal_harpoon"
 weaponCategory="StabSword"
 tradeable = false
+contentGroup = "content.fishing_harpoon"
 [item.params]
+"param.skill_anim"="seq.human_harpoon_infernal"
+"param.levelrequire"=75
 "param.attack_anim_stance1"="seq.human_sword_stab"
 "param.attack_sound_stance1"=2549
 "param.attack_anim_stance2"="seq.human_sword_stab"
@@ -18335,12 +18448,17 @@ tradeable = false
 "param.attackrate"=5
 
 
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 [[item]]
 id = "obj.infernal_harpoon_empty"
 inherit = "obj.infernal_harpoon_empty"
 weaponCategory="StabSword"
 tradeable = false
+contentGroup = "content.fishing_harpoon"
 [item.params]
+"param.skill_anim"="seq.human_harpoon_infernal"
+"param.levelrequire"=75
 "param.attack_anim_stance1"="seq.human_sword_stab"
 "param.attack_sound_stance1"=2549
 "param.attack_anim_stance2"="seq.human_sword_stab"
@@ -18351,6 +18469,8 @@ tradeable = false
 "param.attack_sound_stance4"=2549
 "param.defend_anim"="seq.human_sword_def"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -19519,6 +19639,8 @@ contentGroup = "content.mining_pickaxe"
 "param.skill_action_delay"=3
 "param.skill_anim"="seq.human_mining_gilded_pickaxe"
 "param.skill_wall_anim"="seq.human_mining_gilded_pickaxe_wall"
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=40
 
 
 [[item]]
@@ -19936,9 +20058,13 @@ tradeable = false
 [[item]]
 id = "obj.crystal_axe_inactive"
 inherit = "obj.crystal_axe_inactive"
+# Inactive crystal axes still require level 71, but use dragon-axe success curves.
+contentGroup = 26
 weaponCategory="Axe"
 tradeable = false
 [item.params]
+"param.skill_anim"="seq.human_woodcutting_crystal_axe"
+"param.levelrequire"=71
 "param.equipment_sound"=2229
 "param.attack_anim_stance1"="seq.human_axe_hack"
 "param.attack_sound_stance1"=2498
@@ -19950,6 +20076,10 @@ tradeable = false
 "param.attack_sound_stance4"=2498
 "param.defend_anim"="seq.human_axe_block"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=70
+"param.statreq2_skill"="stat.agility"
+"param.statreq2_level"=50
 
 
 [[item]]
@@ -19974,6 +20104,8 @@ tradeable = false
 "param.skill_action_delay"=3
 "param.skill_anim"="seq.human_mining_zalcano_pickaxe"
 "param.skill_wall_anim"="seq.human_mining_zalcano_pickaxe_wall"
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -19998,6 +20130,10 @@ tradeable = false
 "param.skill_action_delay"=3
 "param.skill_anim"="seq.human_mining_crystal_pickaxe"
 "param.skill_wall_anim"="seq.human_mining_crystal_pickaxe_wall"
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=70
+"param.statreq2_skill"="stat.agility"
+"param.statreq2_level"=50
 [[item]]
 id = "obj.crystal_pickaxe_inactive"
 inherit = "obj.crystal_pickaxe_inactive"
@@ -20020,6 +20156,10 @@ tradeable = false
 "param.skill_action_delay"=3
 "param.skill_anim"="seq.human_mining_crystal_pickaxe"
 "param.skill_wall_anim"="seq.human_mining_crystal_pickaxe_wall"
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=70
+"param.statreq2_skill"="stat.agility"
+"param.statreq2_level"=50
 
 
 [[item]]
@@ -20027,7 +20167,10 @@ id = "obj.crystal_harpoon"
 inherit = "obj.crystal_harpoon"
 weaponCategory="StabSword"
 tradeable = false
+contentGroup = "content.fishing_harpoon"
 [item.params]
+"param.skill_anim"="seq.human_harpoon_crystal"
+"param.levelrequire"=71
 "param.attack_anim_stance1"="seq.human_sword_stab"
 "param.attack_sound_stance1"=2549
 "param.attack_anim_stance2"="seq.human_sword_stab"
@@ -20040,12 +20183,20 @@ tradeable = false
 "param.attackrate"=5
 
 
+# TODO: Verify the inactive crystal harpoon's assumed dragon-tier catch rate.
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=70
+"param.statreq2_skill"="stat.agility"
+"param.statreq2_level"=50
 [[item]]
 id = "obj.crystal_harpoon_inactive"
 inherit = "obj.crystal_harpoon_inactive"
 weaponCategory="StabSword"
 tradeable = false
+contentGroup = "content.fishing_harpoon"
 [item.params]
+"param.skill_anim"="seq.human_harpoon_crystal"
+"param.levelrequire"=71
 "param.attack_anim_stance1"="seq.human_sword_stab"
 "param.attack_sound_stance1"=2549
 "param.attack_anim_stance2"="seq.human_sword_stab"
@@ -20056,6 +20207,10 @@ tradeable = false
 "param.attack_sound_stance4"=2549
 "param.defend_anim"="seq.human_sword_def"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=70
+"param.statreq2_skill"="stat.agility"
+"param.statreq2_level"=50
 
 
 [[item]]
@@ -21310,7 +21465,10 @@ id = "obj.trailblazer_harpoon"
 inherit = "obj.trailblazer_harpoon"
 weaponCategory="StabSword"
 tradeable = false
+contentGroup = "content.fishing_harpoon"
 [item.params]
+"param.skill_anim"="seq.human_harpoon_infernal"
+"param.levelrequire"=75
 "param.attack_anim_stance1"="seq.human_sword_stab"
 "param.attack_sound_stance1"=2549
 "param.attack_anim_stance2"="seq.human_sword_stab"
@@ -21321,6 +21479,8 @@ tradeable = false
 "param.attack_sound_stance4"=2549
 "param.defend_anim"="seq.human_sword_def"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -21340,6 +21500,8 @@ tradeable = false
 "param.attack_sound_stance4"=2498
 "param.defend_anim"="seq.human_axe_block"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -21429,7 +21591,10 @@ id = "obj.trailblazer_harpoon_empty"
 inherit = "obj.trailblazer_harpoon_empty"
 weaponCategory="StabSword"
 tradeable = false
+contentGroup = "content.fishing_harpoon"
 [item.params]
+"param.skill_anim"="seq.human_harpoon_infernal"
+"param.levelrequire"=75
 "param.attack_anim_stance1"="seq.human_sword_stab"
 "param.attack_sound_stance1"=2549
 "param.attack_anim_stance2"="seq.human_sword_stab"
@@ -21440,6 +21605,8 @@ tradeable = false
 "param.attack_sound_stance4"=2549
 "param.defend_anim"="seq.human_sword_def"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -21459,14 +21626,19 @@ tradeable = false
 "param.attack_sound_stance4"=2498
 "param.defend_anim"="seq.human_axe_block"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
 id = "obj.trailblazer_axe_empty"
 inherit = "obj.trailblazer_axe_empty"
+contentGroup = 26
 weaponCategory="Axe"
 tradeable = false
 [item.params]
+"param.skill_anim"="seq.human_woodcutting_infernal_axe"
+"param.levelrequire"=61
 "param.equipment_sound"=2229
 "param.attack_anim_stance1"="seq.human_axe_hack"
 "param.attack_sound_stance1"=2498
@@ -21478,6 +21650,8 @@ tradeable = false
 "param.attack_sound_stance4"=2498
 "param.defend_anim"="seq.human_axe_block"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -21485,7 +21659,10 @@ id = "obj.trailblazer_harpoon_no_infernal"
 inherit = "obj.trailblazer_harpoon_no_infernal"
 weaponCategory="StabSword"
 tradeable = false
+contentGroup = "content.fishing_harpoon"
 [item.params]
+"param.skill_anim"="seq.human_harpoon_infernal"
+"param.levelrequire"=75
 "param.attack_anim_stance1"="seq.human_sword_stab"
 "param.attack_sound_stance1"=2549
 "param.attack_anim_stance2"="seq.human_sword_stab"
@@ -21496,6 +21673,8 @@ tradeable = false
 "param.attack_sound_stance4"=2549
 "param.defend_anim"="seq.human_sword_def"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -21515,6 +21694,8 @@ tradeable = false
 "param.attack_sound_stance4"=2498
 "param.defend_anim"="seq.human_axe_block"
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -26421,6 +26602,10 @@ inherit = "obj.roguesden_gloves"
 tradeable = false
 [item.params]
 "param.equipment_sound"=2236
+"param.statreq1_skill"=17
+"param.statreq1_level"=50
+"param.statreq2_skill"=16
+"param.statreq2_level"=50
 
 
 [[item]]
@@ -26429,6 +26614,10 @@ inherit = "obj.roguesden_boots"
 tradeable = false
 [item.params]
 "param.equipment_sound"=2237
+"param.statreq1_skill"=17
+"param.statreq1_level"=50
+"param.statreq2_skill"=16
+"param.statreq2_level"=50
 
 
 [[item]]
@@ -28666,6 +28855,8 @@ id = "obj.hunting_silent_gloves"
 inherit = "obj.hunting_silent_gloves"
 [item.params]
 "param.equipment_sound"=2236
+"param.statreq1_skill"=21
+"param.statreq1_level"=54
 
 
 [[item]]
@@ -35242,8 +35433,12 @@ tradeable = false
 [[item]]
 id = "obj.bronze_axe_2h"
 inherit = "obj.bronze_axe_2h"
+# Every felling-axe content tag also needs skill_anim; the woodcutting lookup requires it.
+contentGroup = 26
 weaponCategory="Axe"
 [item.params]
+"param.skill_anim"="seq.forestry_2h_axe_chopping_bronze"
+"param.levelrequire"=0
 "param.equipment_sound"=2229
 "param.attackrate"=7
 
@@ -35251,8 +35446,11 @@ weaponCategory="Axe"
 [[item]]
 id = "obj.iron_axe_2h"
 inherit = "obj.iron_axe_2h"
+contentGroup = 26
 weaponCategory="Axe"
 [item.params]
+"param.skill_anim"="seq.forestry_2h_axe_chopping_iron"
+"param.levelrequire"=0
 "param.equipment_sound"=2229
 "param.attackrate"=7
 
@@ -35260,84 +35458,133 @@ weaponCategory="Axe"
 [[item]]
 id = "obj.steel_axe_2h"
 inherit = "obj.steel_axe_2h"
+contentGroup = 26
 weaponCategory="Axe"
 [item.params]
+"param.skill_anim"="seq.forestry_2h_axe_chopping_steel"
+"param.levelrequire"=6
 "param.equipment_sound"=2229
 "param.attackrate"=7
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=5
 
 
 [[item]]
 id = "obj.black_axe_2h"
 inherit = "obj.black_axe_2h"
+contentGroup = 26
 weaponCategory="Axe"
 [item.params]
+"param.skill_anim"="seq.forestry_2h_axe_chopping_black"
+"param.levelrequire"=11
 "param.equipment_sound"=2229
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=10
 
 
 [[item]]
 id = "obj.mithril_axe_2h"
 inherit = "obj.mithril_axe_2h"
+contentGroup = 26
 weaponCategory="Axe"
 [item.params]
+"param.skill_anim"="seq.forestry_2h_axe_chopping_mithril"
+"param.levelrequire"=21
 "param.equipment_sound"=2229
 "param.attackrate"=7
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=20
 
 
 [[item]]
 id = "obj.adamant_axe_2h"
 inherit = "obj.adamant_axe_2h"
+contentGroup = 26
 weaponCategory="Axe"
 [item.params]
+"param.skill_anim"="seq.forestry_2h_axe_chopping_adamant"
+"param.levelrequire"=31
 "param.equipment_sound"=2229
 "param.attackrate"=7
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=30
 
 
 [[item]]
 id = "obj.rune_axe_2h"
 inherit = "obj.rune_axe_2h"
+contentGroup = 26
 weaponCategory="Axe"
 [item.params]
+"param.skill_anim"="seq.forestry_2h_axe_chopping_rune"
+"param.levelrequire"=41
 "param.equipment_sound"=2229
 "param.attackrate"=7
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=40
 
 
 [[item]]
 id = "obj.dragon_axe_2h"
 inherit = "obj.dragon_axe_2h"
+contentGroup = 26
 weaponCategory="Axe"
 [item.params]
+"param.skill_anim"="seq.forestry_2h_axe_chopping_dragon"
+"param.levelrequire"=61
 "param.equipment_sound"=2229
 "param.attackrate"=7
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
 id = "obj.crystal_axe_2h"
 inherit = "obj.crystal_axe_2h"
+contentGroup = 26
 weaponCategory="Axe"
 tradeable = false
 [item.params]
+"param.skill_anim"="seq.forestry_2h_axe_chopping_crystal"
+"param.levelrequire"=71
 "param.equipment_sound"=2229
 "param.attackrate"=7
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=70
+"param.statreq2_skill"="stat.agility"
+"param.statreq2_level"=50
 
 
 [[item]]
 id = "obj.crystal_axe_2h_inactive"
 inherit = "obj.crystal_axe_2h_inactive"
+contentGroup = 26
 weaponCategory="Axe"
 tradeable = false
 [item.params]
+"param.skill_anim"="seq.forestry_2h_axe_chopping_crystal_inactive"
+"param.levelrequire"=71
 "param.equipment_sound"=2229
 "param.attackrate"=7
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=70
+"param.statreq2_skill"="stat.agility"
+"param.statreq2_level"=50
 
 
 [[item]]
 id = "obj.3a_axe_2h"
 inherit = "obj.3a_axe_2h"
+contentGroup = 26
 weaponCategory="Axe"
 [item.params]
+"param.skill_anim"="seq.forestry_2h_axe_chopping_3a"
+"param.levelrequire"=61
 "param.equipment_sound"=2229
 "param.attackrate"=7
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=65
 
 
 [[item]]
@@ -40132,15 +40379,6 @@ tradeable = false
 
 
 [[item]]
-id = "obj.midsummer_fan"
-inherit = "obj.midsummer_fan"
-weaponCategory="Blunt"
-tradeable = false
-[item.params]
-"param.destroy_note_desc"="You can get a replacement from Diango."
-
-
-[[item]]
 id = "obj.fossilquest_sawmill_proposal"
 inherit = "obj.fossilquest_sawmill_proposal"
 tradeable = false
@@ -42317,6 +42555,14 @@ inherit = "obj.xmas20_sled"
 tradeable = false
 [item.params]
 "param.destroy_note_desc"="You can get another on the top of the slope in the caves below the Goblin Village."
+# The sled uses appearance BAS overrides for idle and all movement directions.
+"param.bas_readyanim"="seq.trollromance_toboggan_ready"
+"param.bas_turnonspot"="seq.trollromance_toboggan_walking"
+"param.bas_walk_f"="seq.trollromance_toboggan_walking"
+"param.bas_walk_b"="seq.trollromance_toboggan_walking"
+"param.bas_walk_l"="seq.trollromance_toboggan_walking"
+"param.bas_walk_r"="seq.trollromance_toboggan_walking"
+"param.bas_running"="seq.trollromance_toboggan_walking"
 
 
 [[item]]
@@ -46997,6 +47243,14 @@ tradeable = false
 
 
 [[item]]
+id = "obj.pickpocket_coin_pouch_pirate"
+inherit = "obj.pickpocket_coin_pouch_pirate"
+tradeable = false
+[item.params]
+"param.destroy_note_desc"="You may simply open the pouch instead to continue pickpocketing."
+
+
+[[item]]
 id = "obj.dizanas_quiver_broken"
 inherit = "obj.dizanas_quiver_broken"
 tradeable = false
@@ -49661,10 +49915,15 @@ tradeable = false
 [[item]]
 id = "obj.trailblazer_reloaded_axe"
 inherit = "obj.trailblazer_reloaded_axe"
+contentGroup = 26
 weaponCategory="Axe"
 tradeable = false
 [item.params]
+"param.skill_anim"="seq.human_woodcutting_trailblazer_reloaded_axe"
+"param.levelrequire"=61
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -49903,10 +50162,15 @@ inherit = "obj.grapes"
 [[item]]
 id = "obj.trailblazer_reloaded_axe_empty"
 inherit = "obj.trailblazer_reloaded_axe_empty"
+contentGroup = 26
 weaponCategory="Axe"
 tradeable = false
 [item.params]
+"param.skill_anim"="seq.human_woodcutting_trailblazer_reloaded_axe"
+"param.levelrequire"=61
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -50144,6 +50408,8 @@ weaponCategory="Pickaxe"
 tradeable = false
 [item.params]
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -50327,6 +50593,8 @@ weaponCategory="Pickaxe"
 tradeable = false
 [item.params]
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -51278,6 +51546,8 @@ weaponCategory="StabSword"
 tradeable = false
 [item.params]
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -51552,12 +51822,6 @@ tradeable = false
 
 
 [[item]]
-id = "obj.giants_foundry_preform"
-inherit = "obj.giants_foundry_preform"
-tradeable = false
-
-
-[[item]]
 id = "obj.ancient_sceptre_shadow_trouver"
 inherit = "obj.ancient_sceptre_shadow_trouver"
 weaponCategory="Staff"
@@ -51574,10 +51838,15 @@ inherit = "obj.topaz_ring"
 [[item]]
 id = "obj.trailblazer_reloaded_axe_no_infernal"
 inherit = "obj.trailblazer_reloaded_axe_no_infernal"
+contentGroup = 26
 weaponCategory="Axe"
 tradeable = false
 [item.params]
+"param.skill_anim"="seq.human_woodcutting_trailblazer_reloaded_axe_no_infernal"
+"param.levelrequire"=61
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -51698,6 +51967,8 @@ weaponCategory="StabSword"
 tradeable = false
 [item.params]
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -52205,6 +52476,8 @@ weaponCategory="StabSword"
 tradeable = false
 [item.params]
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -52513,6 +52786,8 @@ weaponCategory="Pickaxe"
 tradeable = false
 [item.params]
 "param.attackrate"=5
+"param.statreq1_skill"="stat.attack"
+"param.statreq1_level"=60
 
 
 [[item]]
@@ -52674,7 +52949,6 @@ dummyitem = 2
 tradeable = false
 
 
-# Mining ores
 [[item]]
 id = "obj.clay"
 inherit = "obj.clay"
@@ -52759,78 +53033,121 @@ contentGroup = "content.ore"
 id = "obj.softclay"
 inherit = "obj.softclay"
 contentGroup = "content.ore"
-
 [[item]]
 id = "obj.skillcape_max_firecape"
 inherit = "obj.skillcape_max_firecape"
 contentGroup = "content.max_cape"
-
 [[item]]
 id = "obj.skillcape_max_saradomin"
 inherit = "obj.skillcape_max_saradomin"
 contentGroup = "content.max_cape"
-
 [[item]]
 id = "obj.skillcape_max_zamorak"
 inherit = "obj.skillcape_max_zamorak"
 contentGroup = "content.max_cape"
-
 [[item]]
 id = "obj.skillcape_max_guthix"
 inherit = "obj.skillcape_max_guthix"
 contentGroup = "content.max_cape"
-
 [[item]]
 id = "obj.skillcape_max_ardy"
 inherit = "obj.skillcape_max_ardy"
 contentGroup = "content.max_cape"
-
 [[item]]
 id = "obj.skillcape_max_infernalcape"
 inherit = "obj.skillcape_max_infernalcape"
 contentGroup = "content.max_cape"
-
 [[item]]
 id = "obj.skillcape_max_saradomin2"
 inherit = "obj.skillcape_max_saradomin2"
 contentGroup = "content.max_cape"
-
 [[item]]
 id = "obj.skillcape_max_zamorak2"
 inherit = "obj.skillcape_max_zamorak2"
 contentGroup = "content.max_cape"
-
 [[item]]
 id = "obj.skillcape_max_guthix2"
 inherit = "obj.skillcape_max_guthix2"
 contentGroup = "content.max_cape"
-
 [[item]]
 id = "obj.skillcape_max_infernalcape_trouver"
 inherit = "obj.skillcape_max_infernalcape_trouver"
 contentGroup = "content.max_cape"
-
 [[item]]
 id = "obj.skillcape_max_firecape_trouver"
 inherit = "obj.skillcape_max_firecape_trouver"
 contentGroup = "content.max_cape"
-
 [[item]]
 id = "obj.skillcape_max_saradomin2_trouver"
 inherit = "obj.skillcape_max_saradomin2_trouver"
 contentGroup = "content.max_cape"
-
 [[item]]
 id = "obj.skillcape_max_zamorak2_trouver"
 inherit = "obj.skillcape_max_zamorak2_trouver"
 contentGroup = "content.max_cape"
-
 [[item]]
 id = "obj.skillcape_max_guthix2_trouver"
 inherit = "obj.skillcape_max_guthix2_trouver"
 contentGroup = "content.max_cape"
-
 [[item]]
 id = "obj.skillcape_max_mythical"
 inherit = "obj.skillcape_max_mythical"
 contentGroup = "content.max_cape"
+
+
+[[item]]
+id = "obj.deal_wrench"
+inherit = "obj.deal_wrench"
+weaponCategory="Blunt"
+[item.params]
+"param.attack_anim_stance1"="seq.human_blunt_pound"
+"param.attack_sound_stance1"=2567
+"param.attack_anim_stance2"="seq.human_blunt_pound"
+"param.attack_sound_stance2"=2567
+"param.attack_anim_stance4"="seq.human_blunt_pound"
+"param.attack_sound_stance4"=2567
+"param.defend_anim"="seq.human_blunt_block"
+
+
+[[item]]
+id = "obj.deal_wrench_blessed"
+inherit = "obj.deal_wrench_blessed"
+weaponCategory="Blunt"
+[item.params]
+"param.attack_anim_stance1"="seq.human_blunt_pound"
+"param.attack_sound_stance1"=2567
+"param.attack_anim_stance2"="seq.human_blunt_pound"
+"param.attack_sound_stance2"=2567
+"param.attack_anim_stance4"="seq.human_blunt_pound"
+"param.attack_sound_stance4"=2567
+"param.defend_anim"="seq.human_blunt_block"
+
+
+[[item]]
+id = "obj.roguesden_helm"
+inherit = "obj.roguesden_helm"
+[item.params]
+"param.statreq1_skill"=17
+"param.statreq1_level"=50
+"param.statreq2_skill"=16
+"param.statreq2_level"=50
+
+
+[[item]]
+id = "obj.roguesden_body"
+inherit = "obj.roguesden_body"
+[item.params]
+"param.statreq1_skill"=17
+"param.statreq1_level"=50
+"param.statreq2_skill"=16
+"param.statreq2_level"=50
+
+
+[[item]]
+id = "obj.roguesden_legs"
+inherit = "obj.roguesden_legs"
+[item.params]
+"param.statreq1_skill"=17
+"param.statreq1_level"=50
+"param.statreq2_skill"=16
+"param.statreq2_level"=50

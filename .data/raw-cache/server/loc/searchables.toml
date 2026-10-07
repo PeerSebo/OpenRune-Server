@@ -1,0 +1,601 @@
+# Quest containers with items belong to their quest scripts. These handlers supply messages only.
+# TODO: Verify inferred search text and container sounds.
+
+
+
+[[object]]
+id = "loc.crate2"
+inherit = "loc.crate2"
+contentGroup = "content.empty_crate"
+
+[object.params]
+"param.game_message" = "You search the crate but find nothing."
+
+[[object]]
+id = "loc.crate_old"
+inherit = "loc.crate_old"
+contentGroup = "content.empty_crate"
+
+[object.params]
+"param.game_message" = "You search the crate but find nothing."
+
+[[object]]
+id = "loc.draynor_crate"
+inherit = "loc.draynor_crate"
+contentGroup = "content.empty_crate"
+
+[object.params]
+"param.game_message" = "You search the crate but find nothing."
+
+[[object]]
+id = "loc.draynor_crates"
+inherit = "loc.draynor_crates"
+contentGroup = "content.empty_crate"
+
+[object.params]
+"param.game_message" = "You search the crates but find nothing."
+
+[[object]]
+id = "loc.sarim_crate"
+inherit = "loc.sarim_crate"
+contentGroup = "content.empty_crate"
+
+[object.params]
+"param.game_message" = "You search the crate but find nothing."
+
+[[object]]
+id = "loc.sarim_crate2"
+inherit = "loc.sarim_crate2"
+contentGroup = "content.empty_crate"
+
+[object.params]
+"param.game_message" = "You search the crate but find nothing."
+
+[[object]]
+id = "loc.sarim_crate3"
+inherit = "loc.sarim_crate3"
+contentGroup = "content.empty_crate"
+
+[object.params]
+"param.game_message" = "You search the crates but find nothing."
+
+[[object]]
+id = "loc.gertrudeempty_crate"
+inherit = "loc.gertrudeempty_crate"
+contentGroup = "content.empty_crate"
+
+[object.params]
+"param.game_message" = "You search the crate but find nothing."
+
+[[object]]
+id = "loc.fai_varrock_green_crate"
+inherit = "loc.fai_varrock_green_crate"
+contentGroup = "content.empty_crate"
+
+[object.params]
+"param.game_message" = "You search the crate but find nothing."
+
+[[object]]
+id = "loc.fai_barbarian_small_crates"
+inherit = "loc.fai_barbarian_small_crates"
+contentGroup = "content.empty_crate"
+
+[object.params]
+"param.game_message" = "You search the crates but find nothing."
+
+[[object]]
+id = "loc.fai_falador_small_crates"
+inherit = "loc.fai_falador_small_crates"
+contentGroup = "content.empty_crate"
+
+[object.params]
+"param.game_message" = "You search the crates but find nothing."
+
+[[object]]
+id = "loc.fai_wiztower_crate"
+inherit = "loc.fai_wiztower_crate"
+contentGroup = "content.empty_crate"
+
+[object.params]
+"param.game_message" = "You search the crate but find nothing."
+
+[[object]]
+id = "loc.fai_wiztower_crate2"
+inherit = "loc.fai_wiztower_crate2"
+contentGroup = "content.empty_crate"
+
+[object.params]
+"param.game_message" = "You search the crate but find nothing."
+
+[[object]]
+id = "loc.fai_wiztower_crate3"
+inherit = "loc.fai_wiztower_crate3"
+contentGroup = "content.empty_crate"
+
+[object.params]
+"param.game_message" = "You search the crates but find nothing."
+
+[[object]]
+id = "loc.potato_crate"
+inherit = "loc.potato_crate"
+contentGroup = "content.empty_crate"
+
+[object.params]
+"param.game_message" = "You search the crate but find nothing."
+
+[[object]]
+id = "loc.cabbage_crate"
+inherit = "loc.cabbage_crate"
+contentGroup = "content.empty_crate"
+
+[object.params]
+"param.game_message" = "You search the crate but find nothing."
+
+[[object]]
+id = "loc.wildy_hub_crate_in_water"
+inherit = "loc.wildy_hub_crate_in_water"
+contentGroup = "content.empty_crate"
+
+[object.params]
+"param.game_message" = "You search the crate but find nothing."
+
+[[object]]
+id = "loc.chicken_crate"
+inherit = "loc.chicken_crate"
+contentGroup = "content.empty_crate"
+
+[object.params]
+"param.game_message" = "You search the crates but find nothing."
+
+
+
+[[object]]
+id = "loc.boxes2"
+inherit = "loc.boxes2"
+contentGroup = "content.empty_boxes"
+
+[object.params]
+"param.game_message" = "There is nothing interesting in these boxes."
+
+[[object]]
+id = "loc.boxes3"
+inherit = "loc.boxes3"
+contentGroup = "content.empty_boxes"
+
+[object.params]
+"param.game_message" = "There is nothing interesting in these boxes."
+
+[[object]]
+id = "loc.sarim_boxes"
+inherit = "loc.sarim_boxes"
+contentGroup = "content.empty_boxes"
+
+[object.params]
+"param.game_message" = "There is nothing interesting in these boxes."
+
+[[object]]
+id = "loc.fai_falador_boxes"
+inherit = "loc.fai_falador_boxes"
+contentGroup = "content.empty_boxes"
+
+[object.params]
+"param.game_message" = "There is nothing interesting in these boxes."
+
+[[object]]
+id = "loc.fai_wiztower_boxes"
+inherit = "loc.fai_wiztower_boxes"
+contentGroup = "content.empty_boxes"
+
+[object.params]
+"param.game_message" = "There is nothing interesting in these boxes."
+
+
+
+[[object]]
+id = "loc.bookcase2"
+inherit = "loc.bookcase2"
+contentGroup = "content.bookcase"
+
+[[object]]
+id = "loc.bookcase_bamboo"
+inherit = "loc.bookcase_bamboo"
+contentGroup = "content.bookcase"
+
+[[object]]
+id = "loc.shelves_bamboo"
+inherit = "loc.shelves_bamboo"
+contentGroup = "content.bookcase"
+
+[[object]]
+id = "loc.bookcase_polybooks"
+inherit = "loc.bookcase_polybooks"
+contentGroup = "content.bookcase"
+
+[[object]]
+id = "loc.sarim_bookcase2"
+inherit = "loc.sarim_bookcase2"
+contentGroup = "content.bookcase"
+
+[[object]]
+id = "loc.sarim_bookcase2_offset"
+inherit = "loc.sarim_bookcase2_offset"
+contentGroup = "content.bookcase"
+
+[[object]]
+id = "loc.sarim_bookcase2_offset_northfacing"
+inherit = "loc.sarim_bookcase2_offset_northfacing"
+contentGroup = "content.bookcase"
+
+[[object]]
+id = "loc.sarim_bookcase2_offset_westfacing"
+inherit = "loc.sarim_bookcase2_offset_westfacing"
+contentGroup = "content.bookcase"
+
+[[object]]
+id = "loc.fai_falador_bookshelf_old_tall"
+inherit = "loc.fai_falador_bookshelf_old_tall"
+contentGroup = "content.bookcase"
+
+[[object]]
+id = "loc.fai_falador_bookcase_wide"
+inherit = "loc.fai_falador_bookcase_wide"
+contentGroup = "content.bookcase"
+
+[[object]]
+id = "loc.fai_wiztower_bookcase"
+inherit = "loc.fai_wiztower_bookcase"
+contentGroup = "content.bookcase"
+
+[[object]]
+id = "loc.fai_wiztower_bookcase_wall"
+inherit = "loc.fai_wiztower_bookcase_wall"
+contentGroup = "content.bookcase"
+
+# TODO: Reconcile this shelf's search behavior with loc.fai_varrock_shelf_books.
+[[object]]
+id = "loc.fai_varrock_shelves_books"
+inherit = "loc.fai_varrock_shelves_books"
+contentGroup = "content.bookcase"
+
+[[object]]
+id = "loc.wom_bookshelf_old_tall_double"
+inherit = "loc.wom_bookshelf_old_tall_double"
+contentGroup = "content.bookcase"
+
+[[object]]
+id = "loc.wom_bookshelf_old_tall_double2"
+inherit = "loc.wom_bookshelf_old_tall_double2"
+contentGroup = "content.bookcase"
+
+[[object]]
+id = "loc.bookshelf_old_tall"
+inherit = "loc.bookshelf_old_tall"
+contentGroup = "content.bookcase"
+
+[[object]]
+id = "loc.bookshelf_old_tall2"
+inherit = "loc.bookshelf_old_tall2"
+contentGroup = "content.bookcase"
+
+[[object]]
+id = "loc.bookshelf_old_tall3"
+inherit = "loc.bookshelf_old_tall3"
+contentGroup = "content.bookcase"
+
+[[object]]
+id = "loc.bookshelf_old_tall_double"
+inherit = "loc.bookshelf_old_tall_double"
+contentGroup = "content.bookcase"
+
+[[object]]
+id = "loc.bookshelf_old_short"
+inherit = "loc.bookshelf_old_short"
+contentGroup = "content.bookcase"
+
+[[object]]
+id = "loc.bookshelf_old_short2"
+inherit = "loc.bookshelf_old_short2"
+contentGroup = "content.bookcase"
+
+[[object]]
+id = "loc.bookshelf_old_short3"
+inherit = "loc.bookshelf_old_short3"
+contentGroup = "content.bookcase"
+
+
+
+[[object]]
+id = "loc.gertrudeempty_barrel"
+inherit = "loc.gertrudeempty_barrel"
+contentGroup = "content.searchable_scenery"
+
+[object.params]
+"param.game_message" = "You search the barrel but find nothing."
+
+[[object]]
+id = "loc.rimmington_wheel_barrow"
+inherit = "loc.rimmington_wheel_barrow"
+contentGroup = "content.searchable_scenery"
+
+[object.params]
+"param.game_message" = "You search the wheelbarrow but find nothing."
+
+[[object]]
+id = "loc.fai_varrock_chemisty_desk"
+inherit = "loc.fai_varrock_chemisty_desk"
+contentGroup = "content.searchable_scenery"
+
+
+
+[[object]]
+id = "loc.chestclosed"
+inherit = "loc.chestclosed"
+contentGroup = "content.chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.chestopen"
+"param.opensound" = "synth.CHEST_OPEN"
+
+[[object]]
+id = "loc.chestopen"
+inherit = "loc.chestopen"
+contentGroup = "content.opened_chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.chestclosed"
+"param.closesound" = "synth.CHEST_CLOSE"
+"param.game_message" = "You search the chest but find nothing."
+
+[[object]]
+id = "loc.chestclosedgold"
+inherit = "loc.chestclosedgold"
+contentGroup = "content.chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.chestopengold"
+"param.opensound" = "synth.CHEST_OPEN"
+
+[[object]]
+id = "loc.chestopengold"
+inherit = "loc.chestopengold"
+contentGroup = "content.opened_chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.chestclosedgold"
+"param.closesound" = "synth.CHEST_CLOSE"
+"param.game_message" = "You search the chest but find nothing."
+
+[[object]]
+id = "loc.chestlocked"
+inherit = "loc.chestlocked"
+contentGroup = "content.locked_chest"
+
+[object.params]
+"param.game_message" = "The chest is locked."
+
+
+
+[[object]]
+id = "loc.cupboard"
+inherit = "loc.cupboard"
+contentGroup = "content.chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.cupboardopen"
+"param.opensound" = "synth.CUPBOARD_OPEN"
+
+[[object]]
+id = "loc.cupboardopen"
+inherit = "loc.cupboardopen"
+contentGroup = "content.opened_chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.cupboard"
+"param.closesound" = "synth.CUPBOARD_CLOSE"
+"param.game_message" = "You search the cupboard but find nothing."
+
+[[object]]
+id = "loc.cupboardhigh"
+inherit = "loc.cupboardhigh"
+contentGroup = "content.chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.cupboardopen_high"
+"param.opensound" = "synth.CUPBOARD_OPEN"
+
+[[object]]
+id = "loc.cupboardopen_high"
+inherit = "loc.cupboardopen_high"
+contentGroup = "content.opened_chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.cupboardhigh"
+"param.closesound" = "synth.CUPBOARD_CLOSE"
+"param.game_message" = "You search the cupboard but find nothing."
+
+[[object]]
+id = "loc.cupboard_big"
+inherit = "loc.cupboard_big"
+contentGroup = "content.chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.cupboardopen_big"
+"param.opensound" = "synth.CUPBOARD_OPEN"
+
+[[object]]
+id = "loc.cupboardopen_big"
+inherit = "loc.cupboardopen_big"
+contentGroup = "content.opened_chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.cupboard_big"
+"param.closesound" = "synth.CUPBOARD_CLOSE"
+"param.game_message" = "You search the cupboard but find nothing."
+
+# This open cupboard uses op1 Search/op2 Shut, so it needs content.empty_chest.
+[[object]]
+id = "loc.newbiecbshut"
+inherit = "loc.newbiecbshut"
+contentGroup = "content.chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.newbiecbopen"
+"param.opensound" = "synth.CUPBOARD_OPEN"
+
+[[object]]
+id = "loc.newbiecbopen"
+inherit = "loc.newbiecbopen"
+contentGroup = "content.empty_chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.newbiecbshut"
+"param.closesound" = "synth.CUPBOARD_CLOSE"
+"param.game_message" = "You search the cupboard but find nothing."
+
+
+
+[[object]]
+id = "loc.drawers1"
+inherit = "loc.drawers1"
+contentGroup = "content.chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.drawers1open"
+"param.opensound" = "synth.DRAWER_OPEN"
+
+[[object]]
+id = "loc.drawers1open"
+inherit = "loc.drawers1open"
+contentGroup = "content.opened_chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.drawers1"
+"param.closesound" = "synth.DRAWER_CLOSE"
+"param.game_message" = "You search the drawers but find nothing."
+
+[[object]]
+id = "loc.drawers2"
+inherit = "loc.drawers2"
+contentGroup = "content.chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.drawers2open"
+"param.opensound" = "synth.DRAWER_OPEN"
+
+[[object]]
+id = "loc.drawers2open"
+inherit = "loc.drawers2open"
+contentGroup = "content.opened_chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.drawers2"
+"param.closesound" = "synth.DRAWER_CLOSE"
+"param.game_message" = "You search the drawers but find nothing."
+
+[[object]]
+id = "loc.drawers2_rotated"
+inherit = "loc.drawers2_rotated"
+contentGroup = "content.chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.drawers2open_rotated"
+"param.opensound" = "synth.DRAWER_OPEN"
+
+[[object]]
+id = "loc.drawers2open_rotated"
+inherit = "loc.drawers2open_rotated"
+contentGroup = "content.opened_chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.drawers2_rotated"
+"param.closesound" = "synth.DRAWER_CLOSE"
+"param.game_message" = "You search the drawers but find nothing."
+
+[[object]]
+id = "loc.drawers3"
+inherit = "loc.drawers3"
+contentGroup = "content.chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.drawers3open"
+"param.opensound" = "synth.DRAWER_OPEN"
+
+[[object]]
+id = "loc.drawers3open"
+inherit = "loc.drawers3open"
+contentGroup = "content.opened_chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.drawers3"
+"param.closesound" = "synth.DRAWER_CLOSE"
+"param.game_message" = "You search the drawers but find nothing."
+
+[[object]]
+id = "loc.drawers4"
+inherit = "loc.drawers4"
+contentGroup = "content.chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.drawers4open"
+"param.opensound" = "synth.DRAWER_OPEN"
+
+[[object]]
+id = "loc.drawers4open"
+inherit = "loc.drawers4open"
+contentGroup = "content.opened_chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.drawers4"
+"param.closesound" = "synth.DRAWER_CLOSE"
+"param.game_message" = "You search the drawers but find nothing."
+
+[[object]]
+id = "loc.fai_falador_drawers"
+inherit = "loc.fai_falador_drawers"
+contentGroup = "content.chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_falador_drawers_open"
+"param.opensound" = "synth.DRAWER_OPEN"
+
+[[object]]
+id = "loc.fai_falador_drawers_open"
+inherit = "loc.fai_falador_drawers_open"
+contentGroup = "content.empty_chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_falador_drawers"
+"param.closesound" = "synth.DRAWER_CLOSE"
+"param.game_message" = "You search the drawers but find nothing."
+
+
+
+[[object]]
+id = "loc.draynor_wardrobe"
+inherit = "loc.draynor_wardrobe"
+contentGroup = "content.chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.draynor_wardrobe_open"
+"param.opensound" = "synth.CREAKYDOOR_OPEN"
+
+[[object]]
+id = "loc.draynor_wardrobe_open"
+inherit = "loc.draynor_wardrobe_open"
+contentGroup = "content.opened_chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.draynor_wardrobe"
+"param.closesound" = "synth.CREAKYDOOR_CLOSE"
+"param.game_message" = "You search the wardrobe but find nothing."
+
+# The skeleton wardrobe closes to the plain wardrobe; next_loc_stage is required even without a map spawn.
+[[object]]
+id = "loc.draynor_wardrobe_open_skeleton"
+inherit = "loc.draynor_wardrobe_open_skeleton"
+contentGroup = "content.opened_chest"
+
+[object.params]
+"param.next_loc_stage" = "loc.draynor_wardrobe"
+"param.closesound" = "synth.CREAKYDOOR_CLOSE"
+"param.game_message" = "You search the wardrobe but find nothing."

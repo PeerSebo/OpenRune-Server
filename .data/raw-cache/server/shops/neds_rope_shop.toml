@@ -1,0 +1,26 @@
+# Use the custom shop inventory; native inv 286 belongs to a skill guide.
+
+[[inventory]]
+isServerOnly = true
+id = "inv.neds_rope_shop"
+name = "Ned's Ropes."
+
+scope = "Shared"
+stack = "Always"
+
+sellMultiplier = 1000
+buyMultiplier = 600
+delta = 20
+
+size = 1
+
+protect = false
+runWeight = false
+restock = true
+allStock = false
+placeholders = false
+
+[[inventory.stock]]
+obj = "obj.rope"
+count = 30
+restockCycles = 100

@@ -2,17 +2,15 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
 import org.rsmod.api.droptable.rsPlayerGuaranteedTable
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.content.drops.tables.shared.SharedDropTables
-import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.content.drops.brimstoneKeyRoll
-import org.rsmod.content.drops.hasCompletedQuest
-import org.rsmod.content.drops.isOnQuest
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.content.drops.hasCompletedQuest
+import org.rsmod.content.drops.tables.shared.SharedDropTables
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -22,7 +20,7 @@ public val redDragonDropTable: RSDropTable<Player, DropRollItem> = RSDropTable(
     npcs = npcs("npc.ds2_red_dragon", "npc.ds2_red_dragon_cutscene_flying", "npc.ds2_red_dragon_flying", "npc.red_dragon", "npc.red_dragon2", "npc.red_dragon3", "npc.red_dragon4", "npc.red_dragon5"),
     guaranteed = rsPlayerGuaranteedTable {
         "obj.dragonhide_red" count 1 condition { player ->
-            // Drops Need Manual: Red dragonhide is dropped in bank note form if players have completed the Karamja Diary and are killing red dragons in the Brimhaven Dungeon.
+            // TODO: Red dragonhide is dropped in bank note form if players have completed the Karamja Diary and are killing red dragons in the Brimhaven Dungeon.
              true
         }
     },
@@ -56,10 +54,9 @@ public val redDragonDropTable: RSDropTable<Player, DropRollItem> = RSDropTable(
         5 weight SharedDropTables.gem
     },
     tertiaries = rsPlayerTertiaryTable {
-        // Drops Need Manual (rate): The drop rate to receive any tattered page is 1/10. When rolled, the player will receive the page they have the fewest of.
-        // Drops Need Manual (rate): Tattered pages and grubby keys are only dropped by those found in the Forthos Dungeon. The drop rate to receive any tattered page is 1/10. When rolled, the player will receive the page they have the fewest of.
+        // TODO: In Forthos Dungeon, roll tattered pages at 1/10 and choose the least-owned page.
         1 outOf 10 weight "obj.hosdun_moon_page" count 1 condition { player ->
-            // Drops Need Manual: Tattered pages and grubby keys are only dropped by those found in the Forthos Dungeon.
+            // TODO: Tattered pages and grubby keys are only dropped by those found in the Forthos Dungeon.
              true
         }
         1 outOf 10 weight "obj.hosdun_sun_page" count 1

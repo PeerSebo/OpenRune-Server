@@ -1,5 +1,3 @@
-# Game values
-# You want to edit these to fit your game.
 name: "OpenRune"
 game-port: 43594
 revision: 241
@@ -8,13 +6,15 @@ world: 255
 
 gameplay:
   drop-rates:
-    # Server-wide multiplier for drops flagged `boosted` (2.0 turns 1/512 into 1/256). Stacks with
-    # each player's own multiplier (varp.drop_rate_multiplier, percent; 0 = unset).
+    # Applies to drops explicitly marked as boosted. 2.0 doubles their chance.
     multiplier: 1.0
+# Server-wide XP multiplier, applied to existing characters on login. Keep this key for install defaults.
+  xp-rate: 10.0
+
   quest-requirements:
-    # Temporary core-mechanics default. Use "respect-progress" when quest gates should use real
-    # quest state, or "virtual-completions" for league-style profiles.
-    mode: "assume-completed"
+# Optional bypasses access requirements while preserving real quest objectives and rewards.
+# Respect-progress enforces quest gates; virtual-completions supports league profiles.
+    mode: "optional"
     virtual-completions: []
     virtual-lines: []
 
@@ -31,7 +31,7 @@ central:
     #same-instance: false
     #host: "127.0.0.1"
     #link-port: 9091
-    #world-key: "Ae2fPNJIjrvNKepBebm_qakFc5nBW4o7"
+    #world-key: "<world-link-key>"
     #postgres:
     # PostgreSQL JDBC connection URL
     #jdbc-url: "jdbc:postgresql://127.0.0.1:5432/openrune_central"

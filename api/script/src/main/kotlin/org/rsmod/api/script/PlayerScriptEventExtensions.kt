@@ -5,6 +5,7 @@ import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
 import dev.openrune.types.ItemServerType
 import dev.or2.central.account.Rights
+import org.rsmod.api.player.events.PlayerEmoteEvent
 import org.rsmod.api.player.events.PlayerHitEvents
 import org.rsmod.api.player.events.PlayerHitpointsChangedEvent
 import org.rsmod.api.player.events.PlayerMovementEvent
@@ -30,7 +31,6 @@ public fun ScriptContext.onDialogInput(action: DialogInput.() -> Unit): Unit = o
 public fun ScriptContext.onPlayerLogout(action: SessionStateEvent.Logout.() -> Unit): Unit =
     onEvent(action)
 
-/* Op functions */
 public fun ScriptContext.onOpPlayerT(
     component: String,
     action: suspend ProtectedAccess.(PlayerTEvents.Op) -> Unit,
@@ -46,7 +46,6 @@ public fun ScriptContext.onOpPlayerU(
     action: suspend ProtectedAccess.(PlayerUEvents.Op) -> Unit,
 ): Unit = onProtectedEvent(type.id, action)
 
-/* Ap functions */
 public fun ScriptContext.onApPlayerT(
     component: ComponentType,
     action: suspend ProtectedAccess.(PlayerTEvents.Ap) -> Unit,
@@ -62,7 +61,6 @@ public fun ScriptContext.onApPlayerU(
     action: suspend ProtectedAccess.(PlayerUEvents.Ap) -> Unit,
 ): Unit = onProtectedEvent(type.id, action)
 
-/* Timer functions */
 public fun ScriptContext.onPlayerTimer(
     timer: String,
     action: suspend ProtectedAccess.(PlayerTimerEvent.Normal) -> Unit,
@@ -73,7 +71,6 @@ public fun ScriptContext.onPlayerSoftTimer(
     action: PlayerTimerEvent.Soft.() -> Unit,
 ): Unit = onEvent(timer.asRSCM(RSCMType.TIMER), action)
 
-/* Queue functions */
 public fun ScriptContext.onPlayerQueue(
     queue: String,
     action: suspend ProtectedAccess.(PlayerQueueEvents.Protected<Nothing>) -> Unit,
@@ -94,7 +91,6 @@ public fun <T> ScriptContext.onPlayerSoftQueueWithArgs(
     action: PlayerQueueEvents.Soft<T>.() -> Unit,
 ): Unit = onEvent(queue.asRSCM(RSCMType.QUEUE), action)
 
-/* Walk trigger functions */
 public fun ScriptContext.onPlayerWalkTrigger(
     trigger: String,
     action: PlayerMovementEvent.WalkTrigger.() -> Unit,
@@ -108,6 +104,8 @@ public fun ScriptContext.onPlayerHitpointsChanged(
     action: PlayerHitpointsChangedEvent.() -> Unit
 ): Unit = onEvent(action)
 
+public fun ScriptContext.onPlayerEmote(seq: String, action: PlayerEmoteEvent.() -> Unit): Unit =
+    onEvent(seq.asRSCM(RSCMType.SEQ), action)
 public fun ScriptContext.onPlayerHit(action: PlayerHitEvents.Impact.() -> Unit): Unit =
     onEvent(action)
 

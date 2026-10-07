@@ -1,6 +1,5 @@
 plugins {
     id("base-conventions")
-
 }
 
 dependencies {
@@ -15,5 +14,11 @@ dependencies {
     implementation(projects.api.spells)
     implementation(projects.api.stats.xpmod)
     implementation(projects.content.skills.utils)
+    testImplementation(libs.fastutil)
 }
 
+tasks.test {
+    workingDir(rootProject.projectDir)
+    inputs.dir(rootProject.file(".data/cache/SERVER"))
+    inputs.file(rootProject.file(".data/gamevals-binary/gamevals.dat"))
+}

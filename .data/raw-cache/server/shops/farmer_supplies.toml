@@ -1,0 +1,54 @@
+[[inventory]]
+isServerOnly = true
+id = "inv.farmer_supplies"
+name = "Farming Supplies"
+
+scope = "Shared"
+stack = "Always"
+
+sellMultiplier = 1000
+buyMultiplier = 0
+delta = 0
+
+size = 7
+
+protect = false
+runWeight = false
+restock = false
+allStock = false
+placeholders = false
+
+[[inventory.stock]]
+obj = "obj.plant_cure"
+count = 65535
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.bucket_compost"
+count = 65535
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.rake"
+count = 65535
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.plantpot_empty"
+count = 65535
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.watering_can_0"
+count = 65535
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.gardening_trowel"
+count = 65535
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.dibber"
+count = 65535
+restockCycles = 0

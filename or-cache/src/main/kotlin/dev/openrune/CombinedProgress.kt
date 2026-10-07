@@ -3,10 +3,10 @@ package dev.openrune
 import com.github.michaelbull.logging.InlineLogger
 import dev.openrune.cache.tools.progress.CacheProgress
 import dev.openrune.cache.tools.progress.ProgressTracker
-import me.tongfei.progressbar.ProgressBar
-import me.tongfei.progressbar.ProgressBarStyle
 import java.time.Duration
 import java.time.temporal.ChronoUnit
+import me.tongfei.progressbar.ProgressBar
+import me.tongfei.progressbar.ProgressBarStyle
 
 class CombinedProgress : CacheProgress {
 
@@ -96,27 +96,17 @@ class CombinedProgress : CacheProgress {
             active.extraMessage = message
         }
 
-        /** The bar outlives the section; it is closed when the label changes or the build ends. */
         override fun close() {}
     }
 
     companion object {
         private const val REFRESH_MS = 120
 
-        /**
-         * Blanks written to wipe a live bar's line. Spaces rather than an ANSI erase so it degrades safely
-         * on consoles without VT support; the trailing carriage return puts the record back at column 0, so
-         * a terminal shows a clean line. Redirected output keeps the padding, which is cosmetic only.
-         */
         private const val LINE_WIDTH = 120
 
         @Volatile
         private var barOpen = false
 
-        /**
-         * Clears the line a live bar is sitting on. Called by [BarAwareAppender] before each log record so
-         * the record is not appended onto the bar's line.
-         */
         fun eraseActiveBarLine() {
             if (!barOpen) return
             System.err.print("\r" + " ".repeat(LINE_WIDTH) + "\r")

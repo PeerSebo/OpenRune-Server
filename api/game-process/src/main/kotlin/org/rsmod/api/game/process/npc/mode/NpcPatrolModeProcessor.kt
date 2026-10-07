@@ -46,10 +46,6 @@ public class NpcPatrolModeProcessor @Inject constructor(private val collision: C
     }
 
     public companion object {
-        /**
-         * The amount of cycles that the patrol npc can wait without moving before it teleports to
-         * its next patrol waypoint.
-         */
         public const val IDLE_TELE_DELAY: Int = 30
 
         public fun Coord.toCoordGrid(): CoordGrid = CoordGrid(x, z, level)

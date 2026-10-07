@@ -1,0 +1,59 @@
+[[varp]]
+isServerOnly = true
+id = "varp.demon_slayer_progress"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.demon_slayer_traiborn_bones"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.demon_slayer_aris_asked"
+scope = "Perm"
+transmit = "Never"
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.demon_slayer_traiborn_asked"
+varp = "varp.demon_slayer_progress"
+startBit = 0
+endBit = 0
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.demon_slayer_traiborn_key_given"
+varp = "varp.demon_slayer_progress"
+startBit = 1
+endBit = 1
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.demon_slayer_traiborn_asked_migrated"
+varp = "varp.demon_slayer_progress"
+startBit = 2
+endBit = 2
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.demon_slayer_traiborn_key_given_migrated"
+varp = "varp.demon_slayer_progress"
+startBit = 3
+endBit = 3
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.demon_slayer_traiborn_bones_migrated"
+varp = "varp.demon_slayer_progress"
+startBit = 4
+endBit = 4
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.demon_slayer_aris_asked_migrated"
+varp = "varp.demon_slayer_progress"
+startBit = 5
+endBit = 5

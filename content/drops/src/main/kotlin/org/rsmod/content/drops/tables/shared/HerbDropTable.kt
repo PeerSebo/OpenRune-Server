@@ -7,11 +7,6 @@ import dtx.rs.rsWeightedTable
 import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.game.entity.Player
 
-/**
- * Standard OSRS herb drop table (shared subtable).
- *
- * Weights from [[Herb drop table]] on the OSRS Wiki. On F2P worlds the herb roll is replaced by 10 coins.
- */
 public val herbDropTable: RSWeightedTable<Player, DropRollItem> = rsWeightedTable {
     name("Herb drop table")
     32 weight DropRollItem("obj.unidentified_guam", 1)

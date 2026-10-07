@@ -1,0 +1,243 @@
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_guild_flags"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumours_completed"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumours_active"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumours_last"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumours_reroll_after"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_quetzal_feed_credit"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_gilman_prey"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_gilman_count"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_gilman_original"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_gilman_original_count"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_cervus_prey"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_cervus_count"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_cervus_original"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_cervus_original_count"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_ornus_prey"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_ornus_count"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_ornus_original"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_ornus_original_count"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_aco_prey"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_aco_count"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_aco_original"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_aco_original_count"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_teco_prey"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_teco_count"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_teco_original"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_teco_original_count"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_wolf_prey"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_wolf_count"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_wolf_original"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_rumour_wolf_original_count"
+scope = "Perm"
+transmit = "Never"
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.hunter_guild_state_migrated"
+varp = "varp.hunter_guild_flags"
+startBit = 0
+endBit = 0
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.hunter_rumours_unlocked"
+varp = "varp.hunter_guild_flags"
+startBit = 1
+endBit = 1
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.hunter_rumours_back_to_back"
+varp = "varp.hunter_guild_flags"
+startBit = 2
+endBit = 2
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.hunter_rumours_reset_lock"
+varp = "varp.hunter_guild_flags"
+startBit = 3
+endBit = 3
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.hunter_basic_blueprint_claimed"
+varp = "varp.hunter_guild_flags"
+startBit = 4
+endBit = 4
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.hunter_perfected_whistle_crafted"
+varp = "varp.hunter_guild_flags"
+startBit = 5
+endBit = 5
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.hunter_infinite_whistle_unlocked"
+varp = "varp.hunter_guild_flags"
+startBit = 6
+endBit = 6
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.hunter_enhanced_blueprint_seen"
+varp = "varp.hunter_guild_flags"
+startBit = 7
+endBit = 7
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.hunter_perfected_blueprint_seen"
+varp = "varp.hunter_guild_flags"
+startBit = 8
+endBit = 8
+

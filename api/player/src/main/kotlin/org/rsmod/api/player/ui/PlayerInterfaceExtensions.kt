@@ -22,6 +22,7 @@ import net.rsprot.protocol.game.outgoing.interfaces.IfSetNpcHead
 import net.rsprot.protocol.game.outgoing.interfaces.IfSetNpcHeadActive
 import net.rsprot.protocol.game.outgoing.interfaces.IfSetObject
 import net.rsprot.protocol.game.outgoing.interfaces.IfSetPlayerHead
+import net.rsprot.protocol.game.outgoing.interfaces.IfSetPosition
 import net.rsprot.protocol.game.outgoing.interfaces.IfSetText
 import net.rsprot.protocol.game.outgoing.misc.player.TriggerOnDialogAbort
 import org.rsmod.annotations.InternalApi
@@ -45,7 +46,6 @@ import org.rsmod.api.player.output.mes
 import org.rsmod.api.player.output.runClientScript
 import org.rsmod.api.player.vars.intVarBit
 import org.rsmod.coroutine.GameCoroutine
-import org.rsmod.coroutine.resume.DeferredResumeCondition
 import org.rsmod.events.EventBus
 import org.rsmod.game.entity.Player
 import org.rsmod.game.inv.InvObj
@@ -62,11 +62,31 @@ private typealias MoveSub = org.rsmod.api.player.ui.IfMoveSub
 private var Player.chatModalUnclamp: Int by intVarBit("varbit.chatmodal_unclamp")
 
 public fun Player.ifSetObj(target: String, obj: String, zoomOrCount: Int) {
-    client.write(IfSetObject(target.asRSCM(RSCMType.COMPONENT), obj.asRSCM(RSCMType.OBJ), zoomOrCount))
+    client.write(
+        IfSetObject(target.asRSCM(RSCMType.COMPONENT), obj.asRSCM(RSCMType.OBJ), zoomOrCount)
+    )
 }
 
 public fun Player.ifSetObj(target: String, obj: InvObj, zoomOrCount: Int) {
     client.write(IfSetObject(target.asRSCM(RSCMType.COMPONENT), obj.id, zoomOrCount))
+}
+
+/**
+ * Quest reward models need position adjustment after ifSetObj to account for different model
+ * bounds.
+ */
+public fun Player.ifSetPosition(target: String, x: Int, y: Int) {
+    val component = ServerCacheManager.fromComponent(target.asRSCM(RSCMType.COMPONENT))
+    client.write(IfSetPosition(component.interfaceId, component.component, x, y))
+}
+
+/**
+ * Pass a raw cache model id; models.rscm contains only custom additions, not the full model
+ * index.
+ */
+public fun Player.ifSetModel(internal: String, model: Int) {
+    val target = ServerCacheManager.fromComponent(internal.asRSCM(RSCMType.COMPONENT))
+    client.write(IfSetModelV2(target.interfaceId, target.component, model))
 }
 
 public fun Player.ifSetAnim(internal: String, seq: SequenceServerType?) {
@@ -79,13 +99,11 @@ public fun Player.ifSetPlayerHead(internal: String) {
     client.write(IfSetPlayerHead(target.interfaceId, target.component))
 }
 
-/** @see [IfSetNpcHead] */
 public fun Player.ifSetNpcHead(internal: String, npc: String) {
     val target = ServerCacheManager.fromComponent(internal.asRSCM(RSCMType.COMPONENT))
     client.write(IfSetNpcHead(target.interfaceId, target.component, npc.asRSCM(RSCMType.NPC)))
 }
 
-/** @see [IfSetNpcHeadActive] */
 public fun Player.ifSetNpcHeadActive(internal: String, npcSlotId: Int) {
     val target = ServerCacheManager.fromComponent(internal.asRSCM(RSCMType.COMPONENT))
     client.write(IfSetNpcHeadActive(target.interfaceId, target.component, npcSlotId))
@@ -164,11 +182,6 @@ public fun Player.ifCloseInputDialog() {
     }
 }
 
-/**
- * If [requiresInputDialogAbort] or [requiresPauseDialogAbort] conditions are met, the player's
- * active script will be cancelled ([Player.cancelActiveCoroutine]) and [TriggerOnDialogAbort] will
- * be sent to their client.
- */
 private fun Player.cancelActiveDialog() {
     val coroutine = activeCoroutine ?: return
     if (coroutine.requiresPauseDialogAbort() || coroutine.requiresInputDialogAbort()) {
@@ -177,18 +190,9 @@ private fun Player.cancelActiveDialog() {
     }
 }
 
-/**
- * Checks if the coroutine is suspended on a [DeferredResumeCondition] and the deferred type matches
- * [ResumePauseButtonInput], which occurs during dialogs with `Click here to continue`-esque pause
- * buttons.
- */
 private fun GameCoroutine.requiresPauseDialogAbort(): Boolean =
     isAwaiting(ResumePauseButtonInput::class)
 
-/**
- * Checks if the coroutine is suspended on a [DeferredResumeCondition] and the deferred type matches
- * any input from dialogue boxes built through cs2, which are not standard modals or overlays.
- */
 private fun GameCoroutine.requiresInputDialogAbort(): Boolean {
     return isAwaitingAny(
         ResumePCountDialogInput::class,
@@ -199,16 +203,12 @@ private fun GameCoroutine.requiresInputDialogAbort(): Boolean {
 }
 
 public fun Player.ifCloseModals(eventBus: EventBus) {
-    // This gives us an iterable copy of the entries, so we are safe to modify `ui.modals` while
-    // closing them.
     val modalEntries = ui.modals.entries()
     for ((key, value) in modalEntries) {
         val interf = UserInterface(value)
         val target = Component(key)
         closeModal(interf, target, eventBus)
     }
-    // Make sure _all_ modals were closed. If not, then something is wrong, and we'd rather force
-    // the player to disconnect than to allow them to keep modals open when they shouldn't.
     check(ui.modals.isEmpty()) {
         "Could not close all modals for player `$this`. (modals=${ui.modals})"
     }
@@ -256,8 +256,9 @@ public fun Player.ifMoveTop(dest: String, eventBus: EventBus) {
         "This function can only be used after `ifOpenTop` has been called. " +
             "Use `ifOpenTop` instead."
     }
-    val destInterface = ServerCacheManager.getInterface(dest.asRSCM(RSCMType.INTERFACE))
-        ?: error("Could not find interface $dest")
+    val destInterface =
+        ServerCacheManager.getInterface(dest.asRSCM(RSCMType.INTERFACE))
+            ?: error("Could not find interface $dest")
     eventBus.publish(IfMoveTop(this, destInterface))
 }
 
@@ -279,16 +280,6 @@ public fun Player.ifCloseSub(interf: String, eventBus: EventBus) {
 
 public fun Player.ifCloseModal(interf: String, eventBus: EventBus) {
     closeModal(interf, eventBus)
-}
-
-public fun Player.ifCloseChat(eventBus: EventBus) {
-    val target =
-        ServerCacheManager.fromComponent("component.chatbox:chatmodal".asRSCM(RSCMType.COMPONENT))
-            .toIdComponent()
-    if (target !in ui.modals) {
-        return
-    }
-    closeModal(ui.modals[target], target, eventBus)
 }
 
 public fun Player.ifCloseOverlay(interf: String, eventBus: EventBus) {
@@ -315,7 +306,7 @@ private fun Player.openModal(interf: String, internal: String, eventBus: EventBu
 }
 
 public fun Player.setColour(component: String, colour: Color) {
-    client.write(IfSetColour(component.asRSCM(), colour))
+    client.write(IfSetColour(component.asRSCM(), colour.red, colour.green, colour.blue))
 }
 
 private fun Player.openOverlay(interf: String, internal: String, eventBus: EventBus) {
@@ -386,8 +377,6 @@ private fun Player.closeOverlay(interf: UserInterface, target: Component, eventB
 }
 
 private fun Player.closeOverlayChildren(parent: UserInterface, eventBus: EventBus) {
-    // This gives us an iterable copy of the entries, so we are safe to modify `ui.overlays` while
-    // closing them.
     val overlayEntries = ui.overlays.entries()
     for ((key, value) in overlayEntries) {
         val interf = UserInterface(value)
@@ -415,10 +404,6 @@ public fun Player.closeSubs(from: Component, eventBus: EventBus) {
     }
 }
 
-/**
- * Similar to [closeSubs], but only triggers "close sub" scripts and does _not_ send [IfCloseSub]
- * packet to the client.
- */
 private fun Player.triggerCloseSubs(from: Component, eventBus: EventBus) {
     val remove = ui.modals.remove(from) ?: ui.overlays.remove(from)
     if (remove != null) {
@@ -428,13 +413,7 @@ private fun Player.triggerCloseSubs(from: Component, eventBus: EventBus) {
     }
 }
 
-/**
- * Similar to [closeOverlayChildren], but only triggers "close sub" scripts and does _not_ send
- * [IfCloseSub] packet to the client.
- */
 private fun Player.triggerCloseOverlayChildren(parent: UserInterface, eventBus: EventBus) {
-    // This gives us an iterable copy of the entries, so we are safe to modify `ui.overlays` while
-    // closing them.
     val overlayEntries = ui.overlays.entries()
     for ((key, value) in overlayEntries) {
         val interf = UserInterface(value)
@@ -445,10 +424,6 @@ private fun Player.triggerCloseOverlayChildren(parent: UserInterface, eventBus: 
     }
 }
 
-/**
- * Similar to [closeOverlay], but only triggers "close sub" scripts and does _not_ send [IfCloseSub]
- * packet to the client.
- */
 private fun Player.triggerCloseOverlay(
     interf: UserInterface,
     target: Component,
@@ -477,25 +452,26 @@ private fun ComponentType.toIdComponent() = Component(packed)
 private fun UserInterfaceMap.translate(component: Component): Component =
     gameframe.getOrNull(component) ?: component
 
-/*
- * Dialogue helper functions
- *
- * These functions are intended to help with displaying various dialogue interfaces to the player.
- * However, they do _not_ properly handle state suspension or resuming from player input.
- *
- * Important: These functions should only be used internally within systems that properly manage
- * player state, input handling, and coroutine suspension. Direct usage in other contexts may result
- * in unwanted behavior.
- */
-
 internal fun Player.ifMesbox(text: String, pauseText: String, lineHeight: Int, eventBus: EventBus) {
     mes(text, ChatType.Mesbox)
     openModal("interface.messagebox", "component.chatbox:chatmodal", eventBus)
     ifSetText("component.messagebox:text", text)
     ifSetTextAlign(this, "component.messagebox:text", alignH = 1, alignV = 1, lineHeight)
     ifSetPauseText("component.messagebox:continue", pauseText)
-    // TODO: Look into clientscript to name property and place in clientscript utility class.
-    runClientScript(1508, "0")
+    runClientScript("clientscript.[clientscript,script1508]", "0")
+}
+
+internal fun Player.ifLevelUp(
+    iconComponent: String,
+    line1: String,
+    line2: String,
+    eventBus: EventBus,
+) {
+    ifOpenChat("interface.levelup_display", constants.modal_fixedwidthandheight, eventBus)
+    ifSetHide(iconComponent, false)
+    ifSetText("component.levelup_display:text1", line1)
+    ifSetText("component.levelup_display:text2", line2)
+    ifSetPauseText("component.levelup_display:continue", constants.cm_pausebutton)
 }
 
 internal fun Player.ifObjbox(
@@ -506,7 +482,7 @@ internal fun Player.ifObjbox(
     eventBus: EventBus,
 ) {
     mes(text, ChatType.Mesbox)
-    ifOpenChat("interface.objectbox", constants.modal_fixedwidthandheight, eventBus)
+    ifOpenChat("interface.objectbox", constants.modal_infinitewidthandheight, eventBus)
     objboxSetButtons(this, pauseText)
     if (pauseText.isNotBlank()) {
         ifSetEvents("component.objectbox:universe", 0..1, IfEvent.PauseButton)
@@ -573,7 +549,6 @@ internal fun Player.ifMenu(
     ifSetEvents("component.menu:lj_layer1", 0..127, IfEvent.PauseButton)
 }
 
-/** @see [chatboxMultiInit] */
 internal fun Player.ifChoice(
     title: String,
     joinedChoices: String,
@@ -594,7 +569,7 @@ internal fun Player.ifChatPlayer(
     eventBus: EventBus,
 ) {
     mes("$title|$text", ChatType.Dialogue)
-    ifOpenChat("interface.chat_right", constants.modal_infinitewidthandheight, eventBus)
+    ifOpenChat("interface.chat_right", constants.modal_fixedwidthandheight, eventBus)
     ifSetPlayerHead("component.chat_right:head")
     ifSetAnim("component.chat_right:head", expression)
     ifSetText("component.chat_right:name", title)
@@ -613,7 +588,7 @@ internal fun Player.ifChatNpcActive(
     eventBus: EventBus,
 ) {
     mes("$title|$text", ChatType.Dialogue)
-    ifOpenChat("interface.chat_left", constants.modal_infinitewidthandheight, eventBus)
+    ifOpenChat("interface.chat_left", constants.modal_fixedwidthandheight, eventBus)
     ifSetNpcHeadActive("component.chat_left:head", npcSlotId)
     ifSetAnim("component.chat_left:head", chatanim)
     ifSetText("component.chat_left:name", title)
@@ -658,9 +633,4 @@ private fun Player.ifSetPauseText(component: String, text: String) {
 
 private fun Player.ifSetObj(target: String, obj: Int, zoomOrCount: Int) {
     client.write(IfSetObject(target.asRSCM(RSCMType.COMPONENT), obj, zoomOrCount))
-}
-
-public fun Player.ifSetModel(internal: String, model: Int) {
-    val target = ServerCacheManager.fromComponent(internal.asRSCM(RSCMType.COMPONENT))
-    client.write(IfSetModelV2(target.interfaceId, target.component, model))
 }

@@ -16,21 +16,8 @@ class SeeTagKonsistTest {
     }
 
     /**
-     * Validates that `see` tags in KDoc declarations do not throw unhandled exceptions during
-     * parsing.
-     *
-     * This function addresses a bug in Konsist where `see` tags that are not followed by the
-     * expected format (such as whitespace and a valid string reference) may cause errors during
-     * parsing. These errors can lead to unhandled exceptions, resulting in test failures. By using
-     * this function, such exceptions are caught, and a reasonable error message is output instead
-     * of an unexpected internal exception.
-     *
-     * Additionally, this function handles cases where code examples in KDocs contain arbitrary tags
-     * (e.g., `@Inject`), which can cause `see` tags to be parsed improperly, leading to similar
-     * parsing errors.
-     *
-     * @return The original list of `KoKDocDeclaration` objects, ensuring it remains unmodified
-     *   while confirming that no exceptions were thrown during the validation process.
+     * Konsist throws on unbracketed see tags; this test rejects them before other architecture
+     * checks run.
      */
     private fun List<KoKDocDeclaration>.validateSeeTagParsing(): List<KoKDocDeclaration> {
         for (declaration in this) {

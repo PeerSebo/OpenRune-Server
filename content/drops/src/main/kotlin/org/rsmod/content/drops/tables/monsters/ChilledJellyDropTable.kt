@@ -2,16 +2,14 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.api.droptable.nothing
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.content.drops.tables.shared.SharedDropTables
-import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.content.drops.brimstoneKeyRoll
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.api.droptable.nothing
-import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.content.drops.tables.shared.SharedDropTables
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -45,7 +43,7 @@ public val chilledJellyDropTable: RSDropTable<Player, DropRollItem> = RSDropTabl
     tertiaries = rsPlayerTertiaryTable {
         onBuilder { brimstoneKeyRoll(konarTaskBonus = true) }
         1 outOf 504 weight "obj.varlamore_key_half_1" count 1 condition { player ->
-            // Drops Need Manual: Only dropped in Ruins of Tapoyauik.
+            // TODO: Only dropped in Ruins of Tapoyauik.
              true
         }
         1 outOf 60 weight "obj.trail_clue_hard_map001" count 1 transformObj { player ->
@@ -54,5 +52,5 @@ public val chilledJellyDropTable: RSDropTable<Player, DropRollItem> = RSDropTabl
     },
 )
 
-// Unknown wiki drop rates (text rarity — need data collection):
+// TODO: Resolve the unquantified drop rates below.
 //   - Frozen tear [tertiary/Rare]

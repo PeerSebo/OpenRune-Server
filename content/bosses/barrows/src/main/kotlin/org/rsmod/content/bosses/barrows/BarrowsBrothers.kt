@@ -15,7 +15,7 @@ import org.rsmod.plugin.scripts.ScriptContext
 private const val MELEE_HIT_DELAY = 1
 
 private fun meleeHit(type: MeleeAttackType, block: HitBuilder.() -> Unit = {}): Effect.Hit = hit {
-    damage(Accuracy(NpcMaxHit(type), meleeAttackType = type))
+    damage(Accuracy(npcMaxHit(type), meleeAttackType = type))
     type(Melee)
     delay = MELEE_HIT_DELAY
     block()
@@ -180,7 +180,7 @@ class KarilTheTainted @Inject constructor(deps: BossDeps) : BossPluginScript(dep
             spotanim = "spotanim.crossbowbolt_travel"
             travel = "projanim.bolt"
             hit {
-                damage(Accuracy(NpcMaxHit()))
+                damage(Accuracy(npcMaxHit()))
                 type(Ranged)
                 effect()
             }

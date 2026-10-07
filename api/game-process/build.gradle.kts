@@ -1,15 +1,24 @@
 plugins {
     id("base-conventions")
-    id("game-cache-test-conventions")
+
 }
 
 kotlin {
     explicitApi()
 }
 
+tasks.test {
+    workingDir(rootProject.projectDir)
+    inputs.dir(rootProject.file(".data/cache/SERVER"))
+    inputs.file(rootProject.file(".data/gamevals-binary/gamevals.dat"))
+}
+
 dependencies {
-    implementation(libs.kotlin.inline.logger)
-    runtimeOnly(libs.logback.classic)
+    testImplementation(projects.engine.coroutine)
+    testImplementation(projects.api.areaChecker)
+    testImplementation(projects.api.market)
+    testImplementation(projects.api.combat.combatCommons)
+    implementation(libs.bundles.logging)
     implementation(libs.fastutil)
     implementation(libs.guice)
     implementation(libs.rsprot.api)
@@ -19,6 +28,7 @@ dependencies {
     implementation(projects.api.dbGateway)
     implementation(projects.api.hunt)
     implementation(projects.api.invWeight)
+    implementation(projects.api.mechanics.stun)
     implementation(projects.api.npc)
     implementation(projects.api.player)
     implementation(projects.api.playerOutput)
@@ -35,8 +45,4 @@ dependencies {
     implementation(projects.engine.interact)
     implementation(projects.engine.map)
     implementation(projects.engine.routefinder)
-
-    testImplementation(projects.api.areaChecker)
-    testImplementation(projects.api.market)
-    testImplementation(projects.engine.coroutine)
 }

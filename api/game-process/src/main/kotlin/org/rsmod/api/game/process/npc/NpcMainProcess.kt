@@ -104,14 +104,21 @@ constructor(
         }
     }
 
+    /** Log before registry deletion clears the NPC uid and slot. */
     private inline fun Npc.tryOrDespawn(block: Npc.() -> Unit) =
         try {
             block(this)
         } catch (e: Exception) {
-            registry.del(this)
-            exceptionHandler.handle(e) { "Error processing main cycle for npc: $this." }
+            despawnAfterLogging(e)
         } catch (e: NotImplementedError) {
-            registry.del(this)
-            exceptionHandler.handle(e) { "Error processing main cycle for npc: $this." }
+            despawnAfterLogging(e)
         }
+
+    private fun Npc.despawnAfterLogging(t: Throwable) {
+        try {
+            exceptionHandler.handle(t) { "Error processing main cycle for npc: $this." }
+        } finally {
+            registry.del(this)
+        }
+    }
 }

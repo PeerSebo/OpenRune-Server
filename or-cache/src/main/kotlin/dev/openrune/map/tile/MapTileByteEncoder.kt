@@ -10,12 +10,8 @@ import kotlin.collections.iterator
 import org.rsmod.map.square.MapSquareKey
 
 /*
- * Currently, we do not decode and re-encode `m[x]_[z]` map data before packing. While consistency
- * with other codecs is typically preferred, map files are large and do not require decoding unless
- * merging multiple files - a step not permitted for `m` files.
- *
- * That is why this encoder accepts a raw byte data wrapper from the file instead of
- * `MapTileDefinition`.
+ * Passes raw `m[x]_[z]` bytes through: tile-file merging is unsupported, so decoding and
+ * re-encoding these large files is unnecessary.
  */
 public object MapTileByteEncoder {
     public fun encodeAll(cache: Cache, definitions: Map<MapSquareKey, MapTileByteDefinition>) {

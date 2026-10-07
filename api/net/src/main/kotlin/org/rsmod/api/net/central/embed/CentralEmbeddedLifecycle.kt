@@ -1,15 +1,12 @@
 package org.rsmod.api.net.central.embed
 
-import com.github.michaelbull.logging.InlineLogger
 import dev.or2.central.auth.PasswordAuthConfig
 import dev.or2.central.embed.OpenRuneCentralEmbeddedServer
 import dev.or2.central.util.config.centralRuntimeConfigFromJdbc
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
-import java.sql.DriverManager
 import java.sql.SQLException
 import org.rsmod.api.db.jdbc.EmbeddedSameInstancePostgres
-import org.rsmod.api.db.jdbc.PostgresPublicSchemaReset
 import org.rsmod.api.net.central.OpenRuneCentralWorldLink
 import org.rsmod.api.server.config.SameInstanceCentralConfigValidation
 import org.rsmod.api.server.config.ServerConfig
@@ -21,8 +18,8 @@ constructor(
     private val serverConfig: ServerConfig,
     private val openRuneCentral: OpenRuneCentralWorldLink,
 ) {
-    private val logger = InlineLogger()
     private var server: OpenRuneCentralEmbeddedServer? = null
+    private var shutdownBridge: CentralShutdownBridge? = null
 
     public fun startIfConfigured() {
         val c = serverConfig.central ?: return
@@ -34,23 +31,17 @@ constructor(
         val jdbcFromYaml = pg.jdbcUrl.trim()
         val (jdbc, dbUser, dbPassword) =
             if (jdbcFromYaml.isNotEmpty()) {
-                Triple(
-                    jdbcFromYaml,
-                    pg.user.trim().ifBlank { "openrune" },
-                    pg.password,
-                )
+                Triple(jdbcFromYaml, pg.user.trim().ifBlank { "openrune" }, pg.password)
             } else {
                 val embeddedCreds =
                     EmbeddedSameInstancePostgres.jdbcTripleIfEmbedded()
                         ?: error(
                             "game.yml: `central.postgres.jdbc-url` is blank but embedded PostgreSQL did not start. " +
                                 "Ensure [org.rsmod.server.app.GameBootstrap] calls " +
-                                "`EmbeddedSameInstancePostgres.ensureStarted` before starting embedded Central.",
+                                "`EmbeddedSameInstancePostgres.ensureStarted` before starting embedded Central."
                         )
                 embeddedCreds
             }
-
-        val usesEmbeddedJdbc = jdbcFromYaml.isEmpty()
 
         fun buildRuntime() =
             centralRuntimeConfigFromJdbc(
@@ -73,43 +64,60 @@ constructor(
                 bcryptCost = runtime.auth.bcryptCost,
                 argon2Iterations = runtime.auth.argon2Iterations,
                 argon2MemoryKib = runtime.auth.argon2MemoryKib,
-            ),
+            )
         )
 
         val centralServer = OpenRuneCentralEmbeddedServer(c.httpPort, runtime)
-        try {
-            centralServer.start()
-            server = centralServer
-        } catch (t: Throwable) {
-            runCatching { centralServer.stop() }
-            if (!usesEmbeddedJdbc || !CentralStartupFailure.indicatesUninitializedSchema(t)) {
-                // Either a non-embedded database (never safe to wipe someone else's DB), or a
-                // startup failure unrelated to the schema itself - e.g. a port-bind conflict.
-                // Only a genuinely missing/uninitialized schema is safe to auto-recover from.
-                throw t
-            }
-            logger.warn(t) { "Embedded OpenRune Central failed to start: schema appears uninitialized." }
-            runCatching {
-                DriverManager.getConnection(jdbc, dbUser, dbPassword).use { conn ->
-                    conn.autoCommit = true
-                    PostgresPublicSchemaReset.dropAllInPublicSchema(conn)
-                }
-            }.onFailure { dropEx ->
-                logger.error(dropEx) { "Failed to reset schema `public` after Central startup failure." }
-            }
-            logger.error {
-                "Embedded database was reset (schema `public` dropped). Please restart the server."
-            }
-            throw IllegalStateException(
-                "OpenRune Central could not start; the embedded database was reset. Please restart the server.",
-                t,
-            )
-        }
+        startCentralPreservingDatabase(
+            start = {
+                centralServer.start()
+                shutdownBridge = CentralShutdownBridge.install(centralServer)
+            },
+            stop = { centralServer.stop() },
+        )
+        server = centralServer
     }
 
     public fun stopIfRunning() {
-        server?.stop()
-        server = null
+        var failure: Throwable? = null
+        try {
+            server?.stop()
+        } catch (cause: Throwable) {
+            failure = cause
+        } finally {
+            server = null
+            try {
+                shutdownBridge?.throwIfFailed()
+            } catch (cause: Throwable) {
+                failure?.addSuppressed(cause) ?: run { failure = cause }
+            }
+            shutdownBridge = null
+        }
+        failure?.let { throw it }
+    }
+}
+
+/**
+ * Releases resources from a failed start and preserves its cause for diagnosis. A missing schema
+ * object can indicate a migration mismatch in a populated database; it never authorizes a reset.
+ */
+internal fun startCentralPreservingDatabase(start: () -> Unit, stop: () -> Unit) {
+    try {
+        start()
+    } catch (cause: Throwable) {
+        val failure = IllegalStateException(
+            "OpenRune Central could not start. No automatic database reset was attempted. " +
+                "Inspect the underlying error and check the configured database connection and ports. " +
+                "For schema errors, back up the existing database and apply the required compatible " +
+                "schema migration before restarting.",
+            cause,
+        )
+        try {
+            stop()
+        } catch (cleanupFailure: Throwable) {
+            if (cleanupFailure !== cause) failure.addSuppressed(cleanupFailure)
+        }
+        throw failure
     }
 }
 

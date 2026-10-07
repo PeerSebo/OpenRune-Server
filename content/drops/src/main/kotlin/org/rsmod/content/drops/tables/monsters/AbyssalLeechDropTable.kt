@@ -2,14 +2,12 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.api.droptable.nothing
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.api.droptable.nothing
-import org.rsmod.api.droptable.RegisterDropTable
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -37,7 +35,7 @@ public val abyssalLeechDropTable: RSDropTable<Player, DropRollItem> = RSDropTabl
         3 weight "obj.magic_emerald_necklace" count 1
         1 outOf 42 separate rsPlayerWeightedTable {
             1 weight "obj.rcu_pouch_small" count 1 condition { player ->
-                // Drops Need Manual: Players will only get a pouch if they have all the smaller pouches, and if a player has them all, they will no longer get them as a drop, unless one was lost.
+                // TODO: Players will only get a pouch if they have all the smaller pouches, and if a player has them all, they will no longer get them as a drop, unless one was lost.
                  true
             }
             1 weight "obj.rcu_pouch_medium" count 1

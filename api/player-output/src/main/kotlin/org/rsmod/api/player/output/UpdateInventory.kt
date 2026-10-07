@@ -10,7 +10,6 @@ import org.rsmod.game.inv.InvObj
 import org.rsmod.game.inv.Inventory
 
 public object UpdateInventory {
-    /** @see [UpdateInvFull] */
     public fun updateInvFull(player: Player, inv: Inventory) {
         val highestSlot = inv.lastOccupiedSlot()
         val provider = RspObjProvider(inv.objs)
@@ -18,7 +17,38 @@ public object UpdateInventory {
         player.client.write(message)
     }
 
-    /** @see [UpdateInvPartial] */
+    /**
+     * Sends [inv] as a "mirrored" inventory: the client files it under the partner's copy of the
+     * same inv id (what clientscripts read with `invother_*`), which is how the trade screens show
+     * the other player's offer next to your own.
+     */
+    public fun updateInvFullMirror(player: Player, inv: Inventory) {
+        updateInvFullMirrorAs(player, inv, inv.type.id)
+    }
+
+    /**
+     * Sends [inv]'s contents to the client under a different inventory id, [asInvId]. Useful when
+     * a cache interface is hard-wired to one inv id but the server keeps the objs elsewhere (a
+     * persisted holding inventory shown through the trade screen, for example). Nothing keeps the
+     * client copy in sync afterwards; call again after every change.
+     */
+    public fun updateInvFullAs(player: Player, inv: Inventory, asInvId: Int) {
+        val message = UpdateInvFull(-(1234 + asInvId), asInvId, inv.lastOccupiedSlot(), RspObjProvider(inv.objs))
+        player.client.write(message)
+    }
+
+    public fun updateInvFullMirrorAs(player: Player, inv: Inventory, asInvId: Int) {
+        val message = UpdateInvFull(MIRROR_ID_OFFSET - asInvId, asInvId, inv.lastOccupiedSlot(), RspObjProvider(inv.objs))
+        player.client.write(message)
+    }
+
+    public fun updateInvStopTransmit(player: Player, invId: Int) {
+        player.client.write(UpdateInvStopTransmit(invId))
+    }
+
+    /** rsprot documents any combined id below -70000 as marking a mirrored inventory. */
+    private const val MIRROR_ID_OFFSET: Int = -(70_000 + 1234)
+
     public fun updateInvPartial(player: Player, inv: Inventory) {
         val changedSlots = inv.modifiedSlots.asSequence().iterator()
         val provider = RspIndexedObjProvider(inv.objs, changedSlots)
@@ -26,14 +56,10 @@ public object UpdateInventory {
         player.client.write(message)
     }
 
-    /** @see [UpdateInvStopTransmit] */
     public fun updateInvStopTransmit(player: Player, inv: Inventory) {
         player.client.write(UpdateInvStopTransmit(inv.type.id))
     }
 
-    /**
-     * Mostly used for emulation when re-syncing an inventory. [slot] is usually sent as value `0`.
-     */
     public fun resendSlot(inv: Inventory, slot: Int) {
         inv.modifiedSlots.set(slot)
     }

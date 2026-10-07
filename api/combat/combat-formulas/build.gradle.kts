@@ -1,6 +1,5 @@
 plugins {
     id("base-conventions")
-
 }
 
 kotlin {
@@ -8,6 +7,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(libs.bundles.logging)
     implementation(libs.guice)
     implementation(projects.api.combatAccuracy)
     implementation(projects.api.combatMaxhit)

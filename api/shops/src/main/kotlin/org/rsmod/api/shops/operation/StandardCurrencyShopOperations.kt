@@ -60,12 +60,27 @@ public open class StandardCurrencyShopOperations(
         val internalName = RSCM.getReverseMapping(RSCMType.OBJ, objType.id)
         val shopInitialObjCount = shopInv.initialStockCount(obj)
         val availableCurrencyCount = currency.balance(player, sideInv)
-        val cappedRequest =
+        val extras = shop.purchaseExtras[obj.id].orEmpty()
+        var cappedRequest =
             if (objType.isStackable) {
                 min(Int.MAX_VALUE - sideInv.count(internalName), initialPurchaseRequest)
             } else {
                 min(sideInv.freeSpace(), initialPurchaseRequest)
             }
+        if (extras.isNotEmpty()) {
+            var slotsPerPurchase = if (objType.isStackable) 0L else 1L
+            for (extra in extras) {
+                val extraType = getInvObj(extra)
+                if (extraType.isStackable) {
+                    cappedRequest = min(cappedRequest, (Int.MAX_VALUE - sideInv.count(extra, extraType)) / extra.count)
+                } else {
+                    slotsPerPurchase += extra.count
+                }
+            }
+            if (slotsPerPurchase > 0) {
+                cappedRequest = min(cappedRequest, (sideInv.freeSpace() / slotsPerPurchase).toInt())
+            }
+        }
 
         val (finalPurchaseCount, totalCost, firstObjPrice) =
             CostCalculation.calculateShopSellBulkParameters(
@@ -106,6 +121,13 @@ public open class StandardCurrencyShopOperations(
                     this.obj = obj.id
                     this.strictCount = finalPurchaseCount
                 }
+                for (extra in extras) {
+                    insert {
+                        this.into = inv
+                        this.obj = extra.id
+                        this.strictCount = Math.multiplyExact(extra.count, finalPurchaseCount)
+                    }
+                }
             }
 
         val success = transaction.success
@@ -113,13 +135,13 @@ public open class StandardCurrencyShopOperations(
         val stockObjAddIndex = if (currencyObj != null) 2 else 1
         val currencyDel =
             if (currencyDelIndex >= 0) transaction.results.getOrNull(currencyDelIndex) else null
-        val stockObjAdd = transaction.results.getOrNull(stockObjAddIndex)
+        val stockObjAdds = transaction.results.drop(stockObjAddIndex)
 
         val message =
             when {
                 currencyDel == TransactionResult.ObjNotFound -> currency.notEnoughMessage()
                 currencyDel == TransactionResult.NotEnoughObjCount -> currency.notEnoughMessage()
-                stockObjAdd == TransactionResult.NotEnoughSpace -> NOT_ENOUGH_INV_SPACE
+                TransactionResult.NotEnoughSpace in stockObjAdds -> NOT_ENOUGH_INV_SPACE
                 success && finalPurchaseCount < initialPurchaseRequest -> {
                     if (availableCurrencyCount <= finalPurchaseCost) {
                         currency.notEnoughMessage()
@@ -135,7 +157,11 @@ public open class StandardCurrencyShopOperations(
             if (currencyObj == null) {
                 currency.deduct(player, finalPurchaseCost)
             }
-            restockProcess += shopInv
+            if (shop.infiniteStock) {
+                shopInv[slot] = obj
+            } else {
+                restockProcess += shopInv
+            }
         }
 
         if (shopInv[slot] == null) {
@@ -156,18 +182,26 @@ public open class StandardCurrencyShopOperations(
     }
 
     override fun examineInvValue(player: Player, sideInv: Inventory, shop: Shop, slot: Int) {
+        if (!shop.allowSelling) {
+            player.mes("You can't sell items to this shop.")
+            return
+        }
         val obj = sideInv[slot] ?: return
         val uncert = uncert(obj)
         val objType = getInvObj(uncert)
 
-        val tradeable = objType.tradeable || objType.stockmarket
-        if (!tradeable) {
+        if (objType.id in shop.unsellableItems) {
+            player.mes("You can't sell this item to this shop.")
+            return
+        }
+
+        if (!objType.tradeable && objType.id !in shop.sellableItems) {
             player.mes("You can't sell this item.")
             return
         }
 
         val saleRestricted = objType.param(ShopParams.shop_sale_restricted)
-        if (saleRestricted) {
+        if (saleRestricted && objType.id !in shop.sellableItems) {
             player.mes("You can't sell this item to a shop.")
             return
         }
@@ -193,18 +227,26 @@ public open class StandardCurrencyShopOperations(
     }
 
     override fun invSell(player: Player, sideInv: Inventory, shop: Shop, slot: Int, request: Int) {
+        if (!shop.allowSelling) {
+            player.mes("You can't sell items to this shop.")
+            return
+        }
         val obj = sideInv[slot] ?: return
         val objType = getInvObj(obj)
         val uncertType = uncert(objType)
 
-        val tradeable = uncertType.tradeable || uncertType.stockmarket
-        if (!tradeable) {
+        if (uncertType.id in shop.unsellableItems) {
+            player.mes("You can't sell this item to this shop.")
+            return
+        }
+
+        if (!uncertType.tradeable && uncertType.id !in shop.sellableItems) {
             player.mes("You can't sell this item.")
             return
         }
 
         val saleRestricted = uncertType.param(ShopParams.shop_sale_restricted)
-        if (saleRestricted) {
+        if (saleRestricted && uncertType.id !in shop.sellableItems) {
             player.mes("You can't sell this item to a shop.")
             return
         }

@@ -1,5 +1,8 @@
+import java.nio.file.FileVisitResult
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.SimpleFileVisitor
+import java.nio.file.attribute.BasicFileAttributes
 
 rootProject.name = "OpenRune-Server"
 
@@ -32,9 +35,6 @@ include(
     "engine",
     "server",
     "or-cache",
-    "example-plugin",
-    "tools:osrs-mcp",
-    "tools:wiki-dumping",
 )
 
 includeProjects(project(":api"))
@@ -44,12 +44,22 @@ includeProjects(project(":server"))
 
 fun includeProjects(pluginProject: ProjectDescriptor) {
     val projectPath = pluginProject.projectDir.toPath()
-    Files.walk(projectPath).forEach {
-        if (!Files.isDirectory(it)) {
-            return@forEach
-        }
-        searchProject(pluginProject.name, projectPath, it)
-    }
+    val generatedDirectories = setOf("build", "out", "target", ".gradle", ".git", "node_modules")
+    Files.walkFileTree(
+        projectPath,
+        object : SimpleFileVisitor<Path>() {
+            override fun preVisitDirectory(
+                directory: Path,
+                attributes: BasicFileAttributes,
+            ): FileVisitResult {
+                if (directory != projectPath && directory.fileName.toString() in generatedDirectories) {
+                    return FileVisitResult.SKIP_SUBTREE
+                }
+                searchProject(pluginProject.name, projectPath, directory)
+                return FileVisitResult.CONTINUE
+            }
+        },
+    )
 }
 
 fun searchProject(parentName: String, root: Path, currentPath: Path) {
@@ -65,9 +75,7 @@ fun searchProject(parentName: String, root: Path, currentPath: Path) {
     val projectPath = "$parentName:$projectName"
     include(projectPath)
 
-    // Plugin packs all live in a directory named `pack`, so they would share `org.rsmod:pack`
-    // coordinates and Gradle would drop all but one by conflict resolution. Naming them after the
-    // plugin keeps the directory convention and makes the coordinates distinct.
+    // Give plugin packs distinct names; shared org.rsmod:pack coordinates collapse during dependency resolution.
     val project = project(":$projectPath")
     if (project.name == "pack") {
         project.name = "${project.parent?.name}-pack"

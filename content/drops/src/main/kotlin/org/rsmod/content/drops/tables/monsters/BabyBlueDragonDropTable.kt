@@ -2,15 +2,11 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
-import org.rsmod.api.droptable.rsPlayerTertiaryTable
-import org.rsmod.api.droptable.rsPlayerWeightedTable
 import org.rsmod.api.droptable.DropRollItem
-import org.rsmod.content.drops.brimstoneKeyRoll
-import org.rsmod.content.drops.hasCompletedQuest
-import org.rsmod.content.drops.isOnQuest
 import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.api.droptable.rsPlayerTertiaryTable
+import org.rsmod.content.drops.brimstoneKeyRoll
+import org.rsmod.content.drops.isOnQuest
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -24,7 +20,7 @@ public val babyBlueDragonDropTable: RSDropTable<Player, DropRollItem> = RSDropTa
         }
         1 outOf 100 weight "obj.scaly_bluehide" count 1
         1 outOf 100 weight "obj.frozen_tear" count 6 condition { player ->
-            // Drops Need Manual: Only dropped in Ruins of Tapoyauik
+            // TODO: Only dropped in Ruins of Tapoyauik
              true
         }
         onBuilder { brimstoneKeyRoll() }

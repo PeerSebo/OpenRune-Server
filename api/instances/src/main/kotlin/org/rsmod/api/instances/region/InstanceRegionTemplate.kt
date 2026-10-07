@@ -30,6 +30,17 @@ internal fun buildRegionTemplate(
         destZoneWidth > RegionRepository.SMALL_REGION_ZONE_LENGTH ||
             destZoneLength > RegionRepository.SMALL_REGION_ZONE_LENGTH
 
+    // Multi-region copies are supported up to the large-region build square (40 zones = 5 map
+    // squares a side). Past that `RegionStaticTemplate.set` rejects the first out-of-range zone
+    // with a message that says nothing about the area that asked for it.
+    val maxZoneLength = RegionRepository.LARGE_REGION_ZONE_LENGTH
+    require(destZoneWidth <= maxZoneLength && destZoneLength <= maxZoneLength) {
+        "Instance area is too large to copy: ${destZoneWidth}x$destZoneLength zones exceeds the " +
+            "${maxZoneLength}x$maxZoneLength large-region limit " +
+            "(${maxZoneLength / MAP_SQUARE_ZONE_LENGTH} map squares a side). " +
+            "(regionIds=$regionIds, rotation=$rotation)"
+    }
+
     val builder: RegionStaticTemplate.() -> Unit = {
         copy(copyZoneX, copyZoneZ, level) {
             this.zoneWidth = zoneWidth

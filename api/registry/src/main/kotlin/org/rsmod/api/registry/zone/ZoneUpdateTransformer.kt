@@ -5,6 +5,7 @@ import net.rsprot.protocol.game.outgoing.util.OpFlags
 import net.rsprot.protocol.game.outgoing.zone.payload.LocAddChangeV2
 import net.rsprot.protocol.game.outgoing.zone.payload.LocAnim
 import net.rsprot.protocol.game.outgoing.zone.payload.LocDel
+import net.rsprot.protocol.game.outgoing.zone.payload.LocMerge
 import net.rsprot.protocol.game.outgoing.zone.payload.MapAnim
 import net.rsprot.protocol.game.outgoing.zone.payload.MapProjAnimV2
 import net.rsprot.protocol.game.outgoing.zone.payload.ObjAdd
@@ -53,6 +54,39 @@ public object ZoneUpdateTransformer {
     public fun toLocDelProt(loc: LocInfo): ZoneProt {
         val zoneGrid = ZoneGrid.from(loc.coords)
         return LocDel(zoneGrid.x, zoneGrid.z, loc.shapeId, loc.angleId)
+    }
+
+    /**
+     * Binds [loc]'s model to the player at [playerIndex] for the window between [start] and [end]
+     * (client cycles), so the loc moves with them - what a stile does while it is being climbed.
+     *
+     * [minX]/[maxX]/[minZ]/[maxZ] are the loc's tile extents relative to its south-west corner.
+     */
+    public fun toLocMerge(
+        loc: LocInfo,
+        playerIndex: Int,
+        start: Int,
+        end: Int,
+        minX: Int,
+        minZ: Int,
+        maxX: Int,
+        maxZ: Int,
+    ): ZoneProt {
+        val zoneGrid = ZoneGrid.from(loc.coords)
+        return LocMerge(
+            playerIndex,
+            loc.id,
+            zoneGrid.x,
+            zoneGrid.z,
+            loc.shapeId,
+            loc.angleId,
+            start,
+            end,
+            minX,
+            minZ,
+            maxX,
+            maxZ,
+        )
     }
 
     public fun toLocAnim(loc: LocInfo, seq: Int): ZoneProt {
@@ -114,6 +148,34 @@ public object ZoneUpdateTransformer {
         return SoundArea(synth, delay, loops, radius, size, zoneGrid.x, zoneGrid.z)
     }
 
+    /**
+     * Area sounds inherit the enclosing zone plane and attenuate only horizontally; filter
+     * other-floor observers while preserving their scenery updates.
+     */
+    public fun isAreaSound(prot: ZoneProt): Boolean =
+        when (prot) {
+            is SoundArea -> true
+            is SoundAreaExcluded -> true
+            else -> false
+        }
+
+    /**
+     * Exclude participants by session-unique PlayerUid: they already received soundsynth.
+     * Filter other-floor observers too.
+     */
+    public fun toSoundAreaExcludedProt(
+        source: CoordGrid,
+        synth: Int,
+        delay: Int,
+        loops: Int,
+        radius: Int,
+        size: Int,
+        excludedUids: IntArray,
+    ): ZoneProt {
+        val backing = toSoundAreaProt(source, synth, delay, loops, radius, size)
+        return SoundAreaExcluded(excludedUids, source.level, backing)
+    }
+
     public fun toMapAnimProt(spotanim: Int, coord: CoordGrid, height: Int, delay: Int): ZoneProt {
         val zoneGrid = ZoneGrid.from(coord)
         return MapAnim(spotanim, delay, height, zoneGrid.x, zoneGrid.z)
@@ -138,7 +200,7 @@ public object ZoneUpdateTransformer {
         )
     }
 
-    private fun Obj.copy(): Obj = Obj(coords, entity, creationCycle, receiverId)
+    private fun Obj.copy(): Obj = Obj(coords, entity, creationCycle, receiverId, ownerId, vars)
 
     public interface PartialFollowsZoneProt : ZoneProt {
         public val backing: ZoneProt
@@ -167,4 +229,21 @@ public object ZoneUpdateTransformer {
 
     public class ObjReveal(public val obj: Obj, override val backing: ZoneProt) :
         PartialFollowsZoneProt
+
+    /**
+     * A `soundarea` that every observer on [level] receives _except_ those whose packed
+     * [org.rsmod.game.entity.player.PlayerUid] appears in [excludedUids].
+     *
+     * @property level the level of the coord the sound came from. Observers standing on any other
+     *   level never hear it, no matter how close they are horizontally - see [isAreaSound].
+     * @see [toSoundAreaExcludedProt]
+     */
+    public class SoundAreaExcluded(
+        public val excludedUids: IntArray,
+        public val level: Int,
+        override val backing: ZoneProt,
+    ) : PartialFollowsZoneProt {
+        public fun isAudibleTo(observerUid: Int, observerLevel: Int): Boolean =
+            observerLevel == level && observerUid !in excludedUids
+    }
 }

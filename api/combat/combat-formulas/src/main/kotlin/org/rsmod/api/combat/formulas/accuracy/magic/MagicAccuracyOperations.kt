@@ -24,9 +24,6 @@ private typealias StaffAttr = CombatStaffAttributes
 private typealias NpcAttr = CombatNpcAttributes
 
 public object MagicAccuracyOperations {
-    /**
-     * @param targetWeaknessPercent The target's elemental weakness percentage (e.g., `1` = `1%`).
-     */
     public fun modifySpellAttackRoll(
         attackRoll: Int,
         targetWeaknessPercent: Int,
@@ -177,8 +174,6 @@ public object MagicAccuracyOperations {
         return modified
     }
 
-    // Note: Though currently empty, this serves as the attack roll modifier for pvp as a way to
-    // differentiate between player and npc targets.
     public fun modifyStaffAttackRoll(attackRoll: Int): Int = attackRoll
 
     public fun calculateEffectiveMagic(player: Player, attackStyle: MagicAttackStyle?): Int =

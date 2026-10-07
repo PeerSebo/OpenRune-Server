@@ -46,7 +46,6 @@ coords = "0_18_51_57_44"
 npc = "npc.troll_mountain_goat_smaller"
 coords = "0_18_51_59_41"
 
-## Aldarin
 
 [[spawn]]
 npc = "npc.butterfly_ruby"
@@ -160,11 +159,10 @@ coords = "0_21_46_5_32"
 npc = "npc.varlamore_porcupine"
 coords = "0_22_46_8_49"
 
-## Auburnvale
 
 [[spawn]]
 npc = "npc.auburn_sawmill_operator"
-coords = "0_21_52_51_41"
+coords = "0_21_52_52_41"
 
 [[spawn]]
 npc = "npc.butterfly_ruby"
@@ -342,7 +340,6 @@ coords = "0_23_52_17_1"
 npc = "npc.viking_fox"
 coords = "0_23_52_47_3"
 
-## Colossal Wyrm Agility Course
 
 [[spawn]]
 npc = "npc.varlamore_wyrm_agility_guide_3op"
@@ -352,7 +349,6 @@ coords = "0_25_45_39_42"
 npc = "npc.varlamore_wyrm_agility_worker"
 coords = "0_25_45_39_43"
 
-## Hunter Guild Surface
 
 [[spawn]]
 npc = "npc.hg_apatura"
@@ -386,7 +382,6 @@ coords = "2_24_47_22_39"
 npc = "npc.moth_sunlight"
 coords = "0_24_47_37_16"
 
-## Ralos Rise
 
 [[spawn]]
 npc = "npc.butterfly_glacialis"
@@ -468,13 +463,11 @@ coords = "0_22_48_61_1"
 npc = "npc.varlamore_white_jaguar"
 coords = "0_22_50_13_33"
 
-## Shields of Mistrock
 
 [[spawn]]
 npc = "npc.mistrock_shield_store"
 coords = "0_21_44_43_53"
 
-## Southern Varlamore
 
 [[spawn]]
 npc = "npc.afl_atza"
@@ -1656,7 +1649,6 @@ coords = "0_26_48_35_15"
 npc = "npc.vmq4_captain_vibia_visible"
 coords = "2_25_49_52_10"
 
-## Tal Teklan - Indoors ground level
 
 [[spawn]]
 npc = "npc.tal_teklan_archery_trader"
@@ -1670,7 +1662,6 @@ coords = "0_18_48_51_47"
 npc = "npc.tal_teklan_farmer"
 coords = "0_19_48_27_61"
 
-## The Stranglewood
 
 [[spawn]]
 npc = "npc.dt2_strangled_base_t1_1"
@@ -1808,13 +1799,19 @@ coords = "0_17_51_40_57"
 npc = "npc.stranglewood_fishingspot_hmm"
 coords = "0_17_52_5_40"
 
-## The Windbreaker
+[[spawn]]
+npc = "npc.vardorvis_base"
+coords = "0_17_53_40_25"
+
+[[spawn]]
+npc = "npc.vardorvis_big_tentacle"
+coords = "0_17_53_35_25"
+
 
 [[spawn]]
 npc = "npc.quetzacalli_dwarf_worker"
 coords = "0_23_50_31_27"
 
-## Varlamore - Tlati Rainforest
 
 [[spawn]]
 npc = "npc.butterfly_warlock"
@@ -2100,7 +2097,6 @@ coords = "0_20_49_58_7"
 npc = "npc.varlamore_jaguar_cub"
 coords = "0_20_49_60_12"
 
-## Varlamore Savanna Hunter Pit Traps
 
 [[spawn]]
 npc = "npc.sunlight_antelope"
@@ -2138,7 +2134,6 @@ coords = "0_27_47_27_5"
 npc = "npc.sunlight_antelope"
 coords = "0_27_47_7_0"
 
-## Varlamore Snowy Mountains Lower
 
 [[spawn]]
 npc = "npc.varlamore_buffalo_gear_unattackable"
@@ -2148,7 +2143,6 @@ coords = "0_24_51_55_12"
 npc = "npc.varlamore_white_jaguar"
 coords = "0_22_51_59_30"
 
-## Varlamore Snowy Mountains Upper
 
 [[spawn]]
 npc = "npc.hg_bank_buffalo"
@@ -2166,7 +2160,6 @@ coords = "0_23_51_56_29"
 npc = "npc.vm_prayer_uncerter"
 coords = "0_22_49_34_18"
 
-## Varlamore Temple Crypt
 
 [[spawn]]
 npc = "npc.fortis_barracks_captain"
@@ -2175,6 +2168,3 @@ coords = "0_25_149_42_33"
 [[spawn]]
 npc = "npc.fortis_teoki_ranul_vis"
 coords = "0_26_148_32_14"
-
-## Varlamore Temple Crypt End
-

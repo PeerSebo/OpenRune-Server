@@ -64,11 +64,9 @@ constructor(private val charges: ObjChargeManager, private val objRepo: ObjRepos
             return
         }
 
-        // Official behavior: `countDialog` is shown as long as the player has at least one of each
-        // rune, even if the total is not enough to apply a single charge.
         val currCharges = charges.getCharges(inventory[invSlot], "varobj.tumeken_charges")
         if (currCharges >= MAX_CHARGES) {
-            // TODO(content): Correct message when already fully charged.
+            // TODO: Correct message when already fully charged.
             mes("Your Tumeken's shadow is fully charged.")
             return
         }
@@ -93,11 +91,9 @@ constructor(private val charges: ObjChargeManager, private val objRepo: ObjRepos
             return
         }
 
-        // Paranoid check: Should always be the case.
         check(inventory[invSlot].isType(obj))
 
         charges.addCharges(inventory, invSlot, requested, "varobj.tumeken_charges", MAX_CHARGES)
-        // Official message: Uses "charges" even when applying a single charge.
         objbox("obj.tumekens_shadow", 400, "You apply $requested charges to your Tumeken's shadow.")
     }
 
@@ -108,7 +104,6 @@ constructor(private val charges: ObjChargeManager, private val objRepo: ObjRepos
     }
 
     private fun ProtectedAccess.checkCharges(obj: InvObj?) {
-        // Official message: "s" is lowercase and always uses "charges."
         val charges = charges.getCharges(obj, "varobj.tumeken_charges")
         mes("Tumeken's shadow has $charges charges remaining.")
     }
@@ -120,9 +115,6 @@ constructor(private val charges: ObjChargeManager, private val objRepo: ObjRepos
             return
         }
 
-        // Given how the `charge` conditions are handled when it comes to checking if player has
-        // runes, we are assuming this condition is also lenient. Requires testing in the official
-        // game (need max rune stacks).
         var spaceReq = 2
         if ("obj.soulrune" in inv) {
             spaceReq--

@@ -181,7 +181,6 @@ internal suspend fun ProtectedAccess.endScene(
 }
 
 private fun ProtectedAccess.restoreSceneState() {
-    ifClose()
     camUnlock(unlock = false)
     camReset()
 

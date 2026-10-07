@@ -1,4 +1,3 @@
-## Morytania Slayer Tower Basement
 
 [[spawn]]
 obj = "obj.bones"
@@ -43,4 +42,3 @@ coords = "0_53_155_36_40"
 [[spawn]]
 obj = "obj.tinderbox"
 coords = "0_53_155_13_17"
-

@@ -1,0 +1,30 @@
+[gamevals.dbtable]
+mahogany_homes_tiers = 63904
+mahogany_homes_houses = 63905
+mahogany_homes_rewards = 63906
+
+[gamevals.dbrow]
+mahogany_homes_tier_beginner = 63294
+mahogany_homes_tier_novice = 63295
+mahogany_homes_tier_adept = 63296
+mahogany_homes_tier_expert = 63297
+mahogany_homes_house_bob = 63298
+mahogany_homes_house_jeff = 63299
+mahogany_homes_house_sarah = 63300
+mahogany_homes_house_tau = 63301
+mahogany_homes_house_larry = 63302
+mahogany_homes_house_norman = 63303
+mahogany_homes_house_noella = 63304
+mahogany_homes_house_ross = 63305
+mahogany_homes_house_jess = 63306
+mahogany_homes_house_mariah = 63307
+mahogany_homes_house_leela = 63308
+mahogany_homes_house_barbara = 63309
+mahogany_homes_reward_construction_supply_crate = 63310
+mahogany_homes_reward_wearable_saw = 63311
+mahogany_homes_reward_plank_sack = 63312
+mahogany_homes_reward_hosidius_blueprints = 63313
+mahogany_homes_reward_construction_hat = 63314
+mahogany_homes_reward_construction_shirt = 63315
+mahogany_homes_reward_construction_trousers = 63316
+mahogany_homes_reward_construction_boots = 63317

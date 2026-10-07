@@ -59,12 +59,12 @@ constructor(
         return Executors.newSingleThreadExecutor(threadFactory)
     }
 
-    override suspend fun setup() {
+    override suspend fun signalStartup() {
         scriptBootGate.awaitReady()
         process.startup()
     }
 
-    override suspend fun signalStartup() {}
+    override suspend fun setup() {}
 
     override suspend fun signalShutdown() {
         shutdownSignaled.set(true)

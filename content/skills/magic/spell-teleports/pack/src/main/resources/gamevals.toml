@@ -1,0 +1,49 @@
+[gamevals.varp]
+home_teleport_cast_coords = 63804
+
+[gamevals.dbtable]
+standard_spell_teleports = 63902
+
+[gamevals.dbrow]
+standard_spell_teleport_home = 63208
+standard_spell_teleport_varrock = 63209
+standard_spell_teleport_lumbridge = 63210
+standard_spell_teleport_falador = 63211
+standard_spell_teleport_house = 63212
+standard_spell_teleport_camelot = 63213
+standard_spell_teleport_kourend_castle = 63214
+standard_spell_teleport_ardougne = 63215
+standard_spell_teleport_civitas_illa_fortis = 63216
+standard_spell_teleport_watchtower = 63217
+standard_spell_teleport_trollheim = 63218
+standard_spell_teleport_ape_atoll = 63219
+standard_spell_teleport_boat_to_me = 63220
+standard_spell_teleport_me_to_boat = 63221
+standard_spell_teleport_edgeville_home = 62840
+standard_spell_teleport_paddewwa = 62841
+standard_spell_teleport_senntisten = 62842
+standard_spell_teleport_kharyrll = 62843
+standard_spell_teleport_lassar = 62844
+standard_spell_teleport_dareeyak = 62845
+standard_spell_teleport_carrallanger = 62846
+standard_spell_teleport_annakarl = 62847
+standard_spell_teleport_ghorrock = 62848
+standard_spell_teleport_moonclan = 63461
+standard_spell_teleport_ourania = 63462
+standard_spell_teleport_waterbirth = 63463
+standard_spell_teleport_barbarian_outpost = 63464
+standard_spell_teleport_port_khazard = 63465
+standard_spell_teleport_fishing_guild = 63466
+standard_spell_teleport_catherby = 63467
+standard_spell_teleport_ice_plateau = 63468
+standard_spell_teleport_arceuus_library = 63469
+standard_spell_teleport_draynor_manor = 63470
+standard_spell_teleport_battlefront = 63471
+standard_spell_teleport_mind_altar = 63472
+standard_spell_teleport_salve_graveyard = 63473
+standard_spell_teleport_fenkenstrains_castle = 63474
+standard_spell_teleport_west_ardougne = 63475
+standard_spell_teleport_harmony_island = 63476
+standard_spell_teleport_forgotten_cemetery = 63477
+standard_spell_teleport_barrows = 63478
+standard_spell_teleport_ape_atoll_dungeon = 63479

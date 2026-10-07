@@ -15,6 +15,8 @@ public sealed class HeldEquipResult {
 
         public class NotEnoughWornSpace(message: String) : Fail(listOf(message))
 
+        public class Restricted(message: String) : Fail(listOf(message))
+
         public class StatRequirements(messages: List<String>) : Fail(messages) {
             public constructor(
                 messages: Pair<String, String>

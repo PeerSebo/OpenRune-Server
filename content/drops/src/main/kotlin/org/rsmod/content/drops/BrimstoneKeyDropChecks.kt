@@ -1,8 +1,8 @@
 package org.rsmod.content.drops
 
 import org.rsmod.api.area.checker.AreaChecker
-import org.rsmod.content.slayer.core.SlayerTaskManager
-import org.rsmod.content.slayer.dialogue.SlayerMasters
+import org.rsmod.content.skills.slayer.core.SlayerTaskManager
+import org.rsmod.content.skills.slayer.dialogue.SlayerMasters
 import org.rsmod.game.entity.Npc
 import org.rsmod.game.entity.Player
 

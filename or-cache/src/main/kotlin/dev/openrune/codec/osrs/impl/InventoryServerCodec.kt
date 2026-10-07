@@ -27,17 +27,20 @@ class InventoryServerCodec(
                     5,
                     decode = { buf, def, _ ->
                         def.stock =
-                            List(buf.readByte().toInt()) {
+                            List(buf.readUnsignedByte().toInt()) {
                                 InvStock(
                                     buf.readInt(),
-                                    buf.readShort().toInt(),
-                                    buf.readShort().toInt(),
+                                    buf.readUnsignedShort(),
+                                    buf.readUnsignedShort().let { if (it == 65535) -1 else it },
                                 )
                             }
                     },
                     encode = { buf, def ->
+                        require(def.stock.size <= 255) { "Inventory ${def.id} has too many stock entries" }
                         buf.writeByte(def.stock.size)
                         def.stock.forEach {
+                            require(it.count in 0..65535) { "Invalid stock count in inventory ${def.id}: $it" }
+                            require(it.restockCycles in -1..65534) { "Invalid restock interval in inventory ${def.id}: $it" }
                             buf.writeInt(it.obj)
                             buf.writeShort(it.count)
                             buf.writeShort(it.restockCycles)
@@ -45,6 +48,10 @@ class InventoryServerCodec(
                     },
                 )
             )
+            add(DefinitionOpcode(6, OpcodeType.STRING, InventoryServerType::name))
+            add(DefinitionOpcode(7, OpcodeType.INT, InventoryServerType::buyMultiplier))
+            add(DefinitionOpcode(8, OpcodeType.INT, InventoryServerType::sellMultiplier))
+            add(DefinitionOpcode(9, OpcodeType.INT, InventoryServerType::delta))
         }
 
     override fun InventoryServerType.createData() {
@@ -58,6 +65,10 @@ class InventoryServerCodec(
             stack = customData.stack
             flags = customData.flags
             stock = customData.stock
+            name = customData.name
+            buyMultiplier = customData.buyMultiplier
+            sellMultiplier = customData.sellMultiplier
+            delta = customData.delta
         }
     }
 

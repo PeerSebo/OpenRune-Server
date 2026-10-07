@@ -1,0 +1,42 @@
+[[varp]]
+id = "varp.gnomeball_session"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.gnomeball_phase"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.gnomeball_cooldown"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.gnomeball_brought_ball"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varn]]
+id = "varn.gnomeball_cooldown"
+
+[[varn]]
+id = "varn.gnomeball_ball_deadline"
+
+[[varobj]]
+id = "varobj.gnomeball_loan"
+startBit = 30
+endBit = 30
+
+[[inventory]]
+id = "inv.gnomeball_deposit"
+isServerOnly = true
+size = 30
+scope = "Perm"
+stack = "Normal"
+protect = true

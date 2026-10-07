@@ -88,11 +88,13 @@ internal class Arena(private val dx: Int, private val dz: Int, private val level
     val centre: CoordGrid get() = at(LeviathanArena.BOSS_CENTRE)
 
     fun inStrip(coords: CoordGrid, strip: LeviathanArena.Strip): Boolean {
+        if (coords.level != level) return false
         val s = toStatic(coords)
         return s.x in strip.minX..strip.maxX && s.z in strip.minZ..strip.maxZ
     }
 
     fun inSearchBox(coords: CoordGrid): Boolean {
+        if (coords.level != level) return false
         val s = toStatic(coords)
         return s.x in LeviathanArena.SEARCH_SW.x..LeviathanArena.SEARCH_NE.x &&
             s.z in LeviathanArena.SEARCH_SW.z..LeviathanArena.SEARCH_NE.z

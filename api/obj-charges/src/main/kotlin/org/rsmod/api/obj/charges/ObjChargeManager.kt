@@ -22,24 +22,6 @@ public class ObjChargeManager {
         return obj?.vars?.getBits(varobj.bits) ?: 0
     }
 
-    /**
-     * Adds charges to the obj in the given [slot] of the provided [inventory].
-     *
-     * If the obj has **no existing charges**, it is assumed to be the uncharged variant and will be
-     * replaced with its charged counterpart if at least one charge is added. This requires the obj
-     * type to define a `charged_variant` param; otherwise, an [IllegalStateException] is thrown.
-     *
-     * @param add The number of charges to attempt to add. This can exceed [max], but the final
-     *   charge count will never go above [max].
-     * @param max The maximum number of charges the obj can hold (e.g., `20_000` for Tumeken's
-     *   Shadow). This must not exceed the capacity allowed by [varobj], or an
-     *   [IllegalArgumentException] is thrown.
-     * @return [Charge.Success] if at least one charge was added; otherwise, a [Charge.Failure]
-     *   indicating the reason (e.g., obj already has [max] charges).
-     * @throws IllegalStateException if the obj has no charges and does not define a
-     *   `charged_variant` param (required to convert it into its charged form).
-     * @throws IllegalArgumentException if [max] exceeds the representable value for [varobj].
-     */
     public fun addCharges(
         inventory: Inventory,
         slot: Int,
@@ -80,19 +62,6 @@ public class ObjChargeManager {
         return Charge.Success.AddSameObj(added = added, total = total)
     }
 
-    /**
-     * Reduces charges from the player's worn obj in the [wearpos] slot.
-     *
-     * If the obj's **current charges** are `0`, it will immediately be replaced with its uncharged
-     * variant, returning [Uncharge.Failure.NotEnoughCharges]. If the remaining charge count **after
-     * reduction** reaches `0`, the obj will also be replaced with its uncharged variant, but will
-     * return [Uncharge.Success] instead.
-     *
-     * @return [Uncharge.Success] if exactly [decrement] charges were reduced; otherwise, a
-     *   [Uncharge.Failure] indicating the reason for failure.
-     * @throws IllegalStateException if the worn obj does not have a defined `uncharged_variant`
-     *   param.
-     */
     public fun reduceWornCharges(
         player: Player,
         wearpos: Wearpos,
@@ -102,7 +71,6 @@ public class ObjChargeManager {
         val obj = player.worn[wearpos.slot] ?: return Uncharge.Failure.ObjNotFound
         val type = getInvObj(obj)
 
-        // Always ensure that any obj used as a "charge" weapon has an uncharged variant defined.
         val uncharged = type.paramOrNull(params.uncharged_variant)
         if (uncharged == null) {
             val message = "Obj missing `uncharged_variant` param: $obj (type=$type)"
@@ -131,25 +99,8 @@ public class ObjChargeManager {
         return Uncharge.Success(chargesLeft = decrementedCharges)
     }
 
-    /**
-     * Removes all charges from the obj in the given [slot] of the provided [inventory].
-     *
-     * The obj will always be replaced with its uncharged variant, regardless of the current charge
-     * value. This requires the obj type to define an `uncharged_variant` param; otherwise, an
-     * [IllegalStateException] is thrown.
-     *
-     * This function assumes that a valid obj exists in the given [slot].
-     *
-     * _Note: Only the [varobj] var is reset to `0`. All other varobj values on the obj will
-     * persist._
-     *
-     * @return The number of charges the obj had before being reset. This may be `0` if the obj was
-     *   already uncharged.
-     * @throws IllegalStateException if the obj does not define an `uncharged_variant` param.
-     * @throws NoSuchElementException if no obj exists in the given [inventory] slot.
-     */
     public fun removeAllCharges(inventory: Inventory, slot: Int, internal: String): Int {
-        val obj = inventory.getValue(slot) // Should not call this without a valid obj in `slot`.
+        val obj = inventory.getValue(slot)
         val type = getInvObj(obj)
 
         val varobj = ServerCacheManager.getVarObj(internal.asRSCM(RSCMType.VAROBJ)) ?: error("Unable to find varobj: $internal")
@@ -173,14 +124,9 @@ public class ObjChargeManager {
             public abstract val added: Int
             public abstract val total: Int
 
-            /** Indicates that charges were successfully added to an already charged obj. */
             public data class AddSameObj(override val added: Int, override val total: Int) :
                 Success()
 
-            /**
-             * Indicates that charges were added to an "uncharged" variant of an obj, resulting in
-             * the inventory obj being changed to the [charged] variant.
-             */
             public data class AddChangeObj(
                 override val added: Int,
                 override val total: Int,

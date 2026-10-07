@@ -86,12 +86,11 @@ class LibationBowlEvents : PluginScript() {
         val wineXpPerShard = if (libationSunfire == 1) 6.0 else 5.0
         val availableShards = inv.count("obj.blessed_bone_shard")
         val wineCharges = libationWineCharges
-        val prayerShardCapacity = player.prayerLvl / 2
-        val count = minOf(100, availableShards, wineCharges, prayerShardCapacity)
+        val count = minOf(100, availableShards, wineCharges)
         if (count <= 0) {
             return
         }
-        val consumedCount = player.countConsumed(count)
+        val consumedCount = countConsumed(count)
 
         player.anim("seq.human_pray_blessed_bone_shards_01")
         if (consumedCount > 0) {
@@ -148,5 +147,4 @@ class LibationBowlEvents : PluginScript() {
 
     private var ProtectedAccess.libationWineCharges by intVarBit("varbit.varlamore_prayer_winequant")
     private var ProtectedAccess.libationSunfire by intVarBit("varbit.varlamore_prayer_winetype")
-
 }

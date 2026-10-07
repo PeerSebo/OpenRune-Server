@@ -8,14 +8,14 @@ import dtx.impl.meta.MetaRollable
 import dtx.impl.misc.percent
 
 enum class BossModAmount(val modifyBy: Double) {
-    Miniscule(0.025), Slight(0.05), Small(0.1), Moderate(1.0), Medium(2.0), Large(5.0);
+    Miniscule(0.025), Slight(0.05), Small(0.1), Moderate(1.0), Medium(2.0), Large(5.0)
 }
 
 data class BossFilter(
     val idEquals: String,
     val direction: MetaModDirection,
     val type: BossModAmount,
-): MetaEntryFilter<Player, Item> {
+) : MetaEntryFilter<Player, Item> {
 
     override fun filterEntry(modifier: String): Boolean {
         return modifier == idEquals
@@ -62,7 +62,6 @@ val ExampleBossDrops = metaMultiChanceTable<Player, Item> {
         minChance(25.0)
         maxChance(40.0)
 
-
         addFilter(BossFilter("scrap", MetaModDirection.Decrease, BossModAmount.Moderate))
         addFilter(BossFilter("helmet", MetaModDirection.Increase, BossModAmount.Small))
         addFilter(BossFilter("sword", MetaModDirection.Increase, BossModAmount.Slight))
@@ -93,7 +92,6 @@ val ExampleBossDrops = metaMultiChanceTable<Player, Item> {
         addFilter(BossFilter("sword", MetaModDirection.Decrease, BossModAmount.Large))
         addFilter(BossFilter("helmet", MetaModDirection.Increase, BossModAmount.Moderate))
     }
-
 }
 
 fun main() {

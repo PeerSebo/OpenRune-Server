@@ -33,30 +33,39 @@ class KylieMinnow : PluginScript() {
         }
 
         val minnows = access.invTotal(access.inv, MINNOW)
-        if (minnows < 40) {
+        if (minnows < MINNOWS_PER_SHARK) {
             chatNpc(
                 sad,
-                "You'll be needing at least 40 minnows to trade for a shark! " +
+                "You'll be needing at least $MINNOWS_PER_SHARK minnows to trade for a shark! " +
                     "Come back and see me when you have some more!",
             )
             return
         }
         if (access.inv.isFull()) {
-            chatNpc(neutral, "I can't trade you any sharks while you don't have any space for them!")
+            chatNpc(
+                neutral,
+                "I can't trade you any sharks while you don't have any space for them!",
+            )
             return
         }
 
-        chatNpc(happy, "I can give you a shark for every 40 minnows that you give me. How many sharks would you like?")
-        val maxSharks = minnows / 40
-        val requested = access.countDialog("How many sharks? (max $maxSharks)").coerceIn(0, maxSharks)
-        if (requested <= 0) return
+        chatNpc(
+            happy,
+            "I can give you a shark for every $MINNOWS_PER_SHARK minnows that you give me. " +
+                "How many sharks would you like?",
+        )
+        val maxSharks = minnows / MINNOWS_PER_SHARK
+        val requested = access.countDialog().coerceIn(0, maxSharks)
+        if (requested <= 0) {
+            return
+        }
 
         var given = 0
-        while (given < requested && access.invTotal(access.inv, MINNOW) >= 40) {
-            access.invDel(access.inv, MINNOW, 40)
-            val result = access.invAdd(access.inv, RAW_SHARK, 1)
-            if (result.failure) {
-                access.invAdd(access.inv, MINNOW, 40)
+        while (given < requested && access.invTotal(access.inv, MINNOW) >= MINNOWS_PER_SHARK) {
+            access.invDel(access.inv, MINNOW, count = MINNOWS_PER_SHARK)
+            val result = access.invAdd(access.inv, RAW_SHARK, count = 1)
+            if (!result.success) {
+                access.invAdd(access.inv, MINNOW, count = MINNOWS_PER_SHARK)
                 break
             }
             given++
@@ -65,7 +74,10 @@ class KylieMinnow : PluginScript() {
         if (given > 0) {
             chatNpc(happy, "There you go! Enjoy your shark${if (given == 1) "" else "s"}!")
         } else {
-            chatNpc(neutral, "I can't trade you any sharks while you don't have any space for them!")
+            chatNpc(
+                neutral,
+                "I can't trade you any sharks while you don't have any space for them!",
+            )
         }
     }
 
@@ -75,5 +87,7 @@ class KylieMinnow : PluginScript() {
         private const val KYLIE_MULTI = "npc.minnow_fisherman_multi"
         private const val MINNOW = "obj.minnow"
         private const val RAW_SHARK = "obj.raw_shark"
+
+        private const val MINNOWS_PER_SHARK = 40
     }
 }

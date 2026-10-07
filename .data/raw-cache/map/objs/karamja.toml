@@ -251,7 +251,6 @@ coords = "0_46_47_31_5"
 obj = "obj.seaweed"
 coords = "0_46_47_3_59"
 
-## Karamja Volcano Dungeon
 
 [[spawn]]
 obj = "obj.bones"
@@ -304,6 +303,3 @@ coords = "0_44_149_27_24"
 [[spawn]]
 obj = "obj.red_spiders_eggs"
 coords = "0_44_149_16_50"
-
-## Karamja Volcano Dungeon End
-

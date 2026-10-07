@@ -1,0 +1,22 @@
+[gamevals.area]
+barrows_crypt = 32753
+
+[gamevals.queue]
+barrows_dig = 2010
+
+[gamevals.timer]
+barrows_crypt = 136
+
+[gamevals.synth]
+
+[gamevals.varp]
+barrows_state = 64132
+
+[gamevals.varbit]
+barrows_hidden_brother = 64200
+barrows_corner = 64201
+barrows_looted = 64202
+barrows_puzzle_solved = 64203
+barrows_rolled = 64204
+barrows_open_corner_door = 64205
+barrows_open_center_door = 64206

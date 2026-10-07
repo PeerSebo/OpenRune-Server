@@ -10,9 +10,8 @@ import org.rsmod.api.instances.InstanceScript
 import org.rsmod.api.instances.withInstanceEnterTransition
 import org.rsmod.api.instances.withInstanceLeaveTransition
 import org.rsmod.api.player.protect.ProtectedAccess
-import org.rsmod.api.player.vars.intVarBit
+import org.rsmod.api.player.vars.boolVarp
 import org.rsmod.api.script.onOpLoc5
-import org.rsmod.api.script.onPlayerInit
 import org.rsmod.game.entity.Npc
 import org.rsmod.game.entity.Player
 import org.rsmod.map.CoordGrid
@@ -21,9 +20,7 @@ import org.rsmod.plugin.scripts.ScriptContext
 class VardorvisInstance @Inject constructor(registry: BossInstanceRegistry) :
     InstanceScript(registry) {
 
-    private var Player.stranglewoodProgress by intVarBit(STRANGLEWOOD_VARBIT)
-
-    private val pendingAwakened = HashSet<Player>()
+    private var Player.pendingAwakened by boolVarp("varp.vardorvis_pending_awakened")
 
     override fun settingsRow(): String = "dbrow.instance_vardorvis"
 
@@ -32,14 +29,9 @@ class VardorvisInstance @Inject constructor(registry: BossInstanceRegistry) :
     override fun ScriptContext.configure() {
         onEnterPrelude { result, enter ->
             withInstanceEnterTransition(InstanceEnterTransition(message = ENTER_MESSAGE), enter)
-            if (result is InstanceManager.Result.Created && pendingAwakened.remove(player)) {
-                manager.npcsForInstance(result.session.id).firstOrNull()?.let(::markAwakened)
-            }
-        }
-
-        onPlayerInit {
-            if (player.stranglewoodProgress < STRANGLEWOOD_UNLOCKED) {
-                player.stranglewoodProgress = STRANGLEWOOD_UNLOCKED
+            if (result is InstanceManager.Result.Created && player.pendingAwakened) {
+                val npc = manager.npcsForInstance(result.session.id).firstOrNull()
+                if (npc != null && invDel(inv, AWAKENERS_ORB, 1).success) markAwakened(npc)
             }
         }
 
@@ -55,13 +47,15 @@ class VardorvisInstance @Inject constructor(registry: BossInstanceRegistry) :
 
     private suspend fun ProtectedAccess.enterInstance() {
         val owned = player.uuid?.let { manager.sessionOwnedBy(key, it) }
-        if (owned == null && tryConsumeAwakenersOrb()) {
-            pendingAwakened += player
+        player.pendingAwakened = owned == null && chooseAwakened()
+        try {
+            defaultInstanceEntry()
+        } finally {
+            player.pendingAwakened = false
         }
-        defaultInstanceEntry()
     }
 
-    private suspend fun ProtectedAccess.tryConsumeAwakenersOrb(): Boolean {
+    private suspend fun ProtectedAccess.chooseAwakened(): Boolean {
         if (AWAKENERS_ORB !in inv) {
             return false
         }
@@ -76,7 +70,6 @@ class VardorvisInstance @Inject constructor(registry: BossInstanceRegistry) :
         if (!useOrb) {
             return false
         }
-        invDel(inv, AWAKENERS_ORB, 1)
         return true
     }
 
@@ -88,10 +81,6 @@ class VardorvisInstance @Inject constructor(registry: BossInstanceRegistry) :
     }
 
     private companion object {
-        private const val STRANGLEWOOD_VARBIT = "varbit.dt2_stranglewood"
-
-        private const val STRANGLEWOOD_UNLOCKED = 37
-
         private const val ARENA_REGION = 4405
 
         private const val AWAKENERS_ORB = "obj.dt2_awakeners_orb"

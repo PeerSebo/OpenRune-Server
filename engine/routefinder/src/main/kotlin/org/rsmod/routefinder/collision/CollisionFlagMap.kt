@@ -4,25 +4,12 @@ public class CollisionFlagMap(public val flags: Array<IntArray?> = arrayOfNulls(
     public inline val defaultFlag: Int
         inline get() = DEFAULT_COLLISION_FLAG
 
-    /**
-     * Gets the collision bitmask of tile in coordinates ([absoluteX], [absoluteZ], [level]).
-     *
-     * If the zone respective to the input coordinates has not been allocated, [defaultFlag] will be
-     * returned instead.
-     */
     public operator fun get(absoluteX: Int, absoluteZ: Int, level: Int): Int {
         val zoneIndex = zoneIndex(absoluteX, absoluteZ, level)
         val tileIndex = tileIndex(absoluteX, absoluteZ)
         return flags[zoneIndex]?.get(tileIndex) ?: DEFAULT_COLLISION_FLAG
     }
 
-    /**
-     * Sets the collision bitmask of tile in coordinates ([absoluteX], [absoluteZ], [level]) to
-     * [mask].
-     *
-     * If the zone respective to the input coordinates has not been previously set, it will be
-     * allocated before setting the [mask] bitflag onto the tile.
-     */
     public operator fun set(absoluteX: Int, absoluteZ: Int, level: Int, mask: Int) {
         val tiles =
             flags[zoneIndex(absoluteX, absoluteZ, level)]
@@ -30,18 +17,7 @@ public class CollisionFlagMap(public val flags: Array<IntArray?> = arrayOfNulls(
         tiles[tileIndex(absoluteX, absoluteZ)] = mask
     }
 
-    /**
-     * Appends the collision [mask] into the already-existing bitflags located on coordinates
-     * ([absoluteX], [absoluteZ], [level]).
-     *
-     * If the zone respective to the input coordinates has not been previously set, it will be
-     * allocated before applying the [mask] bitflag onto the tile.
-     */
     public fun add(absoluteX: Int, absoluteZ: Int, level: Int, mask: Int) {
-        // If the zone has not been allocated previously - the `set`
-        // operator will allocate/initialize it. We do _not_ want the
-        // `defaultFlag` value to be used. This is why we don't use
-        // the `get` operator and instead redeclare similar code below.
         val zoneIndex = zoneIndex(absoluteX, absoluteZ, level)
         val tileIndex = tileIndex(absoluteX, absoluteZ)
         val currentFlags = flags[zoneIndex]?.get(tileIndex) ?: 0
@@ -72,14 +48,6 @@ public class CollisionFlagMap(public val flags: Array<IntArray?> = arrayOfNulls(
         return tileFlags
     }
 
-    /**
-     * Deallocates the collision flags for the zone that can be found in coordinates ([absoluteX],
-     * [absoluteZ], [level]).
-     *
-     * The x and z-coordinate can range anywhere between 0-7 tiles in respect to the zone base
-     * coordinates. For example, calling this method with the arguments (3202, 3204, [level]) will
-     * have the same results as calling it with (3200, 3200, [level]).
-     */
     public fun deallocateIfPresent(absoluteX: Int, absoluteZ: Int, level: Int) {
         flags[zoneIndex(absoluteX, absoluteZ, level)] = null
     }

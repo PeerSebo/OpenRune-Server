@@ -4,7 +4,12 @@ import jakarta.inject.Inject
 import net.rsprot.protocol.game.incoming.misc.user.MoveGameClick
 import org.rsmod.api.net.rsprot.player.modLevelTeleMoveSpeed
 import org.rsmod.api.net.rsprot.player.protectedTelejump
+import org.rsmod.api.player.events.PlayerMoveClick
+import org.rsmod.api.player.hook.PlayerRestrictions
+import org.rsmod.api.player.hook.RestrictedAction
 import org.rsmod.api.player.output.clearMapFlag
+import org.rsmod.api.player.output.mes
+import org.rsmod.api.player.protect.ProtectedAccessContextFactory
 import org.rsmod.api.player.protect.clearPendingAction
 import org.rsmod.api.player.vars.ctrlMoveSpeed
 import org.rsmod.api.realm.Realm
@@ -21,17 +26,28 @@ constructor(
     private val realm: Realm,
     private val eventBus: EventBus,
     private val collision: CollisionFlagMap,
+    private val contextFactory: ProtectedAccessContextFactory,
+    private val restrictions: PlayerRestrictions = PlayerRestrictions(emptySet()),
 ) : MessageHandler<MoveGameClick> {
     override fun handle(player: Player, message: MoveGameClick) {
         if (player.vars["varbit.cutscene_status"] != 0) {
             player.clearMapFlag()
             return
         }
+        val dest = CoordGrid(message.x, message.z, player.level)
+        val input = PlayerMoveClick(player, dest)
+        eventBus.publish(input)
+        if (input.consumed) { player.clearMapFlag(); return }
         if (player.isDelayed) {
             player.clearMapFlag()
             return
         }
-        val dest = CoordGrid(message.x, message.z, player.level)
+        val restriction = restrictions.check(player, RestrictedAction.Walk)
+        if (restriction != null) {
+            player.clearMapFlag()
+            player.mes(restriction)
+            return
+        }
         val speed =
             when (message.keyCombination) {
                 1 -> player.ctrlMoveSpeed()
@@ -41,7 +57,7 @@ constructor(
         player.clearPendingAction(eventBus)
         player.resetFaceEntity()
         if (speed == MoveSpeed.Stationary) {
-            player.protectedTelejump(collision, dest)
+            player.protectedTelejump(contextFactory, collision, dest)
         } else {
             val request = RouteRequestCoord(dest, clientRequest = true)
             player.routeRequest = request

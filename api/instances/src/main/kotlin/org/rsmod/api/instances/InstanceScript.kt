@@ -51,10 +51,8 @@ public abstract class InstanceScript(
 
     protected open fun spawnOnFirstJoin(): Boolean = false
 
-    /** When true the instance is destroyed as soon as the last player leaves (no reclaim/rejoin). */
     protected open fun destroyWhenEmpty(): Boolean = false
 
-    /** Make the owner's rejoin of an empty instance run the enter prelude, as it does on creation. */
     protected open fun runsPreludeOnFreshRun(): Boolean = false
 
     /**
@@ -94,25 +92,14 @@ public abstract class InstanceScript(
         objectHooks.registerExit(key, action)
     }
 
-    /**
-     * Declarative enter cinematic played before [completeInstanceEntry] telejumps the player in.
-     * Skipped on rejoin by default; override with [completeInstanceEntry]'s [runPreludeWhen].
-     */
     protected fun onEnterTransition(transition: InstanceEnterTransition) {
         objectHooks.registerEnterTransition(key, transition)
     }
 
-    /**
-     * Fully custom enter prelude. Receives an [enter] callback that performs the telejump; call it
-     * whenever your cinematic is ready (e.g. after a fade while the screen is black).
-     */
     protected fun onEnterPrelude(action: InstanceEnterPrelude) {
         objectHooks.registerEnterPrelude(key, action)
     }
 
-    /**
-     * Applies a create/join result, running any registered enter prelude or transition first.
-     */
     protected suspend fun ProtectedAccess.completeInstanceEntry(
         result: InstanceManager.Result,
         runPreludeWhen: (InstanceManager.Result) -> Boolean = { runsEnterPrelude(player, it) },
@@ -130,7 +117,11 @@ public abstract class InstanceScript(
                     is InstanceManager.Result.Joined -> result.session
                     else -> return
                 }
-                val enter: InstanceEnterAction = {
+                val enter: InstanceEnterAction = enter@{
+                    if (manager.sessionForId(session.id) !== session) {
+                        mes("That instance no longer exists.")
+                        return@enter
+                    }
                     telejump(enterCoord, TeleportType.Exempt)
                     manager.finalizeEntry(player, session, worldClock.cycle)
                 }
@@ -244,6 +235,7 @@ public abstract class InstanceScript(
         val currentLabel = when (val a = session.access) {
             InstanceAccess.Private -> "Private"
             InstanceAccess.Friends -> "Friends"
+            InstanceAccess.Public -> "Public"
             is InstanceAccess.Code -> "Code (${a.value})"
         }
         mes("Current access: $currentLabel")
@@ -282,21 +274,7 @@ public abstract class InstanceScript(
     }
 
     protected suspend fun ProtectedAccess.enterPublicRoom(spec: InstanceSpec) {
-        if (manager.sessionForPlayer(player) != null) {
-            mes("You are already inside an instance.")
-            return
-        }
-        val existing = manager.sessionsForKey(key).firstOrNull { session ->
-            session.isServerOwned &&
-                !session.isFull() &&
-                session.state !is SessionState.Grace
-        }
-        val session = existing ?: manager.createServerOwned(key, spec, InstanceAccess.Friends, worldClock.cycle)
-        if (session == null) {
-            mes("No public room available, try again shortly.")
-            return
-        }
-        applyResult(manager.join(player, session, worldClock.cycle, code = null, forceAccess = true))
+        applyResult(manager.joinOrCreateServerOwned(player, key, spec, worldClock.cycle))
     }
 
     private suspend fun ProtectedAccess.showCreateDialogue(spec: InstanceSpec) {

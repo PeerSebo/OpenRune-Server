@@ -1,0 +1,23 @@
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_food_delay_until"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_potion_delay_until"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_combo_food_delay_until"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_combat_delay_until"
+scope = "Temp"
+transmit = "Never"

@@ -1,10 +1,8 @@
-## Arandar Mainland
 
 [[spawn]]
 npc = "npc.goblin_armed"
 coords = "0_37_52_26_6"
 
-## Arandar Prifddinas
 
 [[spawn]]
 npc = "npc.deadly_red_spider"
@@ -69,6 +67,3 @@ coords = "0_52_94_35_8"
 [[spawn]]
 npc = "npc.direwolf"
 coords = "0_52_94_7_7"
-
-## Arandar Prifddinas End
-

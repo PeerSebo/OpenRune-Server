@@ -1,0 +1,123 @@
+
+[[object]]
+id = "loc.icthalarins_tea_stall"
+inherit = "loc.icthalarins_tea_stall"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 5
+"param.skill_xp" = 160
+"param.respawn_time" = 4
+"param.next_loc_stage" = "loc.icthalarins_market"
+"param.thieving_guard_range" = 6
+
+[[object]]
+id = "loc.contact_tea_stall"
+inherit = "loc.contact_tea_stall"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 5
+"param.skill_xp" = 160
+"param.respawn_time" = 4
+"param.next_loc_stage" = "loc.contact_market"
+"param.thieving_guard_range" = 6
+
+[[object]]
+id = "loc.port_roberts_market_stall_veg"
+inherit = "loc.port_roberts_market_stall_veg"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 2
+"param.skill_xp" = 100
+"param.respawn_time" = 2
+"param.next_loc_stage" = "loc.port_roberts_market_stall"
+
+[[object]]
+id = "loc.port_roberts_market_stall_silk"
+inherit = "loc.port_roberts_market_stall_silk"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 20
+"param.skill_xp" = 240
+"param.respawn_time" = 8
+"param.next_loc_stage" = "loc.port_roberts_market_stall"
+
+[[object]]
+id = "loc.port_roberts_market_stall_fur"
+inherit = "loc.port_roberts_market_stall_fur"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 35
+"param.skill_xp" = 450
+"param.respawn_time" = 12
+"param.next_loc_stage" = "loc.port_roberts_market_stall"
+
+[[object]]
+id = "loc.port_roberts_market_stall_fish"
+inherit = "loc.port_roberts_market_stall_fish"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 42
+"param.skill_xp" = 420
+"param.respawn_time" = 12
+"param.next_loc_stage" = "loc.port_roberts_market_stall"
+
+[[object]]
+id = "loc.port_roberts_market_stall_silver"
+inherit = "loc.port_roberts_market_stall_silver"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 50
+"param.skill_xp" = 2050
+"param.respawn_time" = 32
+"param.next_loc_stage" = "loc.port_roberts_market_stall"
+
+[[object]]
+id = "loc.port_roberts_market_stall_spice"
+inherit = "loc.port_roberts_market_stall_spice"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 65
+"param.skill_xp" = 920
+"param.respawn_time" = 10
+"param.next_loc_stage" = "loc.port_roberts_market_stall"
+
+[[object]]
+id = "loc.port_roberts_market_stall_gems"
+inherit = "loc.port_roberts_market_stall_gems"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 75
+"param.skill_xp" = 4080
+"param.respawn_time" = 100
+"param.next_loc_stage" = "loc.port_roberts_market_stall"
+
+[[object]]
+id = "loc.port_roberts_market_stall_ore"
+inherit = "loc.port_roberts_market_stall_ore"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 82
+"param.skill_xp" = 3500
+"param.respawn_time" = 50
+"param.next_loc_stage" = "loc.port_roberts_market_stall"
+
+[[object]]
+id = "loc.port_roberts_market_stall_cball"
+inherit = "loc.port_roberts_market_stall_cball"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 87
+"param.skill_xp" = 2230
+"param.respawn_time" = 4
+"param.next_loc_stage" = "loc.port_roberts_market_stall"

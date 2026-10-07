@@ -1,6 +1,5 @@
 package org.rsmod.api.meta.konsist
 
-import com.lemonappdev.konsist.api.Konsist
 import com.lemonappdev.konsist.api.declaration.KoFunctionDeclaration
 import com.lemonappdev.konsist.api.declaration.KoParameterDeclaration
 import com.lemonappdev.konsist.api.declaration.KoPropertyDeclaration
@@ -17,25 +16,6 @@ import com.lemonappdev.konsist.core.exception.KoInternalException
 import kotlin.random.Random
 import org.junit.jupiter.api.Test
 
-/**
- * This test ensures that the framework exclusively uses its own [org.rsmod.api.random.GameRandom]
- * implementation rather than the standard library's [kotlin.random.Random] or [java.util.Random].
- *
- * The custom implementation is particularly useful in testing environments, where deterministic
- * random number generation is necessary for consistent and thorough testing.
- *
- * This test utilizes [Konsist] to scan the project and verify that the standard library's Random
- * classes are not improperly imported or used.
- * > If you need to bypass the tests for specific cases, you can suppress them by using the
- * > appropriate annotations:
- * - `@Suppress("konsist.avoid usage of stdlib Random in properties")`
- * - `@Suppress("konsist.avoid usage of stdlib Random in getter properties")`
- * - `@Suppress("konsist.avoid usage of stdlib Random in setter properties")`
- * - `@Suppress("konsist.avoid usage of stdlib Random in functions")`
- * - `@Suppress("konsist.avoid usage of stdlib Random in parameters")`
- *
- * @see [org.rsmod.api.random.GameRandom]
- */
 class StdRandomKonsistTest {
     @Test
     fun `avoid usage of stdlib Random imports`() {
@@ -124,10 +104,6 @@ private fun KoNonNullableTypeProvider.hasRandomType(): Boolean =
         hasTypeOf(java.util.Random::class) ||
         hasTypeOf(java.util.concurrent.ThreadLocalRandom::class)
 
-// NOTE: the following is a very naive approach to checking if declaration sites are using standard
-// `random` calls. This relies on the `GameRandom` functions to _not_ be named `random`. This is
-// required because even though Konsist is smart, it cannot perform high-level type inference.
-
 private val NAIVE_RANDOM_CALL_REGEX = Regex(""".+\.random\(\)""")
 private val NAIVE_RANDOM_RETURN_NO_BODY_REGEX =
     Regex("""[^\n]*=\s*(?:[A-Za-z_]\w*\.)*(?:Random|ThreadLocalRandom)\b""")
@@ -189,47 +165,28 @@ private fun KoFunctionDeclaration.containsRandomReturnStatement(): Boolean =
     }
 
 /**
- * Filters out parameters with a suspend block that cause an internal error in Konsist.
- *
- * Due to a bug in Konsist, parameters containing a suspend lambda throw an internal error when
- * their types are being resolved. This error is not handled by the Konsist back-end, resulting in
- * incorrect test outcomes. This function filters out such parameters to prevent tests from failing
- * due to this issue, though this is a workaround rather than an ideal solution.
- *
- * @return A list of [KoParameterDeclaration] objects that do not trigger the Konsist internal
- *   error.
+ * Konsist cannot parse suspend-function parameters; exclude them until the parser supports
+ * them.
  */
 private fun List<KoParameterDeclaration>.discardSuspendLambdas(): List<KoParameterDeclaration> {
     val valid = mutableListOf<KoParameterDeclaration>()
     for (parameter in this) {
         try {
-            parameter.hasTypeOf(Unit::class) // Causes a Konsist internal error.
+            parameter.hasTypeOf(Unit::class)
             valid += parameter
         } catch (_: KoInternalException) {
-            // Ignore the parameter causing the error
         }
     }
     return valid
 }
 
-/**
- * Filters out functions that return a suspend block that cause an internal error in Konsist.
- *
- * Due to a bug in Konsist, return types containing a suspend lambda throw an internal error when
- * their types are being resolved. This error is not handled by the Konsist back-end, resulting in
- * incorrect test outcomes. This function filters out such parameters to prevent tests from failing
- * due to this issue, though this is a workaround rather than an ideal solution.
- *
- * @return A list of [KoFunctionDeclaration] objects that do not trigger the Konsist internal error.
- */
 private fun List<KoFunctionDeclaration>.discardSuspendReturnBlocks(): List<KoFunctionDeclaration> {
     val valid = mutableListOf<KoFunctionDeclaration>()
     for (parameter in this) {
         try {
-            parameter.returnType?.isKotlinBasicType // Causes a Konsist internal error.
+            parameter.returnType?.isKotlinBasicType
             valid += parameter
         } catch (_: KoInternalException) {
-            // Ignore the parameter causing the error
         }
     }
     return valid

@@ -1,38 +1,30 @@
 package org.rsmod.content.skills.smithing.smelting
 
 import org.rsmod.api.stats.xpmod.XpModifiers
-import org.rsmod.api.table.smithing.SmithingBarsRow
-import org.rsmod.content.skills.smithing.util.SmithingBonuses.hasCoalSmeltBoost
+import org.rsmod.content.skills.smithing.table.SmithingBar
 import org.rsmod.game.entity.Player
-import org.rsmod.game.inv.Inventory
 
 object SmithingSmeltXp {
     private const val GOLD_BAR = "obj.gold_bar"
     private const val BLURITE_BAR = "obj.blurite_bar"
 
+    // Apply catalyst XP per bar; a double-smelt can mix boosted and unboosted bars.
     fun resolve(
         player: Player,
-        inventory: Inventory,
-        bar: SmithingBarsRow,
+        bar: SmithingBar,
         isSuperHeat: Boolean,
         xpMods: XpModifiers,
-        regularFurnace: Boolean = true,
     ): Double {
-        val alternate = bar.smithxpalternate
-        val baseXp = when {
-            alternate == null -> bar.xp
-            bar.output.internalName == BLURITE_BAR && isSuperHeat -> alternate
-            bar.output.internalName == GOLD_BAR && player.hasGoldsmithSmeltBonus() -> alternate
-            else -> bar.xp
-        }
+        val alternate = bar.smeltXpAlternate
+        val baseXp =
+            when {
+                alternate == null -> bar.smeltXp
+                bar.output.internalName == BLURITE_BAR && isSuperHeat -> alternate
+                bar.output.internalName == GOLD_BAR && player.hasGoldsmithSmeltBonus() -> alternate
+                else -> bar.smeltXp
+            }
 
-        var xp = baseXp.toDouble() * xpMods.get(player, "stat.smithing")
-
-        if (hasCoalSmeltBoost(player, inventory, bar, regularFurnace)) {
-            xp *= 2
-        }
-
-        return xp
+        return baseXp * xpMods.get(player, "stat.smithing")
     }
 
     private fun Player.hasGoldsmithSmeltBonus(): Boolean =

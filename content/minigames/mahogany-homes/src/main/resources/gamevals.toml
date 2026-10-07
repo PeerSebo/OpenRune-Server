@@ -1,0 +1,27 @@
+
+[gamevals.varbit]
+mahogany_homes_contracts_completed = 65446
+mahogany_homes_layout = 65447
+mahogany_homes_client = 65448
+mahogany_homes_tier = 65449
+mahogany_homes_points = 65450
+
+[gamevals.varp]
+# Custom varps may exceed 65535; do not reuse the native 65502-65535 band.
+mahogany_homes_points = 65618
+mahogany_homes_contracts_completed = 65619
+# Saved layout: tier bits 0-1, house bits 2-5, reserved layout bits 6-9.
+mahogany_homes_contract_state = 65620
+
+[gamevals.currency]
+carpenter_points = 65533
+
+[gamevals.queue]
+mahogany_homes_build = 173
+mahogany_homes_repair = 174
+
+[gamevals.dbrow]
+shop_currency_carpenter_points = 65539
+
+[gamevals.inv]
+mahogany_homes_shop = 1029

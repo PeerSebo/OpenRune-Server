@@ -52,8 +52,6 @@ class ProtectedAccessPlayerMoveTest {
                 assertModalNotOpen(interfaces.chat_left)
             }
 
-            // This portion happens while player does not have LOS to npc, which means the ap
-            // script has not yet been invoked.
             advance(ticks = 1)
             assertExpectedPath(start.translate(0, -1))
 

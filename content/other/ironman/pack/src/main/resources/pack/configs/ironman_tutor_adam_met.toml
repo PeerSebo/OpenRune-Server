@@ -1,0 +1,11 @@
+[[varp]]
+id = "varp.ironman_tutor_adam_met"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.ironman_tutor_adam_met_migrated"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"

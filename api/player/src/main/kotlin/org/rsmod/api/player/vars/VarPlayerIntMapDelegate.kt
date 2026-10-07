@@ -4,6 +4,7 @@ import dev.openrune.ServerCacheManager
 import dev.openrune.definition.type.VarBitType
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
+import dev.openrune.types.varp.VarpLifetime
 import dev.openrune.types.varp.VarpServerType
 import dev.openrune.types.varp.baseVar
 import dev.openrune.types.varp.bits
@@ -26,21 +27,22 @@ public class VarPlayerIntMapDelegate(
     }
 
     public operator fun set(internal: String, value: Int) {
-        if(internal.startsWith("varp.")) {
-            val varp = ServerCacheManager.getVarp(internal.asRSCM(RSCMType.VARP))?: return
+        if (internal.startsWith("varp.")) {
+            val varp = ServerCacheManager.getVarp(internal.asRSCM(RSCMType.VARP)) ?: return
             set(varp, value)
         } else {
-            val varbit = ServerCacheManager.getVarbit(internal.asRSCM(RSCMType.VARBIT))?: return
+            val varbit = ServerCacheManager.getVarbit(internal.asRSCM(RSCMType.VARBIT)) ?: return
             set(varbit, value)
         }
     }
 
     public operator fun set(varp: VarpServerType, value: Int) {
+        val existed = vars.backing.containsKey(varp.id)
         val previous = vars.backing[varp.id]
 
         vars.backing[varp.id] = value
 
-        if (engineLoggedIn && previous != value) {
+        if (engineLoggedIn && varp.scope == VarpLifetime.Perm && (!existed || previous != value)) {
             PlayerPersistenceHints.notify(player)
         }
 

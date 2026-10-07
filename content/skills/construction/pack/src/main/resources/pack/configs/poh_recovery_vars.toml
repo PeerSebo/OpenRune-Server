@@ -1,0 +1,5 @@
+[[varp]]
+id = "varp.poh_login_exit_coord"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"

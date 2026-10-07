@@ -1,0 +1,28 @@
+[[varn]]
+id = "varn.leviathan_volley_stage"
+[[varn]]
+id = "varn.leviathan_volleys"
+[[varn]]
+id = "varn.leviathan_stuns"
+[[varn]]
+id = "varn.leviathan_stunned"
+[[varn]]
+id = "varn.leviathan_in_special"
+[[varn]]
+id = "varn.leviathan_next_special"
+[[varn]]
+id = "varn.leviathan_stun_bearing"
+[[varn]]
+id = "varn.leviathan_special_angle"
+[[varn]]
+id = "varn.leviathan_absent_ticks"
+[[varn]]
+id = "varn.leviathan_ended"
+[[varn]]
+id = "varn.leviathan_pathfinder_corner"
+
+[[varp]]
+isServerOnly = true
+id = "varp.leviathan_pending_spawn"
+scope = "Temp"
+transmit = "Never"

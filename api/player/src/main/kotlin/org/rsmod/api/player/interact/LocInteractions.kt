@@ -62,15 +62,31 @@ constructor(private val boundValidator: BoundValidator, private val eventBus: Ev
         type: ObjectServerType = ServerCacheManager.getObject(loc.id)!!,
         base: BoundLocInfo = loc,
     ): OpEvent? {
-        val multiLoc = multiLoc(loc, type, player.vars)
-        if (multiLoc != null) {
-            val multiLocType = ServerCacheManager.getObject(multiLoc.id)!!
-            val multiLocTrigger = opTrigger(player, multiLoc, op, multiLocType, base)
-            if (multiLocTrigger != null) {
-                return multiLocTrigger
-            }
+        val variants = locVariants(player, loc, type)
+        // A generic handler for the visible leaf must not swallow a script registered on its
+        // parent. Sailing gangplanks and helms deliberately bind their parent ids because the
+        // same visible leaf is shared by many docks or fitted parts.
+        for ((variant, variantType) in variants.asReversed()) {
+            val explicit = explicitOpTrigger(base, variant, variantType, op)
+            if (explicit != null) return explicit
         }
 
+        for ((variant, variantType) in variants.asReversed()) {
+            val unimplEvent = toUnimplementedOp(base, variant, variantType, op)
+            if (eventBus.contains(unimplEvent::class.java, unimplEvent.id)) return unimplEvent
+        }
+
+        val (visible, visibleType) = variants.last()
+        val defaultEvent = toDefaultOp(base, visible, visibleType, op)
+        return defaultEvent.takeIf { eventBus.contains(it::class.java, it.id) }
+    }
+
+    private fun explicitOpTrigger(
+        base: BoundLocInfo,
+        loc: BoundLocInfo,
+        type: ObjectServerType,
+        op: InteractionOp,
+    ): OpEvent? {
         val typeEvent = toOp(base, loc, type, op)
         if (eventBus.contains(typeEvent::class.java, typeEvent.id)) {
             return typeEvent
@@ -88,15 +104,6 @@ constructor(private val boundValidator: BoundValidator, private val eventBus: Ev
             }
         }
 
-        val unimplEvent = toUnimplementedOp(base, loc, type, op)
-        if (eventBus.contains(unimplEvent::class.java, unimplEvent.id)) {
-            return unimplEvent
-        }
-
-        val defaultEvent = toDefaultOp(base, loc, type, op)
-        if (eventBus.contains(defaultEvent::class.java, defaultEvent.id)) {
-            return defaultEvent
-        }
         return null
     }
 
@@ -114,15 +121,27 @@ constructor(private val boundValidator: BoundValidator, private val eventBus: Ev
         type: ObjectServerType = ServerCacheManager.getObject(loc.id)!!,
         base: BoundLocInfo = loc,
     ): ApEvent? {
-        val multiLoc = multiLoc(loc, type, player.vars)
-        if (multiLoc != null) {
-            val multiLocType = ServerCacheManager.getObject(multiLoc.id)!!
-            val multiLocTrigger = apTrigger(player, multiLoc, op, multiLocType, base)
-            if (multiLocTrigger != null) {
-                return multiLocTrigger
-            }
+        val variants = locVariants(player, loc, type)
+        for ((variant, variantType) in variants.asReversed()) {
+            val explicit = explicitApTrigger(base, variant, variantType, op)
+            if (explicit != null) return explicit
         }
 
+        // Unlike operation defaults, approach defaults are keyed by loc type. Keep both leaf
+        // and parent fallbacks available, after every explicit approach has been considered.
+        for ((variant, variantType) in variants.asReversed()) {
+            val defaultEvent = toDefaultAp(base, variant, variantType, op)
+            if (eventBus.contains(defaultEvent::class.java, defaultEvent.id)) return defaultEvent
+        }
+        return null
+    }
+
+    private fun explicitApTrigger(
+        base: BoundLocInfo,
+        loc: BoundLocInfo,
+        type: ObjectServerType,
+        op: InteractionOp,
+    ): ApEvent? {
         val typeEvent = toAp(base, loc, type, op)
         if (eventBus.contains(typeEvent::class.java, typeEvent.id)) {
             return typeEvent
@@ -138,12 +157,23 @@ constructor(private val boundValidator: BoundValidator, private val eventBus: Ev
             return categoryEvent
         }
 
-        val defaultEvent = toDefaultAp(base, loc, type, op)
-        if (eventBus.contains(defaultEvent::class.java, defaultEvent.id)) {
-            return defaultEvent
-        }
-
         return null
+    }
+
+    private fun locVariants(
+        player: Player,
+        loc: BoundLocInfo,
+        type: ObjectServerType,
+    ): List<Pair<BoundLocInfo, ObjectServerType>> = buildList {
+        var current = loc
+        var currentType = type
+        while (true) {
+            add(current to currentType)
+            val next = multiLoc(current, currentType, player.vars) ?: break
+            if (any { (variant, _) -> variant.id == next.id }) break
+            current = next
+            currentType = ServerCacheManager.getObject(next.id)!!
+        }
     }
 
     public fun hasApTrigger(
@@ -168,7 +198,7 @@ constructor(private val boundValidator: BoundValidator, private val eventBus: Ev
             } else {
                 type.multiDefault
             }
-        return if (!ServerCacheManager.getObjects().containsKey(multiLoc)) {
+        return if (ServerCacheManager.getObject(multiLoc) == null) {
             null
         } else {
             loc.copy(entity = LocEntity(multiLoc, loc.shapeId, loc.angleId))

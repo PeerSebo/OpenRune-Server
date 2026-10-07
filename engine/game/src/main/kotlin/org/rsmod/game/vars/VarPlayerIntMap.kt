@@ -12,22 +12,13 @@ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap
 import org.rsmod.utils.bits.bitMask
 import org.rsmod.utils.bits.getBits
 
-/**
- * A map for storing integer-based player variables (varps and varbits).
- *
- * This class **does not provide `set` operators** to prevent direct modifications. Player varps
- * must be kept in sync with the client immediately when changed.
- *
- * Since the networking layer should **not** be mixed with the model layer, this map relies on
- * separate systems to handle synchronization. These systems should ensure that any changes here are
- * properly transmitted to the client as needed.
- */
+/** Use synchronized varp/varbit setters; direct mutation would leave the client stale. */
 @JvmInline
 public value class VarPlayerIntMap(public val backing: Int2IntMap = Int2IntOpenHashMap()) {
 
     public operator fun get(key: String): Int {
         if (key.startsWith("varp")) {
-            val varp = ServerCacheManager.getVarp(key.asRSCM(RSCMType.VARP))?: error("Unable to find varp: $key")
+            val varp = ServerCacheManager.getVarp(key.asRSCM(RSCMType.VARP)) ?: error("Unable to find varp: $key")
             return get(varp)
         } else {
             val varbit = ServerCacheManager.getVarbit(key.asRSCM(RSCMType.VARBIT)) ?: error("Unable to find varbit: $key")

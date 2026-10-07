@@ -12,15 +12,6 @@ import org.rsmod.api.testing.GameTestState
 import org.rsmod.events.EventBus
 
 class IfCloseTest {
-    /**
-     * Ensures that calling [ifClose] properly cancels the player's active script when specific
-     * input dialogues (e.g., `countDialog`) are open.
-     *
-     * These dialogue boxes are not standard modals or overlays but are built using cs2. Unlike
-     * modals, they cannot be verified in the same way as [ResumePauseButton]. As a result,
-     * [ifClose] is responsible for cancelling these cs2-built dialogues and the player's active
-     * coroutine (active script).
-     */
     @Test
     fun GameTestState.`call during dialog input script`() = runGameTest {
         var input: Int? = null
@@ -40,10 +31,6 @@ class IfCloseTest {
         assertNull(input)
     }
 
-    /**
-     * Ensures that calling [ifClose] properly cancels the player's active script when specific
-     * dialogues (e.g., `chatNpc`) are open.
-     */
     @Test
     fun GameTestState.`call during standard dialog script`() = runGameTest {
         var unreachable = true

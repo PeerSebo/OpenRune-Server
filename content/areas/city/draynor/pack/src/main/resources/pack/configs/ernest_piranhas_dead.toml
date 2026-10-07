@@ -1,0 +1,11 @@
+[[varp]]
+id = "varp.ernest_piranhas_dead"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.ernest_piranhas_dead_migrated"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"

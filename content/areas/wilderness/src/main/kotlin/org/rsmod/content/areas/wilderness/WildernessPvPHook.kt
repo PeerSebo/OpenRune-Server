@@ -1,18 +1,18 @@
 package org.rsmod.content.areas.wilderness
 
+import jakarta.inject.Inject
+import kotlin.math.abs
 import org.rsmod.api.area.checker.AreaChecker
-import org.rsmod.api.death.LAST_PVP_HIT_TICK_ATTR
+import org.rsmod.api.area.checker.wildernessLevel
 import org.rsmod.api.death.PvPAttackValidateHook
 import org.rsmod.api.death.PvPAttackValidateResult
 import org.rsmod.api.death.PvPPlayerHitHook
 import org.rsmod.api.death.PvPSkullHook
+import org.rsmod.api.death.recordPvpHit
 import org.rsmod.api.player.isInPvpCombat
 import org.rsmod.api.player.subjectPronoun
 import org.rsmod.content.areas.wilderness.WildernessAreaScript.Companion.canPvp
 import org.rsmod.game.entity.Player
-import org.rsmod.api.area.checker.wildernessLevel
-import jakarta.inject.Inject
-import kotlin.math.abs
 
 public class WildernessPvPHook @Inject constructor(private val areaChecker: AreaChecker) :
     PvPAttackValidateHook, PvPSkullHook, PvPPlayerHitHook {
@@ -73,7 +73,7 @@ public class WildernessPvPHook @Inject constructor(private val areaChecker: Area
         if (wouldSkull(attacker, target)) {
             attacker.applySkull(SkullSource.COMBAT)
         } else if (attacker.isSkulled()) {
-            attacker.attr[SKULL_SOURCE] = SkullSource.COMBAT
+            attacker.wildernessSkullSource = SkullSource.COMBAT
             attacker.softTimer("timer.skull_timer", SkullSource.COMBAT.timerTicks)
             attacker.refreshSkullIcon()
         }
@@ -83,7 +83,7 @@ public class WildernessPvPHook @Inject constructor(private val areaChecker: Area
         if (!attacker.canPvp()) {
             return
         }
-        target.attr[LAST_PVP_HIT_TICK_ATTR] = target.currentMapClock
+        target.recordPvpHit()
 
         if (!areaChecker.inArea("area.multiway", attacker.coords)) {
             return
@@ -98,7 +98,7 @@ public class WildernessPvPHook @Inject constructor(private val areaChecker: Area
         if (!attacker.isSkulled()) {
             attacker.applySkull(SkullSource.COMBAT)
         } else {
-            attacker.attr[SKULL_SOURCE] = SkullSource.COMBAT
+            attacker.wildernessSkullSource = SkullSource.COMBAT
             attacker.softTimer("timer.skull_timer", SkullSource.COMBAT.timerTicks)
             attacker.refreshSkullIcon()
         }
@@ -108,7 +108,6 @@ public class WildernessPvPHook @Inject constructor(private val areaChecker: Area
         val targetPacked = target.uid.packed
         val playerPacked = player.uid.packed
 
-        // Retaliating against a player who already attacked you does not skull.
         if (player.vars["varp.pk_predator1"] == targetPacked) return false
         if (player.vars["varp.pk_predator2"] == targetPacked) return false
         if (player.vars["varp.pk_predator3"] == targetPacked) return false
@@ -117,7 +116,6 @@ public class WildernessPvPHook @Inject constructor(private val areaChecker: Area
             return true
         }
 
-        // Continuing an active fight with this target does not apply a fresh skull.
         if (player.vars["varp.pk_prey1"] == targetPacked) return false
         if (player.vars["varp.pk_prey2"] == targetPacked) return false
         if (target.vars["varp.pk_predator1"] == playerPacked) return false

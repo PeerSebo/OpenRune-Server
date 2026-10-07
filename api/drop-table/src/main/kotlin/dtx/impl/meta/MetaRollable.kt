@@ -1,8 +1,8 @@
 package dtx.impl.meta
 
 import dtx.core.ArgMap
-import dtx.core.Rollable
 import dtx.core.RollResult
+import dtx.core.Rollable
 import dtx.table.Table
 
 public interface MetaEntryFilter<T, R> {
@@ -15,7 +15,7 @@ public interface MetaEntryFilter<T, R> {
 internal class MetaEntryFilterImpl<T, R>(
     val filterFunc: (String) -> Boolean,
     val modifyFunc: (MetaRollable<T, R>) -> Unit
-): MetaEntryFilter<T, R> {
+) : MetaEntryFilter<T, R> {
 
     override fun filterEntry(modifier: String): Boolean {
         return filterFunc(modifier)
@@ -25,7 +25,6 @@ internal class MetaEntryFilterImpl<T, R>(
         return modifyFunc(entry)
     }
 }
-
 
 public class MetaEntryFilterBuilder<T, R> {
 
@@ -40,7 +39,6 @@ public class MetaEntryFilterBuilder<T, R> {
         return this
     }
 
-
     public fun modify(func: (MetaRollable<T, R>) -> Unit): MetaEntryFilterBuilder<T, R> {
 
         modifyFunc = func
@@ -48,14 +46,12 @@ public class MetaEntryFilterBuilder<T, R> {
         return this
     }
 
-
     public fun build(): MetaEntryFilter<T, R> {
         return MetaEntryFilterImpl(filterFunc) { modifyFunc(it) }
     }
 }
 
-
-public interface MetaRollable<T, R>: Rollable<T, R> {
+public interface MetaRollable<T, R> : Rollable<T, R> {
 
     public val rollable: Rollable<T, R>
 
@@ -107,7 +103,7 @@ public interface MetaRollable<T, R>: Rollable<T, R> {
     }
 }
 
-public interface MetaTable<T, R>: Table<T, R> {
+public interface MetaTable<T, R> : Table<T, R> {
 
     override val tableEntries: Collection<MetaRollable<T, R>>
 

@@ -33,6 +33,22 @@ public class ZoneUpdateMap {
         updates += prot
     }
 
+    public fun locMerge(
+        loc: LocInfo,
+        playerIndex: Int,
+        start: Int,
+        end: Int,
+        minX: Int,
+        minZ: Int,
+        maxX: Int,
+        maxZ: Int,
+    ) {
+        val updates = loc.coords.getOrPutUpdateList()
+        val prot =
+            ZoneUpdateTransformer.toLocMerge(loc, playerIndex, start, end, minX, minZ, maxX, maxZ)
+        updates += prot
+    }
+
     public fun objAdd(obj: Obj) {
         val updates = obj.coords.getOrPutUpdateList()
         val prot = obj.resolveObjAddProt()
@@ -82,6 +98,37 @@ public class ZoneUpdateMap {
     ) {
         val updates = source.getOrPutUpdateList()
         val prot = ZoneUpdateTransformer.toSoundAreaProt(source, synth, delay, loops, radius, size)
+        updates += prot
+    }
+
+    /**
+     * Exclude packed PlayerUids already receiving the player-local synth.
+     * An empty exclusion set keeps shared zone encoding; filtering costs one encoding per observer.
+     */
+    public fun soundAreaExcluding(
+        source: CoordGrid,
+        synth: Int,
+        delay: Int,
+        loops: Int,
+        radius: Int,
+        size: Int,
+        excludedUids: IntArray,
+    ) {
+        if (excludedUids.isEmpty()) {
+            soundArea(source, synth, delay, loops, radius, size)
+            return
+        }
+        val updates = source.getOrPutUpdateList()
+        val prot =
+            ZoneUpdateTransformer.toSoundAreaExcludedProt(
+                source,
+                synth,
+                delay,
+                loops,
+                radius,
+                size,
+                excludedUids,
+            )
         updates += prot
     }
 

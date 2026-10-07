@@ -44,8 +44,6 @@ public object StandardGpCostCalculations {
         )
     }
 
-    /* Logic for buying objs from shop */
-
     public fun calculateShopSellSingleValue(
         initialStock: Int,
         currentStock: Int,
@@ -87,7 +85,7 @@ public object StandardGpCostCalculations {
         var totalValue = 0
         var exchangeCount = 0
 
-        while (exchangeCount < requestedCount && totalValue + currentCost <= availableCurrency) {
+        while (exchangeCount < requestedCount && totalValue.toLong() + currentCost <= availableCurrency) {
             totalValue += currentCost
             exchangeCount++
             currentCost =
@@ -106,8 +104,6 @@ public object StandardGpCostCalculations {
             firstObjPrice = firstObjPrice,
         )
     }
-
-    /* Logic for selling objs to shop */
 
     public fun calculateShopBuySingleValue(
         initialStock: Int,
@@ -150,7 +146,7 @@ public object StandardGpCostCalculations {
         var totalValue = 0
         var exchangeCount = 0
 
-        while (exchangeCount < requestedCount && totalValue + currentPrice <= currencyCap) {
+        while (exchangeCount < requestedCount && totalValue.toLong() + currentPrice <= currencyCap) {
             totalValue += currentPrice
             exchangeCount++
             currentPrice =

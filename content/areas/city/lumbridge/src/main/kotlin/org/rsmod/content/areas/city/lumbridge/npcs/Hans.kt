@@ -3,6 +3,8 @@ package org.rsmod.content.areas.city.lumbridge.npcs
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import org.rsmod.api.player.dialogue.Dialogue
+import org.rsmod.api.player.events.PlayerAction
+import org.rsmod.api.player.events.PlayerActionCompleteEvent
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.script.onOpNpc1
 import org.rsmod.api.script.onOpNpc3
@@ -85,6 +87,7 @@ class Hans : PluginScript() {
                     "since you arrived $accountAgeDays days ago."
             }
 
+        access.publish(PlayerActionCompleteEvent(player, PlayerAction.LearnAge, "npc.hans"))
         chatNpc(happy, text)
     }
 

@@ -27,7 +27,6 @@ class NpcQueueProcessorTest {
             check(npc.hitpoints == 0)
             assertFalse(npc.isDelayed)
 
-            // The death sequence will be invoked during this cycle; the npc should be delayed.
             advance(ticks = 1)
             assertTrue(npc.isDelayed)
 
@@ -46,18 +45,12 @@ class NpcQueueProcessorTest {
             npc.queueHit(player, delay = 1, HitType.Melee, damage = 7)
             npc.queueHit(player, delay = 1, HitType.Melee, damage = 5)
 
-            // On the next cycle (advance by 1), both hits (7 and 5 damage) are processed.
-            // The 7 damage hit reduces the npc's hitpoints to 0 and queues the death sequence.
-            // Because the death queue is added at the end of the list, and the queue that submitted
-            // it was not the last in the list, the death queue ends up being processed in the same
-            // cycle - after the remaining queues - instead of waiting for the next cycle.
-            // This is the "speed-up" bug/quirk, where (death) queues are triggered sooner than they
-            // normally would.
+            // A death queue appended during traversal can fire this cycle after the remaining
+            // queues.
             advance(ticks = 1)
             check(npc.hitpoints == 0)
             check(!npc.hasMovedPreviousCycle)
 
-            // If death queue script was triggered, the npc should now be delayed.
             assertTrue(npc.isDelayed)
             assertEquals(NpcMode.None, npc.mode)
         }

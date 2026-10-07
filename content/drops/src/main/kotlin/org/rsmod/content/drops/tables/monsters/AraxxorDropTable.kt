@@ -2,16 +2,14 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.api.droptable.nothing
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.content.drops.tables.shared.SharedDropTables
-import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.content.drops.brimstoneKeyRoll
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.api.droptable.nothing
-import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.content.drops.tables.shared.SharedDropTables
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -73,11 +71,11 @@ public val araxxorDropTable: RSDropTable<Player, DropRollItem> = RSDropTable(
     },
     tertiaries = rsPlayerTertiaryTable {
         1 outOf 1 weight "obj.araxxor_pet_morph" count 1 condition { player ->
-            // Drops Need Manual: Guaranteed reward for defeating Araxxor in under 1:15, provided that the player does not already have one in their possession, or has not already used one on Nid.
+            // TODO: Guaranteed reward for defeating Araxxor in under 1:15, provided that the player does not already have one in their possession, or has not already used one on Nid.
              true
         }
         onBuilder { brimstoneKeyRoll(konarTaskBonus = true) }
-        // Drops Need Manual (rate): The pet drop rate is doubled if the player chooses to destroy Araxxor's corpse instead of harvesting it.
+        // TODO: The pet drop rate is doubled if the player chooses to destroy Araxxor's corpse instead of harvesting it.
         1 outOf 3000 weight "obj.araxxorpet" count 1
         1 outOf 47 weight "obj.trail_elite_emote_exp1" count 1 transformObj { player ->
              player.clueScrollTransformObj("obj.trail_elite_emote_exp1")

@@ -1,0 +1,55 @@
+[gamevals.dbtable]
+tears_rules = 62840
+tears_walls = 62841
+tears_skills = 62842
+
+[gamevals.dbrow]
+tears_rules = 62849
+tears_wall_0 = 62850
+tears_wall_1 = 62851
+tears_wall_2 = 62852
+tears_wall_3 = 62853
+tears_wall_4 = 62854
+tears_wall_5 = 62855
+tears_wall_6 = 62856
+tears_wall_7 = 62857
+tears_wall_8 = 62858
+tears_skill_attack = 62859
+tears_skill_strength = 62860
+tears_skill_ranged = 62861
+tears_skill_magic = 62862
+tears_skill_defence = 62863
+tears_skill_hitpoints = 62864
+tears_skill_prayer = 62865
+tears_skill_agility = 62866
+tears_skill_herblore = 62867
+tears_skill_thieving = 62868
+tears_skill_crafting = 62869
+tears_skill_runecrafting = 62870
+tears_skill_mining = 62871
+tears_skill_smithing = 62872
+tears_skill_fishing = 62873
+tears_skill_cooking = 62874
+tears_skill_firemaking = 62875
+tears_skill_woodcutting = 62876
+tears_skill_fletching = 62877
+tears_skill_slayer = 62878
+tears_skill_farming = 62879
+tears_skill_construction = 62880
+tears_skill_hunter = 62881
+tears_skill_sailing = 62882
+
+[gamevals.varp]
+tears_session_phase = 62840
+tears_session_start = 62841
+tears_session_deadline = 62842
+tears_session_wall = 62843
+tears_has_played = 62844
+tears_last_day = 62845
+tears_last_qp = 62846
+tears_last_xp_low = 62847
+tears_last_xp_high = 62848
+tears_notified_day = 62849
+tears_previous_run = 62850
+tears_logout_after_drink = 62851
+tears_route_step = 62852

@@ -58,7 +58,6 @@ class PlayerZoneUpdateProcessorTest {
         withPlayer(startCoords) {
             val captured = attachClientCapture()
 
-            // Set player observer uuid to view `obj`.
             val observer = 1L
             uuid = observer
             observerUUID = observer
@@ -69,9 +68,7 @@ class PlayerZoneUpdateProcessorTest {
             val zoneRange = -zoneRadius..zoneRadius
 
             fun process() {
-                // Clear zone updates from previous cycle.
                 zoneProcessor.clearPendingZoneUpdates()
-                // Clear zone prots from previous cycle.
                 client.flush()
                 captured.clearOutgoing()
                 buildProcessor.process(this)
@@ -79,11 +76,15 @@ class PlayerZoneUpdateProcessorTest {
             }
 
             val startZone = ZoneKey.from(startCoords)
+            // Zone updates cover every level of the visible zone columns, not just the player's.
             val expectedZoneKeys =
-                zoneRange.flatMap { x -> zoneRange.map { z -> startZone.translate(x, z).packed } }
+                zoneRange.flatMap { x ->
+                    zoneRange.flatMap { z ->
+                        val zone = startZone.translate(x, z)
+                        (0 until 4).map { level -> ZoneKey(zone.x, zone.z, level).packed }
+                    }
+                }
 
-            // Set a static map loc in loc registry; this loc should not be sent as a zone
-            // update, or so we will verify.
             val mapLoc =
                 LocInfo(
                     layer = 3,
@@ -97,7 +98,6 @@ class PlayerZoneUpdateProcessorTest {
                 locZones.mapLocs[zoneKey, locZoneKey] = mapLoc.entity
             }
 
-            // Spawn a loc in loc registry to be sent as a zone update.
             val loc =
                 LocInfo(
                     layer = 0,
@@ -106,7 +106,6 @@ class PlayerZoneUpdateProcessorTest {
                 )
             locRegistry.add(loc)
 
-            // Spawn an obj in obj registry to be sent as a zone update.
             val obj =
                 Obj(
                     coords = startCoords.translate(1, 2),
@@ -118,14 +117,11 @@ class PlayerZoneUpdateProcessorTest {
 
             process()
 
-            // `processNewVisibleZones`
-            assertEquals(49, captured.countOf<UpdateZoneFullFollows>())
+            assertEquals(49 * 4, captured.countOf<UpdateZoneFullFollows>())
 
-            // `refreshVisibleZoneKeys`
             assertEquals(expectedZoneKeys.toSet(), visibleZoneKeys.toSet())
             assertEquals(startZone, lastProcessedZone)
 
-            // `processVisibleZoneUpdates`
             assertEquals(2, captured.count { it is ZoneProt })
             assertEquals(1, captured.countOf<LocAddChangeV2>())
             assertEquals(standardLoc, captured.singleMapOf(LocAddChangeV2::id))
@@ -134,13 +130,10 @@ class PlayerZoneUpdateProcessorTest {
 
             process()
 
-            // Should no longer send update follows.
             assertEquals(0, captured.countOf<UpdateZoneFullFollows>())
 
-            // Visible zones should have stayed the same.
             assertEquals(expectedZoneKeys.toSet(), visibleZoneKeys.toSet())
 
-            // No zone update should have been sent.
             assertEquals(0, captured.count())
         }
     }
@@ -183,11 +176,9 @@ class PlayerZoneUpdateProcessorTest {
             client2.clearOutgoing()
         }
 
-        // Skip the initial set-up phase for new build area.
         process()
         endCycle()
 
-        // Add a new obj to be sent as an `ObjAdd` update.
         val obj =
             Obj(
                 coords = startCoords.translate(1, 0),
@@ -200,19 +191,15 @@ class PlayerZoneUpdateProcessorTest {
         process()
         check(zoneUpdateMap.updatedZones.size == 1)
 
-        // Obj should be sent to `client2`.
         assertEquals(1, client2.count { it is ZoneProt })
         assertEquals(1, client2.countOf<ObjAdd>())
         assertEquals(stackableObj, client2.singleMapOf(ObjAdd::id))
 
-        // `client1` should be oblivious to the Obj.
         assertEquals(0, client1.count { it is ZoneProt })
         assertEquals(0, client1.count())
 
         endCycle()
 
-        // Add the same type of obj on top of the existing stack, this should trigger an
-        // `ObjCount`.
         val countObj =
             Obj(
                 coords = startCoords.translate(1, 0),
@@ -224,32 +211,27 @@ class PlayerZoneUpdateProcessorTest {
 
         process()
 
-        // Obj count should be updated for `client2`.
         assertEquals(1, client2.count { it is ZoneProt })
         assertEquals(1, client2.countOf<ObjCount>())
         assertEquals(stackableObj, client2.singleMapOf(ObjCount::id))
         assertEquals(1, client2.singleMapOf(ObjCount::oldQuantity))
         assertEquals(5, client2.singleMapOf(ObjCount::newQuantity))
 
-        // `client1` should be oblivious to the Obj.
         assertEquals(0, client1.count { it is ZoneProt })
         assertEquals(0, client1.count())
 
         endCycle()
 
-        // Finally, delete the obj.
         val deleteObj = objRegistry.findAll(obj.coords).single()
         objRegistry.del(deleteObj)
 
         process()
 
-        // Obj should be deleted for `client2`.
         assertEquals(1, client2.count { it is ZoneProt })
         assertEquals(1, client2.countOf<ObjDel>())
         assertEquals(stackableObj, client2.singleMapOf(ObjDel::id))
         assertEquals(5, client2.singleMapOf(ObjDel::quantity))
 
-        // `client1` should be oblivious to the Obj.
         assertEquals(0, client1.count { it is ZoneProt })
         assertEquals(0, client1.count())
 

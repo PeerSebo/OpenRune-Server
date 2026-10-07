@@ -4,29 +4,17 @@ import org.rsmod.map.CoordGrid
 
 public class Realm(public val name: String) {
     /**
-     * Gets the current [RealmConfig] snapshot associated with this realm.
-     *
-     * **Important Note**: This value **can** and **will** be mutated through the application's
-     * lifetime. It is imperative to realize this and avoid caching any values from the config, or
-     * to take this fact into account if you do so.
-     *
-     * During the application's initial startup, this value will be inaccessible (to prevent misuse)
-     * until [updateConfig] is called. Callers should only expect this value to be available _after_
-     * the application services have started up.
-     *
-     * @throws IllegalStateException if [updateConfig] has not been called yet.
+     * Treat RealmConfig as a replaceable snapshot; retain a local reference when an operation
+     * needs a consistent view.
      */
     public val config: RealmConfig
         get() = getConfigOrThrow()
 
+    public val isConfigInitialized: Boolean
+        get() = ::mutableConfig.isInitialized
+
     @Volatile private lateinit var mutableConfig: RealmConfig
 
-    /**
-     * Updates the current [RealmConfig] associated with this realm.
-     *
-     * This method must only be called from the game thread to avoid race conditions with concurrent
-     * readers.
-     */
     public fun updateConfig(config: RealmConfig) {
         this.mutableConfig = config
     }

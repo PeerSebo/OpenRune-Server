@@ -2,13 +2,9 @@
 obj = "obj.airrune"
 coords = "0_49_50_14_47"
 
-[[spawn]]
-obj = "obj.bronze_axe"
-coords = "0_49_51_49_13"
+# The stump supplies the bronze axe through its Take option; do not duplicate it as ground loot.
 
-[[spawn]]
-obj = "obj.bronze_axe"
-coords = "0_50_51_32_32"
+
 
 [[spawn]]
 obj = "obj.bucket_empty"
@@ -22,9 +18,26 @@ coords = "0_49_51_33_27"
 obj = "obj.egg"
 coords = "0_49_51_36_37"
 
+
+[[spawn]]
+obj = "obj.egg"
+coords = "0_49_51_37_42"
+
 [[spawn]]
 obj = "obj.egg"
 coords = "0_49_51_39_41"
+
+[[spawn]]
+obj = "obj.egg"
+coords = "0_49_51_41_43"
+
+[[spawn]]
+obj = "obj.egg"
+coords = "0_49_51_43_41"
+
+[[spawn]]
+obj = "obj.egg"
+coords = "0_49_51_44_38"
 
 [[spawn]]
 obj = "obj.egg"
@@ -34,9 +47,22 @@ coords = "0_49_51_49_33"
 obj = "obj.egg"
 coords = "0_50_51_26_37"
 
+
+[[spawn]]
+obj = "obj.egg"
+coords = "0_50_51_27_31"
+
 [[spawn]]
 obj = "obj.egg"
 coords = "0_50_51_29_35"
+
+[[spawn]]
+obj = "obj.egg"
+coords = "0_50_51_31_37"
+
+[[spawn]]
+obj = "obj.egg"
+coords = "0_50_51_33_36"
 
 [[spawn]]
 obj = "obj.iron_dagger"
@@ -134,13 +160,11 @@ coords = "0_49_49_57_45"
 obj = "obj.swamp_tar"
 coords = "0_49_49_58_32"
 
-## Father Urhney
 
 [[spawn]]
 obj = "obj.leather_gloves"
 coords = "0_49_49_12_41"
 
-## Lumbridge Castle
 
 [[spawn]]
 obj = "obj.bowl_empty"
@@ -163,6 +187,10 @@ obj = "obj.jug_empty"
 coords = "0_50_50_11_12"
 
 [[spawn]]
+obj = "obj.jug_empty"
+coords = "0_50_50_11_17"
+
+[[spawn]]
 obj = "obj.knife"
 coords = "0_50_50_5_12"
 
@@ -174,7 +202,6 @@ coords = "0_50_50_6_8"
 obj = "obj.pot_empty"
 coords = "0_50_50_9_14"
 
-## Lumbridge Castle Basement
 
 [[spawn]]
 obj = "obj.bucket_empty"
@@ -200,7 +227,6 @@ coords = "0_50_150_10_15"
 obj = "obj.leather_boots"
 coords = "0_50_150_8_20"
 
-## Lumbridge Castle Dining Room
 
 [[spawn]]
 obj = "obj.logs"
@@ -218,17 +244,12 @@ coords = "2_50_50_8_25"
 obj = "obj.logs"
 coords = "2_50_50_9_24"
 
-## Lumbridge Castle Entryway
 
 [[spawn]]
 obj = "obj.bronze_dagger"
 coords = "1_50_50_13_16"
 
-## Lumbridge General Store
 
 [[spawn]]
 obj = "obj.onion"
 coords = "1_50_50_11_47"
-
-## Lumbridge General Store End
-

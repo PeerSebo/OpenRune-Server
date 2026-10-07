@@ -20,7 +20,7 @@ public val hydraDropTable: RSDropTable<Player, DropRollItem> = RSDropTable(
     npcs = npcs("npc.hydra"),
     preRoll = rsPlayerPrerollTable {
         1 outOf 1801 weight "obj.hydra_eye" count 1 condition { player ->
-            // Drops Need Manual: The order players receive the items in are: Hydra's eye, Hydra's fang, and finally Hydra's heart.
+            // TODO: The order players receive the items in are: Hydra's eye, Hydra's fang, and finally Hydra's heart.
              true
         }
         1 outOf 1801 weight "obj.hydra_fang" count 1
@@ -77,4 +77,4 @@ public val hydraDropTable: RSDropTable<Player, DropRollItem> = RSDropTable(
     },
 )
 
-// Unknown wiki drop rates (text rarity — need data collection):
+// TODO: Resolve the unquantified drop rates below.

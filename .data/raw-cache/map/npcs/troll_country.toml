@@ -1,4 +1,3 @@
-## Burthorpe
 
 [[spawn]]
 npc = "npc.chicken"
@@ -44,7 +43,6 @@ coords = "0_44_55_63_27"
 npc = "npc.wgs_thaerisk_cemphier_multinpc2"
 coords = "0_44_55_61_26"
 
-## Interior Weiss Throne Tent
 
 [[spawn]]
 npc = "npc.my2arm_mother_multi_enthroned"
@@ -78,7 +76,6 @@ coords = "0_44_61_58_30"
 npc = "npc.myarm_multi_throneroom"
 coords = "0_44_61_56_32"
 
-## Troll Ice Path
 
 [[spawn]]
 npc = "npc.fd_troll_dad"
@@ -312,7 +309,6 @@ coords = "0_44_58_42_18"
 npc = "npc.trollrescue_icetroll_melee7"
 coords = "0_44_58_49_14"
 
-## Trollheim
 
 [[spawn]]
 npc = "npc.death_ig_solider_wounded"
@@ -586,7 +582,6 @@ coords = "0_45_57_9_51"
 npc = "npc.troll_thrower5"
 coords = "0_45_57_6_50"
 
-## Warriors Guild
 
 [[spawn]]
 npc = "npc.deadman_guard_warguild"
@@ -748,13 +743,11 @@ coords = "0_44_55_50_26"
 npc = "npc.wgs_silif_falador_multi"
 coords = "1_44_55_39_32"
 
-## Warriors' Guild
 
 [[spawn]]
 npc = "npc.strength_referree1"
 coords = "1_44_55_51_36"
 
-## Weiss Region
 
 [[spawn]]
 npc = "npc.my2arm_sentry_goatpoo_background"
@@ -767,6 +760,3 @@ coords = "0_44_61_53_23"
 [[spawn]]
 npc = "npc.troll_mountain_goat"
 coords = "0_44_61_53_12"
-
-## Weiss Region End
-

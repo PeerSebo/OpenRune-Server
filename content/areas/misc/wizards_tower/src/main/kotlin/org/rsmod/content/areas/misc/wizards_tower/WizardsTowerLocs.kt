@@ -1,6 +1,5 @@
 package org.rsmod.content.areas.misc.wizards_tower
 
-import org.rsmod.api.player.output.ChatType
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.script.onOpLoc1
 import org.rsmod.api.script.onOpLoc2
@@ -18,8 +17,6 @@ class WizardsTowerLocs : PluginScript() {
         onOpLoc1("loc.fai_wiztower_spiralstairstop") { climb(FIRST_FLOOR) }
         onOpLoc1("loc.fai_wiztower_bookcase") { searchBookcase() }
         onOpLoc1("loc.fai_wiztower_bookcase_wall") { searchBookcase() }
-        onOpLoc1("loc.tote_portal_to_gotr_parent") { stepThroughPortal(GUARDIANS_OF_THE_RIFT) }
-        onOpLoc1("loc.gotr_entry") { stepThroughPortal(TOWER_BASEMENT) }
     }
 
     private suspend fun ProtectedAccess.climb(dest: CoordGrid) {
@@ -55,20 +52,10 @@ class WizardsTowerLocs : PluginScript() {
         }
     }
 
-    private suspend fun ProtectedAccess.stepThroughPortal(dest: CoordGrid) {
-        arriveDelay()
-        mes("You step through the portal...", ChatType.Spam)
-        soundSynth(PORTAL_SYNTH)
-        telejump(dest)
-    }
-
     private companion object {
-        const val PORTAL_SYNTH = "synth.gotr_portal_step"
         val GROUND_FLOOR = CoordGrid(3104, 3161, 0)
         val FIRST_FLOOR = CoordGrid(3104, 3161, 1)
         val SECOND_FLOOR = CoordGrid(3104, 3161, 2)
-        val GUARDIANS_OF_THE_RIFT = CoordGrid(3615, 9470, 0)
-        val TOWER_BASEMENT = CoordGrid(3104, 9573, 0)
 
         val BOOKS =
             listOf(

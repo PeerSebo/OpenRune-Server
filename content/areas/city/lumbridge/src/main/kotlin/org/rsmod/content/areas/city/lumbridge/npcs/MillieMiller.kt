@@ -76,7 +76,7 @@ class MillieMiller : PluginScript() {
         chatNpc(
             happy,
             "And that's it! You now have some pots of finely ground flour of the highest quality. " +
-                "Ideal for making tasty cakes or delicous bread. I'm not a cook so you'll have to ask " +
+                "Ideal for making tasty cakes or delicious bread. I'm not a cook so you'll have to ask " +
                 "a cook to find out how to bake things.",
         )
         chatPlayer(happy, "Great! Thanks for your help.")

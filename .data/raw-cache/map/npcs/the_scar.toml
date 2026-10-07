@@ -1,10 +1,8 @@
-## The Scar Essence Mine
 
 [[spawn]]
 npc = "npc.hagus"
 coords = "0_30_99_34_30"
 
-## The Scar Main Area
 
 [[spawn]]
 npc = "npc.dt2_persten_scar"
@@ -54,7 +52,6 @@ coords = "0_32_99_48_53"
 npc = "npc.leviathan_tail_ring_3_base"
 coords = "0_32_99_5_19"
 
-## The Scar Quest Areas
 
 [[spawn]]
 npc = "npc.0_18_57_memberfish"
@@ -335,6 +332,3 @@ coords = "0_34_100_4_8"
 [[spawn]]
 npc = "npc.dt2_scar_maze_ranged_demon"
 coords = "0_34_100_6_42"
-
-## The Scar Quest Areas End
-

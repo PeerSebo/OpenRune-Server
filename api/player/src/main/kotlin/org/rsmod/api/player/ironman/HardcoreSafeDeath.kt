@@ -1,16 +1,16 @@
 package org.rsmod.api.player.ironman
 
-import org.rsmod.api.attr.AttributeKey
+import org.rsmod.api.player.vars.boolVarp
 import org.rsmod.game.entity.Player
 
-public val SAFE_DEATH_ATTR: AttributeKey<Boolean> = AttributeKey()
+private var Player.nextDeathSafe by boolVarp("varp.player_next_death_safe")
 
 public fun Player.markNextDeathSafe() {
-    attr[SAFE_DEATH_ATTR] = true
+    nextDeathSafe = true
 }
 
 public fun Player.clearSafeDeathMark() {
-    attr.remove(SAFE_DEATH_ATTR)
+    nextDeathSafe = false
 }
 
-public fun Player.hasSafeDeathMark(): Boolean = attr[SAFE_DEATH_ATTR] == true
+public fun Player.hasSafeDeathMark(): Boolean = nextDeathSafe

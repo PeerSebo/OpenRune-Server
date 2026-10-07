@@ -26,18 +26,16 @@ class SwampTarEvents : PluginScript() {
             return
         }
 
-        if (!inv.contains(recipe.herb.internalName) || inv.count(SWAMP_TAR) < SWAMP_TAR_PER_BATCH) {
+        if (
+            !inv.contains("obj.pestle_and_mortar") ||
+            !inv.contains(recipe.herb.internalName) ||
+            inv.count(SWAMP_TAR) < SWAMP_TAR_PER_BATCH
+        ) {
             mes(Constants.dm_default)
             return
         }
 
-        val hasFinishedTar = inv.contains(recipe.finishedTar.internalName)
-        val neededSlots = if (hasFinishedTar) 0 else SWAMP_TAR_PER_BATCH
-        if (inv.freeSpace() < neededSlots) {
-            mes("You don't have enough inventory space to make this tar.")
-            return
-        }
-
+        // Deleting the nonstackable herb frees the stackable tar's slot.
         weakQueue("queue.herblore_swamp_tar", 1, SwampTarTask(recipe))
     }
 
@@ -50,9 +48,9 @@ class SwampTarEvents : PluginScript() {
         }
 
         if (
+            !inv.contains("obj.pestle_and_mortar") ||
             !inv.contains(recipe.herb.internalName) ||
-            inv.count(SWAMP_TAR) < SWAMP_TAR_PER_BATCH ||
-            (inv.freeSpace() < SWAMP_TAR_PER_BATCH && !inv.contains(recipe.finishedTar.internalName))
+            inv.count(SWAMP_TAR) < SWAMP_TAR_PER_BATCH
         ) {
             resetAnim()
             return
@@ -83,10 +81,12 @@ class SwampTarEvents : PluginScript() {
         mes("You add the $herbName to the swamp tar.")
 
         if (
+            inv.contains("obj.pestle_and_mortar") &&
             inv.contains(recipe.herb.internalName) &&
             inv.count(SWAMP_TAR) >= SWAMP_TAR_PER_BATCH
         ) {
-            weakQueue("queue.herblore_swamp_tar", 3, SwampTarTask(recipe))
+            // Queue-handler rescheduling requires +1 to preserve the three-tick cadence.
+            weakQueue("queue.herblore_swamp_tar", 4, SwampTarTask(recipe))
         } else {
             resetAnim()
         }

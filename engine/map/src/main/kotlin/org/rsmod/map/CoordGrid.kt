@@ -58,15 +58,6 @@ public value class CoordGrid(public val packed: Int) {
         return translate(translation.x, translation.z, translation.level)
     }
 
-    /**
-     * Returns a new [CoordGrid] whose `x` and `z` coordinates are clamped within the given
-     * [bounds].
-     *
-     * If this coordinate lies outside the [bounds] on the X or Z axis, the resulting coordinate
-     * will be shifted to the nearest edge within those dimensions.
-     *
-     * @throws IllegalArgumentException if [level] does not match [Bounds.level].
-     */
     public fun coerceIn(bounds: Bounds): CoordGrid {
         require(level == bounds.level) {
             "Coord and bounds must be on same level. (coord=$this, bounds=$bounds)"
@@ -125,33 +116,10 @@ public value class CoordGrid(public val packed: Int) {
         public const val X_BIT_MASK: Int = (1 shl X_BIT_COUNT) - 1
         public const val LEVEL_BIT_MASK: Int = (1 shl LEVEL_BIT_COUNT) - 1
 
-        /**
-         * The maximum X coordinate value that can be represented within the game world.
-         *
-         * This constant defines the width of the game map in terms of coordinate units. It is
-         * calculated based on the bit count used for X coordinates, allowing for a range from `0`
-         * up to, but not including, `16384`. Thus, the maximum representable X coordinate is
-         * `16383`.
-         */
         public const val MAP_WIDTH: Int = X_BIT_MASK + 1
 
-        /**
-         * The maximum Z coordinate value that can be represented within the game world.
-         *
-         * This constant defines the length of the game map in terms of coordinate units. It is
-         * calculated based on the bit count used for Z coordinates, allowing for a range from `0`
-         * up to, but not including, `16384`. Therefore, the maximum representable Z coordinate is
-         * `16383`.
-         */
         public const val MAP_LENGTH: Int = Z_BIT_MASK + 1
 
-        /**
-         * The maximum number of levels (or height) that can be represented within the game world.
-         *
-         * This constant defines the number of discrete levels available in the game, calculated
-         * based on the bit mask for levels. It allows for a range from 0 up to, but not including,
-         * `4`, making the maximum representable level `3`.
-         */
         public const val LEVEL_COUNT: Int = LEVEL_BIT_MASK + 1
 
         private fun pack(x: Int, z: Int, level: Int): Int {

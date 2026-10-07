@@ -18,3 +18,9 @@ dependencies {
     implementation(projects.engine.module)
     implementation(projects.server.services)
 }
+
+tasks.test {
+    doFirst {
+        systemProperty("openrune.test.classpath", sourceSets["test"].runtimeClasspath.asPath)
+    }
+}

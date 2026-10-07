@@ -11,6 +11,7 @@ import org.rsmod.api.bosses.spec.*
 import org.rsmod.api.bosses.spec.HitType as BossHitType
 import org.rsmod.api.combat.commons.CombatEffects
 import org.rsmod.api.combat.commons.DragonfireProtection
+import org.rsmod.api.combat.commons.npc.resolveMeleeAttackType
 import org.rsmod.api.combat.commons.player.combatPlayDefendAnim
 import org.rsmod.api.combat.commons.player.finishNpcHit
 import org.rsmod.api.combat.commons.player.queueCombatRetaliate
@@ -78,6 +79,8 @@ class EffectInterpreter internal constructor(
 
     fun run(access: StandardNpcAccess?, effect: Effect, onComplete: () -> Unit = {}) {
         when (effect) {
+            is Effect.TeleportToSpawn ->
+                PathingEntityCommon.telejump(npc, deps.collision, npc.spawnCoords.translate(effect.dx, effect.dz))
             is Effect.Anim -> npc.anim(effect.seq, effect.delay)
             is Effect.IdleAnim -> effect.seq?.let(npc::setIdleAnim) ?: npc.clearIdleAnim()
             is Effect.ResetAnim -> npc.resetAnim()
@@ -254,9 +257,16 @@ class EffectInterpreter internal constructor(
                 return
             }
             is Effect.After -> {
-                deps.worldQueues.add(effect.ticks) {
+                if (!effect.requireAlive && effect.effect is Effect.CamReset) {
+                    scheduleCameraReset(effect.ticks, effect.effect)
+                    onComplete()
+                    return
+                }
+                deps.worldQueues.addDeferred(effect.ticks) {
                     val alive = npc.isSlotAssigned && npc.hitpoints > 0
-                    if (alive || !effect.requireAlive) run(access, effect.effect)
+                    if (deps.encounterRegistry.isCurrent(npc, encounter) && !interrupted &&
+                        (alive || !effect.requireAlive)
+                    ) run(access, effect.effect)
                 }
             }
             is Effect.SpawnLoc -> {
@@ -265,6 +275,19 @@ class EffectInterpreter internal constructor(
             is Effect.Knockback -> knockback(effect)
         }
         onComplete()
+    }
+
+    private fun scheduleCameraReset(ticks: Int, reset: Effect.CamReset) {
+        val viewers = resolvePlayers(reset.target).map { it to it.uid }
+        // Camera cleanup outlives the encounter, but must never reach a replacement session.
+        deps.worldQueues.addDeferred(ticks) {
+            for ((player, uid) in viewers) {
+                if (player.uid == uid && player.isSlotAssigned &&
+                    deps.playerList[player.slotId] === player &&
+                    !player.pendingLogout && !player.loggingOut
+                ) Camera.camReset(player)
+            }
+        }
     }
 
     private fun evaluateVar(expr: VarExpr): Int =
@@ -290,8 +313,19 @@ class EffectInterpreter internal constructor(
 
     private fun scheduleWait(ticks: Int, onComplete: () -> Unit) {
         require(ticks > 0) { "`ticks` must be greater than 0. (ticks=$ticks)" }
-        deps.suppressAttacks(npc, ticks)
-        deps.worldQueues.add(ticks) { if (npc.isValidTarget() && !interrupted) onComplete() }
+        encounter.lastAbilityTick = maxOf(encounter.lastAbilityTick, deps.mapClock.cycle + ticks)
+        deps.suppressAttacksUntil(npc, ticks)
+        schedule(ticks, onComplete)
+    }
+
+    private fun schedule(ticks: Int, action: () -> Unit) {
+        val targetUid = target.uid
+        deps.worldQueues.addDeferred(ticks.coerceAtLeast(1)) {
+            if (deps.encounterRegistry.isCurrent(npc, encounter) && !interrupted &&
+                npc.hitpoints > 0 && npc.isVisible && target.uid == targetUid &&
+                target.hitpoints > 0 && target.isValidTarget() && target.level == npc.level
+            ) action()
+        }
     }
 
     private fun runSequence(
@@ -335,7 +369,7 @@ class EffectInterpreter internal constructor(
             }
             run(access, effect) {
                 if (remaining > 1 && gap > 0) {
-                    deps.worldQueues.add(gap) { if (!interrupted) step(remaining - 1) }
+                    scheduleWait(gap) { step(remaining - 1) }
                 } else {
                     step(remaining - 1)
                 }
@@ -361,7 +395,8 @@ class EffectInterpreter internal constructor(
                 continue
             }
             val landed =
-                t.finishNpcHit(npc, delay, hit.type.toEngine(), damage, deps.playerHitModifier, hit.penetration)
+                t.finishNpcHit(npc, delay, hit.type.toEngine(), damage, deps.playerHitModifier,
+                    prayerPenetration = hit.penetration)
             scheduleLanding(access, hit, t, damage, landed.damage, delay, clientDelay = 0)
         }
     }
@@ -371,6 +406,7 @@ class EffectInterpreter internal constructor(
         val dragonfire = dragonfireType(hit.type) ?: return damage
         val max = damageMax(hit.damage, hit.type, t)
         val cap = DragonfireProtection.resolveMaxHit(t, dragonfire, max)
+        DragonfireProtection.sendAbsorbMessage(t, dragonfire)
         return if (cap <= 0) 0 else deps.random.of(cap + 1)
     }
 
@@ -442,11 +478,11 @@ class EffectInterpreter internal constructor(
 
         proj.impact?.let { impactSpot ->
             val spot = SpotanimType(impactSpot.asRSCM(RSCMType.SPOTANIM))
-            deps.worldQueues.add(ticks) { deps.worldRepo.spotanimMap(spot, destCoord) }
+            schedule(ticks) { deps.worldRepo.spotanimMap(spot, destCoord) }
         }
 
         proj.onImpact?.let { onImpact ->
-            deps.worldQueues.add(ticks) {
+            schedule(ticks) {
                 child(bindings = bindings.copy(impactTile = destCoord)).run(access, onImpact)
             }
         }
@@ -467,14 +503,15 @@ class EffectInterpreter internal constructor(
                 hit.type.toEngine(),
                 damage,
                 impactModifier(access, hit, damage),
-                penetration = if (conditionalPenetration) 0 else hit.penetration,
+                prayerPenetration = if (conditionalPenetration) 0 else hit.penetration,
             )
             showMissSpotanim(hit, player, damage, projAnim.clientCycles)
             return
         }
         val hitType = hit.type.toEngine()
         val landed =
-            player.finishNpcHit(npc, ticks, hitType, damage, deps.playerHitModifier, hit.penetration).damage
+            player.finishNpcHit(npc, ticks, hitType, damage, deps.playerHitModifier,
+                prayerPenetration = hit.penetration).damage
         scheduleLanding(access, hit, player, damage, landed, ticks, projAnim.clientCycles)
     }
 
@@ -488,7 +525,7 @@ class EffectInterpreter internal constructor(
         return PlayerHitModifier { t ->
             val whenever = hit.penetrationWhen
             if (whenever != null && encounter.evaluate(whenever, t, tileScope(t))) {
-                penetration = hit.penetration
+                prayerPenetration = hit.penetration
             }
             val praying = encounter.evaluate(Condition.TargetPraying(hit.type), t)
             deps.playerHitModifier.modify(this, t)
@@ -496,7 +533,7 @@ class EffectInterpreter internal constructor(
             if (hit.spotanimUnlessPraying && !praying) {
                 hit.spotanim?.let { t.spotanim(it, height = hit.spotanimHeight) }
             }
-            if (!npc.isValidTarget()) return@PlayerHitModifier
+            if (!npc.isValidTarget() || !t.isValidTarget()) return@PlayerHitModifier
             val heal = damage * hit.lifesteal / 100
             if (heal > 0) npc.heal(heal)
             onHit?.let { child(target = t).run(access, it) }
@@ -520,10 +557,10 @@ class EffectInterpreter internal constructor(
         val onHit = landingEffect(hit, rolled)
         val heal = landed * hit.lifesteal / 100
         if (onHit == null && heal <= 0) return
-        deps.worldQueues.add(serverDelay) {
-            if (!npc.isValidTarget()) return@add
+        schedule(serverDelay) {
+            if (!npc.isValidTarget() || !t.isValidTarget()) return@schedule
             if (heal > 0) npc.heal(heal)
-            onHit?.let { run(access, it) }
+            onHit?.let { child(target = t).run(access, it) }
         }
     }
 
@@ -537,7 +574,14 @@ class EffectInterpreter internal constructor(
     }
 
     private fun applyTileAoE(aoe: Effect.TileAoE) {
-        val tiles = aoe.tiles(npc, target).toSet()
+        val tiles = aoe.tiles?.invoke(npc, target)?.toSet() ?: run {
+            val center = resolveTile(checkNotNull(aoe.center))
+            buildSet {
+                for (dx in -aoe.radius..aoe.radius) {
+                    for (dz in -aoe.radius..aoe.radius) add(center.translate(dx, dz))
+                }
+            }
+        }
         val windup = aoe.telegraph?.windup ?: 0
         aoe.telegraph?.let { telegraph ->
             val spot = SpotanimType(telegraph.spotanim.asRSCM(RSCMType.SPOTANIM))
@@ -550,7 +594,7 @@ class EffectInterpreter internal constructor(
                 t.finishNpcHit(npc, 1, aoe.type.toEngine(), damage, deps.playerHitModifier)
             }
         }
-        if (windup > 0) deps.worldQueues.add(windup) { strike() } else strike()
+        if (windup > 0) schedule(windup) { strike() } else strike()
     }
 
     private fun applyDebris(effect: Effect.Debris) {
@@ -830,36 +874,42 @@ class EffectInterpreter internal constructor(
         if (targetDx == 0 && targetDz == 0) return emptyList()
 
         val vertical = abs(targetDz) >= abs(targetDx)
-        val sign = if (vertical) targetDz.sign else targetDx.sign
+        val direction = if (vertical) targetDz.sign else targetDx.sign
         val limit = half + reach
         return deps.playerList.filter { player ->
-            if (player.coords.level != npc.coords.level) return@filter false
+            if (!player.isValidTarget() || player.coords.level != npc.coords.level) return@filter false
             val dx = player.coords.x - centreX
             val dz = player.coords.z - centreZ
             if (abs(dx) > limit || abs(dz) > limit) return@filter false
             val (along, across) = if (vertical) dz to dx else dx to dz
-            along * sign > 0 && abs(across) <= abs(along)
+            along * direction > 0 && abs(across) <= abs(along)
         }
     }
 
     private fun damageMax(expr: DamageExpr, hitType: BossHitType, t: Player): Int =
         when (expr) {
+            is DamageExpr.Custom -> expr.roll(npc, t)
+            is DamageExpr.NpcMeleeMaxHit ->
+                checkNotNull(deps.maxHit).getMeleeMaxHit(npc, t, expr.attackType)
             is DamageExpr.Roll -> if (expr.range.isEmpty()) 0 else expr.range.last
             is DamageExpr.Fixed -> expr.value
             is DamageExpr.NpcMaxHit -> npcFormulaMaxHit(expr, hitType, t)
-            else -> evaluateDamage(expr, hitType, t)
+            is DamageExpr.Accuracy -> damageMax(expr.on, hitType, t)
+            is DamageExpr.PercentOfTargetHp -> (t.hitpoints * expr.fraction).toInt()
+            is DamageExpr.Min -> minOf(damageMax(expr.a, hitType, t), damageMax(expr.b, hitType, t))
+            is DamageExpr.Max -> maxOf(damageMax(expr.a, hitType, t), damageMax(expr.b, hitType, t))
         }
 
     private fun npcFormulaMaxHit(expr: DamageExpr.NpcMaxHit, hitType: BossHitType, t: Player): Int {
         val raw =
             when (hitType) {
-                BossHitType.Ranged -> deps.maxHit.getRangedMaxHit(npc, t)
+                BossHitType.Ranged -> checkNotNull(deps.maxHit).getRangedMaxHit(npc, t)
                 BossHitType.Magic,
                 BossHitType.Dragonfire,
                 BossHitType.DragonfireMetal,
-                BossHitType.WyvernIce -> deps.maxHit.getMagicMaxHit(npc, t)
+                BossHitType.WyvernIce -> checkNotNull(deps.maxHit).getMagicMaxHit(npc, t)
                 BossHitType.Melee,
-                BossHitType.Typeless -> deps.maxHit.getMeleeMaxHit(npc, t, expr.meleeAttackType)
+                BossHitType.Typeless -> checkNotNull(deps.maxHit).getMeleeMaxHit(npc, t, expr.meleeAttackType)
             }
         val scaled = if (expr.scale == 1.0) raw else (raw * expr.scale).toInt()
         return scaled.coerceAtLeast(0)
@@ -875,6 +925,8 @@ class EffectInterpreter internal constructor(
 
     private fun evaluateDamage(expr: DamageExpr, hitType: BossHitType, t: Player): Int {
         return when (expr) {
+            is DamageExpr.NpcMeleeMaxHit ->
+                deps.random.of(checkNotNull(deps.maxHit).getMeleeMaxHit(npc, t, expr.attackType) + 1)
             is DamageExpr.Fixed -> expr.value
             is DamageExpr.Roll ->
                 if (expr.range.isEmpty()) 0
@@ -903,12 +955,13 @@ class EffectInterpreter internal constructor(
         meleeAttackType: MeleeAttackType? = null,
     ): Boolean =
         when (hitType) {
-            BossHitType.Melee -> deps.accuracy.rollMeleeAccuracy(npc, t, meleeAttackType, deps.random)
+            BossHitType.Melee ->
+                deps.accuracy.rollMeleeAccuracy(npc, t, meleeAttackType ?: npc.resolveMeleeAttackType(), deps.random)
             BossHitType.Ranged -> deps.accuracy.rollRangedAccuracy(npc, t, deps.random)
-            BossHitType.Magic,
+            BossHitType.Magic -> deps.accuracy.rollMagicAccuracy(npc, t, deps.random)
             BossHitType.Dragonfire,
             BossHitType.DragonfireMetal,
-            BossHitType.WyvernIce -> deps.accuracy.rollMagicAccuracy(npc, t, deps.random)
+            BossHitType.WyvernIce,
             BossHitType.Typeless -> true
         }
 

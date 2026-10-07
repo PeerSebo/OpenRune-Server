@@ -13,7 +13,6 @@ import kotlin.math.max
 import kotlin.math.min
 import org.rsmod.annotations.InternalApi
 import org.rsmod.api.area.checker.AreaChecker
-import org.rsmod.api.combat.commons.magic.Spellbook
 import org.rsmod.api.death.NpcDeathKillContext
 import org.rsmod.api.death.NpcDeathKillHook
 import org.rsmod.api.death.prepareAdminDieTest
@@ -45,10 +44,10 @@ import org.rsmod.api.player.ui.PlayerInterfaceUpdates
 import org.rsmod.api.player.vars.VarPlayerIntMapSetter
 import org.rsmod.api.player.vars.boolVarBit
 import org.rsmod.api.player.vars.resyncVar
+import org.rsmod.api.realm.config.updater.RealmConfigUpdater
 import org.rsmod.api.registry.region.RegionRegistry
 import org.rsmod.api.repo.loc.LocRepository
 import org.rsmod.api.repo.npc.NpcRepository
-import org.rsmod.api.spells.autocast.MagicSpellbookManager
 import org.rsmod.api.utils.format.formatAmount
 import org.rsmod.api.utils.system.SafeServiceExit
 import org.rsmod.game.GameUpdate
@@ -87,8 +86,8 @@ constructor(
     private val regions: RegionRegistry,
     private val deathKillHooks: Set<NpcDeathKillHook>,
     private val instanceRegistry: BossInstanceRegistry,
+    private val realmConfigUpdater: RealmConfigUpdater,
     private val injector: Injector,
-    private val spellbooks: MagicSpellbookManager,
 ) : PluginScript() {
     private val logger = InlineLogger()
 
@@ -97,6 +96,9 @@ constructor(
     private var Player.insideWilderness by boolVarBit("varbit.inside_wilderness")
 
     override fun ScriptContext.startup() {
+        onCommand("xprate", "Set global xp event multiplier", ::xpRate) {
+            invalidArgs = "Use as ::xprate <multiplier>"
+        }
         onCommand("master", "Max out all stats", ::master)
         onCommand("reset", "Reset all stats", ::reset)
         onCommand("mypos", "Get current coordinates", ::mypos)
@@ -148,7 +150,7 @@ constructor(
             invalidArgs = "Use as ::npcadd duration npcDebugNameOrId (ex: 100 prison_pete)"
         }
 
-        onCommand("npcgrid", "Spawn a 3x3 grid of immobile npcs", ::npcGrid) {
+        onCommand("npcgrid", "Spawn a stationary 3x3 NPC grid for spell tests", ::npcGrid) {
             invalidArgs = "Use as ::npcgrid npcDebugName [duration] (ex: ::npcgrid goblin 500)"
         }
 
@@ -221,14 +223,6 @@ constructor(
             invalidArgs =
                 "Usage: ::die pvm|pvp [true|false]  (second arg = in Wilderness, default false)"
         }
-        onCommand(
-            "spellbook",
-            "Swap spellbook (standard|ancients|lunars|arceuus)",
-            ::spellbook,
-            aliases = listOf("book"),
-        ) {
-            invalidArgs = "Use as ::spellbook standard|ancients|lunars|arceuus"
-        }
         onCommand("god", "Toggle god mode (invincibility)", ::god)
         onCommand(
             "componentdebug",
@@ -258,11 +252,7 @@ constructor(
             invalidArgs =
                 "Use as ::testloot npcName [count] (ex: ::testloot godwars_bandos_avatar 100)"
         }
-        onCommand(
-            "instanceexit",
-            "Teleport to an instance's exit coord",
-            ::instanceExit,
-        ) {
+        onCommand("instanceexit", "Teleport to an instance's exit coord", ::instanceExit) {
             invalidArgs = "Use as ::instanceexit instanceKey (ex: ::instanceexit graardor)"
         }
     }
@@ -290,36 +280,6 @@ constructor(
                 }
             player.setGamemode(mode)
             player.mes("Gamemode set to $mode (varbit.ironman synced; persists on logout).")
-        }
-
-    private fun spellbook(cheat: Cheat) =
-        with(cheat) {
-            val book =
-                when (args.getOrNull(0)?.lowercase()) {
-                    "standard",
-                    "normal",
-                    "modern",
-                    "0" -> Spellbook.Standard
-                    "ancients",
-                    "ancient",
-                    "1" -> Spellbook.Ancients
-                    "lunars",
-                    "lunar",
-                    "2" -> Spellbook.Lunars
-                    "arceuus",
-                    "necro",
-                    "3" -> Spellbook.Arceuus
-                    else -> {
-                        player.mes("Use as ::spellbook standard|ancients|lunars|arceuus")
-                        return
-                    }
-                }
-            when (spellbooks.setSpellbook(player, book)) {
-                is MagicSpellbookManager.ChangeResult.Changed ->
-                    player.mes("Spellbook set to $book.")
-                is MagicSpellbookManager.ChangeResult.Unchanged ->
-                    player.mes("You are already on the $book spellbook.")
-            }
         }
 
     private fun god(cheat: Cheat) =
@@ -378,6 +338,22 @@ constructor(
         with(cheat) {
             PlayerDisease.clear(player)
             player.mes("Disease cleared.")
+        }
+
+    private fun xpRate(cheat: Cheat) =
+        with(cheat) {
+            if (args.isEmpty()) {
+                player.mes("Your experience rate is ${player.xpRate * player.globalXpRate}x " +
+                    "(personal ${player.xpRate}x, event ${player.globalXpRate}x).")
+                return
+            }
+            val rate = args.getOrNull(0)?.toDoubleOrNull()
+            if (rate == null || !rate.isFinite() || rate <= 0.0 || rate > 10_000.0) {
+                player.mes("Use as ::xprate <multiplier>, e.g. ::xprate 2 (1 ends the event).")
+                return
+            }
+            realmConfigUpdater.setGlobalXpRate(rate)
+            player.mes("Global xp event multiplier set to ${rate}x.")
         }
 
     private fun master(cheat: Cheat) = with(cheat) { player.setStatLevels(level = 99) }
@@ -625,21 +601,28 @@ constructor(
 
     private fun npcGrid(cheat: Cheat) =
         with(cheat) {
-            val type = ServerCacheManager.getNpc("npc.${args[0]}".asRSCM())
+            val name = args.getOrNull(0)?.removePrefix("npc.")
+            val type = name?.let {
+                runCatching { ServerCacheManager.getNpc("npc.$it".asRSCM()) }.getOrNull()
+            }
             if (type == null) {
-                player.mes("That npc does not exist: npc.${args[0]}")
+                player.mes("Specify a valid NPC: ::npcgrid npcDebugName [duration]")
                 return
             }
             val duration = args.getOrNull(1)?.toIntOrNull() ?: 500
-            val step = type.size
-            val origin = player.coords.translate(-step, step * 2)
-            for (dx in 0 until 3) {
-                for (dz in 0 until 3) {
-                    val npc = Npc(type, origin.translate(dx * step, dz * step))
-                    npcRepo.add(npc, duration)
-                }
+            if (duration !in 1..5000) {
+                player.mes("The duration must be between 1 and 5,000 ticks.")
+                return
             }
-            player.mes("Spawned 3x3 grid of `${args[0]}` (duration: $duration cycles)")
+            val step = type.size.coerceAtLeast(1)
+            val origin = player.coords.translate(-step, step * 2)
+            for (dx in 0..2) for (dz in 0..2) {
+                val npc = Npc(type, origin.translate(dx * step, dz * step))
+                npc.mode = NpcMode.None
+                npc.movementLocked = true
+                npcRepo.add(npc, duration)
+            }
+            player.mes("Spawned a 3x3 grid of `$name` for $duration ticks.")
         }
 
     private fun testLoot(cheat: Cheat) =
@@ -676,7 +659,12 @@ constructor(
                 return
             }
 
-            val count = countArg.toLong().coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
+            val requestedCount = countArg.toLong()
+            if (requestedCount <= 0) {
+                player.mes("Spawn quantity must be greater than zero.")
+                return
+            }
+            val count = requestedCount.coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
             val objName = type.name.ifEmpty { typeName }
 
             val spawned = player.invAdd(player.inv, type.id, count, strict = false)
@@ -756,12 +744,10 @@ constructor(
             }
             val xpDelta = xp - statMap.getXP(statInternal)
             statMap.setCurrentLevel(statInternal, targetLevel.toByte())
-            statAdvance(statInternal, xpDelta.toDouble(), rate = 1.0)
+            statAdvance(statInternal, xpDelta.toDouble(), rate = 1.0, globalRate = 1.0)
         }
     }
 
-    // There is, by design, no helper function to decrease stat xp, as xp reduction is not a
-    // standard operation in normal gameplay.
     @OptIn(InternalApi::class)
     private fun Player.statRevert(stat: String, targetLevel: Int, targetXp: Int) {
         statMap.setCurrentLevel(stat, statMap.getBaseLevel(stat))
@@ -953,7 +939,11 @@ constructor(
     private fun bank(cheat: Cheat) =
         with(cheat) {
             protectedAccess.launch(player) {
-                ifOpenMainSidePair(main = "interface.bankmain", side = "interface.bankside", transparency = -2)
+                ifOpenMainSidePair(
+                    main = "interface.bankmain",
+                    side = "interface.bankside",
+                    transparency = -2,
+                )
             }
         }
 
@@ -980,34 +970,36 @@ constructor(
             player.mes("Transmog: '$npcName'")
         }
 
-    private fun instanceExit(cheat: Cheat) = with(cheat) {
-        val key = args.getOrNull(0)?.trim()
-        if (key.isNullOrEmpty()) {
-            player.mes("Usage: ::instanceexit instanceKey")
-            player.mes("Known keys: ${instanceRegistry.keys().sorted().joinToString(", ")}")
-            return@with
+    private fun instanceExit(cheat: Cheat) =
+        with(cheat) {
+            val key = args.getOrNull(0)?.trim()
+            if (key.isNullOrEmpty()) {
+                player.mes("Usage: ::instanceexit instanceKey")
+                player.mes("Known keys: ${instanceRegistry.keys().sorted().joinToString(", ")}")
+                return@with
+            }
+            val spec = instanceRegistry.get(key)
+            if (spec == null) {
+                player.mes("No instance found with key: '$key'")
+                player.mes("Known keys: ${instanceRegistry.keys().sorted().joinToString(", ")}")
+                return@with
+            }
+            val exit = spec.area.exitCoord()
+            if (exit == null || exit == CoordGrid.ZERO) {
+                player.mes("Instance '$key' has no exit coord configured.")
+                return@with
+            }
+            protectedAccess.launch(player) {
+                player.mes("Teleported to '$key' instance exit coord: $exit")
+                telejump(exit, TeleportType.Exempt)
+            }
         }
-        val spec = instanceRegistry.get(key)
-        if (spec == null) {
-            player.mes("No instance found with key: '$key'")
-            player.mes("Known keys: ${instanceRegistry.keys().sorted().joinToString(", ")}")
-            return@with
-        }
-        val exit = spec.area.exitCoord()
-        if (exit == null || exit == CoordGrid.ZERO) {
-            player.mes("Instance '$key' has no exit coord configured.")
-            return@with
-        }
-        protectedAccess.launch(player) {
-            player.mes("Teleported to '$key' instance exit coord: $exit")
-            telejump(exit, TeleportType.Exempt)
-        }
-    }
 
-    private fun InstanceArea.exitCoord(): CoordGrid? = when (this) {
-        is InstanceArea.Template -> exitCoord
-        is InstanceArea.CopyRegions -> exitCoord
-    }
+    private fun InstanceArea.exitCoord(): CoordGrid? =
+        when (this) {
+            is InstanceArea.Template -> exitCoord
+            is InstanceArea.CopyRegions -> exitCoord
+        }
 
     private fun openInterface(cheat: Cheat) =
         with(cheat) {
@@ -1071,7 +1063,9 @@ constructor(
         if (id != null) {
             return ServerCacheManager.getItem(id)
         }
-        return ServerCacheManager.getItem("obj.$input".asRSCM(RSCMType.OBJ))
+        val mapped = runCatching { "obj.${input.removePrefix("obj.")}".asRSCM(RSCMType.OBJ) }
+            .getOrNull() ?: return null
+        return ServerCacheManager.getItem(mapped)
     }
 
     private fun List<String>.asTypeName(): String = joinToString("_")

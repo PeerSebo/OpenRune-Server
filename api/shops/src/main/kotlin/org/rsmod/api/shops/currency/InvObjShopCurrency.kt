@@ -29,15 +29,7 @@ public class InvObjShopCurrency(
     override fun receiveCap(player: Player, sideInv: Inventory): Int =
         Int.MAX_VALUE - balance(player, sideInv)
 
-    /**
-     * No-op; [org.rsmod.api.shops.operation.StandardCurrencyShopOperations] deletes the currency
-     * obj inside the inventory transaction.
-     */
     override fun deduct(player: Player, amount: Int): Unit = Unit
 
-    /**
-     * No-op; [org.rsmod.api.shops.operation.StandardCurrencyShopOperations] inserts the currency
-     * obj inside the inventory transaction.
-     */
     override fun credit(player: Player, amount: Int): Unit = Unit
 }

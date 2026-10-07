@@ -54,7 +54,7 @@ class GuildDwarvesScript : PluginScript() {
                     describeGuild()
                 }
                 2 -> {
-                    chatPlayer(quiz, "What do you dwarves do with the ore you mind?")
+                    chatPlayer(quiz, "What do you dwarves do with the ore you mine?")
                     describeOreUse()
                 }
                 else -> {

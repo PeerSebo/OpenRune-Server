@@ -6,6 +6,8 @@ import dev.openrune.rscm.RSCMType
 import dev.openrune.types.ItemServerType
 import dev.openrune.types.NpcMode
 import kotlin.math.max
+import org.rsmod.api.combat.commons.types.AttackType
+import org.rsmod.api.combat.commons.types.MeleeAttackType
 import org.rsmod.api.config.constants
 import org.rsmod.api.config.refs.params
 import org.rsmod.api.npc.apPlayer2
@@ -74,12 +76,20 @@ private fun Npc.shouldRetaliateAp(interactions: AiPlayerInteractions, target: Pl
     return interactions.apTrigger(this, target, InteractionOp.Op2) != null
 }
 
+/** Aggression range is relative to spawnCoords; a player on another plane is outside that range. */
+private fun Player.isWithinSpawnAggressionRange(npc: Npc): Boolean {
+    if (level != npc.spawnCoords.level) {
+        return false
+    }
+    return isWithinDistance(npc.spawnCoords, npc.aggressionRange())
+}
+
 private fun Npc.retaliate(target: Player, interactions: AiPlayerInteractions, ap: Boolean) {
     when {
         hitpoints <= param(params.retreat) -> {
             playerEscape(target)
         }
-        visType.wanderRange > 0 && !target.isWithinDistance(spawnCoords, aggressionRange()) -> {
+        visType.wanderRange > 0 && !target.isWithinSpawnAggressionRange(this) -> {
             playerEscape(target)
         }
         ap -> {
@@ -113,3 +123,19 @@ public fun Npc.attackRate(): Int = visType.param(params.attackrate)
 public fun Npc.aggressionRange(): Int = visType.maxRange + attackRange
 
 public fun Npc.resolveCombatXpMultiplier(): Double = combatXpMultiplier / 1000.0
+
+public fun Npc.resolveAttackType(): AttackType {
+    val category = visType.paramOrNull(params.npc_attack_type) ?: return AttackType.Crush
+    return when {
+        category.isType("category.attacktype_stab") -> AttackType.Stab
+        category.isType("category.attacktype_slash") -> AttackType.Slash
+        category.isType("category.attacktype_light") -> AttackType.Light
+        category.isType("category.attacktype_standard") -> AttackType.Standard
+        category.isType("category.attacktype_heavy") -> AttackType.Heavy
+        category.isType("category.attacktype_magic") -> AttackType.Magic
+        else -> AttackType.Crush
+    }
+}
+
+public fun Npc.resolveMeleeAttackType(): MeleeAttackType =
+    MeleeAttackType.from(resolveAttackType()) ?: MeleeAttackType.Crush

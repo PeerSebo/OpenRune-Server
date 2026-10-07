@@ -1,0 +1,17 @@
+[[varp]]
+isServerOnly = true
+id = "varp.lumbridge_tutor_claim_ready_at"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.lumbridge_tutor_claim_remaining_ticks"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.lumbridge_tutor_claim_migrated"
+scope = "Perm"
+transmit = "Never"

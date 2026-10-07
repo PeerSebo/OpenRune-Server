@@ -5,6 +5,7 @@ import org.rsmod.api.invtx.invTakeFee
 import org.rsmod.api.player.dialogue.Dialogue
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.script.onOpNpc1
+import org.rsmod.api.script.onOpNpc3
 import org.rsmod.content.other.pets.dogs.DogCare
 import org.rsmod.content.other.pets.dogs.DogForm
 import org.rsmod.content.other.pets.dogs.Dogs
@@ -17,8 +18,11 @@ import org.rsmod.plugin.scripts.ScriptContext
 
 class Chase @Inject constructor(private val care: DogCare) : PluginScript() {
     override fun ScriptContext.startup() {
-        onOpNpc1(CHASE) { talk(it.npc) }
-        onPetOpIfPresent(CHASE, ADOPT_OP) { adopt(it) }
+        for (chase in CHASE_FORMS) {
+            onOpNpc1(chase) { talk(it.npc) }
+            onPetOpIfPresent(chase, ADOPT_OP) { adopt(it) }
+        }
+        onOpNpc3(CHASE_MULTI) { adopt(it.npc) }
     }
 
     private suspend fun ProtectedAccess.talk(npc: Npc) =
@@ -98,7 +102,8 @@ class Chase @Inject constructor(private val care: DogCare) : PluginScript() {
     private fun questComplete(player: Player): Boolean = QuestRequirements.hasCompleted(player, QUEST)
 
     private companion object {
-        const val CHASE = "npc.dogq_chase_post"
+        const val CHASE_MULTI = "npc.dogq_chase_multi"
+        val CHASE_FORMS = listOf("npc.dogq_chase", CHASE_MULTI, "npc.dogq_chase_post")
         const val ADOPT_OP = "Adopt"
         const val QUEST = "quest_ruffsituation"
         const val CAT_EARS = "obj.osb7_cat_ears"

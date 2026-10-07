@@ -24,7 +24,6 @@ private enum class RimmingtonShop(
 
 class RimmingtonShopkeepersScript @Inject constructor(private val shops: Shops) : PluginScript() {
     override fun ScriptContext.startup() {
-        onOpNpc1("npc.rommik") { startDialogue(it.npc) { rommik() } }
         onOpNpc3("npc.rommik") { player.openShop(RimmingtonShop.Crafting) }
 
         onOpNpc1("npc.salesman_ranging") { startDialogue(it.npc) { brian() } }
@@ -34,15 +33,6 @@ class RimmingtonShopkeepersScript @Inject constructor(private val shops: Shops) 
             onOpNpc1(staff) { startDialogue(it.npc) { generalStore(it.npc) } }
             onOpNpc3(staff) { player.openGeneralStore(it.npc) }
         }
-    }
-
-    private suspend fun Dialogue.rommik() {
-        chatNpc(happy, "Would you like to buy some Crafting equipment?")
-        shopOffer(
-            RimmingtonShop.Crafting,
-            decline = "No thanks, I've got all the Crafting equipment I need.",
-            declineSpoken = "No thanks; I've got all the Crafting equipment I need.",
-        )
     }
 
     private suspend fun Dialogue.brian() {

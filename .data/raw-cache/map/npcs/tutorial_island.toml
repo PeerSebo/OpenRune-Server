@@ -54,7 +54,6 @@ coords = "0_48_48_60_13"
 npc = "npc.newbie_survival_instructor"
 coords = "0_48_48_31_23"
 
-## Tutorial Island Bank
 
 [[spawn]]
 npc = "npc.newbie_account_instructor"
@@ -68,31 +67,26 @@ coords = "0_48_48_48_53"
 npc = "npc.noobbanker"
 coords = "0_48_48_50_53"
 
-## Tutorial Island Church
 
 [[spawn]]
 npc = "npc.brother_noob"
 coords = "0_48_48_53_34"
 
-## Tutorial Island Kitchen
 
 [[spawn]]
 npc = "npc.newbie_cook_instructor"
 coords = "0_48_48_3_13"
 
-## Tutorial Island Quest Building
 
 [[spawn]]
 npc = "npc.newbie_quest_instructor"
 coords = "0_48_48_13_50"
 
-## Tutorial Island Start Building
 
 [[spawn]]
 npc = "npc.newbie_basics_instructor"
 coords = "0_48_48_22_35"
 
-## Tutorial Island The Node
 
 [[spawn]]
 npc = "npc.boar"
@@ -170,7 +164,6 @@ coords = "0_48_47_47_19"
 npc = "npc.seagull"
 coords = "0_48_47_49_1"
 
-## Tutorial Island Underground
 
 [[spawn]]
 npc = "npc.newbie_combat_instructor"
@@ -232,7 +225,6 @@ coords = "0_48_148_35_49"
 npc = "npc.newbiegiantrat"
 coords = "0_48_148_37_46"
 
-## Tutorial Island Wizard Building
 
 [[spawn]]
 npc = "npc.newbie_magic_instructor"
@@ -257,6 +249,3 @@ coords = "0_49_48_4_22"
 [[spawn]]
 npc = "npc.newbiechicken"
 coords = "0_49_48_4_24"
-
-## Tutorial Island Wizard Building End
-

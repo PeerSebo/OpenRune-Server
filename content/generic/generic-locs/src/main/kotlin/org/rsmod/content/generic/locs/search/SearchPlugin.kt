@@ -13,6 +13,7 @@ class SearchPlugin : PluginScript() {
         onOpContentLoc1("content.empty_crate") { player.search(it.type) }
         onOpContentLoc1("content.empty_sacks") { player.search(it.type) }
         onOpContentLoc1("content.empty_boxes") { player.search(it.type) }
+        onOpContentLoc1("content.searchable_scenery") { player.search(it.type) }
     }
 
     private fun Player.search(type: ObjectServerType) {

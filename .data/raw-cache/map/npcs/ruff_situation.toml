@@ -1,0 +1,32 @@
+[[spawn]]
+npc = "npc.dogq_talia"
+coords = "0_47_54_28_0"
+
+[[spawn]]
+npc = "npc.dogq_chase_multi"
+coords = "0_47_54_26_0"
+
+[[spawn]]
+npc = "npc.dogq_black_lab"
+coords = "0_47_54_26_1"
+
+[[spawn]]
+npc = "npc.dogq_varrock_stray_dog_multi_quest"
+coords = "0_49_53_44_33"
+
+[[spawn]]
+npc = "npc.dogq_varrock_guard_multi"
+coords = "0_49_53_43_33"
+
+[[spawn]]
+npc = "npc.dogq_goblin_toetaller_multi"
+coords = "0_48_53_58_43"
+
+[[spawn]]
+npc = "npc.dogq_goblin_picklenose_multi"
+coords = "0_48_53_58_45"
+
+[[spawn]]
+npc = "npc.dogq_puppy_two_multi"
+coords = "0_48_53_59_43"
+

@@ -114,7 +114,6 @@ coords = "0_54_153_54_44"
 npc = "npc.route_veliaf_hurtz_parent"
 coords = "0_54_153_50_46"
 
-## Mort Myre Myreque Hideout west cave 1
 
 [[spawn]]
 npc = "npc.deadly_red_spider"
@@ -132,7 +131,6 @@ coords = "0_54_153_7_21"
 npc = "npc.giantrat1_3"
 coords = "0_54_153_13_24"
 
-## Mort Myre Myreque Hideout west cave 2
 
 [[spawn]]
 npc = "npc.deadly_red_spider"
@@ -146,7 +144,6 @@ coords = "0_54_153_13_14"
 npc = "npc.dog"
 coords = "0_54_153_14_12"
 
-## Mort Myre Myreque Hideout west cave 3
 
 [[spawn]]
 npc = "npc.goblin"
@@ -175,6 +172,3 @@ coords = "0_54_153_11_5"
 [[spawn]]
 npc = "npc.poisonspider"
 coords = "0_54_153_15_4"
-
-## Mort Myre Myreque Hideout west cave 3 End
-

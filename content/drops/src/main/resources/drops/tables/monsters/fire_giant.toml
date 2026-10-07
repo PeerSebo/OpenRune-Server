@@ -1,3 +1,5 @@
+# TODO: Brimstone key drop rates for level 86, 104 and 109 fire giants are , and respectively.
+
 id = "Fire giant Drops"
 npcs = ["npc.firegiant_big", "npc.firegiant_big2", "npc.firegiant_big3", "npc.firegiant", "npc.firegiant2", "npc.firegiant3", "npc.firegiant_strongholdcave_1", "npc.firegiant_strongholdcave_2", "npc.firegiant_strongholdcave_3", "npc.firegiant_strongholdcave_4", "npc.kourend_firegiant1", "npc.kourend_firegiant2"]
 brimstone_key_roll = true
@@ -146,6 +148,3 @@ numerator = 1
 denominator = 5013
 obj = "obj.dorgesh_construction_bone_curved"
 count = 1
-
-
-# Drops need manual rate (konar_key): Brimstone key drop rates for level 86, 104 and 109 fire giants are , and respectively.

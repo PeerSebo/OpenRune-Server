@@ -1,2 +1,25 @@
-[gamevals.synth]
-thieving_stunned = 2727
+[gamevals.content]
+stall = 54
+blackjack = 55
+# Reserved ID; coin pouches currently bind per item. Do not recycle it.
+coin_pouch = 56
+
+[gamevals.param]
+thieving_success_low = 65553
+thieving_success_high = 65554
+thieving_guard_range = 65555
+
+[gamevals.queue]
+thieving_release_face = 60
+
+thieving_pickpocket_success = 146
+thieving_pickpocket_fail_react = 147
+thieving_pickpocket_fail_strike = 148
+thieving_pickpocket_fail_stun = 149
+
+thieving_chest_open = 150
+thieving_safe_crack = 151
+thieving_door_pick = 152
+
+[gamevals.timer]
+pet_rocky_tick = 134

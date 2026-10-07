@@ -7,7 +7,6 @@ import dtx.core.SingleRollableBuilder
 import dtx.core.singleRollable
 import dtx.table.AbstractTableBuilder
 
-
 public open class ChainedTableBuilder<T, R, TT : ChainedTable<T, R>>(
     private val impl: (name: String, head: ChainRollable<T, R>, hooks: ChainedTableHooks<T, R>) -> TT
 ) : AbstractTableBuilder<

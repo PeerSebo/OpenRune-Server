@@ -63,14 +63,19 @@ constructor(
             if (npc.type.id in bossNpcIds) resetFlareState(npc)
         }
         deps.extensionRegistry.register(GAZE_RESOLVE) { _, npc, target, _ ->
-            if (isFighting(npc) && target.isValidTarget()) resolveGaze(npc, target)
-        } }
+            if (isFighting(npc) && inArena(npc, target)) resolveGaze(npc, target)
+        }
+    }
 
     private val bossNpcIds: Set<Int> by lazy {
         listOf(BOSS_NPC, SLEEP_NPC).map { it.asRSCM(RSCMType.NPC) }.toSet()
     }
 
     private fun isFighting(npc: Npc): Boolean = npc.isSlotAssigned && npc.isVisType(BOSS_NPC)
+
+    private fun inArena(npc: Npc, player: Player): Boolean =
+        player.isValidTarget() && player.coords.level == npc.coords.level &&
+            player.coords.chebyshevDistance(npc.coords) <= AGGRESSION_RADIUS
 
     private fun behindPillar(npc: Npc, target: Player): Boolean {
         val west = npc.coords.x
@@ -83,12 +88,10 @@ constructor(
     private fun seq(name: String) = ServerCacheManager.getAnim(name.asRSCM(RSCMType.SEQ))
 
     private fun openGaze(npc: Npc, target: Player) {
-        npc.setBodyModels(listOf(DUKE_BODY_MODEL, DUKE_OPEN_EYE_MODEL))
         target.runClientScript(SCREEN_GLOW_START_SCRIPT, GAZE_GLOW_COLOUR, glowComponent(), 0, 120, 255, 150)
         target.ifOpenFullOverlay(GAZE_INTERFACE, eventBus)
         target.ifSetAnim(GAZE_EYE_COMPONENT, seq(GAZE_EYE_APPEAR_SEQ))
         deps.worldQueues.add(GAZE_RESOLVE_DELAY + GAZE_CLOSE_DELAY) {
-            if (npc.isSlotAssigned) npc.setBodyModels(listOf(DUKE_BODY_MODEL, -1))
             target.ifCloseOverlay(GAZE_INTERFACE, eventBus)
         }
     }
@@ -189,7 +192,7 @@ constructor(
 
     private fun strikeGas(npc: Npc, centre: CoordGrid) {
         for (player in deps.playerList) {
-            if (!player.isValidTarget() || centre.chebyshevDistance(player.coords) > GAS_CLOUD_RADIUS) continue
+            if (!inArena(npc, player) || centre.chebyshevDistance(player.coords) > GAS_CLOUD_RADIUS) continue
             player.statSub("stat.prayer", GAS_PRAYER_DRAIN, 0)
             val damage = GAS_DAMAGE.first + deps.random.of(GAS_DAMAGE.last - GAS_DAMAGE.first + 1)
             player.finishNpcHit(npc, GAS_HIT_DELAY, EngineHitType.Typeless, damage, deps.playerHitModifier)
@@ -220,7 +223,7 @@ constructor(
             if (!player.isValidTarget() || player.coords !in tiles) continue
             val damage = range.first + deps.random.of(range.last - range.first + 1)
             val modifier = deps.playerHitModifier
-            player.finishNpcHit(npc, 1, EngineHitType.Melee, damage, modifier, MELEE_SLAM_PENETRATION)
+            player.finishNpcHit(npc, 1, EngineHitType.Melee, damage, modifier, prayerPenetration = MELEE_SLAM_PENETRATION)
         }
     }
 
@@ -317,6 +320,7 @@ constructor(
         private const val ATTACK_RATE = 5
         private const val ENRAGE_ATTACK_RATE = 4
         private const val ENRAGE_HP_FRACTION = 0.25
+        private const val AGGRESSION_RADIUS = 15
 
         private const val SPECIAL_MIN_ATTACKS = 5
         private const val SPECIAL_MAX_ATTACKS = 6
@@ -352,17 +356,15 @@ constructor(
         private const val GAZE_FROZEN_MESSAGE = "<col=ef1020>You have been frozen!</col>"
         private const val GAZE_RESOLVE_DELAY = 4
         private const val GAZE_CLOSE_DELAY = 2
-        private const val DUKE_BODY_MODEL = 49194
-        private const val DUKE_OPEN_EYE_MODEL = 49193
         private const val GAZE_INTERFACE = "interface.duke_sight"
         private const val GAZE_EYE_COMPONENT = "component.duke_sight:duke_eye_model"
         private const val GAZE_EYE_APPEAR_SEQ = "seq.interface_icon_cthonian01_appear"
         private const val GAZE_EYE_DISAPPEAR_SEQ = "seq.interface_icon_cthonian01_disappear"
-        private const val SCREEN_GLOW_START_SCRIPT = 3128
-        private const val SCREEN_GLOW_END_SCRIPT = 1896
+        private const val SCREEN_GLOW_START_SCRIPT = "clientscript.[clientscript,screen_glow_start]"
+        private const val SCREEN_GLOW_END_SCRIPT = "clientscript.[clientscript,script1896]"
         private const val GLOW_COMPONENT = "component.hpbar_hud:container"
         private const val GAZE_GLOW_COLOUR = 0x4243A1
-        private const val GAZE_RESOLVE_SYNTH = "synth.ice_barrage_impact"
+        private const val GAZE_RESOLVE_SYNTH = "synth.ICE_BARRAGE_IMPACT"
         private const val GAZE_FREEZE_SPOTANIM = "spotanim.ice_barrage_impact"
         private const val GAZE_FREEZE_SPOTANIM_SLOT = 2
         private const val GAZE_FREEZE_TICKS = 8
@@ -373,7 +375,7 @@ constructor(
         private const val GAS_FLARE_CAST = "duke_sucellus.gas_flare_cast"
         private const val GAS_FLARE_ECHO_CAST = "duke_sucellus.gas_flare_echo_cast"
         private const val GAS_FLARE_SEQ = "seq.npc_duke_sucellus01_magic_attack_faster01"
-        private const val GAS_FLARE_SYNTH = 5002
+        private const val GAS_FLARE_SYNTH = "synth.AKD_XAMPHUR_MAGIC_ATTACK"
         private const val GAS_FLARE_PROJECTILE = "spotanim.projanim_duke_spit_01"
         private const val GAS_SOURCE_DX = 3
         private const val GAS_SOURCE_DY = 1

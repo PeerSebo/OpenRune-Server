@@ -1,0 +1,7 @@
+# Use a soft timer so hint delivery does not close the level-up window.
+
+[gamevals.varp]
+levelup_max_total_celebrated = 65473
+
+[gamevals.timer]
+levelup_skill_guide_hint = 126

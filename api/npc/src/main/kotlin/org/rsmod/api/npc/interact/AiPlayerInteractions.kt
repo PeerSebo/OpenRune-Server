@@ -17,6 +17,10 @@ import org.rsmod.game.movement.RouteRequestPathingEntity
 public class AiPlayerInteractions
 @Inject
 constructor(private val eventBus: EventBus, private val playerList: PlayerList) {
+    /**
+     * Pass npc.attackRange explicitly: the default AP range is 10 tiles and engine AP checks
+     * run even for op-only interactions.
+     */
     public fun interactOp(npc: Npc, target: Player, op: InteractionOp) {
         val opTrigger = hasOpTrigger(npc, target, op)
         val interaction =
@@ -25,6 +29,7 @@ constructor(private val eventBus: EventBus, private val playerList: PlayerList) 
                 op = op,
                 hasOpTrigger = opTrigger,
                 hasApTrigger = false,
+                startApRange = npc.attackRange,
             )
         val routeRequest = RouteRequestPathingEntity(target.avatar)
         npc.interaction = interaction

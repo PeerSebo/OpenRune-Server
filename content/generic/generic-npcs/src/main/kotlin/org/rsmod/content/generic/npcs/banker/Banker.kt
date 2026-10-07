@@ -1,6 +1,8 @@
 package org.rsmod.content.generic.npcs.banker
 
+import dev.openrune.ServerCacheManager
 import dev.openrune.rscm.RSCM
+import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
 import dev.openrune.types.ItemServerType
 import jakarta.inject.Inject
@@ -17,8 +19,10 @@ import org.rsmod.api.script.onOpContentNpc1
 import org.rsmod.api.script.onOpContentNpc3
 import org.rsmod.api.script.onOpContentNpc4
 import org.rsmod.api.script.onOpContentNpcU
+import org.rsmod.api.script.onOpNpcU
 import org.rsmod.api.utils.format.formatAmount
 import org.rsmod.content.interfaces.bank.confirmAndExchangeBanknote
+import org.rsmod.content.interfaces.bank.exchangeBankCurrency
 import org.rsmod.content.interfaces.bank.scripts.BankTutorialScript
 import org.rsmod.content.interfaces.bank.tryOpenBank
 import org.rsmod.game.entity.Npc
@@ -31,7 +35,7 @@ private constructor(
     private val spaceShop: BankSpaceShop,
     private val tutorial: BankTutorialScript,
 ) : PluginScript() {
-    // TODO(content): Bank Tutor dialogue variation when player has a bank PIN set up.
+    // TODO: Bank Tutor dialogue variation when player has a bank PIN set up.
 
     override fun ScriptContext.startup() {
         onApContentNpc4("content.banker") { apOpenCollectionBox(it.npc) }
@@ -51,6 +55,19 @@ private constructor(
         onOpContentNpc1("content.banker_tutor") { talkToBanker(it.npc) }
         onApNpcU("content.banker_tutor") { apBanknote(it.npc, it.invSlot, it.objType) }
         onOpContentNpcU("content.banker_tutor") { banknote(it.npc, it.invSlot, it.objType) }
+
+        // Native banker variants may lack the content tag; bind only currency pairs on those variants.
+        val currencies = listOf("obj.coins", "obj.platinum").map {
+            checkNotNull(ServerCacheManager.getItem(it.asRSCM()))
+        }
+        for (type in ServerCacheManager.getNpcs().values) {
+            if (type.isContentType("content.banker") || type.isContentType("content.banker_tutor")) continue
+            if (type.name != "Banker" || (0..4).none { type.actions.getOpOrNull(it) == "Bank" }) continue
+            for (currency in currencies) {
+                onApNpcU(type, currency) { apBanknote(it.npc, it.invSlot, it.objType) }
+                onOpNpcU(type, currency) { banknote(it.npc, it.invSlot, it.objType) }
+            }
+        }
 
         spaceShop.startup()
     }
@@ -225,9 +242,6 @@ private constructor(
         val blocks = access.vars["varbit.bank_extra_blocks_purchased"]
         val costs = spaceShop.listCosts(blocks)
         if (costs.isEmpty()) {
-            // Note: Not sure if this is allowed or if the option to buy more bank slots is
-            // completely removed once you have purchased them all. Either way, this dialogue
-            // is not official.
             chatNpc(quiz, "I can't sell you any more bank slots.")
             return
         }
@@ -302,7 +316,7 @@ private constructor(
             }
 
             access.vars["varbit.bank_extra_blocks_purchased"] += block
-            access.soundSynth("synth.coins_jingle_1")
+            access.soundSynth("synth.COINS_JINGLE_01")
             access.vars["varbit.bank_capacity"] = min(newCapacity, access.bank.size)
             chatNpc(happy, "Your additional bank slots have been added.")
             return
@@ -425,7 +439,7 @@ private constructor(
         doubleobjbox(
             "obj.shrimp",
             400,
-            RSCM.getReverseMapping(RSCMType.OBJ,ocCert("obj.shrimp").id),
+            RSCM.getReverseMapping(RSCMType.OBJ, ocCert("obj.shrimp").id),
             400,
             "A noted item looks like a piece of paper with the image " +
                 "of the actual item on top of it.",
@@ -604,6 +618,7 @@ private constructor(
     }
 
     private suspend fun ProtectedAccess.banknote(npc: Npc, invSlot: Int, objType: ItemServerType) {
+        if (exchangeBankCurrency(invSlot, objType)) return
         if (!objType.isCert) {
             startDialogue(npc) {
                 chatNpcNoTurn(sad, "Hand me a banknote, and I'll try to convert it to an item.")

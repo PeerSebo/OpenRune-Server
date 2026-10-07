@@ -10,19 +10,12 @@ import org.rsmod.plugin.scripts.ScriptContext
 
 class PouchRepairEvents : PluginScript() {
     override fun ScriptContext.startup() {
-        onOpNpc1("npc.rcu_zammy_mage2") {
-            talkToDarkMage(it.npc)
-        }
+        onOpNpc1("npc.rcu_zammy_mage2") { talkToDarkMage(it.npc) }
 
-        onOpNpc3("npc.rcu_zammy_mage2") {
-            repairPouchesDirectly(it.npc)
-        }
+        onOpNpc3("npc.rcu_zammy_mage2") { repairPouchesDirectly(it.npc) }
 
         listOf("npc.gotr_cordelia_1op", "npc.gotr_cordelia_2ops").forEach {
-            onOpNpc1(it) {
-                talkToCordelia(it.npc)
-            }
+            onOpNpc1(it) { talkToCordelia(it.npc) }
         }
-
     }
 }

@@ -1,0 +1,34 @@
+[[npc]]
+id = "npc.vm_patrol_route_wheelbarrow"
+inherit = "npc.vm_patrol_route_wheelbarrow"
+isServerOnly = true
+defaultMode = "None"
+moveRestrict = "PassThru"
+blockWalk = "None"
+wanderRange = 0
+timer = 1
+
+[[npc]]
+id = "npc.vm_patrol_route_wheelbarrow_empty"
+inherit = "npc.vm_patrol_route_wheelbarrow_empty"
+isServerOnly = true
+defaultMode = "None"
+moveRestrict = "PassThru"
+blockWalk = "None"
+wanderRange = 0
+timer = 1
+
+[[varn]]
+id = "varn.museum_workman_waypoint"
+
+[[varn]]
+id = "varn.museum_workman_pause"
+
+[[varn]]
+id = "varn.museum_workman_squeak"
+
+[[varn]]
+id = "varn.museum_workman_greeted"
+
+[[varn]]
+id = "varn.museum_workman_gate_close_delay"

@@ -2,14 +2,14 @@ package dtx.impl.exhaustive
 
 import dtx.table.TableHooks
 
-public interface ExhaustiveTableHooks<T, R>: TableHooks<T, R>, ExhaustiveRollableHooks<T, R>
+public interface ExhaustiveTableHooks<T, R> : TableHooks<T, R>, ExhaustiveRollableHooks<T, R>
 
 internal data class ExhaustiveTableHooksImpl<T, R>(
     val baseTableHooks: TableHooks<T, R>,
     val baseRollableHooks: ExhaustiveRollableHooks<T, R> = ExhaustiveRollableHooksImpl(),
-): ExhaustiveTableHooks<T, R>, TableHooks<T, R> by baseTableHooks {
+) : ExhaustiveTableHooks<T, R>, TableHooks<T, R> by baseTableHooks {
 
-    override fun onExhaust(target: T): Unit {
+    override fun onExhaust(target: T) {
         baseRollableHooks.onExhaust(target)
     }
 
@@ -17,11 +17,11 @@ internal data class ExhaustiveTableHooksImpl<T, R>(
         return baseRollableHooks.isExhausted(rollable)
     }
 
-    override fun resetExhaustible(rollable: ExhaustiveRollable<T, R>): Unit {
+    override fun resetExhaustible(rollable: ExhaustiveRollable<T, R>) {
         return baseRollableHooks.resetExhaustible(rollable)
     }
 
-    override fun incrementExhaustible(rollable: ExhaustiveRollable<T, R>): Unit {
+    override fun incrementExhaustible(rollable: ExhaustiveRollable<T, R>) {
         return baseRollableHooks.incrementExhaustible(rollable)
     }
 }

@@ -1,0 +1,28 @@
+[[npc]]
+isServerOnly = true
+id = "npc.duke_sucellus_asleep"
+inherit = "npc.duke_sucellus_asleep"
+moveRestrict = "NoMove"
+wanderRange = 0
+defaultMode = "None"
+[npc.params]
+"param.killcount_varp" = "varp.total_duke_sucellus_kills"
+"param.boss_hp_bar_mode" = 2
+
+[[npc]]
+isServerOnly = true
+id = "npc.duke_sucellus_awake"
+inherit = "npc.duke_sucellus_awake"
+moveRestrict = "NoMove"
+wanderRange = 0
+defaultMode = "None"
+[npc.params]
+"param.killcount_varp" = "varp.total_duke_sucellus_kills"
+"param.boss_hp_bar_mode" = 2
+"param.death_anim" = "seq.npc_duke_sucellus01_death_01"
+
+[[object]]
+isServerOnly = true
+id = "loc.duke_sucellus_salt"
+inherit = "loc.duke_sucellus_salt"
+contentGroup = "content.rock"

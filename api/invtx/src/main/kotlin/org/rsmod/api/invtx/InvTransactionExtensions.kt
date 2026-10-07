@@ -25,7 +25,7 @@ public fun Player.invAddOrDrop(
     coords: CoordGrid = this.coords,
     inv: Inventory = this.inv,
 ): Boolean {
-    val transaction = invAdd(inv, RSCM.getReverseMapping(RSCMType.OBJ,type.asRSCM(RSCMType.OBJ)), count = count)
+    val transaction = invAdd(inv, RSCM.getReverseMapping(RSCMType.OBJ, type.asRSCM(RSCMType.OBJ)), count = count)
     if (transaction.success) {
         return true
     }
@@ -71,10 +71,6 @@ public fun Player.invAdd(
         )
     }
 
-/**
- * @param ignoreVirtualStorage When `true`, items are placed only in [inv] slots and are not
- *   redirected into virtual storage hooks (e.g. coal bag while open).
- */
 public fun Player.invAdd(
     inv: Inventory,
     type: String,
@@ -185,10 +181,6 @@ public fun Player.invDel(
         )
     }
 
-/**
- * @param ignoreVirtualStorage When `true`, items are removed only from [inv] slots and are not
- *   taken from virtual storage hooks (e.g. essence pouches).
- */
 public fun Player.invDel(
     inv: Inventory,
     type: String,
@@ -334,17 +326,8 @@ public fun Player.invDelAll(
     }
 
 /**
- * @param into The inventory to place the obj into. `null` if swap is to occur in `this` Inventory.
- * @param cert If the obj in the respective [fromSlot] should be turned into its certificate form
- *   when inserted into [into] inv. (if applicable)
- * @param uncert If the obj in the respective [fromSlot] should be transformed, when applicable,
- *   from its certificate form to its non-certificate variant.
- * @param mergeStacks If the obj in the respective [fromSlot] should be merged with any exact obj
- *   match found in [into] inv. (ex: merging stackable items when moved from bank to inventory)
- * @param strict When `true`: If any obj exists in [intoSlot] it must strictly try to take slot
- *   [fromSlot]. When `false`: The `into` obj will attempt to take [fromSlot], but if it cannot, it
- *   will find the next free slot. _`from` obj will always be strictly taken from [fromSlot] and the
- *   transaction will fail if it cannot be done._
+ * A strict swap requires the displaced item to fit into the original slot; non-strict swaps may
+ * use another free slot.
  */
 public fun Player.invSwap(
     from: Inventory,
@@ -372,7 +355,6 @@ public fun Player.invSwap(
         )
     }
 
-/** See [invSwap] extension function for documentation. */
 public fun Transaction<InvObj>.swap(
     from: TransactionInventory<InvObj>,
     fromSlot: Int,

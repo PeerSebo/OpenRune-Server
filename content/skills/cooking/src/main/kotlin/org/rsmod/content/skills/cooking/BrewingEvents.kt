@@ -1,6 +1,7 @@
 package org.rsmod.content.skills.cooking
 
 import jakarta.inject.Inject
+import kotlin.random.Random
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.player.stat.cookingLvl
 import org.rsmod.api.script.onOpLoc1
@@ -13,7 +14,6 @@ import org.rsmod.content.skills.SkillMultiEntry
 import org.rsmod.content.skills.openSkillMulti
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
-import kotlin.random.Random
 
 class BrewingEvents @Inject constructor() : PluginScript() {
 

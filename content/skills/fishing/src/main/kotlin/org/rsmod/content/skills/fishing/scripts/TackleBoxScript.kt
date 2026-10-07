@@ -1,13 +1,14 @@
 package org.rsmod.content.skills.fishing.scripts
 
+import dev.openrune.ServerCacheManager
 import dev.openrune.definition.type.widget.IfEvent
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
 import dev.openrune.types.ItemServerType
 import dev.openrune.types.aconverted.interf.IfButtonOp
 import dev.openrune.types.enums.enum
-import jakarta.inject.Inject
 import kotlin.math.min
+import org.rsmod.api.invtx.invTransfer
 import org.rsmod.api.player.output.UpdateInventory
 import org.rsmod.api.player.output.mes
 import org.rsmod.api.player.protect.ProtectedAccess
@@ -15,40 +16,50 @@ import org.rsmod.api.player.startInvTransmit
 import org.rsmod.api.player.stopInvTransmit
 import org.rsmod.api.player.ui.IfModalButton
 import org.rsmod.api.player.vars.intVarBit
+import org.rsmod.api.script.advanced.onOpBankside
 import org.rsmod.api.script.onIfClose
 import org.rsmod.api.script.onIfModalButton
 import org.rsmod.api.script.onIfOpen
 import org.rsmod.api.script.onOpHeld1
 import org.rsmod.api.script.onOpHeld2
+import org.rsmod.api.script.onOpHeld3
 import org.rsmod.api.script.onOpHeldU
-import org.rsmod.api.table.fishing.FishingMethodRow
 import org.rsmod.game.entity.Player
 import org.rsmod.game.inv.Inventory
 import org.rsmod.game.type.getInvObj
-import org.rsmod.objtx.isOk
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
-class TackleBoxScript @Inject constructor() : PluginScript() {
+class TackleBoxScript : PluginScript() {
 
     private val storable: Set<String> by lazy {
-        val configured = enum<Int, ItemServerType>("tackle_box_storable")
-        FishingMethodRow.all()
-            .flatMap { listOfNotNull(it.tool, it.bait, it.altTool) }
-            .toSet() + configured.values.filterNotNull().map { it.internalName }
+        // Resolve custom enum keys lazily; generated accessors may carry stale IDs.
+        enum<Int, ItemServerType>("tackle_box_storable")
+            .backing
+            .values
+            .filterNotNull()
+            .mapTo(HashSet()) { it.internalName }
     }
 
     private val Player.tackleBox: Inventory
         get() = invMap.getOrPut("inv.tackle_box")
 
-    private var ProtectedAccess.selectedQtyId: Int by intVarBit("varbit.ii_elnock_storage_selectedquantity")
+    private var ProtectedAccess.selectedQtyId: Int by
+        intVarBit("varbit.ii_elnock_storage_selectedquantity")
 
     private fun comp(name: String): Int = name.asRSCM(RSCMType.COMPONENT)
 
     override fun ScriptContext.startup() {
         onOpHeld1(BOX) { openBox() }
-        onOpHeld2(BOX) { depositFromBank() }
+        onOpHeld2(BOX) { fillBox() }
+        onOpHeld3(BOX) { emptyBox() }
         onOpHeldU(BOX) { depositHeld(it.second, it.secondSlot) }
+
+        val boxType =
+            checkNotNull(ServerCacheManager.getItem(BOX.asRSCM(RSCMType.OBJ))) {
+                "Missing obj type: $BOX"
+            }
+        onOpBankside(boxType) { depositFromBank(player) }
 
         onIfOpen("interface.tackle_box_main") { player.startInvTransmit(player.tackleBox) }
         onIfClose("interface.tackle_box_main") { player.stopInvTransmit(player.tackleBox) }
@@ -65,10 +76,10 @@ class TackleBoxScript @Inject constructor() : PluginScript() {
     }
 
     private fun ProtectedAccess.openBox() {
-        player.startInvTransmit(player.tackleBox)
+        // Start inventory transmission before initialization scripts draw the panes.
         ifOpenMainSidePair("interface.tackle_box_main", "interface.tackle_box_side")
         runClientScript(
-            4049,
+            "clientscript.[clientscript,tackle_box_init]".asRSCM(RSCMType.CLIENTSCRIPT),
             comp("component.tackle_box_main:universe"),
             comp("component.tackle_box_main:fill"),
             comp("component.tackle_box_main:empty"),
@@ -79,18 +90,33 @@ class TackleBoxScript @Inject constructor() : PluginScript() {
             comp("component.tackle_box_main:x"),
             comp("component.tackle_box_main:all"),
         )
-        runClientScript(4061, comp("component.tackle_box_side:items"))
+        runClientScript(
+            "clientscript.[clientscript,tackle_box_side_init]".asRSCM(RSCMType.CLIENTSCRIPT),
+            comp("component.tackle_box_side:items"),
+        )
         ifSetEvents(
             "component.tackle_box_main:items",
             player.tackleBox.indices,
-            IfEvent.Op1, IfEvent.Op2, IfEvent.Op3, IfEvent.Op4,
-            IfEvent.Op5, IfEvent.Op6, IfEvent.Op7, IfEvent.Op10,
+            IfEvent.Op1,
+            IfEvent.Op2,
+            IfEvent.Op3,
+            IfEvent.Op4,
+            IfEvent.Op5,
+            IfEvent.Op6,
+            IfEvent.Op7,
+            IfEvent.Op10,
         )
         ifSetEvents(
             "component.tackle_box_side:items",
             0..27,
-            IfEvent.Op1, IfEvent.Op2, IfEvent.Op3, IfEvent.Op4,
-            IfEvent.Op5, IfEvent.Op6, IfEvent.Op7, IfEvent.Op10,
+            IfEvent.Op1,
+            IfEvent.Op2,
+            IfEvent.Op3,
+            IfEvent.Op4,
+            IfEvent.Op5,
+            IfEvent.Op6,
+            IfEvent.Op7,
+            IfEvent.Op10,
         )
         ifSetEvents("component.tackle_box_main:fill", 0..0, IfEvent.Op1)
         ifSetEvents("component.tackle_box_main:empty", 0..0, IfEvent.Op1)
@@ -114,8 +140,9 @@ class TackleBoxScript @Inject constructor() : PluginScript() {
             val o = box[s] ?: continue
             if (o.id != clicked.id) continue
             val take = min(remaining, o.count)
-            val result = invMoveFromSlot(from = box, into = inv, fromSlot = s, count = take, strict = false)
-            if (!result[0].isOk()) {
+            val result =
+                invMoveFromSlot(from = box, into = inv, fromSlot = s, count = take, strict = false)
+            if (!result.success) {
                 mes("Your inventory is too full.")
                 break
             }
@@ -124,29 +151,31 @@ class TackleBoxScript @Inject constructor() : PluginScript() {
         UpdateInventory.updateInvFull(player, box)
     }
 
-    /**
-     * The "Use" option while the bank is open sweeps every unnoted supported item out of the
-     * inventory and into the box.
-     */
-    private fun ProtectedAccess.depositFromBank() {
-        if (BANK_INTERFACE !in player.ui) {
-            mes("You can only do that while your bank is open.")
-            return
-        }
+    private fun depositFromBank(player: Player) {
         val box = player.tackleBox
         var moved = 0
-        for (slot in inv.indices) {
-            val obj = inv[slot] ?: continue
+        for (slot in player.inv.indices) {
+            val obj = player.inv[slot] ?: continue
             val type = getInvObj(obj)
             if (type.isCert || type.internalName !in storable || !box.hasRoomFor(obj.id)) {
                 continue
             }
-            val result = invMoveFromSlot(from = inv, into = box, fromSlot = slot, count = obj.count, strict = false)
-            if (result[0].isOk()) {
+            val result =
+                player.invTransfer(
+                    from = player.inv,
+                    fromSlot = slot,
+                    count = obj.count,
+                    into = box,
+                    strict = false,
+                )
+            if (result.success) {
                 moved += obj.count
             }
         }
-        mes(if (moved > 0) "You store your fishing equipment in the tackle box." else "You have no fishing equipment to store.")
+        player.mes(
+            if (moved > 0) "You store your fishing equipment in the tackle box."
+            else "You have no fishing equipment to store."
+        )
         UpdateInventory.updateInvFull(player, box)
     }
 
@@ -161,12 +190,19 @@ class TackleBoxScript @Inject constructor() : PluginScript() {
             return
         }
         val result =
-            invMoveFromSlot(from = inv, into = player.tackleBox, fromSlot = slot, count = obj.count, strict = false)
-        if (result[0].isOk()) {
+            invMoveFromSlot(
+                from = inv,
+                into = player.tackleBox,
+                fromSlot = slot,
+                count = obj.count,
+                strict = false,
+            )
+        if (result.success) {
             mes("You store your ${type.name.lowercase()} in the tackle box.")
         } else {
             mes("The tackle box is full.")
         }
+        UpdateInventory.updateInvFull(player, player.tackleBox)
     }
 
     private suspend fun ProtectedAccess.handleDeposit(event: IfModalButton) {
@@ -192,8 +228,9 @@ class TackleBoxScript @Inject constructor() : PluginScript() {
             val o = inv[s] ?: continue
             if (o.id != clicked.id) continue
             val take = min(remaining, o.count)
-            val result = invMoveFromSlot(from = inv, into = box, fromSlot = s, count = take, strict = false)
-            if (!result[0].isOk()) {
+            val result =
+                invMoveFromSlot(from = inv, into = box, fromSlot = s, count = take, strict = false)
+            if (!result.success) {
                 mes("The tackle box is full.")
                 break
             }
@@ -221,16 +258,39 @@ class TackleBoxScript @Inject constructor() : PluginScript() {
     private fun ProtectedAccess.fillBox() {
         val box = player.tackleBox
         var moved = 0
-        for (name in storable) {
-            val count = invTotal(inv, name)
-            if (count == 0 || !box.hasRoomFor(name.asRSCM(RSCMType.OBJ))) {
+        for (slot in inv.indices) {
+            val obj = inv[slot] ?: continue
+            val type = getInvObj(obj)
+            if (type.isCert || type.internalName !in storable || !box.hasRoomFor(obj.id)) {
                 continue
             }
-            invDel(inv, name, count)
-            invAdd(box, name, count)
-            moved += count
+            val result =
+                invMoveFromSlot(from = inv, into = box, fromSlot = slot, count = obj.count, strict = false)
+            if (result.success) {
+                moved += obj.count
+            }
         }
-        mes(if (moved > 0) "You fill the tackle box with your fishing equipment." else "You have no fishing equipment to store.")
+        mes(
+            if (moved > 0) "You fill the tackle box with your fishing equipment."
+            else "You have no fishing equipment to store."
+        )
+        UpdateInventory.updateInvFull(player, box)
+    }
+
+    private fun ProtectedAccess.emptyBox() {
+        val box = player.tackleBox
+        var emptied = false
+        for (slot in box.indices) {
+            val obj = box[slot] ?: continue
+            val result =
+                invMoveFromSlot(from = box, into = inv, fromSlot = slot, count = obj.count, strict = false)
+            if (!result.success) {
+                mes("Your inventory is too full to empty the whole tackle box.")
+                break
+            }
+            emptied = true
+        }
+        mes(if (emptied) "You empty the tackle box." else "The tackle box is already empty.")
         UpdateInventory.updateInvFull(player, box)
     }
 
@@ -240,29 +300,12 @@ class TackleBoxScript @Inject constructor() : PluginScript() {
     }
 
     private fun ProtectedAccess.mesTackleBoxFull() {
-        mes("The tackle box can only hold ${MAX_DISTINCT_ITEMS} different kinds of item.")
-    }
-
-    private fun ProtectedAccess.emptyBox() {
-        var emptied = false
-        val box = player.tackleBox
-        for (name in storable) {
-            val count = invTotal(box, name)
-            if (count > 0) {
-                invDel(box, name, count)
-                invAdd(inv, name, count)
-                emptied = true
-            }
-        }
-        mes(if (emptied) "You empty the tackle box." else "The tackle box is already empty.")
-        UpdateInventory.updateInvFull(player, box)
+        mes("The tackle box can only hold $MAX_DISTINCT_ITEMS different kinds of item.")
     }
 
     private companion object {
         private const val BOX = "obj.tackle_box"
-        private const val BANK_INTERFACE = "interface.bankmain"
 
-        /** The box only holds this many different kinds of item, no matter how many of each. */
         private const val MAX_DISTINCT_ITEMS = 35
     }
 }

@@ -4,21 +4,6 @@ import org.rsmod.map.CoordGrid
 import org.rsmod.map.square.MapSquareGrid
 import org.rsmod.map.square.MapSquareKey
 
-/**
- * Represents the absolute coordinates of a polygon vertex. This is similar to [CoordGrid], but
- * omits the `level` value; levels are dependent on the parent polygon.
- *
- * Example:
- * ```
- * // Equivalent to CoordGrid(0, 50, 50, 2, 5), or in absolute values X: 3202 and Z: 3205.
- * val vertex = VertexCoord(mx = 50, mz = 50, lx = 2, lz = 5)
- * ```
- *
- * @param mx The map square x coordinate.
- * @param mz The map square z coordinate.
- * @param lx The local x coordinate within the map square `[0-63]`.
- * @param lz The local z coordinate within the map square `[0-63]`.
- */
 @JvmInline
 public value class VertexCoord(public val packed: Int) {
     public val x: Int

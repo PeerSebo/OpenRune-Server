@@ -1,4 +1,7 @@
 [clientscript,spawn_menu_search_key](int $key, char $char, component $searchtext, component $grid, component $scrollbar, component $message)
+if (%meslayermode > 0) {
+    return;
+}
 def_string $query = %settings_search_string;
 def_int $length = string_length($query);
 if ($key = ^key_return | $key = ^key_escape) {

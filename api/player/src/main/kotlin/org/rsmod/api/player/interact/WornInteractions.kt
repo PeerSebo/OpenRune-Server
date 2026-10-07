@@ -42,18 +42,6 @@ constructor(
         interact(access, worn, wornSlot, obj, getInvObj(obj), op)
     }
 
-    /**
-     * Directly unequips the obj in [wornSlot], bypassing the normal `Op1` scripted logic.
-     *
-     * Use this when an obj requires custom or additional logic (before unequipping) that isn't part
-     * of the usual event flow. After that custom logic, call `unequip(...)` to finalize the equip
-     * as if `Op1` had been invoked, but without re-triggering any event-based scripts.
-     *
-     * _Note that this function may not actually unequip the obj if the player is prohibited from
-     * doing so. In those cases, the reason is returned in the form of [WornUnequipResult]._
-     *
-     * @return the outcome of the unequip attempt, represented as [WornUnequipResult].
-     */
     public fun unequip(
         access: ProtectedAccess,
         worn: Inventory,
@@ -260,7 +248,6 @@ constructor(
             return false
         }
 
-        // Op1 (`Remove`) and Op10 (`Examine`) always exists for worn objs.
         val param = op.toParamType()
         if (param != null && !type.hasParam(param)) {
             logger.debug { "OpWorn invalid op blocked: op=$op, obj=$obj, type=$type" }

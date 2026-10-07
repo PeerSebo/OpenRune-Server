@@ -1,0 +1,13 @@
+[gamevals.dbrow]
+instance_vardorvis = 63057
+
+[gamevals.varn]
+vardorvis_next_head_gaze_tick = 21
+vardorvis_last_strangle_tick = 22
+vardorvis_strangle_ready_at = 64089
+vardorvis_next_axes = 64090
+
+[gamevals.varp]
+overhead_lock_expiration = 65657
+vardorvis_pending_awakened = 64070
+vardorvis_strangle_spores = 64071

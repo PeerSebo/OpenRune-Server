@@ -67,7 +67,7 @@ class CraftingCapeScript : PluginScript() {
         private val TELEPORT_START_ANIM = RSCM.getReverseMapping(RSCMType.SEQ, 714)
         private val TELEPORT_SPOTANIM = RSCM.getReverseMapping(RSCMType.SPOTANIM, 111)
 
-        private const val TELEPORT_SOUND = "synth.teleport_all"
+        private const val TELEPORT_SOUND = "synth.TELEPORT_ALL"
         private const val TELEPORT_QUEUE = "queue.crafting_cape_teleport"
         private const val TELEPORT_SPOTANIM_HEIGHT = 92
 

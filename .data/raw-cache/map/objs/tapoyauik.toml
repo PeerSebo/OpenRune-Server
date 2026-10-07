@@ -30,7 +30,6 @@ coords = "0_25_150_59_3"
 obj = "obj.blue_dragon_scale"
 coords = "0_25_150_62_13"
 
-## Ruins of Tapoyauik
 
 [[spawn]]
 obj = "obj.blue_dragon_scale"
@@ -75,6 +74,3 @@ coords = "2_26_150_26_2"
 [[spawn]]
 obj = "obj.slayer_buglan_off"
 coords = "0_26_150_25_61"
-
-## Ruins of Tapoyauik End
-

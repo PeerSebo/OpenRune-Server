@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+  <logger name="org.rsmod.server.app.GameServer" level="DEBUG" />
+  <logger name="org.rsmod.server.app.StopRequestFileWatcher" level="DEBUG" />
+  <logger name="org.rsmod.api.db.jdbc.EmbeddedPostgresOwner" level="DEBUG" />
+  <logger name="org.rsmod.api.realm.config.RealmConfigService" level="DEBUG" />
+  <logger name="org.rsmod.api.net.central.logging.CentralActivityLogWriter" level="DEBUG" />
+  <logger name="org.rsmod.api.farming.FarmingBinRegistry" level="DEBUG" />
+  <logger name="org.rsmod.api.farming.FarmingCropRegistry" level="DEBUG" />
+  <logger name="org.rsmod.api.farming.hook.FarmingStartupScript" level="DEBUG" />
+  <logger name="org.rsmod.api.shops.ShopScript" level="DEBUG" />
+  <logger name="org.rsmod.content.travel.fairyrings.FairyRings" level="DEBUG" />
+  <logger name="org.rsmod.content.other.grandexchange.GeExchange" level="DEBUG" />
+  <logger name="org.rsmod.content.other.defendanims.DefendAnimsScript" level="DEBUG" />
+  <logger name="org.rsmod.content.other.npccombatanims.NpcCombatAnimsScript" level="DEBUG" />
+  <logger name="org.rsmod.content.other.npcaggression.NpcAggressionScript" level="DEBUG" />
+  <logger name="org.rsmod.content.other.poison.PoisonScript" level="DEBUG" />
+  <logger name="org.rsmod.content.areas.misc.deathsdomain.DeathsDomain" level="DEBUG" />
+</included>

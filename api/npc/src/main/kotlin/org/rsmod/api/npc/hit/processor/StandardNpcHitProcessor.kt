@@ -12,6 +12,7 @@ import org.rsmod.api.npc.headbar.InternalNpcHeadbars
 import org.rsmod.api.npc.hit.NpcDamageContributor
 import org.rsmod.api.player.ironman.shouldBlockNpcCombatXp
 import org.rsmod.api.player.output.soundSynth
+import org.rsmod.api.repo.world.WorldRepository
 import org.rsmod.events.EventBus
 import org.rsmod.game.entity.Npc
 import org.rsmod.game.entity.PlayerList
@@ -24,10 +25,13 @@ constructor(
     private val playerList: PlayerList,
     private val eventBus: EventBus,
     private val damageContributors: Set<NpcDamageContributor>,
+    private val worldRepo: WorldRepository,
 ) : NpcHitProcessor {
     override fun StandardNpcAccess.process(hit: Hit) {
-        var changedDamage: Int? = null
-        if (!npc.hitpointsLocked && hit.damage > npc.hitpoints) {
+        val before = NpcHitEvents.BeforeImpact(npc, hit)
+        eventBus.publish(before)
+        var changedDamage: Int? = before.damage.coerceAtLeast(0).takeIf { it != hit.damage }
+        if (!npc.hitpointsLocked && (changedDamage ?: hit.damage) > npc.hitpoints) {
             changedDamage = npc.hitpoints
         }
 
@@ -111,13 +115,23 @@ constructor(
     private val Npc.hitpointsLocked: Boolean
         get() = type.paramOrNull(params.hitpoints_locked) == true
 
+    /**
+     * The attacker receives a local synth; other zone observers receive the area sound.
+     * Exclude the attacker from the broadcast to avoid duplicate audio. Sourceless hits stay silent.
+     */
     private fun StandardNpcAccess.playDefendSound(hit: Hit) {
-        val source = if (hit.isFromPlayer) hit.resolvePlayerSource(playerList) else null
-        if (source == null) {
+        if (!hit.isFromPlayer && !hit.isFromNpc) {
             return
         }
         val defendSound = npc.visType.paramOrNull(params.defend_sound) ?: return
-        source.soundSynth(defendSound)
+        val source = if (hit.isFromPlayer) hit.resolvePlayerSource(playerList) else null
+        source?.soundSynth(defendSound)
+        worldRepo.soundAreaExcept(
+            source = npc,
+            synth = defendSound,
+            except = source,
+            radius = WorldRepository.COMBAT_SOUND_RADIUS,
+        )
     }
 
     private fun Hit.createHeadbar(currHp: Int, maxHp: Int, headbar: HealthBarServerType): Headbar =
@@ -126,5 +140,6 @@ constructor(
     private fun Npc.publishHitEvent(hit: Hit) {
         val event = NpcHitEvents.Impact(this, hit)
         eventBus.publish(event)
+        eventBus.publish(NpcHitEvents.AnyImpact(this, hit))
     }
 }

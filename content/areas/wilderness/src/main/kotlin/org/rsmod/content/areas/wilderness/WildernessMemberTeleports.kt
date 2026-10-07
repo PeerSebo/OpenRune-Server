@@ -2,11 +2,6 @@ package org.rsmod.content.areas.wilderness
 
 import org.rsmod.api.player.hook.TeleportType
 
-/**
- * Member jewellery and items that may teleport up to level 30 Wilderness.
- *
- * Charge variants (e.g. glory_4) and imbued versions are matched by base name prefix.
- */
 public object WildernessMemberTeleports {
     private val LEVEL_30_BASE_NAMES =
         setOf(

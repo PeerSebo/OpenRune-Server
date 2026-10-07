@@ -33,6 +33,7 @@ object Mining {
             column("success_rate_low", COL_SUCCESS_RATE_LOW, VarType.INT)
             column("success_rate_high", COL_SUCCESS_RATE_HIGH, VarType.INT)
             column("deplete_mechanic", COL_DEPLETE_MECHANIC, VarType.INT)
+            // Empty models are shared or align with rock_object order; retain map shape and angle.
             column("empty_rock_object", COL_EMPTY_ROCK, VarType.LOC)
             column("clue_base_chance", COL_CLUE_BASE_CHANCE, VarType.INT)
             column("deplete_min_amount", COL_DEPLETE_MIN, VarType.INT)
@@ -43,6 +44,23 @@ object Mining {
             column("mining_cape", COL_MINING_CAPE, VarType.BOOLEAN)
             column("celestial_ring", COL_CELESTIAL_RING, VarType.BOOLEAN)
 
+            row("dbrow.mining_dukesalt") {
+                columnRSCM(COL_ROCK_OBJECT, "loc.duke_sucellus_salt")
+                column(COL_LEVEL, 1)
+                column(COL_XP, 50)
+                columnRSCM(COL_ORE_ITEM, "obj.duke_sucellus_salt")
+                column(COL_RESPAWN_CYCLES, 0)
+                column(COL_SUCCESS_RATE_LOW, 255)
+                column(COL_SUCCESS_RATE_HIGH, 255)
+                column(COL_DEPLETE_MECHANIC, 3)
+                column(COL_CLUE_BASE_CHANCE, 0)
+                column(COL_MINING_WALL, false)
+                column(COL_MINING_GLOVES, 0)
+                column(COL_VARROCK_ARMOUR, 0)
+                column(COL_MINING_CAPE, false)
+                column(COL_CELESTIAL_RING, false)
+            }
+
             row("dbrow.mining_clayrock") {
                 columnRSCM(COL_ROCK_OBJECT, "loc.clayrock1", "loc.clayrock2")
                 column(COL_LEVEL, 1)
@@ -52,7 +70,7 @@ object Mining {
                 column(COL_SUCCESS_RATE_LOW, 128)
                 column(COL_SUCCESS_RATE_HIGH, 400)
                 column(COL_DEPLETE_MECHANIC, 1)
-                columnRSCM(COL_EMPTY_ROCK, "loc.rocks2")
+                columnRSCM(COL_EMPTY_ROCK, "loc.rocks1", "loc.rocks2")
                 column(COL_CLUE_BASE_CHANCE, 741600)
                 column(COL_MINING_WALL, false)
                 column(COL_MINING_GLOVES, 0)
@@ -70,7 +88,7 @@ object Mining {
                 column(COL_SUCCESS_RATE_LOW, 100)
                 column(COL_SUCCESS_RATE_HIGH, 350)
                 column(COL_DEPLETE_MECHANIC, 1)
-                columnRSCM(COL_EMPTY_ROCK, "loc.rocks2")
+                columnRSCM(COL_EMPTY_ROCK, "loc.rocks1", "loc.rocks2")
                 column(COL_CLUE_BASE_CHANCE, 741600)
                 column(COL_MINING_WALL, false)
                 column(COL_MINING_GLOVES, 1)
@@ -88,7 +106,7 @@ object Mining {
                 column(COL_SUCCESS_RATE_LOW, 100)
                 column(COL_SUCCESS_RATE_HIGH, 350)
                 column(COL_DEPLETE_MECHANIC, 1)
-                columnRSCM(COL_EMPTY_ROCK, "loc.rocks2")
+                columnRSCM(COL_EMPTY_ROCK, "loc.rocks1", "loc.rocks2")
                 column(COL_CLUE_BASE_CHANCE, 741600)
                 column(COL_MINING_WALL, false)
                 column(COL_MINING_GLOVES, 1)
@@ -106,7 +124,7 @@ object Mining {
                 column(COL_SUCCESS_RATE_LOW, 90)
                 column(COL_SUCCESS_RATE_HIGH, 350)
                 column(COL_DEPLETE_MECHANIC, 1)
-                columnRSCM(COL_EMPTY_ROCK, "loc.rocks2")
+                columnRSCM(COL_EMPTY_ROCK, "loc.rocks1", "loc.rocks2")
                 column(COL_CLUE_BASE_CHANCE, 741600)
                 column(COL_MINING_WALL, false)
                 column(COL_MINING_GLOVES, 0)
@@ -124,7 +142,7 @@ object Mining {
                 column(COL_SUCCESS_RATE_LOW, 96)
                 column(COL_SUCCESS_RATE_HIGH, 350)
                 column(COL_DEPLETE_MECHANIC, 1)
-                columnRSCM(COL_EMPTY_ROCK, "loc.rocks2")
+                columnRSCM(COL_EMPTY_ROCK, "loc.rocks1", "loc.rocks2")
                 column(COL_CLUE_BASE_CHANCE, 741600)
                 column(COL_MINING_WALL, false)
                 column(COL_MINING_GLOVES, 1)
@@ -142,7 +160,7 @@ object Mining {
                 column(COL_SUCCESS_RATE_LOW, 25)
                 column(COL_SUCCESS_RATE_HIGH, 200)
                 column(COL_DEPLETE_MECHANIC, 1)
-                columnRSCM(COL_EMPTY_ROCK, "loc.rocks2")
+                columnRSCM(COL_EMPTY_ROCK, "loc.rocks1", "loc.rocks2")
                 column(COL_CLUE_BASE_CHANCE, 741600)
                 column(COL_MINING_WALL, false)
                 column(COL_MINING_GLOVES, 1)
@@ -178,7 +196,7 @@ object Mining {
                 column(COL_SUCCESS_RATE_LOW, 16)
                 column(COL_SUCCESS_RATE_HIGH, 100)
                 column(COL_DEPLETE_MECHANIC, 1)
-                columnRSCM(COL_EMPTY_ROCK, "loc.rocks2")
+                columnRSCM(COL_EMPTY_ROCK, "loc.rocks1", "loc.rocks2")
                 column(COL_CLUE_BASE_CHANCE, 290640)
                 column(COL_MINING_WALL, false)
                 column(COL_MINING_GLOVES, 1)
@@ -195,8 +213,9 @@ object Mining {
                 column(COL_SUCCESS_RATE_LOW, 28)
                 column(COL_SUCCESS_RATE_HIGH, 70)
                 column(COL_DEPLETE_MECHANIC, 1)
-                columnRSCM(COL_EMPTY_ROCK, "loc.rocks1")
-                column(COL_CLUE_BASE_CHANCE, 211866)
+                columnRSCM(COL_EMPTY_ROCK, "loc.rocks1", "loc.rocks2")
+
+                column(COL_CLUE_BASE_CHANCE, 211886)
                 column(COL_MINING_WALL, false)
                 column(COL_MINING_GLOVES, 0)
                 column(COL_VARROCK_ARMOUR, 0)
@@ -213,7 +232,7 @@ object Mining {
                 column(COL_SUCCESS_RATE_LOW, 7)
                 column(COL_SUCCESS_RATE_HIGH, 75)
                 column(COL_DEPLETE_MECHANIC, 1)
-                columnRSCM(COL_EMPTY_ROCK, "loc.rocks2")
+                columnRSCM(COL_EMPTY_ROCK, "loc.rocks1", "loc.rocks2")
                 column(COL_CLUE_BASE_CHANCE, 296640)
                 column(COL_MINING_WALL, false)
                 column(COL_MINING_GLOVES, 1)
@@ -231,7 +250,7 @@ object Mining {
                 column(COL_SUCCESS_RATE_LOW, 4)
                 column(COL_SUCCESS_RATE_HIGH, 50)
                 column(COL_DEPLETE_MECHANIC, 1)
-                columnRSCM(COL_EMPTY_ROCK, "loc.rocks2")
+                columnRSCM(COL_EMPTY_ROCK, "loc.rocks1", "loc.rocks2")
                 column(COL_CLUE_BASE_CHANCE, 148320)
                 column(COL_MINING_WALL, false)
                 column(COL_MINING_GLOVES, 3)
@@ -249,7 +268,7 @@ object Mining {
                 column(COL_SUCCESS_RATE_LOW, 2)
                 column(COL_SUCCESS_RATE_HIGH, 50)
                 column(COL_DEPLETE_MECHANIC, 1)
-                columnRSCM(COL_EMPTY_ROCK, "loc.rocks2")
+                columnRSCM(COL_EMPTY_ROCK, "loc.rocks1", "loc.rocks2")
                 column(COL_CLUE_BASE_CHANCE, 245562)
                 column(COL_MINING_WALL, false)
                 column(COL_MINING_GLOVES, 0)
@@ -267,7 +286,7 @@ object Mining {
                 column(COL_SUCCESS_RATE_LOW, 2)
                 column(COL_SUCCESS_RATE_HIGH, 25)
                 column(COL_DEPLETE_MECHANIC, 1)
-                columnRSCM(COL_EMPTY_ROCK, "loc.rocks2")
+                columnRSCM(COL_EMPTY_ROCK, "loc.rocks1", "loc.rocks2")
                 column(COL_CLUE_BASE_CHANCE, 59328)
                 column(COL_MINING_WALL, false)
                 column(COL_MINING_GLOVES, 3)
@@ -303,7 +322,7 @@ object Mining {
                 column(COL_SUCCESS_RATE_LOW, 1)
                 column(COL_SUCCESS_RATE_HIGH, 18)
                 column(COL_DEPLETE_MECHANIC, 1)
-                columnRSCM(COL_EMPTY_ROCK, "loc.rocks2")
+                columnRSCM(COL_EMPTY_ROCK, "loc.rocks1", "loc.rocks2")
                 column(COL_CLUE_BASE_CHANCE, 42377)
                 column(COL_MINING_WALL, false)
                 column(COL_MINING_GLOVES, 2)
@@ -358,7 +377,7 @@ object Mining {
                 column(COL_SUCCESS_RATE_LOW, 256)
                 column(COL_SUCCESS_RATE_HIGH, 256)
                 column(COL_DEPLETE_MECHANIC, 1)
-                columnRSCM(COL_EMPTY_ROCK, "loc.rocks2")
+                columnRSCM(COL_EMPTY_ROCK, "loc.rocks1", "loc.rocks2")
                 column(COL_CLUE_BASE_CHANCE, 148320)
                 column(COL_MINING_WALL, false)
                 column(COL_MINING_GLOVES, 0)
@@ -417,8 +436,9 @@ object Mining {
                 column(COL_SUCCESS_RATE_LOW, 50)
                 column(COL_SUCCESS_RATE_HIGH, 200)
                 column(COL_DEPLETE_MECHANIC, 1)
-                columnRSCM(COL_EMPTY_ROCK, "loc.rocks2")
-                column(COL_CLUE_BASE_CHANCE, 500000)
+                columnRSCM(COL_EMPTY_ROCK, "loc.rocks1")
+
+                column(COL_CLUE_BASE_CHANCE, 741600)
                 column(COL_MINING_WALL, false)
                 column(COL_MINING_GLOVES, 0)
                 column(COL_VARROCK_ARMOUR, 1)
@@ -458,7 +478,8 @@ object Mining {
                 column(COL_SUCCESS_RATE_HIGH, 180)
                 column(COL_DEPLETE_MECHANIC, 1)
                 columnRSCM(COL_EMPTY_ROCK, "loc.rocks2")
-                column(COL_CLUE_BASE_CHANCE, 400000)
+
+                column(COL_CLUE_BASE_CHANCE, 710000)
                 column(COL_MINING_WALL, false)
                 column(COL_MINING_GLOVES, 0)
                 column(COL_VARROCK_ARMOUR, 1)
@@ -476,7 +497,8 @@ object Mining {
                 column(COL_SUCCESS_RATE_HIGH, 180)
                 column(COL_DEPLETE_MECHANIC, 1)
                 columnRSCM(COL_EMPTY_ROCK, "loc.rocks2")
-                column(COL_CLUE_BASE_CHANCE, 400000)
+
+                column(COL_CLUE_BASE_CHANCE, 741600)
                 column(COL_MINING_WALL, false)
                 column(COL_MINING_GLOVES, 0)
                 column(COL_VARROCK_ARMOUR, 2)
@@ -650,14 +672,9 @@ object Mining {
                 column(COL_CELESTIAL_RING, true)
             }
 
+            // Infernal shale uses crimson_lovakite at level 78; XP, rates and respawn remain unverified.
             row("dbrow.mining_infernalshale") {
-                columnRSCM(
-                    COL_ROCK_OBJECT,
-                    "loc.varlamore_mining_rock",
-                    "loc.varlamore_mining_rock02",
-                    "loc.varlamore_mining_rock03",
-                    "loc.varlamore_mining_rock04",
-                )
+                columnRSCM(COL_ROCK_OBJECT, "loc.crimson_lovakite1", "loc.crimson_lovakite2")
                 column(COL_LEVEL, 78)
                 column(COL_XP, 550)
                 columnRSCM(COL_ORE_ITEM, "obj.infernal_shale")
@@ -665,30 +682,119 @@ object Mining {
                 column(COL_SUCCESS_RATE_LOW, 15)
                 column(COL_SUCCESS_RATE_HIGH, 80)
                 column(COL_DEPLETE_MECHANIC, 1)
-                columnRSCM(COL_EMPTY_ROCK, "loc.varlamore_mining_rock_empty")
+                columnRSCM(COL_EMPTY_ROCK, "loc.rocks1", "loc.rocks2")
                 column(COL_CLUE_BASE_CHANCE, 100000)
                 column(COL_MINING_WALL, false)
                 column(COL_MINING_GLOVES, 0)
-                column(COL_VARROCK_ARMOUR, 4)
+
+                column(COL_VARROCK_ARMOUR, 0)
                 column(COL_MINING_CAPE, false)
                 column(COL_CELESTIAL_RING, false)
             }
 
-            row("dbrow.mining_dukesalt") {
-                columnRSCM(COL_ROCK_OBJECT, "loc.duke_sucellus_salt")
-                column(COL_LEVEL, 1)
-                column(COL_XP, 50)
-                columnRSCM(COL_ORE_ITEM, "obj.duke_sucellus_salt")
-                column(COL_RESPAWN_CYCLES, 0)
-                column(COL_SUCCESS_RATE_LOW, 255)
-                column(COL_SUCCESS_RATE_HIGH, 255)
-                column(COL_DEPLETE_MECHANIC, 3)
-                column(COL_CLUE_BASE_CHANCE, 0)
+            // Calcified rocks yield deposits; rates and enhancer exclusions remain unverified.
+            row("dbrow.mining_calcifiedrock") {
+                columnRSCM(
+                    COL_ROCK_OBJECT,
+                    "loc.varlamore_mining_rock",
+                    "loc.varlamore_mining_rock02",
+                    "loc.varlamore_mining_rock03",
+                    "loc.varlamore_mining_rock04",
+                )
+                column(COL_LEVEL, 41)
+                column(COL_XP, 330)
+                columnRSCM(COL_ORE_ITEM, "obj.calcified_deposit")
+                column(COL_RESPAWN_CYCLES, 50)
+                column(COL_SUCCESS_RATE_LOW, 40)
+                column(COL_SUCCESS_RATE_HIGH, 180)
+                column(COL_DEPLETE_MECHANIC, 1)
+                columnRSCM(
+                    COL_EMPTY_ROCK,
+                    "loc.varlamore_mining_rock_empty",
+                    "loc.varlamore_mining_rock_empty02",
+                    "loc.varlamore_mining_rock_empty03",
+                    "loc.varlamore_mining_rock_empty04",
+                )
+                column(COL_CLUE_BASE_CHANCE, 100000)
                 column(COL_MINING_WALL, false)
                 column(COL_MINING_GLOVES, 0)
                 column(COL_VARROCK_ARMOUR, 0)
                 column(COL_MINING_CAPE, false)
                 column(COL_CELESTIAL_RING, false)
+            }
+
+            // GOTR rates are inferred; rocks never deplete. See guardians-of-the-rift-plan.md.
+            row("dbrow.gotr_mining_parts") {
+                columnRSCM(COL_ROCK_OBJECT, "loc.gotr_essence_tier_1", "loc.gotr_essence_tier_1b")
+                column(COL_LEVEL, 1)
+                column(COL_XP, 50)
+                columnRSCM(COL_ORE_ITEM, "obj.gotr_guardian_fragment")
+                column(COL_RESPAWN_CYCLES, 0)
+                column(COL_SUCCESS_RATE_LOW, 256)
+                column(COL_SUCCESS_RATE_HIGH, 256)
+                column(COL_DEPLETE_MECHANIC, 3)
+                column(COL_CLUE_BASE_CHANCE, 0)
+                column(COL_MINING_WALL, false)
+                column(COL_MINING_GLOVES, 0)
+                column(COL_VARROCK_ARMOUR, 1)
+                column(COL_MINING_CAPE, false)
+                column(COL_CELESTIAL_RING, true)
+            }
+
+            row("dbrow.gotr_mining_remains") {
+                columnRSCM(
+                    COL_ROCK_OBJECT,
+                    "loc.gotr_essence_tier_1_large",
+                    "loc.gotr_essence_tier_1_large_b",
+                )
+                column(COL_LEVEL, 1)
+                column(COL_XP, 50)
+                columnRSCM(COL_ORE_ITEM, "obj.gotr_guardian_fragment")
+                column(COL_RESPAWN_CYCLES, 0)
+                column(COL_SUCCESS_RATE_LOW, 256)
+                column(COL_SUCCESS_RATE_HIGH, 256)
+                column(COL_DEPLETE_MECHANIC, 3)
+                column(COL_CLUE_BASE_CHANCE, 0)
+                column(COL_MINING_WALL, false)
+                column(COL_MINING_GLOVES, 0)
+                column(COL_VARROCK_ARMOUR, 1)
+                column(COL_MINING_CAPE, false)
+                column(COL_CELESTIAL_RING, true)
+            }
+
+            row("dbrow.gotr_mining_large_remains") {
+                columnRSCM(COL_ROCK_OBJECT, "loc.gotr_essence_tier_2")
+                column(COL_LEVEL, 1)
+                column(COL_XP, 50)
+                columnRSCM(COL_ORE_ITEM, "obj.gotr_guardian_fragment")
+                column(COL_RESPAWN_CYCLES, 0)
+                column(COL_SUCCESS_RATE_LOW, 256)
+                column(COL_SUCCESS_RATE_HIGH, 256)
+                column(COL_DEPLETE_MECHANIC, 3)
+                column(COL_CLUE_BASE_CHANCE, 0)
+                column(COL_MINING_WALL, false)
+                column(COL_MINING_GLOVES, 0)
+                column(COL_VARROCK_ARMOUR, 1)
+                column(COL_MINING_CAPE, false)
+                column(COL_CELESTIAL_RING, true)
+            }
+
+            /** Huge remains yield 4-6 guardian essence directly, bypassing the workbench. */
+            row("dbrow.gotr_mining_huge_remains") {
+                columnRSCM(COL_ROCK_OBJECT, "loc.gotr_essence_tier_3")
+                column(COL_LEVEL, 1)
+                column(COL_XP, 50)
+                columnRSCM(COL_ORE_ITEM, "obj.gotr_guardian_essence")
+                column(COL_RESPAWN_CYCLES, 0)
+                column(COL_SUCCESS_RATE_LOW, 256)
+                column(COL_SUCCESS_RATE_HIGH, 256)
+                column(COL_DEPLETE_MECHANIC, 3)
+                column(COL_CLUE_BASE_CHANCE, 0)
+                column(COL_MINING_WALL, false)
+                column(COL_MINING_GLOVES, 0)
+                column(COL_VARROCK_ARMOUR, 1)
+                column(COL_MINING_CAPE, false)
+                column(COL_CELESTIAL_RING, true)
             }
         }
 }

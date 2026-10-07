@@ -1,4 +1,3 @@
-## Trollheim
 
 [[spawn]]
 obj = "obj.bucket_empty"
@@ -8,7 +7,6 @@ coords = "0_44_56_42_2"
 obj = "obj.bucket_empty"
 coords = "0_44_56_48_1"
 
-## Weiss Region
 
 [[spawn]]
 obj = "obj.arctic_pine_log"
@@ -33,6 +31,3 @@ coords = "0_44_61_61_19"
 [[spawn]]
 obj = "obj.spit_iron"
 coords = "0_44_61_59_16"
-
-## Weiss Region End
-

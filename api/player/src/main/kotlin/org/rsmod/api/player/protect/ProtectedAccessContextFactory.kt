@@ -14,6 +14,7 @@ import org.rsmod.api.player.interact.PlayerInteractions
 import org.rsmod.api.player.interact.WornInteractions
 import org.rsmod.api.player.music.MusicPlayer
 import org.rsmod.api.random.GameRandom
+import org.rsmod.api.repo.world.WorldRepository
 import org.rsmod.events.EventBus
 import org.rsmod.game.entity.NpcList
 import org.rsmod.game.entity.PlayerList
@@ -38,6 +39,7 @@ constructor(
     private val marketPrices: MarketPrices,
     private val instantHitProcessor: InstantPlayerHitProcessor,
     private val teleportValidator: PlayerTeleportValidator,
+    private val worldRepo: WorldRepository,
     private val hitModifier: PlayerHitModifier,
 ) {
     public fun create(): ProtectedAccessContext =
@@ -59,6 +61,7 @@ constructor(
             getMarketPrices = { marketPrices },
             getInstantHitProcessor = { instantHitProcessor },
             getTeleportValidator = { teleportValidator },
+            getWorldRepo = { worldRepo },
         )
 
     public companion object {
@@ -80,6 +83,7 @@ constructor(
                 getMarketPrices = { error("No market prices provided.") },
                 getInstantHitProcessor = { error("No instant hit processor provided.") },
                 getTeleportValidator = { error("No teleport validator provided.") },
+                getWorldRepo = { error("No world repository provided.") },
                 getHitModifier = { error("No hit modifier provided.") },
             )
 

@@ -9,7 +9,8 @@ class MiningLevelBoosts @Inject constructor(private val areas: AreaChecker) :
     InvisibleLevelMod("stat.mining") {
     override fun Player.calculateBoost(): Int {
         var boost = 0
-        if (areas.inArea("area.mining_guild", coords)) {
+        val inF2pSection = coords.x in 2985..3081 && coords.z in 9800..9861
+        if (areas.inArea("area.mining_guild", coords) && !inF2pSection) {
             boost += 7
         }
         if (wearingCelestial()) {

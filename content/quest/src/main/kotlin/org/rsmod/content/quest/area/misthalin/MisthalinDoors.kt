@@ -88,4 +88,4 @@ internal fun ProtectedAccess.misthalinDoorCreak() {
 
 private const val InvisWall = "loc.inviswall"
 
-private const val DoorOpenSynth = "synth.creakydoor_open"
+private const val DoorOpenSynth = "synth.CREAKYDOOR_OPEN"

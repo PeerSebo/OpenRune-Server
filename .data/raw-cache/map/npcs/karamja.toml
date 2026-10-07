@@ -1994,7 +1994,6 @@ coords = "0_44_46_60_7"
 npc = "npc.zqzombie_unarmed3"
 coords = "0_44_46_60_11"
 
-## Brimhaven Docks Textured
 
 [[spawn]]
 npc = "npc.captain_barnaby_karamja"
@@ -2004,7 +2003,6 @@ coords = "0_43_50_21_29"
 npc = "npc.myarm_multi_brimhaven"
 coords = "0_43_50_20_23"
 
-## Karamja Volcano
 
 [[spawn]]
 npc = "npc.imp"
@@ -2042,7 +2040,6 @@ coords = "0_44_49_43_41"
 npc = "npc.scorpion"
 coords = "0_44_49_37_23"
 
-## Karamja Volcano Dungeon
 
 [[spawn]]
 npc = "npc.bat"
@@ -2080,13 +2077,11 @@ coords = "0_44_149_22_46"
 npc = "npc.deadly_red_spider"
 coords = "0_44_149_26_47"
 
-[[spawn]]
-npc = "npc.dragonslayer_elvarg_cutscene"
-coords = "0_44_150_36_37"
+# The cutscene owns dragonslayer_elvarg_cutscene; a static copy would show a second Elvarg.
 
 [[spawn]]
 npc = "npc.elvarg"
-coords = "0_44_150_36_37"
+coords = "0_44_150_33_32"
 
 [[spawn]]
 npc = "npc.giantskeleton"
@@ -2216,13 +2211,11 @@ coords = "0_44_149_44_41"
 npc = "npc.skeleton_unarmed4"
 coords = "0_44_149_43_36"
 
-## Obli's General Store
 
 [[spawn]]
 npc = "npc.shilogeneralstore"
 coords = "0_44_46_8_15"
 
-## Shilo Village bank
 
 [[spawn]]
 npc = "npc.shilobanker"
@@ -2231,6 +2224,3 @@ coords = "0_44_46_35_10"
 [[spawn]]
 npc = "npc.shilobanker"
 coords = "0_44_46_37_11"
-
-## Shilo Village bank End
-

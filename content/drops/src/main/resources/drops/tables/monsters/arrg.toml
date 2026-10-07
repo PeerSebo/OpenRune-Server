@@ -120,6 +120,3 @@ numerator = 1
 denominator = 45
 obj = "obj.arceuus_corpse_troll"
 count = 1
-
-
-# Main table pool padding uses a nothing roll (F2P drops removed and/or subtable access missing from wiki parse) (19 weight)

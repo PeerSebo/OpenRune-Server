@@ -1,4 +1,3 @@
-## Shayzien Crypt
 
 [[spawn]]
 npc = "npc.ds2_skeleton_magic"
@@ -375,4 +374,3 @@ coords = "3_23_155_31_23"
 [[spawn]]
 npc = "npc.ds2_zombie_ranged"
 coords = "3_23_155_51_15"
-

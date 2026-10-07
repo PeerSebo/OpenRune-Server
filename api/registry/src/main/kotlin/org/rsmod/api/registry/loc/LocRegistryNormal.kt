@@ -115,10 +115,6 @@ constructor(
             val zoneCoords = zone.toCoords()
             if (spawnedLocs != null) {
                 for (entry in spawnedLocs) {
-                    // Add the byteKey of each entry to the processedKeys set. This ensures that if
-                    // a loc (location entity) exists in both spawnedLocs and staticLocs for the
-                    // same zone grid (tile within the 7x7 zone) and their given `layer`, the loc
-                    // from spawnedLocs takes priority.
                     processedKeys += entry.byteKey
                     val entity = LocEntity(entry.intValue)
                     if (entity.id == DELETED_LOC_ID) {
@@ -132,9 +128,6 @@ constructor(
             }
             if (staticLocs != null) {
                 for (entry in staticLocs) {
-                    // Check if the entry's byteKey has already been processed by spawnedLocs.
-                    // If it has, skip this entry to ensure that any loc from spawnedLocs takes
-                    // priority over staticLocs for the same zone grid and layer.
                     if (entry.byteKey in processedKeys) {
                         continue
                     }
@@ -148,15 +141,7 @@ constructor(
         }
     }
 
-    /**
-     * Removes a spawned loc entity from the [zone] map and removes its collision data.
-     *
-     * This function checks if a location entity associated with the specified [key] exists in the
-     * [zone] map. If found, it removes the entity from the map and any associated collision data
-     * using [removeLocCollision].
-     *
-     * _Note that this operation does not trigger an update within [updates]._
-     */
+    /** Internal removal does not publish a zone update. */
     private fun removeSpawnedLoc(zone: Byte2IntOpenHashMap, key: LocZoneKey, coords: CoordGrid) {
         val removed = zone.remove(key.packed)
         if (removed != zone.defaultReturnValue()) {
@@ -166,20 +151,6 @@ constructor(
         }
     }
 
-    /**
-     * Deletes a spawned loc entity from the [spawnedLocs] map using the given [zoneKey] and updates
-     * its respective viewable zone.
-     *
-     * This function checks if a loc entity exists at the specified [zoneKey] and [locZoneKey]. If
-     * found, it removes the entity, its collision data via [removeLocCollision], _and unlike
-     * [removeSpawnedLoc] function, will trigger an update within [updates]_.
-     *
-     * Additionally, if a static/map loc was previously masked by the "deleted" loc, this function
-     * will reapply its collision data as well as trigger a "loc add" update within [updates].
-     *
-     * @return `true` if the loc entity was removed; `false` otherwise.
-     * @see [removeSpawnedLoc]
-     */
     private fun deleteSpawnedLoc(zoneKey: ZoneKey, locZoneKey: LocZoneKey, loc: LocInfo): Boolean {
         val zone = spawnedLocs[zoneKey] ?: return false
         val previousLoc = zone.get(locZoneKey.packed)
@@ -187,11 +158,8 @@ constructor(
             return false
         }
 
-        // This makes sure that the [loc] given as input matches the same id, shape, and angle as
-        // the loc found in the given zone grid with the same loc layer.
-        // This acts as a safeguard against trying to delete a loc info that may share the same
-        // layer and zone grid as the found loc, but does not share other metadata such as its
-        // type, which could lead to incorrect data being used for i.e., removing its collision.
+        // Match id, shape and angle as well as tile/layer so a replaced loc cannot delete its
+        // successor.
         if (loc.entity.packed != previousLoc) {
             return false
         }
@@ -215,25 +183,12 @@ constructor(
         return true
     }
 
-    /**
-     * Marks a static location as deleted based on the given [zoneKey] and [locZoneKey].
-     *
-     * This function does not remove the loc entry from [mapLocs]; instead, it replaces the entry
-     * with a special "deleted loc" entity (using [DELETED_LOC_ID]). This ensures:
-     * - The deleted loc is ignored in [findAll] and similar functions.
-     * - A "loc del" zone update is sent when players enter the affected zone.
-     *
-     * @return `true` if a static map loc was marked as deleted, `false` otherwise.
-     */
     private fun deleteStaticLoc(zoneKey: ZoneKey, locZoneKey: LocZoneKey, loc: LocInfo): Boolean {
         val staticZone = mapLocs[zoneKey] ?: return false
         val staticLoc = staticZone.getOrDefault(locZoneKey.packed, null) ?: return false
 
-        // This makes sure that the [loc] given as input matches the same id, shape, and angle as
-        // the loc found in the given zone grid with the same loc layer.
-        // This acts as a safeguard against trying to delete a loc info that may share the same
-        // layer and zone grid as the found loc, but does not share other metadata such as its
-        // type, which could lead to incorrect data being used for i.e., removing its collision.
+        // Match id, shape and angle as well as tile/layer so a replaced loc cannot delete its
+        // successor.
         if (loc.entity.packed != staticLoc) {
             return false
         }
@@ -257,10 +212,6 @@ constructor(
     }
 
     public companion object {
-        /**
-         * Constant used as a reference to a "deleted" loc entity id. This is used when map-loaded
-         * (spawned from cache) locs are "deleted" via [del] functions.
-         */
         public val DELETED_LOC_ID: Int = LocEntity.NULL.id
     }
 }

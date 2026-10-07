@@ -32,7 +32,6 @@ class PlayerDelayTest {
         val dest = CoordGrid(0, 50, 50, 10, 10)
         val intercept = CoordGrid(0, 50, 50, 1, 1)
 
-        // Ensure `moveGameClick` works as expected for test validity.
         player.teleport(start)
         player.moveGameClick(intercept)
         advance(ticks = 1)

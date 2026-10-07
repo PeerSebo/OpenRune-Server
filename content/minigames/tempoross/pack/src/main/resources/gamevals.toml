@@ -1,0 +1,76 @@
+[gamevals.varp]
+tempoross_best_points = 63100
+tempoross_best_ticks = 63101
+tempoross_reward_searches = 63102
+tempoross_outfit_unlocks = 63103
+
+[gamevals.varbit]
+tempoross_spirit_angler_hat = 63100
+tempoross_spirit_angler_top = 63101
+tempoross_spirit_angler_legs = 63102
+tempoross_spirit_angler_boots = 63103
+
+[gamevals.dbtable]
+tempoross_fish_bands = 63620
+tempoross_fish_slots = 63621
+tempoross_casket_rewards = 63622
+
+[gamevals.dbrow]
+tempoross_fish_band_35 = 63120
+tempoross_fish_band_40 = 63121
+tempoross_fish_band_46 = 63122
+tempoross_fish_band_50 = 63123
+tempoross_fish_band_76 = 63124
+tempoross_fish_band_79 = 63125
+tempoross_fish_band_81 = 63126
+tempoross_fish_slot_0 = 63127
+tempoross_fish_slot_1 = 63128
+tempoross_fish_slot_2 = 63129
+tempoross_fish_slot_3 = 63130
+tempoross_fish_slot_4 = 63131
+tempoross_casket_0 = 63132
+tempoross_casket_1 = 63133
+tempoross_casket_2 = 63134
+tempoross_casket_3 = 63135
+tempoross_casket_4 = 63136
+tempoross_casket_5 = 63137
+tempoross_casket_6 = 63138
+tempoross_casket_7 = 63139
+tempoross_casket_8 = 63140
+tempoross_casket_9 = 63141
+tempoross_casket_10 = 63142
+tempoross_casket_11 = 63143
+tempoross_casket_12 = 63144
+tempoross_casket_13 = 63145
+tempoross_casket_14 = 63146
+tempoross_casket_15 = 63147
+tempoross_casket_16 = 63148
+tempoross_casket_17 = 63149
+tempoross_casket_18 = 63150
+tempoross_casket_19 = 63151
+tempoross_casket_20 = 63152
+tempoross_casket_21 = 63153
+tempoross_casket_22 = 63154
+tempoross_casket_23 = 63155
+tempoross_casket_24 = 63156
+tempoross_casket_25 = 63157
+tempoross_casket_26 = 63158
+tempoross_casket_27 = 63159
+tempoross_casket_28 = 63160
+tempoross_casket_29 = 63161
+tempoross_casket_30 = 63162
+tempoross_casket_31 = 63163
+tempoross_casket_32 = 63164
+tempoross_casket_33 = 63165
+tempoross_casket_34 = 63166
+tempoross_casket_35 = 63167
+tempoross_casket_36 = 63168
+tempoross_casket_37 = 63169
+tempoross_casket_38 = 63170
+tempoross_casket_39 = 63171
+tempoross_casket_40 = 63172
+tempoross_casket_41 = 63173
+tempoross_casket_42 = 63174
+tempoross_casket_43 = 63175
+tempoross_casket_44 = 63176
+tempoross_casket_45 = 63177

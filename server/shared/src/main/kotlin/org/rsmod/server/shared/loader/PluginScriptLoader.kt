@@ -16,11 +16,13 @@ class PluginScriptLoader @Inject constructor() {
         type: Class<T>,
         injector: Injector,
         lenient: Boolean = false,
+        excludedClassNames: Set<String> = emptySet(),
     ): Collection<T> {
         val (classes, lookupDuration) =
             measureTimedValue {
                 PluginClasspathScan.scan
                     .getSubclasses(type)
+                    .filter { it.name !in excludedClassNames }
                     .parallelStream()
                     .map { info -> info.loadClass(type) }
                     .filter { clazz ->
@@ -42,7 +44,7 @@ class PluginScriptLoader @Inject constructor() {
             }
         }
 
-        logger.info {
+        logger.debug {
             val constructTotal = timings.fold(Duration.ZERO) { acc, (_, dur) -> acc + dur }
             val slowest =
                 timings.sortedByDescending { it.second }.take(10).joinToString { (name, dur) ->

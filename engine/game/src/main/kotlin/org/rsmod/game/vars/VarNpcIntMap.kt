@@ -30,7 +30,6 @@ public value class VarNpcIntMap(public val backing: Int2IntMap = Int2IntOpenHash
         set(varnType, value)
     }
 
-
     public operator fun set(key: VarnType, value: Int?) {
         if (value == null) {
             backing.remove(key.id)

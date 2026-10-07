@@ -21,17 +21,17 @@ placeholders = false
 [[inventory.stock]]
 obj = "obj.sapphire"
 count = 3
-restockCycles = -1
+restockCycles = 100
 
 [[inventory.stock]]
 obj = "obj.emerald"
 count = 2
-restockCycles = -1
+restockCycles = 100
 
 [[inventory.stock]]
 obj = "obj.ruby"
 count = 2
-restockCycles = -1
+restockCycles = 100
 
 [[inventory.stock]]
 obj = "obj.diamond"

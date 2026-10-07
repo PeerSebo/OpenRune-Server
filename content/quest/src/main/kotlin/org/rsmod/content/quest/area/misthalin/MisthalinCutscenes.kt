@@ -3,6 +3,7 @@ package org.rsmod.content.quest.area.misthalin
 import dev.openrune.types.MesAnimType
 import org.rsmod.api.player.dialogue.Dialogue
 import org.rsmod.api.player.protect.ProtectedAccess
+import org.rsmod.api.player.recovery.loginExitCoord
 import org.rsmod.api.repo.loc.LocRepository
 import org.rsmod.api.repo.npc.NpcRepository
 import org.rsmod.api.repo.obj.ObjRepository
@@ -68,9 +69,9 @@ internal class MisthalinCutscenes(
             )
 
             killer.anim("seq.hween16_slash")
-            sound("synth.scythe_double")
+            sound("synth.SCYTHE_DOUBLE")
             access.delay(1)
-            sound("synth.barbarian_grunt_death")
+            sound("synth.BARBARIAN_GRUNT_DEATH")
 
             sidWoozy(sid, shocked, "Whoah, not cool bro...")
             sidWoozy(sid, neutral, "...urgh...")
@@ -93,7 +94,7 @@ internal class MisthalinCutscenes(
             sidWoozy(sid, neutral, "...flergh.")
 
             sid.anim("seq.human_death")
-            sound("synth.human_death")
+            sound("synth.HUMAN_DEATH")
 
             mesbox(
                 "Sid collapses to the ground in a crumpled mess. As he falls down you spot " +
@@ -102,7 +103,7 @@ internal class MisthalinCutscenes(
 
             chatPlayer(shocked, "Gosh, that was horrible and so drawn out!")
 
-            sound("synth.barbarian_grunt_death")
+            sound("synth.BARBARIAN_GRUNT_DEATH")
             sidWoozy(sid, neutral, "...urgh...")
             chatPlayer(bored, "Oh wow, he's still going...")
 
@@ -146,13 +147,13 @@ internal class MisthalinCutscenes(
             access.delay(1)
 
             killer.anim("seq.hween16_slash")
-            sound("synth.scythe_double")
+            sound("synth.SCYTHE_DOUBLE")
             access.delay(1)
 
-            sound("synth.scream2")
+            sound("synth.SCREAM2")
             taytenSays(tayten, shocked, "Gurgle...")
             tayten.anim("seq.human_death")
-            sound("synth.human_death")
+            sound("synth.HUMAN_DEATH")
             chatPlayer(shocked, "Nooooo!")
 
             killer.walk(r[TaytenNotePost])
@@ -160,7 +161,7 @@ internal class MisthalinCutscenes(
             killer.faceSquare(r[TaytenNoteTile])
             killer.anim("seq.human_pickupfloor")
             access.delay(2)
-            sound("synth.paper_move")
+            sound("synth.PAPER_MOVE")
 
             objRepo.add(LibraryNote, r[TaytenNoteTile], NoteVisibleTicks)
             access.delay(1)
@@ -264,12 +265,12 @@ internal class MisthalinCutscenes(
             }
 
             killer.anim("seq.hween16_slash")
-            sound("synth.scythe_double")
+            sound("synth.SCYTHE_DOUBLE")
 
-            sound("synth.scream2")
+            sound("synth.SCREAM2")
             laceySays(lacey, sad, "Gargle...urgh...")
             lacey.anim("seq.human_death")
-            sound("synth.human_death")
+            sound("synth.HUMAN_DEATH")
 
             access.delay(2)
             killer.walk(r[LaceyNotePost])
@@ -280,7 +281,7 @@ internal class MisthalinCutscenes(
             killer.anim("seq.myarm_human_players_vile")
             quest.setQuestStage(access, MisthalinStage.LaceyDead)
             access.delay(2)
-            sound("synth.paper_move")
+            sound("synth.PAPER_MOVE")
 
             access.delay(1)
             killer.walk(r[LaceyKillerExit])
@@ -312,17 +313,17 @@ internal class MisthalinCutscenes(
             mandySays(mandy, sad, "Why am I the one who is always left clearing up after everyone?")
 
             noise.say("*shuffle*")
-            sound("synth.tree_rustle_01")
+            sound("synth.TREE_RUSTLE_01")
             mandySays(mandy, quiz, "Hello? Anyone there?")
 
             noise.telejump(r[MandyNoiseNorth])
             noise.say("*rustle*")
-            sound("synth.tree_rustle_02")
+            sound("synth.TREE_RUSTLE_02")
             mandySays(mandy, quiz, "Hello? Lacey? Sid?")
 
             noise.telejump(r[MandyNoiseKitchen])
             noise.say("*scratch*")
-            sound("synth.skullball_scratchy")
+            sound("synth.SKULLBALL_SCRATCHY")
             noise.walk(r[MandyNoiseKitchenExit])
 
             mandySays(
@@ -388,12 +389,12 @@ internal class MisthalinCutscenes(
             killer.faceSquare(r[MandySpawn])
             access.delay(1)
             killer.anim("seq.hween16_slash")
-            sound("synth.scythe_double")
+            sound("synth.SCYTHE_DOUBLE")
 
-            sound("synth.scream2")
+            sound("synth.SCREAM2")
             mandySays(mandy, sad, "No...why...me...")
             mandy.anim("seq.human_death")
-            sound("synth.human_death")
+            sound("synth.HUMAN_DEATH")
 
             chatPlayer(angry, "That psycho! He was just toying with her!")
 
@@ -402,7 +403,7 @@ internal class MisthalinCutscenes(
             killer.faceSquare(r[MandyVantage])
             killer.anim("seq.human_pickupfloor")
             access.delay(2)
-            sound("synth.paper_move")
+            sound("synth.PAPER_MOVE")
 
             killer.walk(r[MandyKillerStart])
             access.delay(4)
@@ -478,7 +479,7 @@ internal class MisthalinCutscenes(
         ticks: Int,
     ) {
         locRepo.add(tile, openLeaf, ticks, angle, LocShape.CentrepieceStraight)
-        sound("synth.creakydoor_open")
+        sound("synth.CREAKYDOOR_OPEN")
     }
 
     // Player-paced dialogue can outlast timed props; keep scene dressing alive until teardown.
@@ -498,7 +499,7 @@ internal class MisthalinCutscenes(
                 LocAngle.East,
                 LocShape.WallStraight,
             )
-            sound("synth.door_open")
+            sound("synth.DOOR_OPEN")
         } else {
             locRepo.add(
                 closed,
@@ -507,7 +508,7 @@ internal class MisthalinCutscenes(
                 LocAngle.North,
                 LocShape.WallStraight,
             )
-            sound("synth.door_close")
+            sound("synth.DOOR_CLOSE")
         }
     }
 
@@ -525,15 +526,12 @@ internal class MisthalinCutscenes(
         underFade: (SceneRegion) -> Unit = {},
         body: suspend Dialogue.(SceneRegion) -> Unit,
     ) {
-        val region = regionRepo.add(MisthalinIslandTemplate) ?: run {
-            mes("The area is unavailable at the moment. Please try again shortly.")
-            return
-        }
-        regionRepo.protect(region)
+        val region = regionRepo.add(MisthalinIslandTemplate)
+        region?.let(regionRepo::protect)
         val scene = SceneRegion(region)
 
-        player.misthalinReturnTile = vantage.packed
-        player.uuid?.let { uuid -> sceneRegions[uuid] = region }
+        player.loginExitCoord = vantage
+        player.uuid?.let { uuid -> region?.let { sceneRegions[uuid] = it } }
 
         try {
             lockedScene(
@@ -546,10 +544,10 @@ internal class MisthalinCutscenes(
                 startDialogue { body(scene) }
             }
         } finally {
-            player.misthalinReturnTile = 0
+            player.loginExitCoord = null
             player.uuid?.let(sceneRegions::remove)
 
-            regionRepo.unprotect(region)
+            region?.let(regionRepo::unprotect)
         }
     }
 

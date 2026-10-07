@@ -15,10 +15,10 @@ class EctoGrinderEvents : PluginScript() {
     override fun ScriptContext.startup() {
         onPlayerQueueWithArgs("queue.prayer_ecto_grinder") { processGrinderTick(it.args) }
 
-        onOpLoc1("loc.ahoy_grinder_handle") { windGrinder() } // Wind
-        onOpLoc2("loc.ahoy_grinder_handle") { grinderStatus() } // Status
+        onOpLoc1("loc.ahoy_grinder_handle") { windGrinder() }
+        onOpLoc2("loc.ahoy_grinder_handle") { grinderStatus() }
 
-        onOpLoc1("loc.ahoy_grinder_chute") { collectBonemealFromBin() } // Empty
+        onOpLoc1("loc.ahoy_grinder_chute") { collectBonemealFromBin() }
 
         ECTO_RECIPES.forEach { recipe ->
             onOpLocU("loc.ahoy_grinder_loader", recipe.bones) { addBonesToLoader(it, recipe) }
@@ -100,6 +100,8 @@ class EctoGrinderEvents : PluginScript() {
                 }
                 faceSquare(coords.translateZ(1))
                 anim("seq.ahoy_bone_dump")
+                // This sequence has no baked audio in the native cache.
+                soundSynth("synth.FILL_GRINDER")
                 ectoGrinderStatus = 1
                 ectoGrinderRecipe = recipe.id
                 mes("You place the bones into the loader.")
@@ -118,6 +120,8 @@ class EctoGrinderEvents : PluginScript() {
                 }
                 faceSquare(coords.translateZ(1))
                 anim("seq.ahoy_bone_grind")
+                // This sequence has no baked audio in the native cache.
+                soundSynth("synth.GRINDER_WIND")
                 ectoGrinderStatus = 0
                 mes("You grind the bones into bonemeal.")
                 weakQueue(
@@ -130,16 +134,13 @@ class EctoGrinderEvents : PluginScript() {
                 if (!forcePathToExactTile(COORD_GRINDER_BIN)) {
                     return
                 }
-                if (invDel(inv, "obj.pot_empty", 1).failure) {
-                    return
-                }
-                if (invAdd(inv, recipe.bonemeal, 1).failure) {
-                    invAdd(inv, "obj.pot_empty", 1)
-                    mes("You don't have enough inventory space.")
+                if (invReplace(inv, "obj.pot_empty", 1, recipe.bonemeal).failure) {
                     return
                 }
                 faceSquare(coords.translateZ(1))
                 anim("seq.ahoy_fillbucket_bonedust")
+                // This sequence has no baked audio in the native cache.
+                soundSynth("synth.GRINDER_EMPTY")
                 ectoGrinderRecipe = 0
                 mes("You collect the bonemeal from the bin.")
                 if (task.auto && inv.contains(recipe.bones) && inv.contains("obj.pot_empty")) {

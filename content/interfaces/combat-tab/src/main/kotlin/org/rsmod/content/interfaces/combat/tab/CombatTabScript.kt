@@ -10,6 +10,8 @@ import dev.openrune.types.enums.EnumTypeNonNullMap
 import dev.openrune.util.WeaponCategory
 import dev.openrune.util.Wearpos
 import jakarta.inject.Inject
+import java.util.Collections
+import java.util.WeakHashMap
 import org.rsmod.api.combat.commons.CombatStance
 import org.rsmod.api.combat.commons.magic.MagicSpell
 import org.rsmod.api.combat.commons.magic.Spellbook
@@ -22,8 +24,8 @@ import org.rsmod.api.player.output.mes
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.player.protect.ProtectedAccessLauncher
 import org.rsmod.api.player.righthand
-import org.rsmod.api.player.ui.PlayerInterfaceUpdates
 import org.rsmod.api.player.ui.IfOverlayButton
+import org.rsmod.api.player.ui.PlayerInterfaceUpdates
 import org.rsmod.api.player.ui.ifClose
 import org.rsmod.api.player.ui.ifOpenOverlay
 import org.rsmod.api.player.ui.ifSetEvents
@@ -34,8 +36,8 @@ import org.rsmod.api.player.vars.enumVarBit
 import org.rsmod.api.player.vars.enumVarp
 import org.rsmod.api.player.vars.intVarBit
 import org.rsmod.api.player.vars.intVarp
-import org.rsmod.api.script.onIfClose
 import org.rsmod.api.script.advanced.onWearposChange
+import org.rsmod.api.script.onIfClose
 import org.rsmod.api.script.onIfOpen
 import org.rsmod.api.script.onIfOverlayButton
 import org.rsmod.api.script.onPlayerQueue
@@ -51,14 +53,8 @@ import org.rsmod.game.entity.Player
 import org.rsmod.game.type.getOrNull
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
-import java.util.Collections
-import java.util.WeakHashMap
 
-/*
- * Note: The logic and execution order in this script are designed for emulation accuracy. While
- * this approach is not optimized for efficiency and includes redundant operations, it should not
- * have a big impact on real-world performance.
- */
+/* Preserve operation order: repeated writes reproduce native combat-tab behaviour. */
 class CombatTabScript
 @Inject
 constructor(
@@ -140,9 +136,6 @@ constructor(
         if (varbit != null) {
             val savedStanceVar = vars[varbit]
 
-            // The null fallback means any new weapon categories being worn will default to
-            // `Stance1` (usually top-left selection). This is the official behavior when
-            // wielding new weapon types.
             val stance = CombatStance[savedStanceVar] ?: CombatStance.Stance1
             combatStance = stance
         }
@@ -165,8 +158,7 @@ constructor(
             return
         }
 
-        // Note: As of writing this logic, the official game does _not_ check that the spell's
-        // spellbook param matches the player's current spellbook when switching weapons.
+        // Weapon switching intentionally does not require the spell param to match the current spellbook.
 
         val isValidStaff = autocast.canStaffAutocast(weaponType, savedAutocastId)
         if (!isValidStaff) {
@@ -174,7 +166,6 @@ constructor(
             return
         }
 
-        // `hasRunes` is responsible for sending the "error" message to the player.
         val hasRunes = runes.hasRunes(this, savedAutocastSpell)
         if (!hasRunes) {
             autocast.reset(this, autocastVarBits)
@@ -400,8 +391,6 @@ constructor(
         ifClose(eventBus)
 
         if (isAccessProtected) {
-            // Unlike changing com_mode, this does not queue the toggle; the click is
-            // simply discarded.
             return
         }
 
@@ -433,8 +422,6 @@ constructor(
             return
         }
 
-        // When going from `Block` to `Pummel` while using Dinh's bulwark, there is an 8-cycle
-        // delay added to combat (handled through a special queue).
         val wasBlocking = combatStance == CombatStance.Stance4
         if (wasBlocking && combatStance != stance) {
             clearQueue("queue.dinhs_combat_delay")
@@ -454,8 +441,6 @@ constructor(
         val validated = if (attackStyle == null) CombatStance.Stance1 else startStance
         setWeaponStance(validated)
 
-        // Subtle difference with other "stance style validation" function is that there is
-        // an explicit equals condition based on current `meleeStyle`.
         val meleeStyle = MeleeAttackStyle.from(attackStyle)
         if (meleeStyle != null && this.meleeStyle != meleeStyle) {
             this.meleeStyle = meleeStyle
@@ -475,10 +460,7 @@ constructor(
             SpecialAttackType.None -> enableSpecialAttack()
             SpecialAttackType.Weapon -> resetSpecialType()
             SpecialAttackType.Shield -> {
-                // Shield specials can only be reset by reactivating them the same way they
-                // were enabled. For example, re-selecting the "Activate" option on a dragonfire
-                // shield. They cannot be disabled via the special attack orb or the attack tab
-                // special bar.
+                // Shield specials can only be disabled through their own activation operation.
             }
         }
     }

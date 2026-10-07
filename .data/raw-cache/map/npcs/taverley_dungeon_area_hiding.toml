@@ -1,10 +1,8 @@
-## Amethyst Mines
 
 [[spawn]]
 npc = "npc.mguild_amethystminer"
 coords = "0_47_151_13_43"
 
-## Dwarven Mines
 
 [[spawn]]
 npc = "npc.boot_the_dwarf"
@@ -294,7 +292,6 @@ coords = "0_47_153_34_8"
 npc = "npc.xbows_sales_dwarf_mine"
 coords = "0_46_153_59_7"
 
-## Entrana Dungeon
 
 [[spawn]]
 npc = "npc.black_demon"
@@ -400,7 +397,6 @@ coords = "0_44_152_30_28"
 npc = "npc.zombie_entranan5"
 coords = "0_44_152_30_32"
 
-## Taverley Dungeon
 
 [[spawn]]
 npc = "npc.0_45_152_lavafish"
@@ -862,7 +858,6 @@ coords = "0_45_153_13_36"
 npc = "npc.spider"
 coords = "0_45_153_16_41"
 
-## Taverley Dungeon Black Knight Base
 
 [[spawn]]
 npc = "npc.aggressive_black_knight"
@@ -1056,7 +1051,6 @@ coords = "0_45_151_52_33"
 npc = "npc.velrak_the_explorer"
 coords = "0_45_151_51_21"
 
-## Taverley Dungeon Black Knight Kitchen
 
 [[spawn]]
 npc = "npc.aggressive_black_knight"
@@ -1066,7 +1060,6 @@ coords = "0_45_151_43_46"
 npc = "npc.black_knight_f"
 coords = "0_45_151_41_44"
 
-## Taverley Dungeon Darken Wall Tops
 
 [[spawn]]
 npc = "npc.black_dragon_strongholdcave_1"
@@ -1136,7 +1129,6 @@ coords = "1_46_153_2_32"
 npc = "npc.blue_dragon_strongholdcave_5"
 coords = "1_45_153_62_26"
 
-## Taverley Dungeon Gravel
 
 [[spawn]]
 npc = "npc.baby_black_dragon_strongholdcave"
@@ -1246,7 +1238,6 @@ coords = "0_44_153_60_14"
 npc = "npc.questscorpiona"
 coords = "0_44_153_61_4"
 
-## White Wolf Mountain passage
 
 [[spawn]]
 npc = "npc.aluft_pilot_ninto"
@@ -1303,6 +1294,3 @@ coords = "0_44_154_49_21"
 [[spawn]]
 npc = "npc.xbows_sales_dwarf_white_wolf_mt"
 coords = "0_44_154_49_15"
-
-## White Wolf Mountain passage End
-

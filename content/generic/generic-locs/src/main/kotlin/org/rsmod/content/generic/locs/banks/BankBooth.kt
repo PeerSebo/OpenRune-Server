@@ -5,6 +5,7 @@ import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.script.onOpContentLoc2
 import org.rsmod.api.script.onOpContentLocU
 import org.rsmod.content.interfaces.bank.confirmAndExchangeBanknote
+import org.rsmod.content.interfaces.bank.exchangeBankCurrency
 import org.rsmod.content.interfaces.bank.tryOpenBank
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
@@ -16,6 +17,7 @@ class BankBooth : PluginScript() {
     }
 
     private suspend fun ProtectedAccess.unnote(invSlot: Int, objType: ItemServerType) {
+        if (exchangeBankCurrency(invSlot, objType)) return
         if (!objType.isCert) {
             mes("Nothing interesting happens.")
             return

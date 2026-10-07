@@ -2,17 +2,15 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.api.droptable.dropRollable
+import org.rsmod.api.droptable.nothing
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.api.droptable.dropRollable
-import org.rsmod.content.drops.tables.shared.SharedDropTables
-import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.content.drops.brimstoneKeyRoll
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.api.droptable.nothing
-import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.content.drops.tables.shared.SharedDropTables
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -30,14 +28,14 @@ public val ancientZygomiteDropTable: RSDropTable<Player, DropRollItem> = RSDropT
         6 weight "obj.unidentified_torstol" count 1
         10 weight "obj.mushroom_seed" count 1
         18 weight dropRollable(DropRollItem("obj.fossil_pyrophosphite", 1, condition = { player ->
-            // Drops Need Manual: Only dropped by ancient zygomites on Fossil Island.
+            // TODO: Only dropped by ancient zygomites on Fossil Island.
              true
         }, bonusDrops = listOf(
             DropRollItem("obj.fossil_calcite", 1),
         )))
         10 weight "obj.cert_mortmyremushroom" count 5
         15 outOf 472 separate "obj.unidentified_kwuarm" count 1 condition { player ->
-            // Drops Need Manual: Only dropped by ancient zygomites in the Stalker Den.
+            // TODO: Only dropped by ancient zygomites in the Stalker Den.
              true
         }
         12 outOf 472 separate rsPlayerWeightedTable {

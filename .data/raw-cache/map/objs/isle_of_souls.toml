@@ -1,4 +1,3 @@
-## Isle Of Souls Mainland
 
 [[spawn]]
 obj = "obj.big_net"
@@ -112,7 +111,6 @@ coords = "0_35_43_56_31"
 obj = "obj.seaweed"
 coords = "0_35_43_57_35"
 
-## Isle of Souls Dungeon
 
 [[spawn]]
 obj = "obj.blue_dragon_scale"
@@ -138,7 +136,6 @@ coords = "0_33_145_8_29"
 obj = "obj.blue_dragon_scale"
 coords = "0_33_145_9_21"
 
-## Soul Wars Arena
 
 [[spawn]]
 obj = "obj.fly_fishing_rod"
@@ -148,7 +145,6 @@ coords = "0_35_45_23_6"
 obj = "obj.woodplank"
 coords = "0_35_45_25_8"
 
-## Tear Of The Soul
 
 [[spawn]]
 obj = "obj.iron_axe"
@@ -177,6 +173,3 @@ coords = "0_36_43_21_24"
 [[spawn]]
 obj = "obj.seaweed"
 coords = "0_36_43_22_25"
-
-## Tear Of The Soul End
-

@@ -1,4 +1,3 @@
-## Goblin Maze
 
 [[spawn]]
 npc = "npc.cave_goblin_guard1"
@@ -72,7 +71,6 @@ coords = "0_51_150_55_15"
 npc = "npc.lotg_grubfoot_at_entrance"
 coords = "0_51_150_54_15"
 
-## Lumbridge Castle Basement
 
 [[spawn]]
 npc = "npc.dttd_zanik_cellar"
@@ -94,7 +92,6 @@ coords = "0_50_150_16_24"
 npc = "npc.spider"
 coords = "0_50_150_9_18"
 
-## Lumbridge Swamp Caves
 
 [[spawn]]
 npc = "npc.0_49_149_cavefish"
@@ -539,6 +536,3 @@ coords = "0_50_149_15_24"
 [[spawn]]
 npc = "npc.swamp_wallbeast"
 coords = "0_50_149_16_52"
-
-## Lumbridge Swamp Caves End
-

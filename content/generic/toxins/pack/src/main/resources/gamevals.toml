@@ -1,0 +1,9 @@
+[gamevals.varp]
+toxin_poison_immunity_until = 63680
+toxin_venom_immunity_until = 63681
+toxin_poison_immunity_warned_until = 63682
+toxin_poison_immunity_display_until = 63683
+toxin_poison_immunity_remaining = 63684
+toxin_venom_immunity_remaining = 63685
+toxin_poison_immunity_warned = 63686
+toxin_immunity_migrated = 63687

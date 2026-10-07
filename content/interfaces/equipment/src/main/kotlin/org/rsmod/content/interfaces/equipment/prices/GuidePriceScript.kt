@@ -1,6 +1,5 @@
 package org.rsmod.content.interfaces.equipment.prices
 
-import dev.openrune.ServerCacheManager
 import dev.openrune.definition.type.widget.IfEvent
 import dev.openrune.rscm.RSCM
 import dev.openrune.rscm.RSCMType
@@ -136,7 +135,7 @@ constructor(
 
     private fun Player.updatePrices(priceList: List<Int>) {
         check(priceList.size == 28) { "ClientScript takes 28 exact prices." }
-        runClientScript(785, *priceList.toTypedArray())
+        runClientScript("clientscript.[clientscript,ge_pricechecker_prices]", *priceList.map { it.toLong() }.toTypedArray())
     }
 
     private fun Iterable<InvObj?>.toPriceList(): PriceList {
@@ -158,7 +157,7 @@ constructor(
     private suspend fun ProtectedAccess.searchObj() {
         val search = objDialog("Select an item to ask about its price:")
 
-        val searchInternalName = RSCM.getReverseMapping(RSCMType.OBJ,search.id)
+        val searchInternalName = RSCM.getReverseMapping(RSCMType.OBJ, search.id)
 
         ifSetObj("component.ge_pricechecker:otheritem", searchInternalName, zoom = 1)
         player.updateSearchPrice(search)
@@ -167,7 +166,7 @@ constructor(
     private fun ProtectedAccess.addAllFromInv() {
         if (inv.isEmpty()) {
             mes("You have no items that can be checked.")
-            soundSynth("synth.pillory_wrong")
+            soundSynth("synth.PILLORY_WRONG")
             return
         }
         val untradableSlots = inv.mapSlots { slot, obj -> obj != null && !ocTradable(obj) }
@@ -175,7 +174,7 @@ constructor(
 
         if (transaction.noneCompleted()) {
             mes("You have items that cannot be traded.")
-            soundSynth("synth.pillory_wrong")
+            soundSynth("synth.PILLORY_WRONG")
             return
         }
 

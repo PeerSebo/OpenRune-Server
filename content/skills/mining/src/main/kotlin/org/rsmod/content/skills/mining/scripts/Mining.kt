@@ -23,7 +23,6 @@ import org.rsmod.api.player.stat.miningLvl
 import org.rsmod.api.player.stat.smithingLvl
 import org.rsmod.api.repo.loc.LocRepository
 import org.rsmod.api.script.onOpContentLoc1
-import org.rsmod.api.script.onOpContentLoc2
 import org.rsmod.api.script.onOpContentLoc3
 import org.rsmod.api.script.onOpContentU
 import org.rsmod.api.stats.levelmod.InvisibleLevels
@@ -35,11 +34,13 @@ import org.rsmod.content.skills.mining.MiningEquipment.wearingChargedGlory
 import org.rsmod.content.skills.mining.configs.MiningParams
 import org.rsmod.content.skills.mining.configs.MiningRocks
 import org.rsmod.content.skills.mining.configs.depleteRange
+import org.rsmod.content.skills.mining.configs.emptyRockFor
 import org.rsmod.content.skills.mining.configs.hasDepleteRange
 import org.rsmod.content.skills.mining.configs.isGemRock
 import org.rsmod.content.skills.mining.configs.isInfinite
 import org.rsmod.content.skills.mining.configs.miningXp
 import org.rsmod.content.skills.mining.drops.MiningGemDropTables
+import org.rsmod.content.skills.mining.lastMiningPickaxe
 import org.rsmod.game.MapClock
 import org.rsmod.game.entity.Player
 import org.rsmod.game.inv.InvObj
@@ -59,19 +60,11 @@ constructor(
 ) : PluginScript() {
     override fun ScriptContext.startup() {
         onOpContentLoc1("content.rock") { attempt(it.loc, it.type) }
-        onOpContentLoc2("content.rock") { prospect(it.type) }
         onOpContentLoc3("content.rock") { mine(it.loc, it.type) }
         onOpContentU("content.rock", "content.mining_pickaxe") { mine(it.loc, it.type) }
     }
 
     private fun rockData(type: ObjectServerType): MiningRocksRow? = MiningRocks.forLoc(type)
-
-    private suspend fun ProtectedAccess.prospect(type: ObjectServerType) {
-        val data = rockData(type)
-        mes("You examine the rock for ores...")
-        delay(PROSPECT_DELAY)
-        mes(prospectMessage(data))
-    }
 
     private fun ProtectedAccess.attempt(rock: BoundLocInfo, type: ObjectServerType) {
         val data = rockData(type) ?: return
@@ -82,12 +75,14 @@ constructor(
 
         if (inv.isFull()) {
             mes(inventoryFullMessage(data))
-            soundSynth("synth.pillory_wrong")
+            soundSynth("synth.PILLORY_WRONG")
             return
         }
 
-        if (actionDelay < mapClock) {
-            actionDelay = mapClock + 3
+        // Warm-up reuse requires the gathering-owned clock as well as shared actionDelay.
+        if (actionDelay < mapClock || skillAnimDelay < mapClock) {
+            // Never shorten a foreign action delay.
+            actionDelay = maxOf(actionDelay, mapClock + 3)
             skillAnimDelay = mapClock + 3
             opLoc1(rock)
         } else {
@@ -117,7 +112,7 @@ constructor(
 
         if (inv.isFull()) {
             mes(inventoryFullMessage(data))
-            soundSynth("synth.pillory_wrong")
+            soundSynth("synth.PILLORY_WRONG")
             resetAnim()
             return
         }
@@ -126,6 +121,8 @@ constructor(
             skillAnimDelay = mapClock + 4
             anim(miningAnim(pickaxe, data))
         }
+
+        player.lastMiningPickaxe = getInvObj(pickaxe).internalName
 
         val delay = pickaxeActionDelay(pickaxe)
         var minedOre = false
@@ -261,7 +258,7 @@ constructor(
     }
 
     private fun ProtectedAccess.depleteRock(rock: BoundLocInfo, data: MiningRocksRow) {
-        val empty = data.emptyRockObject ?: return
+        val empty = data.emptyRockFor(rock.id) ?: return
         locRepo.change(rock, empty, data.respawnCycles)
         resetAnim()
     }
@@ -344,17 +341,6 @@ constructor(
         return "Your inventory is too full to hold any more ore."
     }
 
-    private fun prospectMessage(data: MiningRocksRow?): String {
-        if (data == null) {
-            return "There is no ore currently available in this rock."
-        }
-        if (data.isGemRock) {
-            return "This rock contains gems."
-        }
-        val ore = data.oreItem ?: return "There is no ore currently available in this rock."
-        return "This rock contains ${ore.name.lowercase()}."
-    }
-
     private fun ProtectedAccess.miningAnim(pickaxe: InvObj, data: MiningRocksRow): String {
         val pickaxeType = getInvObj(pickaxe)
         val seq =
@@ -389,8 +375,7 @@ constructor(
     }
 
     companion object {
-        private const val ORE_OBTAINED_SOUND = 3600
-        private const val PROSPECT_DELAY = 4
+        private const val ORE_OBTAINED_SOUND = "synth.MINE_ORE"
         private const val INFERNAL_SMITHING_REQ = 85
         private const val SONG_OF_THE_ELVES = "quest_songoftheelves"
 
@@ -433,7 +418,6 @@ constructor(
             return candidates.maxWithOrNull(pickaxeComparator)
         }
 
-        /** Higher is better: lower action delay first, then higher mining level req. */
         private val pickaxeComparator: Comparator<InvObj> =
             Comparator { left, right ->
                 val leftType = getInvObj(left)

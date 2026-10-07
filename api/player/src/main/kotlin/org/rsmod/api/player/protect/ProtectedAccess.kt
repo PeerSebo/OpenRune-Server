@@ -3,7 +3,6 @@ package org.rsmod.api.player.protect
 import com.github.michaelbull.logging.InlineLogger
 import dev.openrune.ServerCacheManager
 import dev.openrune.TypedParamType
-import dev.openrune.definition.type.widget.ComponentType
 import dev.openrune.definition.type.widget.IfEvent
 import dev.openrune.rscm.RSCM
 import dev.openrune.rscm.RSCM.asRSCM
@@ -28,7 +27,6 @@ import kotlin.math.max
 import kotlin.reflect.KClass
 import org.rsmod.annotations.InternalApi
 import org.rsmod.api.config.constants
-import org.rsmod.api.config.refs.done.BaseHitmarkGroups
 import org.rsmod.api.config.refs.done.hitmark_groups
 import org.rsmod.api.hunt.NpcSearch
 import org.rsmod.api.hunt.PlayerSearch
@@ -52,9 +50,7 @@ import org.rsmod.api.player.combatClearQueue
 import org.rsmod.api.player.dialogue.Dialogue
 import org.rsmod.api.player.hit.modifier.NoopPlayerHitModifier
 import org.rsmod.api.player.hit.modifier.PlayerHitModifier
-import org.rsmod.api.player.hit.modifier.StandardPlayerHitModifier
 import org.rsmod.api.player.hit.processQueuedHit
-import org.rsmod.api.player.hit.processor.DamageOnlyPlayerHitProcessor
 import org.rsmod.api.player.hit.processor.InstantPlayerHitProcessor
 import org.rsmod.api.player.hit.processor.StandardPlayerHitProcessor
 import org.rsmod.api.player.hit.queueHit
@@ -65,8 +61,6 @@ import org.rsmod.api.player.input.ResumePCountDialogInput
 import org.rsmod.api.player.input.ResumePObjDialogInput
 import org.rsmod.api.player.input.ResumePStringDialogInput
 import org.rsmod.api.player.input.ResumePauseButtonInput
-import org.rsmod.api.player.interact.HeldInteractions
-import org.rsmod.api.player.interact.WornInteractions
 import org.rsmod.api.player.isInCombat
 import org.rsmod.api.player.isInPvnCombat
 import org.rsmod.api.player.isInPvpCombat
@@ -74,7 +68,6 @@ import org.rsmod.api.player.isOutOfCombat
 import org.rsmod.api.player.mapMultiway
 import org.rsmod.api.player.midiJingle
 import org.rsmod.api.player.midiSong
-import org.rsmod.api.player.output.CamShakeAxis
 import org.rsmod.api.player.output.Camera
 import org.rsmod.api.player.output.ChatType
 import org.rsmod.api.player.output.ClientScripts
@@ -107,12 +100,12 @@ import org.rsmod.api.player.ui.ifChatNpcSpecific
 import org.rsmod.api.player.ui.ifChatPlayer
 import org.rsmod.api.player.ui.ifChoice
 import org.rsmod.api.player.ui.ifClose
-import org.rsmod.api.player.ui.ifCloseChat
 import org.rsmod.api.player.ui.ifCloseSub
 import org.rsmod.api.player.ui.ifConfirmDestroy
 import org.rsmod.api.player.ui.ifConfirmOverlay
 import org.rsmod.api.player.ui.ifConfirmOverlayClose
 import org.rsmod.api.player.ui.ifDoubleobjbox
+import org.rsmod.api.player.ui.ifLevelUp
 import org.rsmod.api.player.ui.ifMenu
 import org.rsmod.api.player.ui.ifMesbox
 import org.rsmod.api.player.ui.ifObjbox
@@ -130,6 +123,7 @@ import org.rsmod.api.player.ui.ifSetModel
 import org.rsmod.api.player.ui.ifSetNpcHead
 import org.rsmod.api.player.ui.ifSetObj
 import org.rsmod.api.player.ui.ifSetPlayerHead
+import org.rsmod.api.player.ui.ifSetPosition
 import org.rsmod.api.player.ui.ifSetText
 import org.rsmod.api.player.vars.VarPlayerIntMapDelegate
 import org.rsmod.api.player.vars.resyncVar
@@ -193,6 +187,12 @@ public class ProtectedAccess(
 ) {
     public val random: GameRandom by context::random
 
+    /**
+     * Keep internal: a public worldRepo receiver would shadow content scripts' own worldRepo
+     * inside ProtectedAccess lambdas.
+     */
+    internal val worldRepo: WorldRepository by context::worldRepo
+
     public val coords: CoordGrid by player::coords
     public val mapClock: Int by player::currentMapClock
     public val isBusy2: Boolean by player::isBusy2
@@ -215,35 +215,14 @@ public class ProtectedAccess(
         player.walk(dest)
     }
 
-    /**
-     * Queues a route towards [dest] and delays the player (suspending this call-site) based on the
-     * distance to [dest] and the "step rate" of [MoveSpeed.Walk].
-     *
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     */
     public suspend fun playerWalk(dest: CoordGrid) {
         playerMove(dest, MoveSpeed.Walk)
     }
 
-    /**
-     * Queues a route towards [dest] and delays the player (suspending this call-site) based on the
-     * distance to [dest] and the "step rate" of [MoveSpeed.Run].
-     *
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     */
     public suspend fun playerRun(dest: CoordGrid) {
         playerMove(dest, MoveSpeed.Run)
     }
 
-    /**
-     * Queues a route to [dest] and delays the player (suspending this call-site) based on the
-     * distance to [dest] and the "step rate" of [moveSpeed].
-     *
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     */
     public suspend fun playerMove(dest: CoordGrid, moveSpeed: MoveSpeed = player.varMoveSpeed) {
         walk(dest)
         player.moveSpeed = moveSpeed
@@ -259,35 +238,14 @@ public class ProtectedAccess(
         }
     }
 
-    /**
-     * Similar to [playerWalk], but ensures a minimum delay of 1 cycle, regardless of distance.
-     *
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [playerWalk]
-     */
     public suspend fun playerWalkWithMinDelay(dest: CoordGrid) {
         playerMoveWithMinDelay(dest, MoveSpeed.Walk)
     }
 
-    /**
-     * Similar to [playerRun], but ensures a minimum delay of 1 cycle, regardless of distance.
-     *
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [playerRun]
-     */
     public suspend fun playerRunWithMinDelay(dest: CoordGrid) {
         playerMoveWithMinDelay(dest, MoveSpeed.Run)
     }
 
-    /**
-     * Similar to [playerMove], but ensures a minimum delay of 1 cycle, regardless of distance.
-     *
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [playerMove]
-     */
     public suspend fun playerMoveWithMinDelay(
         dest: CoordGrid,
         moveSpeed: MoveSpeed = player.varMoveSpeed,
@@ -322,6 +280,8 @@ public class ProtectedAccess(
             mes("Invalid teleport!", ChatType.Engine)
             return
         }
+        ifClose()
+        player.clearMapFlag()
         PathingEntityCommon.telejump(player, collision, dest)
     }
 
@@ -342,6 +302,8 @@ public class ProtectedAccess(
             mes("Invalid teleport!", ChatType.Engine)
             return
         }
+        ifClose()
+        player.clearMapFlag()
         PathingEntityCommon.teleport(player, collision, dest)
     }
 
@@ -349,18 +311,37 @@ public class ProtectedAccess(
         teleport(dest, context.collision, teleportType)
     }
 
-    /**
-     * Starts an `exactmove` sequence from [start] to [end].
-     *
-     * @param start The starting coordinates, typically the current [Player.coords].
-     * @param end The destination coordinates where the player will appear after [delay2] client
-     *   cycles.
-     * @param delay1 The number of client cycles before the player visually appears at [start].
-     * @param delay2 The number of client cycles before the player visually appears at [end].
-     * @param dir A value in the range `[0..2047]` representing the direction the player will face
-     *   upon reaching [end]. Common values can be found in the `constants` file, prefixed with
-     *   "em_face_" (e.g. `em_face_north`).
-     */
+    public suspend fun spellTeleport(
+        dest: CoordGrid,
+        type: TeleportType = TeleportType.Standard,
+        castAnim: String = "seq.human_castteleport",
+        castSpotanim: String = "spotanim.teleport_casting",
+        castSound: String = "synth.TELEPORT_ALL",
+        windUp: Int = 4,
+        arrivalAnim: String? = null,
+    ) {
+        player.abortRoute()
+        player.clearMapFlag()
+        anim(castAnim)
+        spotanim(castSpotanim, height = 92)
+        soundSynth(castSound)
+        delay(windUp)
+        val from = player.coords
+        telejump(dest, type)
+        if (player.coords == from && from != dest) {
+            // Teleport denied mid-wind-up (e.g. teleblocked): telejump already sent the denial
+            // message; do not play the landing animation while standing still.
+            resetAnim()
+            return
+        }
+        if (arrivalAnim != null) {
+            anim(arrivalAnim)
+        } else {
+            resetAnim()
+        }
+    }
+
+    /** exactmove delays use 20 ms client cycles; dir is a 0..2047 facing angle. */
     public fun exactMove(
         start: CoordGrid,
         end: CoordGrid,
@@ -428,6 +409,14 @@ public class ProtectedAccess(
 
     public fun resetTransmog() {
         player.transmog = null
+    }
+
+    public fun hideWornAppearance() {
+        player.appearance.hideObjs = true
+    }
+
+    public fun showWornAppearance() {
+        player.appearance.hideObjs = false
     }
 
     public fun rebuildAppearance() {
@@ -501,55 +490,19 @@ public class ProtectedAccess(
         return true
     }
 
-    /**
-     * Returns a [Player] from the active player list whose [Player.uid] matches [uid], or `null` if
-     * no match is found.
-     */
     public fun findUid(uid: PlayerUid): Player? {
         return uid.resolve(context.playerList)
     }
 
-    /**
-     * Returns an [Npc] from the active npc list whose [Npc.uid] matches [uid], or `null` if no
-     * match is found.
-     */
     public fun findUid(uid: NpcUid): Npc? {
         return uid.resolve(context.npcList)
     }
 
-    /**
-     * Searches for and returns a validated coordinate within a [minRadius] to [maxRadius] tile
-     * radius of [centre].
-     *
-     * A coordinate is considered valid if:
-     * - It does **not** have the [CollisionFlag.BLOCK_WALK] collision flags set.
-     *
-     * This function calls [validatedSquares], which **randomizes** the order of candidate
-     * coordinates before validation. The first valid coordinate from the shuffled list is returned.
-     *
-     * @return A randomly selected, **validated** coordinate within range, or `null` if none are
-     *   found.
-     */
     public fun mapFindSquareNone(centre: CoordGrid, minRadius: Int, maxRadius: Int): CoordGrid? {
         val squares = validatedSquares(centre, minRadius, maxRadius)
         return squares.firstOrNull()
     }
 
-    /**
-     * Searches for and returns a validated coordinate within a [minRadius] to [maxRadius] tile
-     * radius of [centre].
-     *
-     * A coordinate is considered valid if:
-     * - It has a valid line-of-walk from [centre].
-     * - It does **not** have the [CollisionFlag.BLOCK_PLAYERS] or [CollisionFlag.BLOCK_WALK]
-     *   collision flags set.
-     *
-     * This function calls [validatedLineOfWalkSquares], which **randomizes** the order of candidate
-     * coordinates before validation. The first valid coordinate from the shuffled list is returned.
-     *
-     * @return A randomly selected, **validated** coordinate within range, or `null` if none are
-     *   found.
-     */
     public fun mapFindSquareLineOfWalk(
         centre: CoordGrid,
         minRadius: Int,
@@ -559,21 +512,6 @@ public class ProtectedAccess(
         return squares.firstOrNull()
     }
 
-    /**
-     * Searches for and returns a validated coordinate within a [minRadius] to [maxRadius] tile
-     * radius of [centre].
-     *
-     * A coordinate is considered valid if:
-     * - It has a valid line-of-sight from [centre].
-     * - It does **not** have the [CollisionFlag.BLOCK_PLAYERS] or [CollisionFlag.BLOCK_WALK]
-     *   collision flags set.
-     *
-     * This function calls [validatedLineOfWalkSquares], which **randomizes** the order of candidate
-     * coordinates before validation. The first valid coordinate from the shuffled list is returned.
-     *
-     * @return A randomly selected, **validated** coordinate within range, or `null` if none are
-     *   found.
-     */
     public fun mapFindSquareLineOfSight(
         centre: CoordGrid,
         minRadius: Int,
@@ -583,17 +521,6 @@ public class ProtectedAccess(
         return squares.firstOrNull()
     }
 
-    /**
-     * Returns a sequence of **shuffled** and **validated** coordinates centered around [centre],
-     * within a radius of [minRadius] to [maxRadius] tiles.
-     *
-     * A coordinate is considered valid if:
-     * - It has a valid line-of-walk from [centre].
-     * - It does **not** have the [CollisionFlag.BLOCK_PLAYERS] or [CollisionFlag.BLOCK_WALK]
-     *   collision flags set.
-     *
-     * @return A **shuffled** and **validated** [Sequence] of coordinates within range.
-     */
     public fun validatedLineOfWalkSquares(
         centre: CoordGrid,
         minRadius: Int,
@@ -606,17 +533,6 @@ public class ProtectedAccess(
         }
     }
 
-    /**
-     * Returns a sequence of **shuffled** and **validated** coordinates centered around [centre],
-     * within a radius of [minRadius] to [maxRadius] tiles.
-     *
-     * A coordinate is considered valid if:
-     * - It has a valid line-of-sight from [centre].
-     * - It does **not** have the [CollisionFlag.BLOCK_PLAYERS] or [CollisionFlag.BLOCK_WALK]
-     *   collision flags set.
-     *
-     * @return A **shuffled** and **validated** [Sequence] of coordinates within range.
-     */
     public fun validatedLineOfSightSquares(
         centre: CoordGrid,
         minRadius: Int,
@@ -629,15 +545,6 @@ public class ProtectedAccess(
         }
     }
 
-    /**
-     * Returns a sequence of **shuffled** and **validated** coordinates centered around [centre],
-     * within a radius of [minRadius] to [maxRadius] tiles.
-     *
-     * A coordinate is considered valid if it does **not** have the [CollisionFlag.BLOCK_WALK]
-     * collision flag set.
-     *
-     * @return A **shuffled** and **validated** [Sequence] of coordinates within range.
-     */
     public fun validatedSquares(
         centre: CoordGrid,
         minRadius: Int,
@@ -665,22 +572,16 @@ public class ProtectedAccess(
         return bounds.shuffled().filter { centre.chebyshevDistance(it) >= minRadius }
     }
 
-    /** Returns `true` if there is a valid line-of-walk from [from] to [to] */
     public fun lineOfWalk(from: CoordGrid, to: CoordGrid): Boolean {
         val validator = RayCastValidator(context.collision)
         return validator.hasLineOfWalk(from, to, extraFlag = CollisionFlag.BLOCK_PLAYERS)
     }
 
-    /** Returns `true` if there is a valid line-of-sight from [from] to [to] */
     public fun lineOfSight(from: CoordGrid, to: CoordGrid): Boolean {
         val validator = RayCastValidator(context.collision)
         return validator.hasLineOfSight(from, to, extraFlag = CollisionFlag.BLOCK_PLAYERS)
     }
 
-    /**
-     * Returns `true` if there is a valid line-of-walk from [from] to **every** coordinate occupied
-     * by [bounds].
-     */
     public fun lineOfWalk(from: CoordGrid, bounds: Bounds): Boolean {
         val validator = RayCastValidator(context.collision)
         val squares = bounds.asSequence()
@@ -689,10 +590,6 @@ public class ProtectedAccess(
         }
     }
 
-    /**
-     * Returns `true` if there is a valid line-of-sight from [from] to **every** coordinate occupied
-     * by [bounds].
-     */
     public fun lineOfSight(from: CoordGrid, bounds: Bounds): Boolean {
         val validator = RayCastValidator(context.collision)
         val squares = bounds.asSequence()
@@ -701,12 +598,10 @@ public class ProtectedAccess(
         }
     }
 
-    /** Returns `true` if [coord] has the [CollisionFlag.BLOCK_WALK] collision flag set. */
     public fun mapBlocked(coord: CoordGrid): Boolean {
         return context.collision.isWalkBlocked(coord)
     }
 
-    /** @see [NpcSearch.find] */
     public fun npcFind(
         coord: CoordGrid,
         npc: String,
@@ -717,7 +612,6 @@ public class ProtectedAccess(
         return search.find(coord, npc, distance, checkVis)
     }
 
-    /** @see [NpcSearch.findCat] */
     public fun npcFindCat(
         coord: CoordGrid,
         category: CategoryType,
@@ -728,7 +622,6 @@ public class ProtectedAccess(
         return search.findCat(coord, category, distance, checkVis)
     }
 
-    /** @see [NpcSearch.findAllAny] */
     public fun npcFindAllAny(
         coord: CoordGrid,
         distance: Int,
@@ -738,7 +631,6 @@ public class ProtectedAccess(
         return search.findAllAny(coord, distance, checkVis)
     }
 
-    /** @see [NpcSearch.findAll] */
     public fun npcFindAll(
         coord: CoordGrid,
         npc: String,
@@ -749,7 +641,6 @@ public class ProtectedAccess(
         return search.findAll(coord, npc, distance, checkVis)
     }
 
-    /** @see [NpcSearch.findAllZone] */
     public fun npcFindAllZone(
         coord: CoordGrid,
         distance: Int,
@@ -759,7 +650,6 @@ public class ProtectedAccess(
         return search.findAllZone(coord, distance, checkVis)
     }
 
-    /** @see [PlayerSearch.findAll] */
     public fun huntAll(
         coord: CoordGrid,
         distance: Int,
@@ -769,7 +659,6 @@ public class ProtectedAccess(
         return search.findAll(coord, distance, checkVis)
     }
 
-    /** @see [NpcSearch.hunt] */
     public fun npcHunt(
         coord: CoordGrid,
         distance: Int,
@@ -779,7 +668,6 @@ public class ProtectedAccess(
         return search.hunt(coord, distance, checkVis)
     }
 
-    /** @see [NpcSearch.huntAll] */
     public fun npcHuntAll(
         coord: CoordGrid,
         npc: NpcServerType,
@@ -826,91 +714,42 @@ public class ProtectedAccess(
         context.playerInteractions.interact(player, target, InteractionOp.Op2)
     }
 
-    /**
-     * @throws IllegalStateException if [checkOpHeldCallLimit] exceeds the safety net threshold.
-     * @see [checkOpHeldCallLimit]
-     */
     public suspend fun opHeld1(invSlot: Int, inv: Inventory = player.inv) {
         checkOpHeldCallLimit()
         context.heldInteractions.interact(this, inv, invSlot, HeldOp.Op1)
     }
 
-    /**
-     * Note: If you wish to directly equip an obj bypassing `onOpHeld2` scripts you will need to
-     * call [invEquip] instead.
-     *
-     * @throws IllegalStateException if [checkOpHeldCallLimit] exceeds the safety net threshold.
-     * @see [checkOpHeldCallLimit]
-     * @see [HeldOp.Op2]
-     */
-    // TODO: Add specialized `HeldInteractions.opHeld2` function that returns a result type.
+    /** TODO: Add a specialized HeldInteractions.opHeld2 function returning a result type. */
     public suspend fun opHeld2(invSlot: Int, inv: Inventory = player.inv) {
         checkOpHeldCallLimit()
         context.heldInteractions.interact(this, inv, invSlot, HeldOp.Op2)
     }
 
-    /**
-     * @throws IllegalStateException if [checkOpHeldCallLimit] exceeds the safety net threshold.
-     * @see [checkOpHeldCallLimit]
-     */
     public suspend fun opHeld3(invSlot: Int, inv: Inventory = player.inv) {
         checkOpHeldCallLimit()
         context.heldInteractions.interact(this, inv, invSlot, HeldOp.Op3)
     }
 
-    /**
-     * @throws IllegalStateException if [checkOpHeldCallLimit] exceeds the safety net threshold.
-     * @see [checkOpHeldCallLimit]
-     */
     public suspend fun opHeld4(invSlot: Int, inv: Inventory = player.inv) {
         checkOpHeldCallLimit()
         context.heldInteractions.interact(this, inv, invSlot, HeldOp.Op4)
     }
 
-    /**
-     * Note: If you wish to directly drop an obj bypassing any custom scripts you will need to call
-     * [invDrop] instead.
-     *
-     * @throws IllegalStateException if [checkOpHeldCallLimit] exceeds the safety net threshold.
-     * @see [HeldOp.Op5]
-     * @see [checkOpHeldCallLimit]
-     */
     public suspend fun opHeld5(invSlot: Int, inv: Inventory = player.inv) {
         checkOpHeldCallLimit()
         context.heldInteractions.interact(this, inv, invSlot, HeldOp.Op5)
     }
 
-    /**
-     * Note: This function will bypass any `onOpHeld2` scripts attached to the respective obj and
-     * will attempt to directly equip it instead. Use [opHeld2] if you wish to avoid this behavior.
-     *
-     * @return [HeldEquipResult] with result of the attempt to equip respective obj.
-     * @see [HeldInteractions.equip]
-     */
     public fun invEquip(invSlot: Int, inv: Inventory = player.inv): HeldEquipResult {
         return context.heldInteractions.equip(this, inv, invSlot)
     }
 
-    /**
-     * Note: This function will bypass any `onOpHeld5` scripts attached to the respective obj and
-     * will attempt to directly drop it instead. Use [opHeld5] if you wish to avoid this behavior.
-     *
-     * @see [HeldInteractions.drop]
-     */
     public suspend fun invDrop(invSlot: Int, inv: Inventory = player.inv) {
         checkOpHeldCallLimit()
         context.heldInteractions.drop(this, inv, invSlot)
     }
 
-    /**
-     * Note: This function will bypass any `onOpWorn1` scripts attached to the respective obj and
-     * will attempt to directly unequip it instead.
-     *
-     * @return [WornUnequipResult] with result of the attempt to unequip respective obj.
-     * @see [WornInteractions.unequip]
-     */
-    // TODO: This function needs to be removed and any calls should be replaced with a new
-    //  `opWorn1`.
+    /** TODO: Replace this function and its callers with a new opWorn1. */
     public fun wornUnequip(
         wornSlot: Int,
         into: Inventory = player.inv,
@@ -1092,14 +931,6 @@ public class ProtectedAccess(
         )
     }
 
-    /**
-     * This transaction will remove the first found inv obj associated with [replace] based on their
-     * slot.
-     *
-     * If [count] amount of the inv obj could not be deleted, this transaction will fail.
-     *
-     * _Note: This function will add the [replacement] obj in the first empty and valid slot._
-     */
     public fun invReplace(
         inv: Inventory,
         replace: String,
@@ -1124,15 +955,6 @@ public class ProtectedAccess(
         }
     }
 
-    /**
-     * This transaction will remove the inv obj occupying slot [slot], resulting in failure if there
-     * is no obj in said `slot`, or if there are any other implicit transaction errors.
-     *
-     * _Note: This function will add the new [replacement] obj in the first empty and valid slot. If
-     * you wish to add the item into [slot] instead, use [invReplaceSlot]._
-     *
-     * @see [invReplaceSlot]
-     */
     public fun invReplace(
         inv: Inventory,
         slot: Int,
@@ -1141,8 +963,6 @@ public class ProtectedAccess(
         vars: Int = 0,
         autoCommit: Boolean = true,
     ): TransactionResultList<InvObj> {
-        // The transaction will implicitly fail if the obj is null - no verification is required
-        // at this level.
         val deleteObj = inv[slot]
         return player.invTransaction(inv, autoCommit) {
             val fromInv = select(inv)
@@ -1161,15 +981,6 @@ public class ProtectedAccess(
         }
     }
 
-    /**
-     * This transaction will remove the inv obj occupying slot [slot], resulting in failure if there
-     * is no obj in said `slot`, or if there are any other implicit transaction errors.
-     *
-     * _Note: This function will strictly add the new [replacement] obj in the [slot] slot. If you
-     * wish for the obj to take the first available slot instead, use [invReplace]._
-     *
-     * @see [invReplace]
-     */
     public fun invReplaceSlot(
         inv: Inventory,
         slot: Int,
@@ -1178,8 +989,6 @@ public class ProtectedAccess(
         vars: Int = 0,
         autoCommit: Boolean = true,
     ): TransactionResultList<InvObj> {
-        // The transaction will implicitly fail if the obj is null - no verification is required
-        // at this level.
         val deleteObj = inv[slot]
         return player.invTransaction(inv, autoCommit) {
             val fromInv = select(inv)
@@ -1296,27 +1105,22 @@ public class ProtectedAccess(
         player.objExamine(normalized, obj.count, marketPrices[normalized] ?: 0)
     }
 
-    /** @see [org.rsmod.api.player.stat.stat] */
     public fun stat(stat: String): Int {
         return player.stat(stat)
     }
 
-    /** @see [org.rsmod.api.player.stat.statBase] */
     public fun statBase(stat: String): Int {
         return player.statBase(stat)
     }
 
-    /** @see [org.rsmod.api.player.stat.statRestore] */
     public fun statRestore(stat: String) {
         player.statRestore(stat)
     }
 
-    /** @see [org.rsmod.api.player.stat.statRestoreAll] */
     public fun statRestoreAll(stats: Iterable<String>) {
         player.statRestoreAll(stats)
     }
 
-    /** @see [org.rsmod.api.player.stat.statAdvance] */
     public fun statAdvance(
         stat: String,
         xp: Double,
@@ -1326,37 +1130,30 @@ public class ProtectedAccess(
         return player.statAdvance(stat, xp, rate, globalRate)
     }
 
-    /** @see [org.rsmod.api.player.stat.statAdd] */
     public fun statAdd(stat: String, constant: Int, percent: Int) {
         player.statAdd(stat, constant, percent)
     }
 
-    /** @see [org.rsmod.api.player.stat.statBoost] */
     public fun statBoost(stat: String, constant: Int, percent: Int) {
         player.statBoost(stat, constant, percent)
     }
 
-    /** @see [org.rsmod.api.player.stat.statSub] */
     public fun statSub(stat: String, constant: Int, percent: Int) {
         player.statSub(stat, constant, percent)
     }
 
-    /** @see [org.rsmod.api.player.stat.statDrain] */
     public fun statDrain(stat: String, constant: Int, percent: Int) {
         player.statDrain(stat, constant, percent)
     }
 
-    /** @see [org.rsmod.api.player.stat.statHeal] */
     public fun statHeal(stat: String, constant: Int, percent: Int) {
         player.statHeal(stat, constant, percent)
     }
 
-    /** @see [org.rsmod.api.player.stat.statRandom] */
     public fun statRandom(stat: String, low: Int, high: Int, invisibleBoost: Int): Boolean {
         return player.statRandom(random, stat, low, high, invisibleBoost)
     }
 
-    /** @see [org.rsmod.api.player.stat.statRandom] */
     public fun statRandom(
         stat: String,
         low: Int,
@@ -1364,6 +1161,23 @@ public class ProtectedAccess(
         invisibleLevels: InvisibleLevels,
     ): Boolean {
         return player.statRandom(random, stat, low, high, invisibleLevels)
+    }
+
+    /**
+     * Success roll with [flatBonus] added to the interpolated value before the floor - for OSRS
+     * bonuses expressed as a flat fraction of 256 rather than a second low/high curve (the Hosidius
+     * kitchen's +12.8 / +25.6 burn reduction).
+     *
+     * @see [org.rsmod.api.player.stat.statRandom]
+     */
+    public fun statRandom(
+        stat: String,
+        low: Int,
+        high: Int,
+        invisibleBoost: Int,
+        flatBonus: Double,
+    ): Boolean {
+        return player.statRandom(random, stat, low, high, invisibleBoost, flatBonus)
     }
 
     public fun isInCombat(): Boolean {
@@ -1387,43 +1201,8 @@ public class ProtectedAccess(
     }
 
     /**
-     * Queues a hit dealt by [source] with an impact cycle delay of [delay] before the hit is
-     * displayed and health is deducted from the player.
-     *
-     * _[modifier] is applied immediately when this function is called (via
-     * [PlayerHitModifier.modify]). This means that effects like prayer protection reducing damage
-     * are handled at this point and **not** on impact._
-     *
-     * If you want the modifier to be applied on impact, use [queueImpactHit] instead.
-     *
-     * **Notes:**
-     * - [damage] is capped to the [player]'s current health at the time this function is called.
-     *   This ensures that the "tick-eating" mechanic is possible.
-     * - [StandardPlayerHitProcessor] is invoked when the cycle [delay] completes and the hit takes
-     *   effect. It is responsible for reducing the [player]'s health, handling armour degradation,
-     *   recoil damage, displaying the hitsplat, and other related mechanics. This behavior **cannot
-     *   be bypassed** when using this function; however, it can be changed when using
-     *   [takeInstantHit].
-     * - As the hit is immediately modified, this function **returns an accurate** [Hit]
-     *   representation of what will be dealt once the cycle [delay] passes. The only exception is
-     *   if the [player]'s respective queue list is cleared, which would remove the hit before it
-     *   has been processed.
-     *
-     * @param damage The initial damage intended for the [player]. This value may change based on
-     *   various factors from [modifier].
-     * @param hitmark The hitmark group used for the visual hitsplat. See [BaseHitmarkGroups] or
-     *   reference [hitmark_groups] for a list of available hitmark groups.
-     * @param specific If `true`, only the [player] will see the hitsplat; this does not affect
-     *   actual damage calculations.
-     * @param sourceWeapon An optional [ItemServerType] reference of a "weapon" used by the [source]
-     *   that hit modifiers and/or processors can use for specialized logic. Typically unnecessary
-     *   when [source] is an [Npc], though there may be niche use cases.
-     * @param sourceSecondary Similar to [sourceWeapon], except this refers to objs that are **not**
-     *   the primary weapon, such as ammunition for ranged attacks or objs tied to magic spells.
-     * @param modifier A [PlayerHitModifier] used to adjust damage and other hit properties. By
-     *   default, this is set to [StandardPlayerHitModifier], which applies standard modifications,
-     *   such as damage reduction from protection prayers.
-     * @see [BaseHitmarkGroups]
+     * Standard-hit modifiers run when queued, not at impact. Clearing the relevant queue
+     * cancels the hit.
      */
     public fun queueHit(
         source: Npc,
@@ -1449,42 +1228,6 @@ public class ProtectedAccess(
         )
     }
 
-    /**
-     * Queues a hit dealt by [source] with an impact cycle delay of [delay] before the hit is
-     * displayed and health is deducted from the player.
-     *
-     * _[modifier] is applied immediately when this function is called (via
-     * [PlayerHitModifier.modify]). This means that effects like prayer protection reducing damage
-     * are handled at this point and **not** on impact._
-     *
-     * If you want the modifier to be applied on impact, use [queueImpactHit] instead.
-     *
-     * **Notes:**
-     * - The [Hit.righthandObj] is implicitly set based on the `righthand` obj equipped in
-     *   [Player.worn] for [source]. This behavior is not configurable to ensure consistency across
-     *   systems such as [modifier] and other processors.
-     * - [StandardPlayerHitProcessor] is invoked when the cycle [delay] completes and the hit takes
-     *   effect. It is responsible for reducing the [player]'s health, handling armour degradation,
-     *   recoil damage, displaying the hitsplat, and other related mechanics. This behavior **cannot
-     *   be bypassed** when using this function; however, it can be changed when using
-     *   [takeInstantHit].
-     * - As the hit is immediately modified, this function **returns an accurate** [Hit]
-     *   representation of what will be dealt once the cycle [delay] passes. The only exception is
-     *   if the [player]'s respective queue list is cleared, which would remove the hit before it
-     *   has been processed.
-     *
-     * @param damage The initial damage intended for the [player]. This value may change based on
-     *   various factors from [modifier].
-     * @param hitmark The hitmark group used for the visual hitsplat. See [BaseHitmarkGroups] or
-     *   reference [hitmark_groups] for a list of available hitmark groups.
-     * @param sourceSecondary The "secondary" obj used in the attack by [source]. If the hit is from
-     *   a ranged attack, this should be set to the ammunition obj (if applicable). If the attack is
-     *   from a magic spell, this should be the associated spell obj.
-     * @param modifier A [PlayerHitModifier] used to adjust damage and other hit properties. By
-     *   default, this is set to [StandardPlayerHitModifier], which applies standard modifications,
-     *   such as damage reduction from protection prayers.
-     * @see [BaseHitmarkGroups]
-     */
     public fun queueHit(
         source: Player,
         delay: Int,
@@ -1505,41 +1248,6 @@ public class ProtectedAccess(
         )
     }
 
-    /**
-     * Queues a hit that does not originate from either a [Player] or an [Npc], with an impact cycle
-     * delay of [delay] before the hit is displayed and health is deducted from the player.
-     *
-     * _[modifier] is applied immediately when this function is called (via
-     * [PlayerHitModifier.modify]). This means that effects like prayer protection reducing damage
-     * are handled at this point and **not** on impact._
-     *
-     * If you want the modifier to be applied on impact, use [queueImpactHit] instead.
-     *
-     * **Notes:**
-     * - [StandardPlayerHitProcessor] is invoked when the cycle [delay] completes and the hit takes
-     *   effect. It is responsible for reducing the [player]'s health, handling armour degradation,
-     *   recoil damage, displaying the hitsplat, and other related mechanics. This behavior **cannot
-     *   be bypassed** when using this function; however, it can be changed when using
-     *   [takeInstantHit].
-     * - As the hit is immediately modified, this function **returns an accurate** [Hit]
-     *   representation of what will be dealt once the cycle [delay] passes. The only exception is
-     *   if the [player]'s respective queue list is cleared, which would remove the hit before it
-     *   has been processed.
-     *
-     * @param damage The initial damage intended for the [player]. This value may change based on
-     *   various factors from [modifier].
-     * @param hitmark The hitmark group used for the visual hitsplat. See [BaseHitmarkGroups] or
-     *   reference [hitmark_groups] for a list of available hitmark groups.
-     * @param specific If `true`, only the [player] will see the hitsplat; this does not affect
-     *   actual damage calculations.
-     * @param modifier A [PlayerHitModifier] used to adjust damage and other hit properties. By
-     *   default, this is set to [StandardPlayerHitModifier], which applies standard modifications,
-     *   such as damage reduction from protection prayers.
-     * @param strongQueue If `false`, the hit will be queued through [Player.queue] instead of
-     *   [Player.strongQueue]. This is `true` by default. Currently, the only known case for setting
-     *   this to `false` is for 'Ring of Recoil' damage, but other use cases may exist.
-     * @see [BaseHitmarkGroups]
-     */
     public fun queueHit(
         delay: Int,
         type: HitType,
@@ -1560,21 +1268,6 @@ public class ProtectedAccess(
         )
     }
 
-    /**
-     * Instantly applies [damage] to [player]. By default, this function applies no modification to
-     * the hit ([NoopPlayerHitModifier]) unless explicitly provided through [modifier].
-     *
-     * @param damage The initial damage intended for the [player]. This value may be adjusted by
-     *   [modifier] based on various factors.
-     * @param hitmark The hitmark group used for the visual hitsplat. See [BaseHitmarkGroups] or
-     *   reference [hitmark_groups] for a list of available hitmark groups.
-     * @param specific If `true`, only the [player] will see the hitsplat; this does not affect
-     *   actual damage calculations.
-     * @param modifier A [PlayerHitModifier] that modifies the damage and other properties.
-     * @param processor An [InstantPlayerHitProcessor] that processes the [Hit] instantly. Defaults
-     *   to [DamageOnlyPlayerHitProcessor], meaning effects such as degradation and recoil damage
-     *   **will not** apply.
-     */
     public fun takeInstantHit(
         type: HitType,
         damage: Int,
@@ -1594,43 +1287,8 @@ public class ProtectedAccess(
     }
 
     /**
-     * Queues a hit dealt by [source] with an impact cycle delay of [delay] before the hit is
-     * displayed and health is deducted from the player.
-     *
-     * _[modifier] is applied **on impact** (via [PlayerHitModifier.modify]). This means that
-     * effects like prayer protection reducing damage are handled right before the hit damage is
-     * reduced from the player's health._
-     *
-     * If you want to apply the modifier as soon as the hit is queued, use [queueHit] instead.
-     *
-     * **Notes:**
-     * - [damage] is **not** capped based on the [player]'s current health.
-     * - [StandardPlayerHitProcessor] is invoked when the cycle [delay] completes and the hit takes
-     *   effect. It is responsible for reducing the [player]'s health, handling armour degradation,
-     *   recoil damage, displaying the hitsplat, and other related mechanics. This behavior **cannot
-     *   be bypassed** when using this function; however, it can be changed when using
-     *   [takeInstantHit].
-     * - Unlike the [queueHit] variants, this function **cannot** return an accurate [Hit]
-     *   representation (and thus does not return one at all). This is because the hit is scheduled
-     *   for modification only _after_ [delay] cycles have passed, and the only way to retrieve the
-     *   modified value would be by suspending execution - something we do not do here for multiple
-     *   reasons.
-     *
-     * @param damage The initial damage intended for the [player]. This value may change based on
-     *   various factors from [modifier].
-     * @param hitmark The hitmark group used for the visual hitsplat. See [BaseHitmarkGroups] or
-     *   reference [hitmark_groups] for a list of available hitmark groups.
-     * @param specific If `true`, only the [player] will see the hitsplat; this does not affect
-     *   actual damage calculations.
-     * @param sourceWeapon An optional [ItemServerType] reference of a "weapon" used by the [source]
-     *   that hit modifiers and/or processors can use for specialized logic. Typically unnecessary
-     *   when [source] is an [Npc], though there may be niche use cases.
-     * @param sourceSecondary Similar to [sourceWeapon], except this refers to objs that are **not**
-     *   the primary weapon, such as ammunition for ranged attacks or objs tied to magic spells.
-     * @param modifier A [PlayerHitModifier] used to adjust damage and other hit properties. By
-     *   default, this is set to [StandardPlayerHitModifier], which applies standard modifications,
-     *   such as damage reduction from protection prayers.
-     * @see [BaseHitmarkGroups]
+     * Impact hits resolve modifiers at impact and do not cap damage to current health when
+     * queued.
      */
     public fun queueImpactHit(
         source: Npc,
@@ -1656,43 +1314,6 @@ public class ProtectedAccess(
         )
     }
 
-    /**
-     * Queues a hit dealt by [source] with an impact cycle delay of [delay] before the hit is
-     * displayed and health is deducted from the player.
-     *
-     * _[modifier] is applied **on impact** (via [PlayerHitModifier.modify]). This means that
-     * effects like prayer protection reducing damage are handled right before the hit damage is
-     * reduced from the player's health._
-     *
-     * If you want to apply the modifier as soon as the hit is queued, use [queueHit] instead.
-     *
-     * **Notes:**
-     * - The [Hit.righthandObj] is implicitly set based on the `righthand` obj equipped in
-     *   [Player.worn] for [source]. This behavior is not configurable to ensure consistency across
-     *   systems such as [modifier] and other processors.
-     * - [StandardPlayerHitProcessor] is invoked when the cycle [delay] completes and the hit takes
-     *   effect. It is responsible for reducing the [player]'s health, handling armour degradation,
-     *   recoil damage, displaying the hitsplat, and other related mechanics. This behavior **cannot
-     *   be bypassed** when using this function; however, it can be changed when using
-     *   [takeInstantHit].
-     * - Unlike the [queueHit] variants, this function **cannot** return an accurate [Hit]
-     *   representation (and thus does not return one at all). This is because the hit is scheduled
-     *   for modification only _after_ [delay] cycles have passed, and the only way to retrieve the
-     *   modified value would be by suspending execution - something we do not do here for multiple
-     *   reasons.
-     *
-     * @param damage The initial damage intended for the [player]. This value may change based on
-     *   various factors from [modifier].
-     * @param hitmark The hitmark group used for the visual hitsplat. See [BaseHitmarkGroups] or
-     *   reference [hitmark_groups] for a list of available hitmark groups.
-     * @param sourceSecondary The "secondary" obj used in the attack by [source]. If the hit is from
-     *   a ranged attack, this should be set to the ammunition obj (if applicable). If the attack is
-     *   from a magic spell, this should be the associated spell obj.
-     * @param modifier A [PlayerHitModifier] used to adjust damage and other hit properties. By
-     *   default, this is set to [StandardPlayerHitModifier], which applies standard modifications,
-     *   such as damage reduction from protection prayers.
-     * @see [BaseHitmarkGroups]
-     */
     public fun queueImpactHit(
         source: Player,
         delay: Int,
@@ -1713,39 +1334,6 @@ public class ProtectedAccess(
         )
     }
 
-    /**
-     * Queues a hit that does not originate from either a [Player] or an [Npc], with an impact cycle
-     * delay of [delay] before the hit is displayed and health is deducted from the player.
-     *
-     * _[modifier] is applied **on impact** (via [PlayerHitModifier.modify]). This means that
-     * effects like prayer protection reducing damage are handled right before the hit damage is
-     * reduced from the player's health._
-     *
-     * If you want to apply the modifier as soon as the hit is queued, use [queueHit] instead.
-     *
-     * **Notes:**
-     * - [StandardPlayerHitProcessor] is invoked when the cycle [delay] completes and the hit takes
-     *   effect. It is responsible for reducing the [player]'s health, handling armour degradation,
-     *   recoil damage, displaying the hitsplat, and other related mechanics. This behavior **cannot
-     *   be bypassed** when using this function; however, it can be changed when using
-     *   [takeInstantHit].
-     * - Unlike the [queueHit] variants, this function **cannot** return an accurate [Hit]
-     *   representation (and thus does not return one at all). This is because the hit is scheduled
-     *   for modification only _after_ [delay] cycles have passed, and the only way to retrieve the
-     *   modified value would be by suspending execution - something we do not do here for multiple
-     *   reasons.
-     *
-     * @param damage The initial damage intended for the [player]. This value may change based on
-     *   various factors from [modifier].
-     * @param hitmark The hitmark group used for the visual hitsplat. See [BaseHitmarkGroups] or
-     *   reference [hitmark_groups] for a list of available hitmark groups.
-     * @param specific If `true`, only the [player] will see the hitsplat; this does not affect
-     *   actual damage calculations.
-     * @param modifier A [PlayerHitModifier] used to adjust damage and other hit properties. By
-     *   default, this is set to [StandardPlayerHitModifier], which applies standard modifications,
-     *   such as damage reduction from protection prayers.
-     * @see [BaseHitmarkGroups]
-     */
     public fun queueImpactHit(
         delay: Int,
         type: HitType,
@@ -1843,23 +1431,10 @@ public class ProtectedAccess(
         player.clearQueue(queue)
     }
 
-    /**
-     * Adds "hero points" (also known as kill credits) for [source], where [points] typically
-     * represent the amount of damage dealt to [player].
-     */
     public fun heroPoints(source: Player, points: Int) {
         player.heroPoints(source, points)
     }
 
-    /**
-     * Finds the player with the highest "hero points" stored in this [Player.heroPoints].
-     *
-     * **Notes:**
-     * - Only players who have dealt damage greater than `0` can occupy an entry.
-     * - [Player.heroPoints] is limited to `16` entries by default. Once all entries are occupied,
-     *   no additional players can accrue kill credit (hero points) for this [player] until their
-     *   hero points are cleared.
-     */
     public fun findHero(): Player? {
         return player.findHero(context.playerList)
     }
@@ -1874,17 +1449,14 @@ public class ProtectedAccess(
     public fun leastDamager(target: PathingEntity): Player? =
         target.damageContributions.leastPlayer(context.playerList)
 
-    /** Returns `true` if [coords] is within [area]. */
     public fun inArea(area: String, coords: CoordGrid): Boolean {
         return context.areaChecker.inArea(area, coords)
     }
 
-    /** @see [org.rsmod.api.player.mapMultiway] */
     public fun mapMultiway(): Boolean {
         return player.mapMultiway(context.areaChecker)
     }
 
-    /** @see [org.rsmod.api.player.music.MusicPlayer.unlockAndPlay] */
     public fun musicPlay(musicRow: MusicRow) {
         context.musicPlayer.unlockAndPlay(player, musicRow)
     }
@@ -1898,54 +1470,17 @@ public class ProtectedAccess(
     }
 
     /**
-     * Sets the player's `walkTrigger` to [trigger], allowing the underlying [Player.walkTrigger]
-     * function to determine if the change is permitted based on the [WalkTriggerType.priority]
-     * rules.
-     *
-     * Unlike [trySetWalkTrigger], this function does *not* return a success status. If it is
-     * important to know whether the trigger was applied, use [trySetWalkTrigger] instead.
-     *
-     * **See:** Documentation in [WalkTriggerPriority] for priority rules.
-     *
-     * @see [WalkTriggerPriority.None]
-     * @see [WalkTriggerPriority.Low]
-     * @see [WalkTriggerPriority.High]
+     * Respects [WalkTriggerPriority]; use [trySetWalkTrigger] when the caller needs to detect rejection.
      */
     public fun walkTrigger(trigger: String) {
         player.walkTrigger(trigger)
     }
 
-    /**
-     * Checks whether [trigger] can replace the player's current walk trigger, based on the
-     * [WalkTriggerType.priority] rules.
-     *
-     * This does *not* modify the player's walk trigger.
-     *
-     * **See:** Documentation in [WalkTriggerPriority] for priority rules.
-     *
-     * @see [WalkTriggerPriority.None]
-     * @see [WalkTriggerPriority.Low]
-     * @see [WalkTriggerPriority.High]
-     */
     public fun canSetWalkTrigger(trigger: WalkTriggerType): Boolean {
         val current = player.walkTrigger ?: return true
         return trigger.priority.canOverwrite(current.priority)
     }
 
-    /**
-     * Attempts to set the players `walkTrigger` to [trigger], ensuring that walk trigger priority
-     * rules are respected.
-     *
-     * If the existing walk trigger cannot be overwritten due to its priority, the update is
-     * **rejected**, and this function returns `false`. Otherwise, the trigger is updated, and
-     * `true` is returned.
-     *
-     * **See:** Documentation in [WalkTriggerPriority] for priority rules.
-     *
-     * @see [WalkTriggerPriority.None]
-     * @see [WalkTriggerPriority.Low]
-     * @see [WalkTriggerPriority.High]
-     */
     public fun trySetWalkTrigger(trigger: String): Boolean {
         return player.walkTrigger(trigger)
     }
@@ -1988,11 +1523,6 @@ public class ProtectedAccess(
         conversation(dialogue)
     }
 
-    /**
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumeWithMainModalProtectedAccess]
-     */
     public suspend fun delayBySeq(anim: String, extra: Int = 0) {
         val cycles =
             ServerCacheManager.getAnim(anim.asRSCM(RSCMType.SEQ))?.totalDelay ?: (2 + extra)
@@ -2003,11 +1533,6 @@ public class ProtectedAccess(
         resumeWithMainModalProtectedAccess(Unit, modal)
     }
 
-    /**
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumeWithMainModalProtectedAccess]
-     */
     public suspend fun delay(cycles: Int = 1) {
         require(cycles > 0) { "`cycles` must be greater than 0. (cycles=$cycles)" }
         val modal = player.ui.getModalOrNull("component.toplevel_osrs_stretch:mainmodal")
@@ -2017,28 +1542,16 @@ public class ProtectedAccess(
     }
 
     /**
-     * Delays the [player] for a single cycle **only if** they moved in the previous cycle.
-     *
-     * @throws ProtectedAccessLostException if [regainProtectedAccess] returns `false` after
-     *   suspension resumes.
-     * @see [regainProtectedAccess]
+     * Use currentMapClock for previous-tick movement: processedMapClock is one cycle stale
+     * during client input.
      */
     public suspend fun arriveDelay() {
-        if (!player.hasMovedPreviousCycle) {
+        if (player.lastMovement != player.currentMapClock - 1) {
             return
         }
         delay()
     }
 
-    /**
-     * Delays the player for a number of ticks equal to the time duration of [seq].
-     *
-     * @param seq The seq type whose tick duration determines the delay.
-     * @throws IllegalStateException if [SequenceServerType.tickDuration] is `0`.
-     * @throws ProtectedAccessLostException if [regainProtectedAccess] returns false after
-     *   suspension resumes.
-     * @see [regainProtectedAccess]
-     */
     public suspend fun delay(seq: SequenceServerType) {
         val ticks = seq.tickDuration
         check(ticks > 0) { "Seq tick duration must be positive: ${seq}" }
@@ -2069,24 +1582,8 @@ public class ProtectedAccess(
     }
 
     /**
-     * Suspends the [coroutine] until the player receives the expected [input].
-     *
-     * **Notes:**
-     * - This does not `delay` the player.
-     * - This function is niche and only required in specific scenarios. For example, certain modals
-     *   suspend while waiting for a "non-traditional" [ResumePauseButtonInput] - such as one sent
-     *   from an `IfButton` click. Examples include the bank tutorial and the items-kept-on-death
-     *   interfaces.
-     * - Since this function calls [resumeWithMainModalProtectedAccess], the player's currently
-     *   opened modal (if any) **must remain unchanged** from the start of this call until the
-     *   suspension ends. Otherwise, the [ProtectedAccess] scope will terminate itself from
-     *   [ProtectedAccessLostException].
-     *
-     * @param input the expected input type to suspend on, provided as a [KClass].
-     * @return the input value of type [T] once received.
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumeWithMainModalProtectedAccess]
+     * Suspends without delaying the player. The main modal must remain unchanged until input
+     * resumes, or protected access is lost.
      */
     private suspend fun <T : Any> await(input: KClass<T>): T {
         val modal = player.ui.getModalOrNull("component.toplevel_osrs_stretch:mainmodal")
@@ -2094,26 +1591,8 @@ public class ProtectedAccess(
         return resumeWithMainModalProtectedAccess(value, modal)
     }
 
-    /**
-     * Suspends the coroutine until a [ResumePauseButtonInput] is received.
-     *
-     * This function is used in specific scenarios where the player must wait for a non-standard
-     * input - such as a button click from an interface like the bank tutorial or items kept on
-     * death. It ensures that the player's current modal remains unchanged during the suspension to
-     * maintain protected access.
-     *
-     * @return the received [ResumePauseButtonInput] instance.
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [await]
-     */
     public suspend fun pauseButton(): ResumePauseButtonInput = await(ResumePauseButtonInput::class)
 
-    /**
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumePauseButtonWithProtectedAccess]
-     */
     public suspend fun mesbox(text: String) {
         val alignment = context.alignment
         val pages = alignment.generateMesPageList(text)
@@ -2136,13 +1615,13 @@ public class ProtectedAccess(
         resumePauseButtonWithProtectedAccess(input, modal, "component.messagebox:continue")
     }
 
-    /**
-     * Similar to [mesbox], but does **not** suspend nor show a `Click here to continue` pause
-     * button.
-     *
-     * This dialogue is meant to be used in a script sequence where the script itself will replace
-     * or close the dialogue after a certain number of cycles.
-     */
+    public suspend fun levelUpDialogue(iconComponent: String, line1: String, line2: String) {
+        player.ifLevelUp(iconComponent, line1, line2, context.eventBus)
+        val modal = player.ui.getModalOrNull("component.chatbox:chatmodal")
+        val input = coroutine.pause(ResumePauseButtonInput::class)
+        resumePauseButtonWithProtectedAccess(input, modal, "component.levelup_display:continue")
+    }
+
     public fun mesboxNp(text: String) {
         val alignment = context.alignment
         val pages = alignment.generateMesPageList(text)
@@ -2154,20 +1633,10 @@ public class ProtectedAccess(
         player.ifMesbox(pgText, pauseText = "", lineHeight, context.eventBus)
     }
 
-    /**
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumePauseButtonWithProtectedAccess]
-     */
     public suspend fun objbox(obj: String, text: String) {
         objbox(obj, zoom = 400, text)
     }
 
-    /**
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumePauseButtonWithProtectedAccess]
-     */
     public suspend fun objbox(obj: String, zoom: Int, text: String) {
         val alignment = context.alignment
         val pages = alignment.generateChatPageList(text)
@@ -2189,24 +1658,27 @@ public class ProtectedAccess(
         resumePauseButtonWithProtectedAccess(input, modal, "component.objectbox:universe")
     }
 
-    /**
-     * Similar to [objbox], but does **not** suspend nor show a `Click here to continue` pause
-     * button.
-     *
-     * This dialogue is meant to be used in a script sequence where the script itself will replace
-     * or close the dialogue after a certain number of cycles.
-     */
+    public suspend fun confirmObjbox(
+        obj: String,
+        text: String,
+        cancel: String = "No.",
+        confirm: String = "Yes.",
+    ): Boolean {
+        player.ifObjbox(text, obj.asRSCM(RSCMType.OBJ), 400, "$cancel|$confirm", context.eventBus)
+        val modal = player.ui.getModalOrNull("component.chatbox:chatmodal")
+        val input = coroutine.pause(ResumePauseButtonInput::class)
+        resumePauseButtonWithProtectedAccess(input, modal, "component.objectbox:universe")
+        return when (input.subcomponent) {
+            0 -> false
+            1 -> true
+            else -> error("Invalid choice `${input.subcomponent}` for `$player`. (input=$input)")
+        }
+    }
+
     public fun objboxNp(obj: String, text: String) {
         objboxNp(obj, zoom = 400, text)
     }
 
-    /**
-     * Similar to [objbox], but does **not** suspend nor show a `Click here to continue` pause
-     * button.
-     *
-     * This dialogue is meant to be used in a script sequence where the script itself will replace
-     * or close the dialogue after a certain number of cycles.
-     */
     public fun objboxNp(obj: String, zoom: Int, text: String) {
         val alignment = context.alignment
         val pages = alignment.generateChatPageList(text)
@@ -2217,20 +1689,10 @@ public class ProtectedAccess(
         player.ifObjbox(page.text, obj.asRSCM(RSCMType.OBJ), zoom, pauseText = "", context.eventBus)
     }
 
-    /**
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumePauseButtonWithProtectedAccess]
-     */
     public suspend fun objbox(obj: InvObj, text: String) {
         objbox(obj, zoom = 400, text)
     }
 
-    /**
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumePauseButtonWithProtectedAccess]
-     */
     public suspend fun objbox(obj: InvObj, zoom: Int, text: String) {
         val alignment = context.alignment
         val pages = alignment.generateChatPageList(text)
@@ -2252,24 +1714,10 @@ public class ProtectedAccess(
         resumePauseButtonWithProtectedAccess(input, modal, "component.objectbox:universe")
     }
 
-    /**
-     * Similar to [objbox], but does **not** suspend nor show a `Click here to continue` pause
-     * button.
-     *
-     * This dialogue is meant to be used in a script sequence where the script itself will replace
-     * or close the dialogue after a certain number of cycles.
-     */
     public fun objboxNp(obj: InvObj, text: String) {
         objboxNp(obj, zoom = 400, text)
     }
 
-    /**
-     * Similar to [objbox], but does **not** suspend nor show a `Click here to continue` pause
-     * button.
-     *
-     * This dialogue is meant to be used in a script sequence where the script itself will replace
-     * or close the dialogue after a certain number of cycles.
-     */
     public fun objboxNp(obj: InvObj, zoom: Int, text: String) {
         val alignment = context.alignment
         val pages = alignment.generateChatPageList(text)
@@ -2280,20 +1728,10 @@ public class ProtectedAccess(
         player.ifObjbox(page.text, obj.id, zoom, pauseText = "", context.eventBus)
     }
 
-    /**
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumePauseButtonWithProtectedAccess]
-     */
     public suspend fun doubleobjbox(obj1: String, obj2: String, text: String) {
         doubleobjbox(obj1, zoom1 = 400, obj2, zoom2 = 400, text)
     }
 
-    /**
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumePauseButtonWithProtectedAccess]
-     */
     public suspend fun doubleobjbox(
         obj1: String,
         zoom1: Int,
@@ -2339,24 +1777,10 @@ public class ProtectedAccess(
         resumePauseButtonWithProtectedAccess(input, modal, "component.objectbox_double:pausebutton")
     }
 
-    /**
-     * Similar to [doubleobjbox], but does **not** suspend nor show a `Click here to continue` pause
-     * button.
-     *
-     * This dialogue is meant to be used in a script sequence where the script itself will replace
-     * or close the dialogue after a certain number of cycles.
-     */
     public fun doubleobjboxNp(obj1: String, obj2: String, text: String) {
         doubleobjboxNp(obj1, zoom1 = 400, obj2, zoom2 = 400, text)
     }
 
-    /**
-     * Similar to [doubleobjbox], but does **not** suspend nor show a `Click here to continue` pause
-     * button.
-     *
-     * This dialogue is meant to be used in a script sequence where the script itself will replace
-     * or close the dialogue after a certain number of cycles.
-     */
     public fun doubleobjboxNp(obj1: String, zoom1: Int, obj2: String, zoom2: Int, text: String) {
         val alignment = context.alignment
         val pages = alignment.generateChatPageList(text)
@@ -2375,20 +1799,10 @@ public class ProtectedAccess(
         )
     }
 
-    /**
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumePauseButtonWithProtectedAccess]
-     */
     public suspend fun doubleobjbox(obj1: InvObj, obj2: InvObj, text: String) {
         doubleobjbox(obj1, zoom1 = 400, obj2, zoom2 = 400, text)
     }
 
-    /**
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumePauseButtonWithProtectedAccess]
-     */
     public suspend fun doubleobjbox(
         obj1: InvObj,
         zoom1: Int,
@@ -2426,24 +1840,10 @@ public class ProtectedAccess(
         resumePauseButtonWithProtectedAccess(input, modal, "component.objectbox_double:pausebutton")
     }
 
-    /**
-     * Similar to [doubleobjbox], but does **not** suspend nor show a `Click here to continue` pause
-     * button.
-     *
-     * This dialogue is meant to be used in a script sequence where the script itself will replace
-     * or close the dialogue after a certain number of cycles.
-     */
     public fun doubleobjboxNp(obj1: InvObj, obj2: InvObj, text: String) {
         doubleobjboxNp(obj1, zoom1 = 400, obj2, zoom2 = 400, text)
     }
 
-    /**
-     * Similar to [doubleobjbox], but does **not** suspend nor show a `Click here to continue` pause
-     * button.
-     *
-     * This dialogue is meant to be used in a script sequence where the script itself will replace
-     * or close the dialogue after a certain number of cycles.
-     */
     public fun doubleobjboxNp(obj1: InvObj, zoom1: Int, obj2: InvObj, zoom2: Int, text: String) {
         val alignment = context.alignment
         val pages = alignment.generateChatPageList(text)
@@ -2454,11 +1854,6 @@ public class ProtectedAccess(
         player.ifDoubleobjbox(page.text, obj1.id, zoom1, obj2.id, zoom2, "", context.eventBus)
     }
 
-    /**
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumePauseButtonWithProtectedAccess]
-     */
     public suspend fun <T> choice2(
         choice1: String,
         result1: T,
@@ -2477,11 +1872,6 @@ public class ProtectedAccess(
         }
     }
 
-    /**
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumePauseButtonWithProtectedAccess]
-     */
     public suspend fun <T> choice3(
         choice1: String,
         result1: T,
@@ -2508,11 +1898,6 @@ public class ProtectedAccess(
         }
     }
 
-    /**
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumePauseButtonWithProtectedAccess]
-     */
     public suspend fun <T> choice4(
         choice1: String,
         result1: T,
@@ -2542,11 +1927,6 @@ public class ProtectedAccess(
         }
     }
 
-    /**
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumePauseButtonWithProtectedAccess]
-     */
     public suspend fun <T> choice5(
         choice1: String,
         result1: T,
@@ -2579,20 +1959,45 @@ public class ProtectedAccess(
         }
     }
 
-    /**
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumePauseButtonWithProtectedAccess]
-     */
+    public suspend fun <T> choice6(
+        choice1: String,
+        result1: T,
+        choice2: String,
+        result2: T,
+        choice3: String,
+        result3: T,
+        choice4: String,
+        result4: T,
+        choice5: String,
+        result5: T,
+        choice6: String,
+        result6: T,
+        title: String = constants.cm_options,
+    ): T {
+        player.ifChoice(
+            title,
+            "$choice1|$choice2|$choice3|$choice4|$choice5|$choice6",
+            choiceCountInclusive = 6,
+            context.eventBus,
+        )
+        val modal = player.ui.getModalOrNull("component.chatbox:chatmodal")
+        val input = coroutine.pause(ResumePauseButtonInput::class)
+        resumePauseButtonWithProtectedAccess(input, modal, "component.chatmenu:options")
+        return when (input.subcomponent) {
+            1 -> result1
+            2 -> result2
+            3 -> result3
+            4 -> result4
+            5 -> result5
+            6 -> result6
+            else -> error("Invalid choice `${input.subcomponent}` for `$player`. (input=$input)")
+        }
+    }
+
     public suspend fun chatPlayerNoAnim(text: String) {
         chatPlayer(null, text)
     }
 
-    /**
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumePauseButtonWithProtectedAccess]
-     */
     public suspend fun chatPlayer(
         mesanim: MesAnimType?,
         text: String,
@@ -2629,11 +2034,6 @@ public class ProtectedAccess(
         resumePauseButtonWithProtectedAccess(input, modal, "component.chat_right:continue")
     }
 
-    /**
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumePauseButtonWithProtectedAccess]
-     */
     public suspend fun chatNpcNoAnim(
         npc: Npc,
         text: String,
@@ -2643,11 +2043,6 @@ public class ProtectedAccess(
         chatNpc(npc, mesanim = null, text = text, title = title, faceFar = faceFar)
     }
 
-    /**
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumePauseButtonWithProtectedAccess]
-     */
     public suspend fun chatNpc(
         npc: Npc,
         mesanim: MesAnimType?,
@@ -2703,11 +2098,6 @@ public class ProtectedAccess(
         resumePauseButtonWithProtectedAccess(input, modal, "component.chat_left:continue")
     }
 
-    /**
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumePauseButtonWithProtectedAccess]
-     */
     public suspend fun chatNpcNoTurn(
         npc: Npc,
         mesanim: MesAnimType?,
@@ -2756,11 +2146,6 @@ public class ProtectedAccess(
         resumePauseButtonWithProtectedAccess(input, modal, "component.chat_left:continue")
     }
 
-    /**
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumePauseButtonWithProtectedAccess]
-     */
     public suspend fun chatNpcSpecific(
         title: String,
         type: String,
@@ -2801,13 +2186,6 @@ public class ProtectedAccess(
         resumePauseButtonWithProtectedAccess(input, modal, "component.chat_left:continue")
     }
 
-    /**
-     * Similar to [chatNpcSpecific], but does **not** suspend nor show a `Click here to continue`
-     * pause button.
-     *
-     * This dialogue is meant to be used in a script sequence where the script itself will replace
-     * or close the dialogue after a certain number of cycles.
-     */
     public fun chatNpcSpecificNp(title: String, type: String, mesanim: MesAnimType, text: String) {
         val alignment = context.alignment
         val pages = alignment.generateChatPageList(text)
@@ -2821,11 +2199,6 @@ public class ProtectedAccess(
         player.ifChatNpcSpecific(title, type, pgText, anim, "", lineHeight, context.eventBus)
     }
 
-    /**
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumeWithMainModalProtectedAccess]
-     */
     public suspend fun stringDialog(title: String): String {
         mesLayerMode9(player, title)
         val modal = player.ui.getModalOrNull("component.toplevel_osrs_stretch:mainmodal")
@@ -2848,13 +2221,6 @@ public class ProtectedAccess(
         return resumeWithMainModalProtectedAccess(input.count.absoluteValue, modal)
     }
 
-    /**
-     * A version of [countDialog] that allows the returned value to be negative.
-     *
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumeWithMainModalProtectedAccess]
-     */
     public suspend fun numberDialog(title: String): Int {
         mesLayerMode7(player, title)
         val modal = player.ui.getModalOrNull("component.toplevel_osrs_stretch:mainmodal")
@@ -2884,13 +2250,6 @@ public class ProtectedAccess(
         return resumeWithMainModalProtectedAccess(input.obj, modal)
     }
 
-    /**
-     * Returns `true` if the player selects the "Yes" confirmation to destroy the specified obj.
-     *
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumePauseButtonWithProtectedAccess]
-     */
     public suspend fun confirmDestroy(
         obj: String,
         count: Int,
@@ -2908,13 +2267,6 @@ public class ProtectedAccess(
         }
     }
 
-    /**
-     * Returns `true` if the player selects the [confirm] option.
-     *
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @see [resumeWithMainModalProtectedAccess]
-     */
     public suspend fun confirmOverlay(
         target: String,
         title: String,
@@ -2930,17 +2282,6 @@ public class ProtectedAccess(
         return confirmed
     }
 
-    /**
-     * Opens a list selection modal, suspending until the [player] selects one of the [choices].
-     *
-     * @param hotkeys If `true` the menu interface will allow number keys to be used to select a
-     *   listed choice.
-     * @return The selected choice subcomponent id ranging from `0` to `127`.
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @throws IllegalArgumentException if [choices] has more than `127` elements.
-     * @see [resumeWithMainModalProtectedAccess]
-     */
     public suspend fun menu(title: String, hotkeys: Boolean, choices: List<String>): Int {
         require(choices.size < 128) { "Can only have up to 127 `choices`. (size=${choices.size})" }
         player.ifMenu(title, choices.joinToString("|"), hotkeys, context.eventBus)
@@ -2950,52 +2291,13 @@ public class ProtectedAccess(
         return resumeWithMainModalProtectedAccess(input.subcomponent.absoluteValue, modal)
     }
 
-    /**
-     * Opens a list selection modal, suspending until the [player] selects one of the [choices].
-     *
-     * @param hotkeys If `true` the menu interface will allow number keys to be used to select a
-     *   listed choice.
-     * @return The selected choice subcomponent id ranging from `0` to `127`.
-     * @throws ProtectedAccessLostException if the player could not retain protected access after
-     *   the coroutine suspension.
-     * @throws IllegalArgumentException if [choices] has more than `127` elements.
-     * @see [resumeWithMainModalProtectedAccess]
-     */
     public suspend fun menu(title: String, vararg choices: String, hotkeys: Boolean = false): Int {
         return menu(title, hotkeys, choices.toList())
     }
 
     /**
-     * Ensures we can still obtain protected access for [player]. If protected access cannot be
-     * regained, this function throws a [ProtectedAccessLostException], which will cause the current
-     * `withProtectedAccess` lambda block to exit gracefully.
-     *
-     * The thrown exception will be suppressed by [Player.advanceActiveCoroutine] and/or
-     * [Player.resumeActiveCoroutine], so it will not interrupt the server or the player. While
-     * losing protected access is handled gracefully, it is something callers should be aware of
-     * when using a suspend function in this [ProtectedAccess] scope.
-     *
-     * For example:
-     * ```
-     * player.withProtectedAccess {
-     *  val input = countDialog()
-     *  // While this lambda is suspended waiting for countDialog input, something has added a
-     *  // delay to `player.`
-     *
-     *  // Input was somehow passed along and returns the number 5 to the suspending `countDialog`
-     *  // call. However, the player is "delayed" and thus `Player.isAccessProtected` will return
-     *  // true, causing `regainProtectedAccess` to throw `ProtectedAccessLostException`, and this
-     *  // lambda to exit gracefully.
-     *
-     *  // This message will never be sent to the player
-     *  player.mes("Your input is: $input.")
-     *  // Nor will anything below this...
-     *  player.invAdd("obj.jug_empty", input)
-     * }
-     * ```
-     *
-     * @throws ProtectedAccessLostException
-     * @see [Player.isAccessProtected]
+     * Recheck protected access when resuming suspended input; another action may have replaced
+     * or cancelled its coroutine.
      */
     @Throws(ProtectedAccessLostException::class)
     private fun regainProtectedAccess() {
@@ -3006,17 +2308,8 @@ public class ProtectedAccess(
     }
 
     /**
-     * Helper function to attempt and resume a call-site from a `ResumePauseButtonInput` suspension
-     * while ensuring that the [ResumePauseButtonInput.component] is associated with the
-     * [expectedComponent] and that the same [expectedModal] is still opened after the suspension.
-     *
-     * @param expectedComponent the [ComponentType] that had its [IfEvent.PauseButton] bitmask
-     *   enabled and what is expected of the player to click in order to "continue."
-     * @param expectedModal the [Component] that is expected to be the player's active modal.
-     * @throws ProtectedAccessLostException if the player is `delayed`, their active coroutine does
-     *   not match this scope's [coroutine], the current modal does not match [expectedModal], or if
-     *   [expectedComponent] `isType` returns `false` for [ResumePauseButtonInput.component].
-     * @see [resumeWithModalProtectedAccess]
+     * Resume only the modal and pause target that created this suspension; stale input must not
+     * resume a different dialogue.
      */
     private fun resumePauseButtonWithProtectedAccess(
         input: ResumePauseButtonInput,
@@ -3035,16 +2328,7 @@ public class ProtectedAccess(
         resumeWithModalProtectedAccess(null, expectedModal, "component.chatbox:chatmodal")
     }
 
-    /**
-     * Helper function to attempt and resume a call-site from a suspension point while ensuring that
-     * the [expectedModal] remained open.
-     *
-     * @param returnWithProtectedAccess the value to be returned after verifying protected access
-     *   conditions are met.
-     * @param expectedModal the [Component] that is expected to be the player's active modal.
-     * @throws ProtectedAccessLostException if the player is `delayed`, their active coroutine does
-     *   not match this scope's [coroutine], or if the current modal does not match [expectedModal].
-     */
+    /** Reacquire protected access before resuming a modal suspension. */
     private fun <T> resumeWithModalProtectedAccess(
         returnWithProtectedAccess: T,
         expectedModal: Component?,
@@ -3077,12 +2361,6 @@ public class ProtectedAccess(
         return returnWithProtectedAccess
     }
 
-    /**
-     * Helper function that calls [resumeWithModalProtectedAccess] with the `modalTarget` set to
-     * `components.main_modal`.
-     *
-     * @see [resumeWithModalProtectedAccess]
-     */
     private fun <T> resumeWithMainModalProtectedAccess(
         returnWithProtectedAccess: T,
         expectedModal: Component?,
@@ -3094,8 +2372,9 @@ public class ProtectedAccess(
         )
     }
 
-    /* Client script helper functions */
     public fun runClientScript(id: Int, vararg args: Any): Unit = player.runClientScript(id, *args)
+
+    public fun runClientScript(id: String, vararg args: Any): Unit = player.runClientScript(id, *args)
 
     public fun camForceAngle(rate: Int, rate2: Int): Unit =
         ClientScripts.camForceAngle(player, rate, rate2)
@@ -3132,7 +2411,6 @@ public class ProtectedAccess(
         ClientScripts.toplevelSidebuttonSwitch(player, side)
     }
 
-    /* Cam helper functions */
     public fun camLookAt(dest: CoordGrid, height: Int, rate: Int, rate2: Int) {
         Camera.camLookAt(player, dest, height, rate, rate2)
     }
@@ -3141,11 +2419,46 @@ public class ProtectedAccess(
         Camera.camMoveTo(player, dest, height, rate, rate2)
     }
 
+    public fun camLookAtV3(
+        dest: CoordGrid,
+        height: Int,
+        rate: Int,
+        rate2: Int,
+        heightRelative: Boolean = false,
+    ) {
+        Camera.camLookAtV3(player, dest, height, rate, rate2, heightRelative)
+    }
+
+    public fun camMoveToV3(
+        dest: CoordGrid,
+        height: Int,
+        rate: Int,
+        rate2: Int,
+        heightRelative: Boolean = false,
+    ) {
+        Camera.camMoveToV3(player, dest, height, rate, rate2, heightRelative)
+    }
+
+    public fun camShake(axis: Int, random: Int, amplitude: Int, rate: Int) {
+        Camera.camShake(player, axis, random, amplitude, rate)
+    }
+
+    public fun camShakeReset(axis: Int) {
+        Camera.camShakeReset(player, axis)
+    }
+
+    public fun camShakeResetAll() {
+        Camera.camShakeResetAll(player)
+    }
+
+    public fun camUnlock(unlock: Boolean) {
+        Camera.camUnlock(player, unlock)
+    }
+
     public fun camReset() {
         Camera.camReset(player)
     }
 
-    /* Cinematic helper functions */
     public fun camModeClose() {
         Cinematic.setCameraMode(player, CameraMode.Close)
     }
@@ -3214,6 +2527,37 @@ public class ProtectedAccess(
         Cinematic.restoreAcceptAid(player)
     }
 
+    /**
+     * **Inert for cutscenes** - read [Cinematic.disableRoofs] before using this. The write reaches
+     * the client and the roof stays up; live solves the same problem with a level-0-only dynamic
+     * region instead.
+     */
+    @Suppress("DEPRECATION")
+    @Deprecated("Inert for cutscenes. See Cinematic.disableRoofs.")
+    public fun tempHideRoofs(): Boolean = Cinematic.disableRoofs(player)
+
+    @Suppress("DEPRECATION")
+    @Deprecated("See tempHideRoofs.")
+    public fun restoreRoofs(previous: Boolean) {
+        Cinematic.restoreRoofs(player, previous)
+    }
+
+    /**
+     * See [Cinematic.setMaxDrawDistance]. Live sends this on every cutscene.
+     *
+     * Writes the varbit only. **Pair it with [syncDrawDistance]** - placed after whatever changes
+     * the viewport - or the client never re-reads the varbit and the scene renders at the
+     * pre-cutscene draw distance.
+     */
+    public fun maxDrawDistance(enabled: Boolean) {
+        Cinematic.setMaxDrawDistance(player, enabled)
+    }
+
+    /** See [Cinematic.syncDrawDistance]. Required on both the set and the clear. */
+    public fun syncDrawDistance() {
+        Cinematic.syncDrawDistance(player)
+    }
+
     public fun hideEntityOps() {
         Cinematic.setHideEntityOps(player, hide = true)
     }
@@ -3252,11 +2596,22 @@ public class ProtectedAccess(
         )
     }
 
+    /**
+     * Scheduled overlay closes use a queue and can be delayed by protected access; use
+     * immediate close when exact timing is required.
+     */
     public fun closeFadeOverlay(cycles: Int = 3) {
         longQueueDiscard("queue.fade_overlay_close", cycles)
     }
 
-    /* Interface helper functions */
+    /**
+     * Close immediately when the overlay must disappear this cycle; queued closes can wait
+     * behind protected access.
+     */
+    public fun closeFadeOverlayNow() {
+        Cinematic.closeFadeOverlay(player, context.eventBus)
+    }
+
     public fun ifClose() {
         player.ifClose(context.eventBus)
     }
@@ -3265,18 +2620,10 @@ public class ProtectedAccess(
         player.ifCloseSub(interf, context.eventBus)
     }
 
-    public fun ifCloseChat() {
-        player.ifCloseChat(context.eventBus)
-    }
-
     public fun ifOpenSide(interf: String) {
         player.ifOpenSide(interf, context.eventBus)
     }
 
-    /**
-     * Difference with [ifOpenMainModal] is that this function will **not** send
-     * `toplevel_mainmodal_open` (script 2524) before opening the interface.
-     */
     public fun ifOpenMain(interf: String) {
         player.ifOpenMain(interf, context.eventBus)
     }
@@ -3290,10 +2637,6 @@ public class ProtectedAccess(
         player.ifOpenMainSidePair(main, side, colour, transparency, context.eventBus)
     }
 
-    /**
-     * Difference with [ifOpenMain] is that this function will send `toplevel_mainmodal_open`
-     * (script 2524) before opening the interface in the main modal position.
-     */
     public fun ifOpenMainModal(interf: String, colour: Int = -1, transparency: Int = -1) {
         player.ifOpenMainModal(interf, context.eventBus, colour, transparency)
     }
@@ -3338,11 +2681,18 @@ public class ProtectedAccess(
         player.ifSetObj(target, obj, zoom)
     }
 
+    public fun ifSetPosition(target: String, x: Int, y: Int) {
+        player.ifSetPosition(target, x, y)
+    }
+
     public fun ifSetHide(target: String, hide: Boolean) {
         player.ifSetHide(target, hide)
     }
 
-    /* Inventory helper functions */
+    public fun ifSetModel(target: String, model: Int) {
+        player.ifSetModel(target, model)
+    }
+
     public fun invTakeFee(fee: Int, inv: Inventory = this.inv): Boolean {
         return player.invTakeFee(fee, inv)
     }
@@ -3372,26 +2722,16 @@ public class ProtectedAccess(
         }
     }
 
-    /**
-     * Returns whether [content] (content group) exists in any of the player's inventories — e.g.
-     * inventory, worn equipment, bank, and any other loaded containers. Shared inventories such as
-     * shops are excluded.
-     */
     public fun playerContainsContent(content: String): Boolean {
         val contentId = content.asRSCM(RSCMType.CONTENT)
         return playerContainsInInventories { getInvObj(it).contentGroup == contentId }
     }
 
-    /**
-     * Returns whether any stack of [obj] exists in any of the player's inventories. Shared
-     * inventories such as shops are excluded.
-     */
     public fun playerContainsObj(obj: String): Boolean {
         val objId = obj.asRSCM(RSCMType.OBJ)
         return playerContainsInInventories { getInvObj(it).id == objId }
     }
 
-    /** @see [playerContainsObj] */
     public fun playerContainsAnyObj(vararg objs: String): Boolean = objs.any(::playerContainsObj)
 
     private inline fun playerContainsInInventories(
@@ -3414,7 +2754,6 @@ public class ProtectedAccess(
         return invContains(this, content)
     }
 
-    /* Loc helper functions (lc=loc config) */
     public fun <T : Any> lcParam(type: ObjectServerType, param: TypedParamType<T>): T {
         return type.param(param)
     }
@@ -3467,7 +2806,6 @@ public class ProtectedAccess(
         repo.locAnim(loc, seq)
     }
 
-    /* Map helper functions */
     public fun spotanimMap(
         repo: WorldRepository,
         internal: String,
@@ -3489,7 +2827,6 @@ public class ProtectedAccess(
         repo.spotanimMap(spotanim, coord, height, delay)
     }
 
-    /* Message game helper functions */
     public fun mes(text: String) {
         player.mes(text, ChatType.GameMessage)
     }
@@ -3502,16 +2839,23 @@ public class ProtectedAccess(
         player.spam(text)
     }
 
-    /* Midi helper functions */
+    public fun midiJingle(jingleTrack: Int, lengthInMillis: Int = 0) {
+        player.midiJingle(jingleTrack, lengthInMillis)
+    }
+
+    @Deprecated(
+        "Jingle gameval ids are not index-11 track ids; the client cannot play them. " +
+            "Use the Int overload with the jingle's cache track id (wiki `Cache ID`).",
+        ReplaceWith("midiJingle(jingleTrack)"),
+    )
     public fun midiJingle(jingle: String) {
-        player.midiJingle(jingle)
+        @Suppress("DEPRECATION") player.midiJingle(jingle)
     }
 
     public fun midiSong(midi: String) {
         player.midiSong(midi)
     }
 
-    /* Npc helper functions (nc=npc config) */
     public fun <T : Any> ncParam(type: NpcServerType, param: TypedParamType<T>): T {
         return type.param(param)
     }
@@ -3554,40 +2898,19 @@ public class ProtectedAccess(
         npc.assignUid()
     }
 
-    /**
-     * Returns the current npc type for [npc], considering `multinpc` from the [player]'s vars and
-     * any transmogrification the npc may have undergone.
-     */
     public fun npcVisType(npc: Npc): NpcServerType {
         val multiNpc = context.npcInteractions.multiNpc(npc.visType, player.vars)
         return multiNpc ?: npc.visType
     }
 
-    /**
-     * Retrieves the [param] value for the base [npc].
-     *
-     * _Note: This retrieves the parameter from the npc's **base** type, ignoring any `multinpc` or
-     * transmogrification effects._
-     *
-     * @throws IllegalStateException if npc type does not have an associated value for [param] and
-     *   [param] does not have a [ParamType.default] value.
-     */
     public fun <T : Any> npcParam(npc: Npc, param: TypedParamType<T>): T {
         return npc.type.param(param)
     }
 
-    /**
-     * Retrieves the [param] value for the base [npc], or returns `null` if the npc's type lacks an
-     * associated value for [param] and [param] does not have a [ParamType.default] value.
-     *
-     * _Note: This retrieves the parameter from the npc's **base** type, ignoring any `multinpc` or
-     * transmogrification effects._
-     */
     public fun <T : Any> npcParamOrNull(npc: Npc, param: TypedParamType<T>): T? {
         return npc.type.paramOrNull(param)
     }
 
-    /* Obj helper functions (oc=obj config) */
     public fun ocCert(type: String): ItemServerType {
         return cert(type)
     }
@@ -3634,18 +2957,14 @@ public class ProtectedAccess(
         return if (obj == null) null else getInvObj(obj)
     }
 
-    /* Seq helper functions */
-    /** Returns the total time duration of [seq] in _**client frames**_. */
     public fun seqLength(seq: SequenceServerType): Int {
         return seq.totalDelay
     }
 
-    /** Returns the total time duration of [seq] in _**server ticks**_. */
     public fun seqTicks(seq: SequenceServerType): Int {
         return seq.tickDuration
     }
 
-    /* Sound helper functions */
     public fun soundSynth(synth: String, loops: Int = 1, delay: Int = 0) {
         player.soundSynth(synth, loops, delay)
     }
@@ -3682,18 +3001,7 @@ public class ProtectedAccess(
     }
 
     /**
-     * Increments [opHeldCallCount] counter and throws [IllegalStateException] if the call count
-     * exceeds a certain threshold. This is done as a counter-measure to avoid [StackOverflowError]
-     * under a specific scenario of `opHeld` calls.
-     *
-     * This occurs when an `opHeldN` function is called from an `onOpHeldN` script that comes from
-     * the same inv slot obj. Assuming there are no `delay` or similar suspending calls in between
-     * each script, this leads to infinite recursion:
-     * ```
-     * onOpHeldN -> opHeldN -> onOpHeldN -> opHeldN -> ...
-     * ```
-     *
-     * @throws IllegalStateException
+     * Guards against unsuspended `onOpHeldN -> opHeldN` recursion on the same inventory slot.
      */
     private fun checkOpHeldCallLimit() {
         if (opHeldCallCount++ >= 25) {
@@ -3726,57 +3034,6 @@ public class ProtectedAccess(
     override fun toString(): String {
         return "ProtectedAccess(player=$player, coroutine=$coroutine)"
     }
-    public fun camMoveToV3(
-        dest: CoordGrid,
-        height: Int,
-        rate: Int,
-        rate2: Int,
-        heightRelative: Boolean = false,
-    ) {
-        Camera.camMoveToV3(player, dest, height, rate, rate2, heightRelative)
-    }
-
-    public fun camLookAtV3(
-        dest: CoordGrid,
-        height: Int,
-        rate: Int,
-        rate2: Int,
-        heightRelative: Boolean = false,
-    ) {
-        Camera.camLookAtV3(player, dest, height, rate, rate2, heightRelative)
-    }
-
-    public fun camShake(axis: CamShakeAxis, random: Int, amplitude: Int, rate: Int) {
-        Camera.camShake(player, axis, random, amplitude, rate)
-    }
-
-    public fun camShakeReset(axis: CamShakeAxis) {
-        Camera.camShakeReset(player, axis)
-    }
-
-    public fun camShakeResetAll() {
-        Camera.camShakeResetAll(player)
-    }
-
-    public fun camUnlock(unlock: Boolean) {
-        Camera.camUnlock(player, unlock)
-    }
-
-    public fun maxDrawDistance(enabled: Boolean) {
-        Cinematic.setMaxDrawDistance(player, enabled)
-    }
-
-    public fun syncDrawDistance() {
-        Cinematic.syncDrawDistance(player)
-    }
-
-    public fun closeFadeOverlayNow() {
-        Cinematic.closeFadeOverlay(player, context.eventBus)
-    }
-
-    public fun ifSetModel(target: String, model: Int) {
-        player.ifSetModel(target, model)
-    }
 }
 
 private fun <T> lazy(init: () -> T): Lazy<T> = lazy(LazyThreadSafetyMode.NONE, init)
@@ -3789,10 +3046,6 @@ private fun MesAnimType.splitGetAnim(lines: Int) =
         else -> len4
     }
 
-/**
- * This function should only be called directly under specific circumstances. Prefer calling
- * [org.rsmod.api.player.protect.ProtectedAccess.clearPendingAction] instead.
- */
 public fun Player.clearPendingAction(eventBus: EventBus) {
     check(!isDelayed) { "`clearpendingaction` should never be called while player is delayed." }
     ifClose(eventBus)

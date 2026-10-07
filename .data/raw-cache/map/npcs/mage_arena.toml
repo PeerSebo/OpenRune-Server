@@ -1,4 +1,3 @@
-## Mage Arena Bank
 
 [[spawn]]
 npc = "npc.arenamage1"
@@ -12,11 +11,7 @@ coords = "0_39_73_38_42"
 npc = "npc.magearena_runeshop"
 coords = "0_39_73_38_47"
 
-## Mage Arena God Statues
 
 [[spawn]]
 npc = "npc.magearena_guardian"
 coords = "0_39_73_12_24"
-
-## Mage Arena God Statues End
-

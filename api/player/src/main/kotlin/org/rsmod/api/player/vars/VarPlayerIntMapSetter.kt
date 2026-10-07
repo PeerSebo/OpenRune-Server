@@ -4,6 +4,7 @@ import dev.openrune.ServerCacheManager
 import dev.openrune.definition.type.VarBitType
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
+import dev.openrune.types.varp.VarpLifetime
 import dev.openrune.types.varp.VarpServerType
 import dev.openrune.types.varp.baseVar
 import dev.openrune.types.varp.bits
@@ -13,29 +14,23 @@ import org.rsmod.game.entity.PlayerPersistenceHints
 import org.rsmod.game.vars.VarPlayerIntMap
 import org.rsmod.utils.bits.withBits
 
-/**
- * Utility object for performing **dynamic** player var operations.
- *
- * The recommended approach for getting and setting player vars is to use the delegates from
- * `VarPlayerTypeDelegates.kt`. However, those delegates do not support cases where
- * dynamically-resolved varbit and varp types must be used.
- *
- * ### When to Use:
- * If a varp or varbit type needs to be resolved dynamically (e.g., retrieved from a function)
- * before being set for a player, this utility provides a way to do so.
- *
- * #### Example Usage:
- * ```
- * val resolvedVarBit = resolveVarBitType(...)
- *
- * player.vars[resolvedVarBit] = 1 // Not allowed - `VarPlayerIntMap` does not support set operator.
- *
- * VarPlayerIntMapSetter.set(player, resolvedVarBit, 1) // Allowed
- * ```
- *
- * @see [VarPlayerIntMap]
- */
+/** Dynamic var types still require synchronized setters; do not mutate VarPlayerIntMap directly. */
 public object VarPlayerIntMapSetter {
+
+    public fun clear(player: Player, varp: String) {
+        val type = checkNotNull(ServerCacheManager.getVarp(varp.asRSCM(RSCMType.VARP))) {
+            "Unable to find varp: $varp"
+        }
+        if (type !in player.vars) return
+        val previous = player.vars.backing.remove(type.id)
+        if (player.processedMapClock <= 0) return
+        if (type.scope == VarpLifetime.Perm) {
+            PlayerPersistenceHints.notify(player)
+        }
+        if (type.transmit.always || type.transmit.onDiff && previous != 0) {
+            VarpSync.writeVarp(player, type, 0)
+        }
+    }
 
     public fun set(player: Player, varp: String, value: Int) {
         if (varp.startsWith("varp.")) {
@@ -46,12 +41,13 @@ public object VarPlayerIntMapSetter {
     }
 
     public fun set(player: Player, varp: VarpServerType, value: Int) {
+        val existed = player.vars.backing.containsKey(varp.id)
         val previous = player.vars.backing[varp.id]
 
         player.vars.backing[varp.id] = value
 
         val engineLoggedIn = player.processedMapClock > 0
-        if (engineLoggedIn && previous != value) {
+        if (engineLoggedIn && varp.scope == VarpLifetime.Perm && (!existed || previous != value)) {
             PlayerPersistenceHints.notify(player)
         }
 

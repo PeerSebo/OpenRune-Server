@@ -1,0 +1,12 @@
+# Only level-one rats drop the quest tail; they leave no default bones.
+
+id = "Rat Drops"
+npcs = ["npc.rat", "npc.rat_indoors"]
+
+[[tertiary]]
+numerator = 1
+denominator = 1
+obj = "obj.rats_tail"
+count = 1
+quest = "quest_witchspotion"
+quest_mode = "during"

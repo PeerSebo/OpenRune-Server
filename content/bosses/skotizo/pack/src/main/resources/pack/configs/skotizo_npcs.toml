@@ -1,0 +1,117 @@
+[[npc]]
+isServerOnly = true
+id = "npc.cata_boss"
+inherit = "npc.cata_boss"
+defaultMode = "None"
+moveRestrict = "NoMove"
+attackRange = 10
+maxRange = 30
+giveChase = false
+[npc.params]
+"param.boss_hp_bar_mode" = 1
+"param.killcount_varp" = "varp.total_cata_boss_kills"
+"param.attackrate" = 6
+"param.attack_anim" = "seq.demon_update_attack"
+"param.defend_anim" = "seq.demon_update_defend"
+"param.death_anim" = "seq.demon_update_death"
+"param.elemental_weakness_percent"=40
+"param.elemental_weakness_type"=1
+
+[[npc]]
+isServerOnly = true
+id = "npc.cata_boss_minion"
+inherit = "npc.cata_boss_minion"
+attackRange = 1
+maxRange = 40
+wanderRange = 0
+[npc.params]
+"param.attackrate" = 4
+"param.attack_anim" = "seq.demon_attack"
+"param.defend_anim" = "seq.demon_block"
+"param.death_anim" = "seq.demon_death"
+
+[[npc]]
+isServerOnly = true
+id = "npc.cata_boss_ankou"
+inherit = "npc.cata_boss_ankou"
+attackRange = 1
+maxRange = 40
+wanderRange = 0
+[npc.params]
+"param.attackrate" = 4
+"param.attack_anim" = "seq.human_unarmedpunch"
+"param.defend_anim" = "seq.human_unarmedblock"
+"param.death_anim" = "seq.human_death"
+
+[[npc]]
+isServerOnly = true
+id = "npc.cata_boss_altar_closed_n"
+inherit = "npc.cata_boss_altar_closed_n"
+defaultMode = "None"
+moveRestrict = "NoMove"
+wanderRange = 0
+giveChase = false
+
+[[npc]]
+isServerOnly = true
+id = "npc.cata_boss_altar_closed_e"
+inherit = "npc.cata_boss_altar_closed_e"
+defaultMode = "None"
+moveRestrict = "NoMove"
+wanderRange = 0
+giveChase = false
+
+[[npc]]
+isServerOnly = true
+id = "npc.cata_boss_altar_closed_s"
+inherit = "npc.cata_boss_altar_closed_s"
+defaultMode = "None"
+moveRestrict = "NoMove"
+wanderRange = 0
+giveChase = false
+
+[[npc]]
+isServerOnly = true
+id = "npc.cata_boss_altar_closed_w"
+inherit = "npc.cata_boss_altar_closed_w"
+defaultMode = "None"
+moveRestrict = "NoMove"
+wanderRange = 0
+giveChase = false
+
+[[npc]]
+isServerOnly = true
+id = "npc.cata_boss_altar_open_n"
+inherit = "npc.cata_boss_altar_open_n"
+defaultMode = "None"
+moveRestrict = "NoMove"
+wanderRange = 0
+giveChase = false
+
+[[npc]]
+isServerOnly = true
+id = "npc.cata_boss_altar_open_e"
+inherit = "npc.cata_boss_altar_open_e"
+defaultMode = "None"
+moveRestrict = "NoMove"
+wanderRange = 0
+giveChase = false
+
+[[npc]]
+isServerOnly = true
+id = "npc.cata_boss_altar_open_s"
+inherit = "npc.cata_boss_altar_open_s"
+defaultMode = "None"
+moveRestrict = "NoMove"
+wanderRange = 0
+giveChase = false
+
+[[npc]]
+isServerOnly = true
+id = "npc.cata_boss_altar_open_w"
+inherit = "npc.cata_boss_altar_open_w"
+defaultMode = "None"
+moveRestrict = "NoMove"
+wanderRange = 0
+giveChase = false
+

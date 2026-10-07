@@ -1,0 +1,7 @@
+0	ALLOTMENT	1	true	CURE	false	false	loc.veg_patch_weeded	10
+1	FLOWER	2	true	CURE	false	false	loc.flower_patch_weeded	5
+2	HERB	3	false	CURE	false	false	loc.herb_patch_weeded	20
+3	HOPS	4	true	CURE	false	false	loc.hop_patch_weeded	10
+4	BUSH	5	false	PRUNE	true	true	loc.bush_patch_weeded	20
+5	TREE	6	false	PRUNE	true	false	loc.tree_patch_weeded	40
+6	FRUIT_TREE	7	false	PRUNE	true	true	loc.fruit_tree_patch_weeded	160

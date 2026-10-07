@@ -16,4 +16,16 @@ dependencies {
     implementation(projects.engine.events)
     implementation(projects.engine.game)
     implementation(projects.engine.plugin)
+    testImplementation(libs.kotlin.coroutines.core)
+    testImplementation(libs.rsprot.api)
+    testImplementation(projects.api.music)
+    testImplementation(projects.api.random)
+    testImplementation(projects.engine.annotations)
+    testImplementation(projects.engine.coroutine)
+}
+
+tasks.test {
+    workingDir(rootProject.projectDir)
+    inputs.dir(rootProject.file(".data/cache/SERVER"))
+    inputs.file(rootProject.file(".data/gamevals-binary/gamevals.dat"))
 }

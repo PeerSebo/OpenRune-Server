@@ -23,6 +23,15 @@ val MiningRocksRow.depleteRange: IntRange
         return if (max < min) min..min else min..max
     }
 
+internal fun MiningRocksRow.emptyRockFor(locId: Int): ObjectServerType? {
+    val index = rockObject.indexOfFirst { it.id == locId }
+    if (index == -1) return null
+    require(emptyRockObject.size <= 1 || emptyRockObject.size == rockObject.size) {
+        "Mining row $rowId must have one shared empty rock or one empty rock per full variant."
+    }
+    return if (emptyRockObject.size <= 1) emptyRockObject.firstOrNull() else emptyRockObject[index]
+}
+
 object MiningRocks {
     private val byLocId: Map<Int, MiningRocksRow> by lazy {
         MiningRocksRow.all().flatMap { row -> row.rockObject.map { loc -> loc.id to row } }.toMap()

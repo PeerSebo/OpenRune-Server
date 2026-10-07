@@ -42,7 +42,6 @@ constructor(
     private var Player.withdrawCert by boolVarBit("varbit.bank_withdrawnotes")
 
     override fun ScriptContext.startup() {
-        // `onBankOpen` occurs on `bank_side` trigger for emulation purposes.
         onIfOpen("interface.bankside") { player.onBankOpen() }
         onIfClose("interface.bankmain") { player.onBankClose() }
     }

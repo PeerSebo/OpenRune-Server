@@ -96,7 +96,7 @@ constructor(
         val obj = drop.transformObj(receiver) ?: drop.obj
         val count = drop.rollCount(random)
         CollectionLog.grant(receiver, obj, count)
-        if (!consumedByHook(obj, count, coords, duration, receiver)) {
+        if (!consumedByHook(obj, count, coords, duration, receiver, npc)) {
             val spawned = objRepo.add(obj, coords, duration, receiver, count)
             ClientScripts.lootTrackerAddLoot(receiver, npc.id, eventId, spawned.type, spawned.count)
         }
@@ -111,12 +111,13 @@ constructor(
         coords: CoordGrid,
         duration: Int,
         receiver: Player,
+        npc: Npc,
     ): Boolean {
         if (count != 1) {
             return false
         }
         val type = ServerCacheManager.getItem(obj.asRSCM(RSCMType.OBJ)) ?: return false
-        val context = NpcDeathDropContext(receiver, type, coords, duration, objRepo)
+        val context = NpcDeathDropContext(receiver, npc, type, coords, duration, objRepo)
         return deathDropHooks.any { it.tryConsume(context) }
     }
 }

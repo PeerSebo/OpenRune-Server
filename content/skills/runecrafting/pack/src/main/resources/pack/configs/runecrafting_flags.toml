@@ -1,0 +1,12 @@
+[[varp]]
+id = "varp.runecrafting_permanent_flags"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varbit]]
+id = "varbit.cordelia_pouch_repair_unlocked"
+isServerOnly = true
+varp = "varp.runecrafting_permanent_flags"
+startBit = 0
+endBit = 0

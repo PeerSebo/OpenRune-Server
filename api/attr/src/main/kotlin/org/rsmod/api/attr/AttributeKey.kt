@@ -1,26 +1,8 @@
 package org.rsmod.api.attr
 
 /**
- * An [AttributeKey] is a flexible key that can be used to represent any type of
- * value.
- *
- * @param T
- * The type of the value that this attribute will store.
- *
- * @param persistenceKey
- * A string key that will be used for persistence. If [persistenceKey] != null,
- * the value of this key in an object's [AttributeMap] will persist (be saved).
- *
- * <strong>Note</strong>- do not use Double or Float if your key needs to be
- * persistent ([persistenceKey] != null). Not all saving and loading systems
- * would be able to differentiate doubles and ints when being loaded, so for
- * compatibility reasons, it is preferable to use an [Int] instead and just
- * multiply or divide it accordingly to represent a [Double] or [Float], if
- * needed.
- *
- * @param resetOnDeath if true, the timer will be removed on pawn death.
- *
- * @author Tom <rspsmods@gmail.com>
+ * Persistent values must avoid Float/Double: storage may decode them as integers. Use scaled
+ * integers instead. Original author: Tom <rspsmods@gmail.com>.
  */
 public class AttributeKey<T>(public val persistenceKey: String? = null, public val resetOnDeath: Boolean = false, public val temp: Boolean = false) {
 

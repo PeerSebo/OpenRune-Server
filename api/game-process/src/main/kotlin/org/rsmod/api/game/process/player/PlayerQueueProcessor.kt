@@ -10,15 +10,27 @@ import org.rsmod.game.queue.PlayerQueueList
 import org.rsmod.game.queue.QueueCategory
 
 public class PlayerQueueProcessor
-@Inject
-constructor(private val eventBus: EventBus, private val protectedAccess: ProtectedAccessLauncher) {
+internal constructor(
+    private val eventBus: EventBus,
+    private val launchQueue: (Player, PlayerQueueEvents.Protected<*>) -> Unit,
+) {
+    @Inject
+    public constructor(eventBus: EventBus, protectedAccess: ProtectedAccessLauncher) :
+        this(eventBus, { player, event ->
+            protectedAccess.launch(player) { eventBus.publish(this, event) }
+        })
+
     public fun process(player: Player) {
-        if (player.queueList.strongQueues > 0) {
+        // Incoming hits stop weak actions and dialogs without replacing combat or movement.
+        if (player.queueList.strongQueues > 0 && player.hasStrongQueueDue()) {
             player.ifClose(eventBus)
         }
         player.publishExpiredQueues()
         player.publishExpiredWeakQueues()
     }
+
+    private fun Player.hasStrongQueueDue(): Boolean =
+        queueList.anyDue(QueueCategory.Strong, currentMapClock)
 
     private fun Player.publishExpiredQueues() {
         while (queueList.isNotEmpty) {
@@ -27,10 +39,6 @@ constructor(private val eventBus: EventBus, private val protectedAccess: Protect
             val iterator = queueList.iterator() ?: break
             while (iterator.hasNext()) {
                 val queue = iterator.next()
-
-                if (queue.shouldCloseModals()) {
-                    ifClose(eventBus)
-                }
 
                 if (queue.processedCycle != currentMapClock) {
                     queue.processedCycle = currentMapClock
@@ -44,6 +52,10 @@ constructor(private val eventBus: EventBus, private val protectedAccess: Protect
 
                 if (queue.remainingCycles > 0) {
                     continue
+                }
+
+                if (queue.shouldCloseModals()) {
+                    ifClose(eventBus)
                 }
 
                 if (canLaunchQueue(queue)) {
@@ -61,10 +73,15 @@ constructor(private val eventBus: EventBus, private val protectedAccess: Protect
     }
 
     private fun PlayerQueueList.Queue.shouldCloseModals(): Boolean =
-        category == QueueCategory.Strong.id || category == QueueCategory.Soft.id
+        closeModals && (category == QueueCategory.Strong.id || category == QueueCategory.Soft.id)
 
     private fun Player.canLaunchQueue(queue: PlayerQueueList.Queue): Boolean =
-        queue.category == QueueCategory.Soft.id || !isAccessProtected
+        when (queue.category) {
+            QueueCategory.Soft.id -> true
+            // A suspended script must finish before another protected queue launches.
+            QueueCategory.Strong.id -> !isModalButtonProtected
+            else -> !isAccessProtected
+        }
 
     private fun Player.publish(queue: PlayerQueueList.Queue) {
         if (queue.category == QueueCategory.Soft.id) {
@@ -77,7 +94,7 @@ constructor(private val eventBus: EventBus, private val protectedAccess: Protect
 
     private fun Player.publishProtected(queue: PlayerQueueList.Queue) {
         val event = PlayerQueueEvents.Protected(queue.args, queue.id)
-        protectedAccess.launch(this) { eventBus.publish(this, event) }
+        launchQueue(this, event)
     }
 
     private fun Player.publishExpiredWeakQueues() {
@@ -105,7 +122,14 @@ constructor(private val eventBus: EventBus, private val protectedAccess: Protect
             }
             iterator.cleanUp()
 
-            if (processedNone || queueList.size == 1) {
+            // Re-sweep whenever a handler was published: the second pass gives a queue added by
+            // that handler its add-tick decrement (the documented n-1 semantics production
+            // loops compensate for). The old `|| queueList.size == 1` clause inspected the
+            // NORMAL queue list, so an unrelated pending queue (e.g. an in-flight "queue.hit")
+            // skipped the re-sweep and ran production loops one tick slow; a size check on the
+            // weak list would be just as wrong, since a lone self-requeueing loop is the
+            // common case that NEEDS the re-sweep.
+            if (processedNone) {
                 break
             }
         }

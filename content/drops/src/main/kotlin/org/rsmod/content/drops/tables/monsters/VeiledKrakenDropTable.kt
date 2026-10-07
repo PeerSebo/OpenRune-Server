@@ -60,7 +60,7 @@ public val veiledKrakenDropTable: RSDropTable<Player, DropRollItem> = RSDropTabl
     },
     tertiaries = rsPlayerTertiaryTable {
         1 outOf 10 weight "obj.sailing_veiled_kraken_ink_sac" count 1 condition { player ->
-            // Drops Need Manual: Tentacles and ink sacks are only dropped while on an applicable bounty task.
+            // TODO: Tentacles and ink sacks are only dropped while on an applicable bounty task.
              true
         }
         1 outOf 5 weight "obj.sailing_veiled_kraken_tentacle" count 1
@@ -70,4 +70,4 @@ public val veiledKrakenDropTable: RSDropTable<Player, DropRollItem> = RSDropTabl
     },
 )
 
-// Unknown wiki drop rates (text rarity — need data collection):
+// TODO: Resolve the unquantified drop rates below.

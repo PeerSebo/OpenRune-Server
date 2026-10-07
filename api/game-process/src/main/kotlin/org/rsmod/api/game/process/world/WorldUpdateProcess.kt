@@ -66,7 +66,6 @@ constructor(private val update: GameUpdate, private val playerList: PlayerList) 
     }
 
     private companion object {
-        /** The interval (in game cycles) to re-send the reboot timer packet to all players. */
         private const val SYNC_INTERVALS = 3
     }
 }

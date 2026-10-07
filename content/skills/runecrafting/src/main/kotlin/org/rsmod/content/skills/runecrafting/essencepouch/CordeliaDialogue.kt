@@ -32,14 +32,7 @@ object CordeliaDialogue {
             return
         }
 
-        when (
-            choice2(
-                "Pay ${25} abyssal pearls to unlock the pouch repair?",
-                1,
-                "Cancel",
-                2,
-            )
-        ) {
+        when (choice2("Pay ${25} abyssal pearls to unlock the pouch repair?", 1, "Cancel", 2)) {
             1 -> confirmUnlock()
             2 -> Unit
         }
@@ -47,13 +40,7 @@ object CordeliaDialogue {
 
     private suspend fun Dialogue.confirmUnlock() {
         chatPlayer(neutral, "Yes, please.")
-        if (
-            access.invDel(
-                access.inv,
-                "obj.abyssal_pearl",
-                25,
-            ).failure
-        ) {
+        if (access.invDel(access.inv, "obj.abyssal_pearl", 25).failure) {
             chatPlayer(neutral, "I don't have enough abyssal pearls for that, I'm afraid.")
             return
         }
@@ -64,42 +51,22 @@ object CordeliaDialogue {
         chatDarkMage(angry, "Quiet! Why do you all try to break my concentration?")
         chatNpc(happy, "OK. The contact has been set up.")
         access.player.cordeliaPouchRepairUnlocked = 1
-        chatNpc(
-            neutral,
-            "It will cost you ${1} abyssal pearl to repair the pouches.",
-        )
-        when (
-            choice2(
-                "Yes, that sounds fair.",
-                1,
-                "No thanks.",
-                2,
-            )
-        ) {
+        chatNpc(neutral, "It will cost you ${1} abyssal pearl to repair the pouches.")
+        when (choice2("Yes, that sounds fair.", 1, "No thanks.", 2)) {
             1 -> performPearlRepair()
             2 -> Unit
         }
     }
 
     private suspend fun Dialogue.unlockedRepairMenu() {
-        chatNpc(
-            neutral,
-            "It will cost you ${1} abyssal pearl to repair the pouches.",
-        )
+        chatNpc(neutral, "It will cost you ${1} abyssal pearl to repair the pouches.")
 
         if (access.inv.count("obj.abyssal_pearl") < 1) {
             chatPlayer(neutral, "I don't have enough abyssal pearls for that, I'm afraid.")
             return
         }
 
-        when (
-            choice2(
-                "Yes, that sounds fair.",
-                1,
-                "No thanks.",
-                2,
-            )
-        ) {
+        when (choice2("Yes, that sounds fair.", 1, "No thanks.", 2)) {
             1 -> performPearlRepair()
             2 -> Unit
         }
@@ -112,13 +79,7 @@ object CordeliaDialogue {
             return
         }
 
-        if (
-            access.invDel(
-                access.inv,
-                "obj.abyssal_pearl",
-                1,
-            ).failure
-        ) {
+        if (access.invDel(access.inv, "obj.abyssal_pearl", 1).failure) {
             chatPlayer(neutral, "I don't have enough abyssal pearls for that, I'm afraid.")
             return
         }

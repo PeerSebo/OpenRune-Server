@@ -256,7 +256,7 @@ class PvPFormulaTest {
                 Matchup.create("Unarmed (No Stats) vs Unarmed (No Stats)") {
                     setup {
                         attacker {
-                            stance = CombatStance.Stance4 // Unarmed "Defensive" stance.
+                            stance = CombatStance.Stance4
                             attackLvl = 1
                             defenceLvl = 1
                             strengthLvl = 1
@@ -266,7 +266,7 @@ class PvPFormulaTest {
                         }
 
                         defender {
-                            stance = CombatStance.Stance1 // Unarmed "Accurate" stance.
+                            stance = CombatStance.Stance1
                             attackLvl = 1
                             defenceLvl = 1
                             strengthLvl = 1
@@ -300,7 +300,6 @@ class PvPFormulaTest {
                         }
 
                         defender {
-                            /* no-op */
                         }
                     }
 

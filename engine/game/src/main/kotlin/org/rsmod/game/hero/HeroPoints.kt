@@ -26,7 +26,6 @@ public class HeroPoints private constructor(private val heroes: Array<Hero?>) {
     }
 
     public fun toMutableList(): MutableList<Hero> {
-        // `count` should be slightly faster than dynamically resizing `list`.
         val count = heroes.count { it != null }
         val list = ArrayList<Hero>(count)
         for (hero in heroes) {

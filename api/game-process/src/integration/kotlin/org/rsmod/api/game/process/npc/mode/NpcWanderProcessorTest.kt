@@ -51,7 +51,6 @@ class NpcWanderProcessorTest {
                     }
                 }
 
-                // Set the npc spawn coord to the appropriate coordgrid.
                 spawnCoords = spawn
 
                 random.next = Int.MAX_VALUE
@@ -60,9 +59,9 @@ class NpcWanderProcessorTest {
                 assertEquals(lastMovement, Int.MIN_VALUE)
                 assertTrue(routeDestination.isEmpty())
 
-                random.next = 0 // Trigger `randomBoolean` to begin walk.
-                random.then = 4 // Set output for x-coordinate movement.
-                random.then = -2 // Set output for z-coordinate movement.
+                random.next = 0
+                random.then = 4
+                random.then = -2
                 val expectedDest1 = spawn.translate(4, -2)
                 process()
                 assertTrue(hasMovedThisCycle)
@@ -217,12 +216,10 @@ class NpcWanderProcessorTest {
                         movement.process(this)
                     }
 
-                    // Set the npc spawn point.
                     spawnCoords = spawn
 
                     val startClock = currentMapClock
 
-                    // Start off with last movement set.
                     lastMovement = currentMapClock
 
                     val respawnDelay = NpcWanderModeProcessor.RESPAWN_IDLE_REQUIREMENT
@@ -231,7 +228,6 @@ class NpcWanderProcessorTest {
                         assertEquals(current, coords)
                     }
 
-                    // There is still a one cycle delay before the npc is actually teleported away.
                     process()
 
                     assertEquals(spawn, coords)

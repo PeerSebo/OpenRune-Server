@@ -7,7 +7,6 @@ import org.rsmod.api.utils.logging.GameExceptionHandler
 import org.rsmod.game.MapClock
 import org.rsmod.game.entity.Npc
 import org.rsmod.game.entity.NpcList
-import org.rsmod.game.entity.PathingEntity
 
 public class NpcPreTickProcess
 @Inject
@@ -27,15 +26,7 @@ constructor(
         }
     }
 
-    /**
-     * Updates the npc's `currentMapClock` to match the latest value from the global `mapClock`.
-     *
-     * This ensures that any `delay` calls set by a player's incoming packet (e.g., delaying a pet
-     * after `IfButton` on "Call follower" button) use an up-to-date reference for the map clock.
-     * Without this update, delays would appear to be "sped up" by one cycle because the `delay`
-     * functions rely on the [PathingEntity.currentMapClock] as a baseline to calculate their delay
-     * duration.
-     */
+    /** Refresh the NPC map clock before input-side callbacks can schedule work against it. */
     private fun Npc.updateMapClock() {
         currentMapClock = mapClock.cycle
     }

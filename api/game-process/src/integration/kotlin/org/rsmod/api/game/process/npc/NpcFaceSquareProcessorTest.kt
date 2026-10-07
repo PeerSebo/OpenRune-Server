@@ -48,8 +48,6 @@ class NpcFaceSquareProcessorTest {
                 check(pendingFaceAngle == EntityFaceAngle.NULL)
 
                 process()
-                // After processing, the npc should have moved. This means the face angle should not
-                // be calculated yet, and pending face square should remain as its initial value.
                 check(routeDestination.lastOrNull() == moveDest)
                 check(hasMovedThisCycle)
                 assertEquals(EntityFaceAngle.NULL, pendingFaceAngle)
@@ -107,7 +105,6 @@ class NpcFaceSquareProcessorTest {
                     }
                     check(pendingFaceAngle == EntityFaceAngle.NULL)
 
-                    // Set the _pending_ face square to target.
                     faceSquare(target, targetWidth = 1, targetLength = 1)
                     check(pendingFaceAngle == EntityFaceAngle.NULL)
 

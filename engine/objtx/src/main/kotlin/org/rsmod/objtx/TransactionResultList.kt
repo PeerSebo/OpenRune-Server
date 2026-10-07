@@ -37,16 +37,6 @@ public data class TransactionResultList<T>(
         return result as? T
     }
 
-    /**
-     * Gets the [TransactionResult] in index [index] within the ordered [results] collection _only
-     * if_ the respective [TransactionResult] is an instance of [TransactionResult.Ok].
-     *
-     * [TransactionResult]s of all applicable types can be retrieved via [get] function or the
-     * [results] list.
-     *
-     * @return `null` if the [index] is out of bounds, or if the retrieved entry is _not_ a
-     *   [TransactionResult.Ok].
-     */
     public fun asOk(index: Int): TransactionResult.Ok? {
         val result = results.getOrNull(index) ?: return null
         return result as? TransactionResult.Ok

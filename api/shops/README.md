@@ -45,6 +45,16 @@ row("dbrow.shop_currency_slayer_points") {
 }
 ```
 
+## Registered currencies
+
+Every row currently in `ShopCurrencyTable` — check here before claiming a new `currency.rscm` id.
+
+| Key | Backed by | Notes |
+| --- | --- | --- |
+| `currency.standard_gp` (0) | `obj.coins` | Default for npc-driven opens |
+| `currency.stardust` (65535) | `obj.star_dust` | Dusuri's Star Shop; uses a `costOf` override |
+| `currency.abyssal_pearls` (65534) | `obj.abyssal_pearl` | GOTR Temple Supplies; needs a `costOf` override (pearl prices are fixed per item, not the obj's `cost`) |
+
 ## Kotlin hooks (optional)
 
 Most currencies need only the dbrow. Use hooks when pricing or client sync is custom:

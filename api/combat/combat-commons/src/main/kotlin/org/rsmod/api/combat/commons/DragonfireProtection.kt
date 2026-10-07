@@ -1,10 +1,18 @@
 package org.rsmod.api.combat.commons
 
+import org.rsmod.api.player.output.ChatType
+import org.rsmod.api.player.output.mes
 import org.rsmod.game.entity.Player
 
 public object DragonfireProtection {
 
     public enum class DragonfireType { Chromatic, Metal, WyvernIce }
+
+    /**
+     * Send on every dragonfire attack at launch, including zero-damage hits, before the delayed
+     * impact.
+     */
+    public const val SHIELD_ABSORB_MESSAGE: String = "Your shield absorbs most of the dragon fire."
 
     private val antifireShields = setOf(
         "obj.antidragonbreathshield",
@@ -45,12 +53,20 @@ public object DragonfireProtection {
         if (antifire && (shield || protect)) return 0
 
         var cap = when {
-            shield -> 5
+            // Chromatic dragonfire with an anti-dragon shield is capped at 10.
+            shield -> 10
             protect -> 10
             else -> baseMax
         }
         if (antifire) cap = (cap - 15).coerceAtLeast(0)
         return cap
+    }
+
+    public fun sendAbsorbMessage(player: Player, type: DragonfireType): Boolean {
+        if (type == DragonfireType.WyvernIce) return false
+        if (!hasAntifireShield(player)) return false
+        player.mes(SHIELD_ABSORB_MESSAGE, ChatType.Spam)
+        return true
     }
 
     private fun hasAntifireShield(player: Player): Boolean =

@@ -1,4 +1,3 @@
-## Fremennik Province
 
 [[spawn]]
 obj = "obj.doogleleaves"
@@ -52,7 +51,6 @@ coords = "0_42_56_54_59"
 obj = "obj.doogleleaves"
 coords = "0_42_56_56_54"
 
-## Mountain Camp
 
 [[spawn]]
 obj = "obj.bronze_axe"
@@ -82,13 +80,11 @@ coords = "0_43_57_61_37"
 obj = "obj.steel_knife"
 coords = "0_43_57_53_55"
 
-## Mountain Camp Lake
 
 [[spawn]]
 obj = "obj.mdaughter_broken_stick"
 coords = "0_43_57_18_28"
 
-## Rellekka
 
 [[spawn]]
 obj = "obj.bones"
@@ -127,6 +123,3 @@ coords = "0_41_57_35_28"
 [[spawn]]
 obj = "obj.viking_tankard_full"
 coords = "0_41_57_34_28"
-
-## Rellekka End
-

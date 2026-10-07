@@ -38,7 +38,6 @@ constructor(
     private val nvpRangedMaxHit: NvPRangedMaxHit,
     private val nvnRangedMaxHit: NvNRangedMaxHit,
 ) {
-    /** @see [PvNMeleeMaxHit.getMaxHit] */
     public fun getMeleeMaxHit(
         player: Player,
         target: Npc,
@@ -56,7 +55,6 @@ constructor(
             roundUp = roundUp,
         )
 
-    /** @see [PvPMeleeMaxHit.getMaxHit] */
     public fun getMeleeMaxHit(
         player: Player,
         target: Player,
@@ -74,14 +72,11 @@ constructor(
             roundUp = roundUp,
         )
 
-    /** @see [NvPMeleeMaxHit.getMaxHit] */
     public fun getMeleeMaxHit(npc: Npc, target: Player, attackType: MeleeAttackType?): Int =
         nvpMeleeMaxHit.getMaxHit(npc, target, attackType)
 
-    /** @see [NvNMeleeMaxHit.getMaxHit] */
     public fun getMeleeMaxHit(npc: Npc): Int = nvnMeleeMaxHit.getMaxHit(npc)
 
-    /** @see [PvNRangedMaxHit.getMaxHit] */
     public fun getRangedMaxHit(
         player: Player,
         target: Npc,
@@ -99,7 +94,6 @@ constructor(
             boltSpecDamage = boltSpecDamage,
         )
 
-    /** @see [PvPRangedMaxHit.getMaxHit] */
     public fun getRangedMaxHit(
         player: Player,
         target: Player,
@@ -117,14 +111,11 @@ constructor(
             boltSpecDamage = boltSpecDamage,
         )
 
-    /** @see [NvPRangedMaxHit.getMaxHit] */
     public fun getRangedMaxHit(npc: Npc, target: Player): Int =
         nvpRangedMaxHit.getMaxHit(npc, target)
 
-    /** @see [NvNRangedMaxHit.getMaxHit] */
     public fun getRangedMaxHit(npc: Npc): Int = nvnRangedMaxHit.getMaxHit(npc)
 
-    /** @see [PvNMagicMaxHit.getSpellMaxHit] */
     public fun getSpellMaxHitRange(
         player: Player,
         target: Npc,
@@ -144,7 +135,6 @@ constructor(
             usedSunfireRune = usedSunfireRune,
         )
 
-    /** @see [PvPMagicMaxHit.getSpellMaxHit] */
     public fun getSpellMaxHitRange(
         player: Player,
         target: Player,
@@ -162,7 +152,6 @@ constructor(
             usedSunfireRune = usedSunfireRune,
         )
 
-    /** @see [PvNMagicMaxHit.getStaffMaxHit] */
     public fun getStaffMaxHit(
         player: Player,
         target: Npc,
@@ -176,7 +165,6 @@ constructor(
             specialMultiplier = specialMultiplier,
         )
 
-    /** @see [PvPMagicMaxHit.getStaffMaxHit] */
     public fun getStaffMaxHit(
         player: Player,
         target: Player,
@@ -190,9 +178,7 @@ constructor(
             specialMultiplier = specialMultiplier,
         )
 
-    /** @see [NvPMagicMaxHit.getMaxHit] */
     public fun getMagicMaxHit(npc: Npc, target: Player): Int = nvpMagicMaxHit.getMaxHit(npc, target)
 
-    /** @see [NvNMagicMaxHit.getMaxHit] */
     public fun getMagicMaxHit(npc: Npc): Int = nvnMagicMaxHit.getMaxHit(npc)
 }

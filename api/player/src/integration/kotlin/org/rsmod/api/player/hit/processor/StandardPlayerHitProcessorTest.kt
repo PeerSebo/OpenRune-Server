@@ -27,18 +27,14 @@ class StandardPlayerHitProcessorTest {
 
             player.queueHit(npc, delay = 1, HitType.Melee, damage = 1)
 
-            // Ensure hits are actually going through for test validity.
             advance(ticks = 1)
             check(player.hitpoints == 98) { "Unexpected player hitpoints: ${player.hitpoints}" }
 
-            // Reset state and queue a new hit.
             player.stats[stats.hitpoints] = 99
             player.queueHit(npc, delay = 1, HitType.Melee, damage = 1)
 
-            // Set npc to 0 hitpoints, mimicking its death.
             npc.hitpoints = 0
 
-            // Hit should have been invalidated due to npc being "dead."
             advance(ticks = 1)
             assertEquals(99, player.hitpoints)
         }

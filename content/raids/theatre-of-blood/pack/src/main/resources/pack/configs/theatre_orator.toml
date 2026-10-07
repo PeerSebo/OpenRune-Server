@@ -1,0 +1,6 @@
+[[npc]]
+id = "npc.theatre_exit_orator"
+isServerOnly = false
+defaultMode = "None"
+wanderRange = 0
+moveRestrict = "NoMove"

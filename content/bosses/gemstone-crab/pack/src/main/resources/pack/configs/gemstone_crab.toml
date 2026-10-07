@@ -1,0 +1,26 @@
+[[params]]
+id = "param.hitpoints_locked"
+isServerOnly = true
+type = "BOOLEAN"
+defaultInt = 0
+isMembers = true
+
+[[npc]]
+id = "npc.gemstone_crab"
+inherit = "npc.gemstone_crab"
+isServerOnly = true
+moveRestrict = "NoMove"
+wanderRange = 0
+
+[npc.params]
+"param.headbar" = "headbar.health_120"
+"param.hitpoints_locked" = true
+"param.freeze_resistance" = 100
+
+[[npc]]
+id = "npc.gemstone_crab_remains"
+inherit = "npc.gemstone_crab_remains"
+isServerOnly = true
+moveRestrict = "NoMove"
+wanderRange = 0
+defaultMode = "None"

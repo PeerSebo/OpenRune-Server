@@ -22,10 +22,12 @@ import net.rsprot.protocol.game.incoming.misc.user.CloseModal
 import net.rsprot.protocol.game.incoming.misc.user.MoveGameClick
 import net.rsprot.protocol.game.incoming.misc.user.MoveMinimapClick
 import net.rsprot.protocol.game.incoming.misc.user.SetChatFilterSettings
+import net.rsprot.protocol.game.incoming.misc.user.SetHeading
 import net.rsprot.protocol.game.incoming.npcs.OpNpc6
 import net.rsprot.protocol.game.incoming.npcs.OpNpcT
 import net.rsprot.protocol.game.incoming.npcs.OpNpcV2
 import net.rsprot.protocol.game.incoming.objs.OpObj6
+import net.rsprot.protocol.game.incoming.objs.OpObjT
 import net.rsprot.protocol.game.incoming.objs.OpObjV2
 import net.rsprot.protocol.game.incoming.players.OpPlayer
 import net.rsprot.protocol.game.incoming.players.OpPlayerT
@@ -38,6 +40,9 @@ import net.rsprot.protocol.game.incoming.social.FriendListAdd
 import net.rsprot.protocol.game.incoming.social.FriendListDel
 import net.rsprot.protocol.game.incoming.social.IgnoreListAdd
 import net.rsprot.protocol.game.incoming.social.IgnoreListDel
+import net.rsprot.protocol.game.incoming.worldentities.OpWorldEntity
+import net.rsprot.protocol.game.incoming.worldentities.OpWorldEntity6
+import net.rsprot.protocol.game.incoming.worldentities.OpWorldEntityT
 import net.rsprot.protocol.message.codec.incoming.GameMessageConsumerRepositoryBuilder
 import net.rsprot.protocol.message.codec.incoming.provider.DefaultGameMessageConsumerRepositoryProvider
 import org.rsmod.api.net.rsprot.handlers.ClickWorldMapHandler
@@ -66,14 +71,19 @@ import org.rsmod.api.net.rsprot.handlers.OpNpcHandler
 import org.rsmod.api.net.rsprot.handlers.OpNpcTHandler
 import org.rsmod.api.net.rsprot.handlers.OpObj6Handler
 import org.rsmod.api.net.rsprot.handlers.OpObjHandler
+import org.rsmod.api.net.rsprot.handlers.OpObjTHandler
 import org.rsmod.api.net.rsprot.handlers.OpPlayerHandler
 import org.rsmod.api.net.rsprot.handlers.OpPlayerTHandler
+import org.rsmod.api.net.rsprot.handlers.OpWorldEntity6Handler
+import org.rsmod.api.net.rsprot.handlers.OpWorldEntityHandler
+import org.rsmod.api.net.rsprot.handlers.OpWorldEntityTHandler
 import org.rsmod.api.net.rsprot.handlers.ResumePCountDialogHandler
 import org.rsmod.api.net.rsprot.handlers.ResumePNameDialogHandler
 import org.rsmod.api.net.rsprot.handlers.ResumePObjDialogHandler
 import org.rsmod.api.net.rsprot.handlers.ResumePStringDialogHandler
 import org.rsmod.api.net.rsprot.handlers.ResumePauseButtonHandler
 import org.rsmod.api.net.rsprot.handlers.SetChatFilterSettingsHandler
+import org.rsmod.api.net.rsprot.handlers.SetHeadingHandler
 import org.rsmod.api.net.rsprot.handlers.WindowStatusHandler
 import org.rsmod.game.entity.Player
 
@@ -84,6 +94,7 @@ constructor(
     private val windowStatus: WindowStatusHandler,
     private val moveGameClick: MoveGameClickHandler,
     private val moveMinimapClick: MoveMinimapClickHandler,
+    private val setHeading: SetHeadingHandler,
     private val clickWorldMap: ClickWorldMapHandler,
     private val opLoc: OpLocHandler,
     private val opLocT: OpLocTHandler,
@@ -106,6 +117,7 @@ constructor(
     private val closeModal: CloseModalHandler,
     private val resumePauseButton: ResumePauseButtonHandler,
     private val opObj: OpObjHandler,
+    private val opObjT: OpObjTHandler,
     private val opObj6: OpObj6Handler,
     private val ifSubOp: IfSubOpHandler,
     private val resumePCountDialog: ResumePCountDialogHandler,
@@ -115,13 +127,17 @@ constructor(
     private val ifButtonD: IfButtonDHandler,
     private val ifButtonT: IfButtonTHandler,
     private val mapBuildComplete: MapBuildCompleteHandler,
-    private val scriptTriggerHandler: IfScriptTriggerHandler
+    private val scriptTriggerHandler: IfScriptTriggerHandler,
+    private val opWorldEntity: OpWorldEntityHandler,
+    private val opWorldEntityT: OpWorldEntityTHandler,
+    private val opWorldEntity6: OpWorldEntity6Handler,
 ) {
     fun get(): DefaultGameMessageConsumerRepositoryProvider<Player> {
         val builder = GameMessageConsumerRepositoryBuilder<Player>()
         builder.addListener(WindowStatus::class.java, windowStatus)
         builder.addListener(MoveGameClick::class.java, moveGameClick)
         builder.addListener(MoveMinimapClick::class.java, moveMinimapClick)
+        builder.addListener(SetHeading::class.java, setHeading)
         builder.addListener(OpLocV2::class.java, opLoc)
         builder.addListener(OpLocT::class.java, opLocT)
         builder.addListener(OpLoc6::class.java, opLoc6)
@@ -144,6 +160,7 @@ constructor(
         builder.addListener(CloseModal::class.java, closeModal)
         builder.addListener(ResumePauseButton::class.java, resumePauseButton)
         builder.addListener(OpObjV2::class.java, opObj)
+        builder.addListener(OpObjT::class.java, opObjT)
         builder.addListener(OpObj6::class.java, opObj6)
         builder.addListener(IfSubOp::class.java, ifSubOp)
         builder.addListener(ResumePCountDialog::class.java, resumePCountDialog)
@@ -154,6 +171,9 @@ constructor(
         builder.addListener(IfButtonT::class.java, ifButtonT)
         builder.addListener(MapBuildComplete::class.java, mapBuildComplete)
         builder.addListener(IfScriptTrigger::class.java, scriptTriggerHandler)
+        builder.addListener(OpWorldEntity::class.java, opWorldEntity)
+        builder.addListener(OpWorldEntityT::class.java, opWorldEntityT)
+        builder.addListener(OpWorldEntity6::class.java, opWorldEntity6)
         return DefaultGameMessageConsumerRepositoryProvider(builder.build())
     }
 }

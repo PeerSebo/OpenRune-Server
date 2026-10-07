@@ -19,6 +19,7 @@ import org.rsmod.api.player.output.soundSynth
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.player.protect.ProtectedAccessLauncher
 import org.rsmod.api.player.protect.forcedWalk
+import org.rsmod.api.player.recovery.loginExitCoord
 import org.rsmod.api.repo.loc.LocRepository
 import org.rsmod.api.repo.npc.NpcRepository
 import org.rsmod.api.repo.obj.ObjRepository
@@ -30,7 +31,6 @@ import org.rsmod.api.script.onApNpc2
 import org.rsmod.api.script.onOpLoc1
 import org.rsmod.api.script.onOpNpc1
 import org.rsmod.api.script.onOpNpc2
-import org.rsmod.api.script.onPlayerLogout
 import org.rsmod.content.quest.manager.Quest
 import org.rsmod.game.entity.Npc
 import org.rsmod.game.entity.Player
@@ -60,12 +60,14 @@ internal class MisthalinBossFight(
     private val collision: CollisionFlagMap,
 ) {
 
+    private val reflections = quest.temporaryInt("MIRROR_REFLECTIONS", "varp.misthalin_mirror_reflections")
+
+    private val blockerTile =
+        quest.temporaryInt("MIRROR_BLOCKER_TILE", "varp.misthalin_mirror_blocker_tile", MisthalinCoords.MirrorBlockerSentinel.packed)
+
     // Death queue dispatch keys on the spawned NPC type, not the visible multinpc leaf.
     fun register(ctx: ScriptContext): Unit =
         with(ctx) {
-            onPlayerLogout {
-                if (player.uuid in rooms) protectedAccess.launch(player) { leaveBlueRoom() }
-            }
             onOpLoc1("loc.mistmyst_door_sapphire") { sapphireDoor(it.loc) }
 
             onOpNpc1("npc.mistmyst_mirror") { pushMirror(it.npc) }
@@ -125,14 +127,14 @@ internal class MisthalinBossFight(
         if (stage < MisthalinStage.SapphireRoomOpen) {
             if (invTotal(inv, SapphireKey) <= 0) {
                 mesbox("The door is securely locked.")
-                soundSynth("synth.locked")
+                soundSynth("synth.LOCKED")
                 return
             }
             if (invDel(inv, SapphireKey, 1).failure) {
                 return
             }
             mes("You use the sapphire key to unlock the door.")
-            soundSynth("synth.unlock")
+            soundSynth("synth.UNLOCK")
             quest.setQuestStage(this, MisthalinStage.SapphireRoomOpen)
         }
 
@@ -144,10 +146,7 @@ internal class MisthalinBossFight(
         )
         misthalinDoorCreak()
         misthalinCrossDoorway(route)
-        if (enterBlueRoom() == null) {
-            telejump(SapphireDoorTile)
-            return
-        }
+        enterBlueRoom()
 
         restoreRoomCast()
 
@@ -181,7 +180,7 @@ internal class MisthalinBossFight(
                 entrance.angle,
                 LocShape.CentrepieceStraight,
             )
-            soundSynth("synth.creakydoor_open")
+            soundSynth("synth.CREAKYDOOR_OPEN")
             delay(1)
 
             val entering = spawn(AbigaleKiller, r[ConfrontationEntry])
@@ -214,8 +213,8 @@ internal class MisthalinBossFight(
         }
 
         quest.setQuestStage(this, MisthalinStage.BossArmed)
-        player.misthalinReflections = 0
-        player.misthalinMirrorBlocker = r[MisthalinCoords.MirrorBlockerSentinel].packed
+        reflections.set(player, 0)
+        blockerTile.set(player, r[MisthalinCoords.MirrorBlockerSentinel].packed)
 
         spawn(MirrorNpc, r[MisthalinCoords.MirrorStart])
 
@@ -305,15 +304,15 @@ internal class MisthalinBossFight(
         PathingEntityCommon.teleport(mirror, collision, to)
 
         locRepo.add(
-            CoordGrid(player.misthalinMirrorBlocker),
+            CoordGrid(blockerTile.get(player)),
             MirrorUnblocker,
             Int.MAX_VALUE,
             LocAngle.West,
             LocShape.CentrepieceStraight,
         )
         locRepo.add(to, MirrorBlocker, Int.MAX_VALUE, LocAngle.West, LocShape.CentrepieceStraight)
-        player.misthalinMirrorBlocker = to.packed
-        soundArea(worldRepo, from, "synth.pyramid_block", radius = 4)
+        blockerTile.set(player, to.packed)
+        soundArea(worldRepo, from, "synth.PYRAMID_BLOCK", radius = 4)
 
         rooms[player.uuid]?.cycle?.let {
             it.pushDx = push.dx
@@ -351,23 +350,24 @@ internal class MisthalinBossFight(
     }
 
     // Persist the exit before logout; a login-handler teleport is too late for RebuildLogin.
-    private fun ProtectedAccess.enterBlueRoom(): SceneRegion? {
-        val uuid = player.uuid ?: return null
+    private fun ProtectedAccess.enterBlueRoom(): SceneRegion {
+        val uuid = player.uuid ?: return SceneRegion(null)
         rooms[uuid]?.let {
             return it.scene
         }
 
         val region = regionRepo.add(MisthalinIslandTemplate)
         if (region == null) {
-            mes("The room is unavailable at the moment. Please try again shortly.")
-            return null
+            // Every small region is taken. Play it on the static map rather than stall a quest at a
+            // stage whose only way forward is this door.
+            return SceneRegion(null)
         }
         regionRepo.protect(region)
 
         val room = BlueRoom(region)
         rooms[uuid] = room
 
-        player.misthalinReturnTile = SapphireDoorTile.packed
+        player.loginExitCoord = SapphireDoorTile
         telejump(room.scene[SapphireInsideTile])
         rebuildAppearance()
         return room.scene
@@ -378,7 +378,7 @@ internal class MisthalinBossFight(
         if (!leaveMurderWeapon()) return
         val room = player.uuid?.let(rooms::remove)
         room?.cycle?.let { stopCycle(it.proxy) }
-        player.misthalinReturnTile = 0
+        player.loginExitCoord = null
         telejump(SapphireDoorTile)
         rebuildAppearance()
         if (room != null) {
@@ -413,7 +413,15 @@ internal class MisthalinBossFight(
             return
         }
         quest.setQuestStage(this, MisthalinStage.SapphireRoomOpen)
-        player.misthalinReflections = 0
+        reflections.set(player, 0)
+    }
+
+    private fun rewindOnLogin(player: Player) {
+        val stage = quest.getQuestStage(player)
+        if (stage < MisthalinStage.BossArmed || stage >= MisthalinStage.AbigaleKilled) {
+            return
+        }
+        protectedAccess.launch(player) { rewindAbandonedRoom() }
     }
 
     private fun mirrorCycleTick(npc: Npc) {
@@ -501,7 +509,7 @@ internal class MisthalinBossFight(
         }
 
         for (viewer in viewers) {
-            viewer.soundSynth("synth.throwingknife")
+            viewer.soundSynth("synth.THROWINGKNIFE")
         }
 
         active.pendingScore = scores
@@ -518,7 +526,7 @@ internal class MisthalinBossFight(
 
         proxy.say(if (reflectionsSoFar(r) % 2 == 0) "Ow!" else "Aaaargh!")
 
-        worldRepo.soundArea(wardrobe, "synth.female_hit_2", radius = 10)
+        worldRepo.soundArea(wardrobe, "synth.FEMALE_HIT_02", radius = 10)
     }
 
     private fun flushPendingHit(r: SceneRegion, active: MirrorCycle, viewers: List<Player>) {
@@ -529,8 +537,8 @@ internal class MisthalinBossFight(
 
         var won = false
         for (viewer in viewers) {
-            val reflected = viewer.misthalinReflections + 1
-            viewer.misthalinReflections = reflected
+            val reflected = reflections.get(viewer) + 1
+            reflections.set(viewer, reflected)
             if (reflected >= ReflectionsToWin) {
                 won = true
             }
@@ -549,7 +557,7 @@ internal class MisthalinBossFight(
                 .findAll(ZoneKey.from(r[MisthalinCoords.BossProxy]), zoneRadius = 1)
                 .firstOrNull {
                     quest.getQuestStage(it) == MisthalinStage.BossArmed &&
-                        it.misthalinReflections >= ReflectionsToWin
+                        reflections.get(it) >= ReflectionsToWin
                 }
         if (winner == null) {
             stopCycle(proxy)
@@ -574,7 +582,7 @@ internal class MisthalinBossFight(
 
     private fun reflectionsSoFar(r: SceneRegion): Int =
         playerRepo.findAll(ZoneKey.from(r[MisthalinCoords.BossProxy]), zoneRadius = 1).maxOfOrNull {
-            it.misthalinReflections
+            reflections.get(it)
         } ?: 0
 
     private fun findMirror(r: SceneRegion): Npc? =
@@ -649,7 +657,7 @@ internal class MisthalinBossFight(
             entrance.angle,
             LocShape.CentrepieceStraight,
         )
-        soundSynth("synth.creakydoor_open")
+        soundSynth("synth.CREAKYDOOR_OPEN")
         delay(1)
 
         var masked: Npc? = spawn(AbigaleKiller, r[ConfrontationExit])
@@ -803,15 +811,15 @@ internal class MisthalinBossFight(
             }
 
             abigale?.anim("seq.hween16_slash")
-            soundSynth("synth.scythe_double")
+            soundSynth("synth.SCYTHE_DOUBLE")
 
             startDialogue {
-                soundSynth("synth.human_hit")
+                soundSynth("synth.HUMAN_HIT")
                 heweySays(confused, "No...my love...")
             }
 
             unmaskedHewey.anim("seq.human_death")
-            soundSynth("synth.human_death")
+            soundSynth("synth.HUMAN_DEATH")
 
             objRepo.add(KillerKnife, r[KnifeDropTile], KnifeDespawnTicks, receiver = player)
             knifeDropped = true
@@ -842,7 +850,7 @@ internal class MisthalinBossFight(
             entrance.angle,
             LocShape.CentrepieceStraight,
         )
-        soundSynth("synth.creakydoor_open")
+        soundSynth("synth.CREAKYDOOR_OPEN")
         delay(1)
 
         val hewey = spawn(HeweyKiller, r[ConfrontationEntry])
@@ -937,13 +945,13 @@ internal class MisthalinBossFight(
 
         faceSquare(killer.coords)
         anim("seq.hween16_slash")
-        soundSynth("synth.scythe_double")
-        soundSynth("synth.scream2")
+        soundSynth("synth.SCYTHE_DOUBLE")
+        soundSynth("synth.SCREAM2")
 
         try {
             delay(2)
             killer.anim("seq.human_death")
-            soundSynth("synth.human_death")
+            soundSynth("synth.HUMAN_DEATH")
             delay(2)
 
             startDialogue {
@@ -1058,15 +1066,15 @@ internal class MisthalinBossFight(
             godsword.faceSquare(r[MirrorKillerTile])
             godsword.anim("seq.bgs_special_player")
             godsword.spotanim("spotanim.dh_sword_update_bandos_special_spotanim")
-            soundSynth("synth.godwars_godsword_special_attack")
+            soundSynth("synth.GODWARS_GODSWORD_SPECIAL_ATTACK")
             delay(2)
 
             startDialogue {
-                soundSynth("synth.scream2")
+                soundSynth("synth.SCREAM2")
                 abigaleSays(sad, "No....this can't be it....")
             }
             abigale.anim("seq.human_death")
-            soundSynth("synth.human_death")
+            soundSynth("synth.HUMAN_DEATH")
 
             godsword.faceSquare(player.coords)
 
@@ -1171,7 +1179,7 @@ internal class MisthalinBossFight(
 
     private fun ProtectedAccess.openWardrobe(tile: CoordGrid, angle: LocAngle) {
         locRepo.add(tile, WardrobeOpen, WardrobeOpenTicks, angle, LocShape.CentrepieceStraight)
-        soundSynth("synth.creakydoor_open")
+        soundSynth("synth.CREAKYDOOR_OPEN")
     }
 
     private fun Npc.walkTo(coords: CoordGrid) {

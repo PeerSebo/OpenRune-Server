@@ -1,0 +1,58 @@
+[[npc]]
+isServerOnly = true
+id = "npc.snakeboss_boss_ranged"
+inherit = "npc.snakeboss_boss_ranged"
+
+[npc.params]
+"param.killcount_varp" = "varp.total_snakeboss_kills"
+"param.boss_hp_bar_mode" = 2
+
+[[npc]]
+isServerOnly = true
+id = "npc.snakeboss_boss_melee"
+inherit = "npc.snakeboss_boss_melee"
+
+[npc.params]
+"param.killcount_varp" = "varp.total_snakeboss_kills"
+"param.boss_hp_bar_mode" = 2
+
+[[npc]]
+isServerOnly = true
+id = "npc.snakeboss_boss_magic"
+inherit = "npc.snakeboss_boss_magic"
+
+[npc.params]
+"param.killcount_varp" = "varp.total_snakeboss_kills"
+"param.boss_hp_bar_mode" = 2
+
+[[npc]]
+isServerOnly = true
+id = "npc.snakeboss_highpriest"
+inherit = "npc.snakeboss_highpriest"
+wanderRange = 0
+defaultMode = "None"
+moveRestrict = "NoMove"
+
+[[npc]]
+isServerOnly = true
+id = "npc.snakeboss_gnome_1"
+inherit = "npc.snakeboss_gnome_1"
+wanderRange = 0
+defaultMode = "None"
+moveRestrict = "NoMove"
+
+[[npc]]
+isServerOnly = true
+id = "npc.snakeboss_fishingspot"
+inherit = "npc.snakeboss_fishingspot"
+wanderRange = 0
+defaultMode = "None"
+moveRestrict = "NoMove"
+
+[[npc]]
+isServerOnly = true
+id = "npc.snakeboss_fishingspot_fake"
+inherit = "npc.snakeboss_fishingspot_fake"
+wanderRange = 0
+defaultMode = "None"
+moveRestrict = "NoMove"

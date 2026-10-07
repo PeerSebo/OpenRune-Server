@@ -1,0 +1,18 @@
+[[varp]]
+id = "varp.rocky_following_obj"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.rocky_following_migrated"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.rocky_resync_follower"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+

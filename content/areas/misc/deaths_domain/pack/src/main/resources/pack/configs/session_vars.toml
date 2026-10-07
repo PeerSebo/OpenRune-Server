@@ -1,0 +1,5 @@
+[[varp]]
+isServerOnly = true
+id = "varp.deaths_domain_return_coord"
+scope = "Temp"
+transmit = "Never"

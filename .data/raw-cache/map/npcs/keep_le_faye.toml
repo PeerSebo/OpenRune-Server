@@ -46,7 +46,6 @@ coords = "1_43_53_22_13"
 npc = "npc.sir_mordred"
 coords = "2_43_53_17_11"
 
-## Keep Le Faye Jail
 
 [[spawn]]
 npc = "npc.kr_cam_gawain_jail"
@@ -83,6 +82,3 @@ coords = "0_29_66_45_47"
 [[spawn]]
 npc = "npc.renegade_knight"
 coords = "0_29_66_53_47"
-
-## Keep Le Faye Jail End
-

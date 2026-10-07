@@ -1,0 +1,53 @@
+[[npc]]
+isServerOnly = true
+id = "npc.leviathan"
+inherit = "npc.leviathan"
+huntMode = 2
+huntRange = 24
+attackRange = 20
+defaultMode = "None"
+maxRange = 40
+respawnRate = 30
+[npc.params]
+"param.killcount_varp"="varp.total_leviathan_kills"
+"param.killcount_varp_awakened"="varp.total_leviathan_awakened_kills"
+"param.boss_hp_bar_mode"=2
+"param.death_anim"="seq.npc_leviathan_01_death"
+
+
+[[npc]]
+isServerOnly = true
+id = "npc.leviathan_buff_npc"
+inherit = "npc.leviathan_buff_npc"
+defaultMode = "None"
+blockWalk = "None"
+
+
+[[npc]]
+isServerOnly = true
+id = "npc.leviathan_tornado"
+inherit = "npc.leviathan_tornado"
+defaultMode = "None"
+blockWalk = "None"
+
+
+[[npc]]
+isServerOnly = true
+id = "npc.leviathan_tail_ring_1"
+inherit = "npc.leviathan_tail_ring_1"
+defaultMode = "None"
+
+
+[[npc]]
+isServerOnly = true
+id = "npc.leviathan_tail_ring_2"
+inherit = "npc.leviathan_tail_ring_2"
+defaultMode = "None"
+
+
+[[npc]]
+isServerOnly = true
+id = "npc.leviathan_tail_ring_3"
+inherit = "npc.leviathan_tail_ring_3"
+defaultMode = "None"
+

@@ -1,6 +1,5 @@
 package org.rsmod.api.script
 
-import dev.openrune.cache.filestore.definition.InterfaceType
 import dev.openrune.definition.type.widget.ComponentType
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
@@ -54,7 +53,11 @@ public fun ScriptContext.onIfOverlayButtonT(
     targetComponent: String = selectedComponent,
     action: IfOverlayButtonT.() -> Unit,
 ) {
-    val packed = EventBus.composeLongKey(selectedComponent.asRSCM(RSCMType.COMPONENT), targetComponent.asRSCM(RSCMType.COMPONENT))
+    val packed =
+        EventBus.composeLongKey(
+            selectedComponent.asRSCM(RSCMType.COMPONENT),
+            targetComponent.asRSCM(RSCMType.COMPONENT),
+        )
     onEvent(packed, action)
 }
 
@@ -63,7 +66,11 @@ public fun ScriptContext.onIfModalButtonT(
     targetComponent: String = selectedComponent,
     action: suspend ProtectedAccess.(IfModalButtonT) -> Unit,
 ) {
-    val packed = EventBus.composeLongKey(selectedComponent.asRSCM(RSCMType.COMPONENT), targetComponent.asRSCM(RSCMType.COMPONENT))
+    val packed =
+        EventBus.composeLongKey(
+            selectedComponent.asRSCM(RSCMType.COMPONENT),
+            targetComponent.asRSCM(RSCMType.COMPONENT),
+        )
     onProtectedEvent(packed, action)
 }
 
@@ -72,7 +79,11 @@ public fun ScriptContext.onIfOverlayDrag(
     targetComponent: String = selectedComponent,
     action: IfOverlayDrag.() -> Unit,
 ) {
-    val packed = EventBus.composeLongKey(selectedComponent.asRSCM(RSCMType.COMPONENT), targetComponent.asRSCM(RSCMType.COMPONENT))
+    val packed =
+        EventBus.composeLongKey(
+            selectedComponent.asRSCM(RSCMType.COMPONENT),
+            targetComponent.asRSCM(RSCMType.COMPONENT),
+        )
     onEvent(packed, action)
 }
 
@@ -81,6 +92,10 @@ public fun ScriptContext.onIfModalDrag(
     targetComponent: String = selectedComponent,
     action: suspend ProtectedAccess.(IfModalDrag) -> Unit,
 ) {
-    val packed = EventBus.composeLongKey(selectedComponent.asRSCM(RSCMType.COMPONENT), targetComponent.asRSCM(RSCMType.COMPONENT))
+    val packed =
+        EventBus.composeLongKey(
+            selectedComponent.asRSCM(RSCMType.COMPONENT),
+            targetComponent.asRSCM(RSCMType.COMPONENT),
+        )
     onProtectedEvent(packed, action)
 }

@@ -2,13 +2,11 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
-import org.rsmod.api.droptable.rsPlayerTertiaryTable
-import org.rsmod.api.droptable.rsPlayerWeightedTable
 import org.rsmod.api.droptable.DropRollItem
-import org.rsmod.api.droptable.nothing
 import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.api.droptable.nothing
+import org.rsmod.api.droptable.rsPlayerGuaranteedTable
+import org.rsmod.api.droptable.rsPlayerWeightedTable
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -18,7 +16,7 @@ public val tektonDropTable: RSDropTable<Player, DropRollItem> = RSDropTable(
     npcs = npcs("npc.raids_tekton_fighting_enraged", "npc.raids_tekton_fighting_standard", "npc.raids_tekton_hammering", "npc.raids_tekton_waiting", "npc.raids_tekton_walking_enraged", "npc.raids_tekton_walking_standard"),
     guaranteed = rsPlayerGuaranteedTable {
         "obj.raids_tekton_book" count 1 condition { player ->
-            // Drops Need Manual: No longer dropped after reading the book.
+            // TODO: No longer dropped after reading the book.
              true
         }
         "obj.raids_stinkhorn_mushroom" count 5

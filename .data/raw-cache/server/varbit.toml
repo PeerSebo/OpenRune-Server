@@ -406,20 +406,6 @@ endBit = 0
 
 [[varbit]]
 isServerOnly = true
-id = "varbit.slayer_streak"
-varp = "varp.slayer_player_state"
-startBit = 1
-endBit = 15
-
-[[varbit]]
-isServerOnly = true
-id = "varbit.slayer_wildy_streak"
-varp = "varp.slayer_player_state"
-startBit = 16
-endBit = 30
-
-[[varbit]]
-isServerOnly = true
 id = "varbit.slayer_superior_active"
 varp = "varp.slayer_player_state"
 startBit = 31
@@ -480,27 +466,6 @@ id = "varbit.slayer_slaughter_charges"
 varp = "varp.slayer_dialogue_flags"
 startBit = 14
 endBit = 19
-
-[[varbit]]
-isServerOnly = true
-id = "varbit.slayer_total_tasks_done"
-varp = "varp.slayer_last_count"
-startBit = 0
-endBit = 15
-
-[[varbit]]
-isServerOnly = true
-id = "varbit.slayer_mortimer_tasks_done"
-varp = "varp.slayer_mortimer_state"
-startBit = 0
-endBit = 15
-
-[[varbit]]
-isServerOnly = true
-id = "varbit.slayer_mortimer_streak"
-varp = "varp.slayer_mortimer_state"
-startBit = 16
-endBit = 30
 
 [[varbit]]
 isServerOnly = true
@@ -574,49 +539,35 @@ endBit = 32
 
 [[varbit]]
 isServerOnly = true
-id = "varbit.barrows_hidden_brother"
-varp = "varp.barrows_state"
+id = "varbit.mahogany_homes_points"
+varp = "varp.mahogany_homes_points"
 startBit = 0
-endBit = 2
+endBit = 31
 
 [[varbit]]
 isServerOnly = true
-id = "varbit.barrows_corner"
-varp = "varp.barrows_state"
-startBit = 3
-endBit = 4
+id = "varbit.mahogany_homes_contracts_completed"
+varp = "varp.mahogany_homes_contracts_completed"
+startBit = 0
+endBit = 31
 
 [[varbit]]
 isServerOnly = true
-id = "varbit.barrows_looted"
-varp = "varp.barrows_state"
-startBit = 5
+id = "varbit.mahogany_homes_tier"
+varp = "varp.mahogany_homes_contract_state"
+startBit = 0
+endBit = 1
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.mahogany_homes_client"
+varp = "varp.mahogany_homes_contract_state"
+startBit = 2
 endBit = 5
 
 [[varbit]]
 isServerOnly = true
-id = "varbit.barrows_puzzle_solved"
-varp = "varp.barrows_state"
+id = "varbit.mahogany_homes_layout"
+varp = "varp.mahogany_homes_contract_state"
 startBit = 6
-endBit = 6
-
-[[varbit]]
-isServerOnly = true
-id = "varbit.barrows_rolled"
-varp = "varp.barrows_state"
-startBit = 7
-endBit = 7
-
-[[varbit]]
-isServerOnly = true
-id = "varbit.barrows_open_corner_door"
-varp = "varp.barrows_state"
-startBit = 8
 endBit = 9
-
-[[varbit]]
-isServerOnly = true
-id = "varbit.barrows_open_center_door"
-varp = "varp.barrows_state"
-startBit = 10
-endBit = 11

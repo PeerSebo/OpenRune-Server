@@ -27,6 +27,7 @@ protect = false
 placeholders = true
 uimBlocked = true
 
+# Keep default stacking: the tackle box mixes stackable bait with non-stackable tools.
 [[inventory]]
 isServerOnly = true
 id = "inv.tackle_box"
@@ -48,6 +49,57 @@ id = "inv.skill_guide_hunting_tracking"
 inherit = "inv.skill_guide_hunting_tracking"
 stack = "Never"
 
+# Cargo holds use the cache maximum of 240 slots; boat upgrades enforce the accessible limit in script.
+
+[[inventory]]
+isServerOnly = true
+id = "inv.sailing_boat_1_cargohold"
+inherit = "inv.sailing_boat_1_cargohold"
+size = 240
+scope = "Perm"
+protect = false
+
+[[inventory]]
+isServerOnly = true
+id = "inv.sailing_boat_2_cargohold"
+inherit = "inv.sailing_boat_2_cargohold"
+size = 240
+scope = "Perm"
+protect = false
+
+[[inventory]]
+isServerOnly = true
+id = "inv.sailing_boat_3_cargohold"
+inherit = "inv.sailing_boat_3_cargohold"
+size = 240
+scope = "Perm"
+protect = false
+
+[[inventory]]
+isServerOnly = true
+id = "inv.sailing_boat_4_cargohold"
+inherit = "inv.sailing_boat_4_cargohold"
+size = 240
+scope = "Perm"
+protect = false
+
+[[inventory]]
+isServerOnly = true
+id = "inv.sailing_boat_5_cargohold"
+inherit = "inv.sailing_boat_5_cargohold"
+size = 240
+scope = "Perm"
+protect = false
+
+# The codec reads size from the base cache; this file only controls server inventory properties.
+[[inventory]]
+isServerOnly = true
+id = "inv.sailing_trawling_net"
+inherit = "inv.sailing_trawling_net"
+size = 250
+scope = "Perm"
+protect = false
+
 [[inventory]]
 isServerOnly = true
 id = "inv.collection_transmit"
@@ -57,11 +109,36 @@ scope = "Perm"
 stack = "Always"
 protect = false
 
+[[inventory]]
+isServerOnly = true
+id = "inv.gravestone"
+inherit = "inv.gravestone"
+size = 120
+scope = "Perm"
+protect = false
 
 [[inventory]]
 isServerOnly = true
-id = "inv.trail_rewardinv"
-inherit = "inv.trail_rewardinv"
-scope = "Temp"
-stack = "Always"
+id = "inv.death_permanent"
+inherit = "inv.death_permanent"
+size = 120
+scope = "Perm"
 protect = false
+
+[[inventory]]
+isServerOnly = true
+id = "inv.huntsmans_kit"
+inherit = "inv.huntsmans_kit"
+size = 32
+stack = "Always"
+scope = "Perm"
+protect = false
+
+[[inventory]]
+isServerOnly = true
+id = "inv.emirs_arena_stake"
+size = 28
+scope = "Perm"
+stack = "Normal"
+protect = false
+runWeight = false

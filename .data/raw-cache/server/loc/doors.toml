@@ -53,7 +53,7 @@ contentGroup = "content.closed_single_door"
 
 [object.params]
 "param.next_loc_stage" = "loc.poshdooropen"
-"param.opensound" = "synth.nicedoor_open"
+"param.opensound" = "synth.NICEDOOR_OPEN"
 
 [[object]]
 id = "loc.poshdooropen"
@@ -61,7 +61,7 @@ inherit = "loc.poshdooropen"
 contentGroup = "content.opened_single_door"
 
 [object.params]
-"param.closesound" = "synth.nicedoor_close"
+"param.closesound" = "synth.NICEDOOR_CLOSE"
 "param.next_loc_stage" = "loc.poshdoor"
 
 
@@ -88,7 +88,7 @@ contentGroup = "content.closed_left_picketgate"
 
 [object.params]
 "param.next_loc_stage" = "loc.openfencegate_l"
-"param.opensound" = "synth.picketgate_open"
+"param.opensound" = "synth.GATE_OPEN"
 
 [[object]]
 id = "loc.openfencegate_l"
@@ -96,7 +96,7 @@ inherit = "loc.openfencegate_l"
 contentGroup = "content.opened_left_picketgate"
 
 [object.params]
-"param.closesound" = "synth.picketgate_close"
+"param.closesound" = "synth.GATE_CLOSE"
 "param.next_loc_stage" = "loc.fencegate_l"
 
 [[object]]
@@ -106,7 +106,7 @@ contentGroup = "content.closed_right_picketgate"
 
 [object.params]
 "param.next_loc_stage" = "loc.openfencegate_r"
-"param.opensound" = "synth.picketgate_open"
+"param.opensound" = "synth.GATE_OPEN"
 
 [[object]]
 id = "loc.openfencegate_r"
@@ -114,8 +114,44 @@ inherit = "loc.openfencegate_r"
 contentGroup = "content.opened_right_picketgate"
 
 [object.params]
-"param.closesound" = "synth.picketgate_close"
+"param.closesound" = "synth.GATE_CLOSE"
 "param.next_loc_stage" = "loc.fencegate_r"
+
+[[object]]
+id = "loc.farming_fencegate_l"
+inherit = "loc.farming_fencegate_l"
+contentGroup = "content.closed_left_picketgate"
+
+[object.params]
+"param.next_loc_stage" = "loc.farming_openfencegate_l"
+"param.opensound" = "synth.GATE_OPEN"
+
+[[object]]
+id = "loc.farming_openfencegate_l"
+inherit = "loc.farming_openfencegate_l"
+contentGroup = "content.opened_left_picketgate"
+
+[object.params]
+"param.closesound" = "synth.GATE_CLOSE"
+"param.next_loc_stage" = "loc.farming_fencegate_l"
+
+[[object]]
+id = "loc.farming_fencegate_r"
+inherit = "loc.farming_fencegate_r"
+contentGroup = "content.closed_right_picketgate"
+
+[object.params]
+"param.next_loc_stage" = "loc.farming_openfencegate_r"
+"param.opensound" = "synth.GATE_OPEN"
+
+[[object]]
+id = "loc.farming_openfencegate_r"
+inherit = "loc.farming_openfencegate_r"
+contentGroup = "content.opened_right_picketgate"
+
+[object.params]
+"param.closesound" = "synth.GATE_CLOSE"
+"param.next_loc_stage" = "loc.farming_fencegate_r"
 
 [[object]]
 id = "loc.qip_sheep_shearer_fencegate_l"
@@ -124,7 +160,7 @@ contentGroup = "content.closed_left_picketgate"
 
 [object.params]
 "param.next_loc_stage" = "loc.qip_sheep_shearer_openfencegate_l"
-"param.opensound" = "synth.picketgate_open"
+"param.opensound" = "synth.GATE_OPEN"
 
 [[object]]
 id = "loc.qip_sheep_shearer_fencegate_r"
@@ -133,7 +169,7 @@ contentGroup = "content.closed_right_picketgate"
 
 [object.params]
 "param.next_loc_stage" = "loc.qip_sheep_shearer_openfencegate_r"
-"param.opensound" = "synth.picketgate_open"
+"param.opensound" = "synth.GATE_OPEN"
 
 [[object]]
 id = "loc.qip_sheep_shearer_openfencegate_l"
@@ -141,7 +177,7 @@ inherit = "loc.qip_sheep_shearer_openfencegate_l"
 contentGroup = "content.opened_left_picketgate"
 
 [object.params]
-"param.closesound" = "synth.door_close"
+"param.closesound" = "synth.DOOR_CLOSE"
 "param.next_loc_stage" = "loc.qip_sheep_shearer_fencegate_l"
 
 [[object]]
@@ -150,7 +186,7 @@ inherit = "loc.qip_sheep_shearer_openfencegate_r"
 contentGroup = "content.opened_right_picketgate"
 
 [object.params]
-"param.closesound" = "synth.door_close"
+"param.closesound" = "synth.DOOR_CLOSE"
 "param.next_loc_stage" = "loc.qip_sheep_shearer_fencegate_r"
 
 [[object]]
@@ -160,7 +196,7 @@ contentGroup = "content.closed_right_picketgate"
 
 [object.params]
 "param.next_loc_stage" = "loc.rustic_openfencegate_r"
-"param.opensound" = "synth.picketgate_open"
+"param.opensound" = "synth.GATE_OPEN"
 
 [[object]]
 id = "loc.rustic_openfencegate_l"
@@ -168,7 +204,7 @@ inherit = "loc.rustic_openfencegate_l"
 contentGroup = "content.opened_left_picketgate"
 
 [object.params]
-"param.closesound" = "synth.door_close"
+"param.closesound" = "synth.DOOR_CLOSE"
 "param.next_loc_stage" = "loc.rustic_fencegate_l"
 
 [[object]]
@@ -177,7 +213,7 @@ inherit = "loc.rustic_openfencegate_r"
 contentGroup = "content.opened_right_picketgate"
 
 [object.params]
-"param.closesound" = "synth.door_close"
+"param.closesound" = "synth.DOOR_CLOSE"
 "param.next_loc_stage" = "loc.rustic_fencegate_r"
 
 [[object]]
@@ -187,4 +223,1109 @@ contentGroup = "content.closed_left_picketgate"
 
 [object.params]
 "param.next_loc_stage" = "loc.rustic_openfencegate_l"
-"param.opensound" = "synth.picketgate_open"
+"param.opensound" = "synth.GATE_OPEN"
+
+
+[[object]]
+id = "loc.qip_sheep_shearer_poordoor"
+inherit = "loc.qip_sheep_shearer_poordoor"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.qip_sheep_shearer_poordooropen"
+
+[[object]]
+id = "loc.qip_sheep_shearer_poordooropen"
+inherit = "loc.qip_sheep_shearer_poordooropen"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.qip_sheep_shearer_poordoor"
+
+[[object]]
+id = "loc.farmdoor"
+inherit = "loc.farmdoor"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.farmdooropen"
+
+[[object]]
+id = "loc.farmdooropen"
+inherit = "loc.farmdooropen"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.farmdoor"
+
+[[object]]
+id = "loc.fai_varrock_poor_door"
+inherit = "loc.fai_varrock_poor_door"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_varrock_poor_door_open"
+
+[[object]]
+id = "loc.fai_varrock_poor_door_open"
+inherit = "loc.fai_varrock_poor_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_varrock_poor_door"
+
+[[object]]
+id = "loc.fai_varrock_shanty_door"
+inherit = "loc.fai_varrock_shanty_door"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_varrock_shanty_door_open"
+
+[[object]]
+id = "loc.fai_varrock_shanty_door_open"
+inherit = "loc.fai_varrock_shanty_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_varrock_shanty_door"
+
+[[object]]
+id = "loc.fai_barbarian_poordoor"
+inherit = "loc.fai_barbarian_poordoor"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_barbarian_poordooropen"
+
+[[object]]
+id = "loc.fai_barbarian_poordooropen"
+inherit = "loc.fai_barbarian_poordooropen"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_barbarian_poordoor"
+
+[[object]]
+id = "loc.draynor_panelled_door"
+inherit = "loc.draynor_panelled_door"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.draynor_panelled_door_open"
+
+[[object]]
+id = "loc.draynor_panelled_door_open"
+inherit = "loc.draynor_panelled_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.draynor_panelled_door"
+
+[[object]]
+id = "loc.castledoor"
+inherit = "loc.castledoor"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.opencastledoor"
+
+[[object]]
+id = "loc.opencastledoor"
+inherit = "loc.opencastledoor"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.castledoor"
+
+[[object]]
+id = "loc.canafis_door"
+inherit = "loc.canafis_door"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.canafis_door_open"
+
+[[object]]
+id = "loc.canafis_door_open"
+inherit = "loc.canafis_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.canafis_door"
+
+[[object]]
+id = "loc.canafis_door_ground"
+inherit = "loc.canafis_door_ground"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.canafis_door_ground_open"
+
+[[object]]
+id = "loc.canafis_door_ground_open"
+inherit = "loc.canafis_door_ground_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.canafis_door_ground"
+
+[[object]]
+id = "loc.fai_falador_poor_door"
+inherit = "loc.fai_falador_poor_door"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_falador_poor_door_open"
+
+[[object]]
+id = "loc.fai_falador_poor_door_open"
+inherit = "loc.fai_falador_poor_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_falador_poor_door"
+
+[[object]]
+id = "loc.fai_falador_poor_castle_door"
+inherit = "loc.fai_falador_poor_castle_door"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_falador_poor_castle_door_open"
+
+[[object]]
+id = "loc.fai_falador_poor_castle_door_open"
+inherit = "loc.fai_falador_poor_castle_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_falador_poor_castle_door"
+
+[[object]]
+id = "loc.thickpoordoor"
+inherit = "loc.thickpoordoor"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.openthickpoordoor"
+
+[[object]]
+id = "loc.openthickpoordoor"
+inherit = "loc.openthickpoordoor"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.thickpoordoor"
+
+[[object]]
+id = "loc.wooden_fur_door"
+inherit = "loc.wooden_fur_door"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.wooden_fur_door_open"
+
+[[object]]
+id = "loc.wooden_fur_door_open"
+inherit = "loc.wooden_fur_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.wooden_fur_door"
+
+[[object]]
+id = "loc.viking_fur_door"
+inherit = "loc.viking_fur_door"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.viking_fur_door_open"
+
+[[object]]
+id = "loc.viking_fur_door_open"
+inherit = "loc.viking_fur_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.viking_fur_door"
+
+[[object]]
+id = "loc.viking_abode_door"
+inherit = "loc.viking_abode_door"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.viking_abode_door_open"
+
+[[object]]
+id = "loc.viking_abode_door_open"
+inherit = "loc.viking_abode_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.viking_abode_door"
+
+[[object]]
+id = "loc.misc_viking_abode_door_low"
+inherit = "loc.misc_viking_abode_door_low"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.misc_viking_abode_door_low_open"
+
+[[object]]
+id = "loc.misc_viking_abode_door_low_open"
+inherit = "loc.misc_viking_abode_door_low_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.misc_viking_abode_door_low"
+
+[[object]]
+id = "loc.frisb_abode_door"
+inherit = "loc.frisb_abode_door"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.frisb_abode_door_open"
+
+[[object]]
+id = "loc.frisb_abode_door_open"
+inherit = "loc.frisb_abode_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.frisb_abode_door"
+
+[[object]]
+id = "loc.royal_village_door"
+inherit = "loc.royal_village_door"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.royal_village_door_open"
+
+[[object]]
+id = "loc.royal_village_door_open"
+inherit = "loc.royal_village_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.royal_village_door"
+
+[[object]]
+id = "loc.hosidius_door"
+inherit = "loc.hosidius_door"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.hosidius_door_open"
+
+[[object]]
+id = "loc.hosidius_door_open"
+inherit = "loc.hosidius_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.hosidius_door"
+
+[[object]]
+id = "loc.kr_poordoor"
+inherit = "loc.kr_poordoor"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.kr_poordooropen"
+
+[[object]]
+id = "loc.kr_poordooropen"
+inherit = "loc.kr_poordooropen"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.kr_poordoor"
+
+[[object]]
+id = "loc.kr_poshdoor"
+inherit = "loc.kr_poshdoor"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.kr_poshdooropen"
+
+[[object]]
+id = "loc.kr_poshdooropen"
+inherit = "loc.kr_poshdooropen"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.kr_poshdoor"
+
+[[object]]
+id = "loc.kr_sin_poordoor"
+inherit = "loc.kr_sin_poordoor"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.kr_sin_poordooropen"
+
+[[object]]
+id = "loc.kr_sin_poordooropen"
+inherit = "loc.kr_sin_poordooropen"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.kr_sin_poordoor"
+
+[[object]]
+id = "loc.kr_sin_poshdoor"
+inherit = "loc.kr_sin_poshdoor"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.kr_sin_poshdooropen"
+
+[[object]]
+id = "loc.kr_sin_poshdooropen"
+inherit = "loc.kr_sin_poshdooropen"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.kr_sin_poshdoor"
+
+[[object]]
+id = "loc.kr_cam_poshdoor"
+inherit = "loc.kr_cam_poshdoor"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.kr_cam_poshdoor_open"
+
+[[object]]
+id = "loc.kr_cam_poshdoor_open"
+inherit = "loc.kr_cam_poshdoor_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.kr_cam_poshdoor"
+
+[[object]]
+id = "loc.dwarf_keldagrim_door"
+inherit = "loc.dwarf_keldagrim_door"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dwarf_keldagrim_door_open"
+
+[[object]]
+id = "loc.dwarf_keldagrim_door_open"
+inherit = "loc.dwarf_keldagrim_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dwarf_keldagrim_door"
+
+[[object]]
+id = "loc.dwarf_keldagrim_door_interior"
+inherit = "loc.dwarf_keldagrim_door_interior"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dwarf_keldagrim_door_interior_open"
+
+[[object]]
+id = "loc.dwarf_keldagrim_door_interior_open"
+inherit = "loc.dwarf_keldagrim_door_interior_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dwarf_keldagrim_door_interior"
+
+[[object]]
+id = "loc.dwarf_keldagrim_door_interior_factory"
+inherit = "loc.dwarf_keldagrim_door_interior_factory"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dwarf_keldagrim_door_interior_factory_open"
+
+[[object]]
+id = "loc.dwarf_keldagrim_door_interior_factory_open"
+inherit = "loc.dwarf_keldagrim_door_interior_factory_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dwarf_keldagrim_door_interior_factory"
+
+[[object]]
+id = "loc.dwarf_keldagrim_door_interior_palace"
+inherit = "loc.dwarf_keldagrim_door_interior_palace"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dwarf_keldagrim_door_interior_palace_open"
+
+[[object]]
+id = "loc.dwarf_keldagrim_door_interior_palace_open"
+inherit = "loc.dwarf_keldagrim_door_interior_palace_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dwarf_keldagrim_door_interior_palace"
+
+[[object]]
+id = "loc.dwarf_keldagrim_door_interior_poor"
+inherit = "loc.dwarf_keldagrim_door_interior_poor"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dwarf_keldagrim_door_interior_poor_open"
+
+[[object]]
+id = "loc.dwarf_keldagrim_door_interior_poor_open"
+inherit = "loc.dwarf_keldagrim_door_interior_poor_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dwarf_keldagrim_door_interior_poor"
+
+[[object]]
+id = "loc.dwarf_keldagrim_door_ornate"
+inherit = "loc.dwarf_keldagrim_door_ornate"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dwarf_keldagrim_door_ornate_open"
+
+[[object]]
+id = "loc.dwarf_keldagrim_door_ornate_open"
+inherit = "loc.dwarf_keldagrim_door_ornate_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dwarf_keldagrim_door_ornate"
+
+[[object]]
+id = "loc.dwarf_keldagrim_door_ornate_mirror"
+inherit = "loc.dwarf_keldagrim_door_ornate_mirror"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dwarf_keldagrim_door_ornate_mirror_open"
+
+[[object]]
+id = "loc.dwarf_keldagrim_door_ornate_mirror_open"
+inherit = "loc.dwarf_keldagrim_door_ornate_mirror_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dwarf_keldagrim_door_ornate_mirror"
+
+[[object]]
+id = "loc.dwarf_keldagrim_door_palace"
+inherit = "loc.dwarf_keldagrim_door_palace"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dwarf_keldagrim_door_palace_open"
+
+[[object]]
+id = "loc.dwarf_keldagrim_door_palace_open"
+inherit = "loc.dwarf_keldagrim_door_palace_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dwarf_keldagrim_door_palace"
+
+[[object]]
+id = "loc.dwarf_keldagrim_door_poor"
+inherit = "loc.dwarf_keldagrim_door_poor"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dwarf_keldagrim_door_poor_open"
+
+[[object]]
+id = "loc.dwarf_keldagrim_door_poor_open"
+inherit = "loc.dwarf_keldagrim_door_poor_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dwarf_keldagrim_door_poor"
+
+[[object]]
+id = "loc.roguesden_door_to_pub"
+inherit = "loc.roguesden_door_to_pub"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.roguesden_door_to_pub_open"
+
+[[object]]
+id = "loc.roguesden_door_to_pub_open"
+inherit = "loc.roguesden_door_to_pub_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.roguesden_door_to_pub"
+
+[[object]]
+id = "loc.ahoy_harbour_door"
+inherit = "loc.ahoy_harbour_door"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.ahoy_harbour_door_open"
+
+[[object]]
+id = "loc.ahoy_harbour_door_open"
+inherit = "loc.ahoy_harbour_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.ahoy_harbour_door"
+
+[[object]]
+id = "loc.timberwall_door"
+inherit = "loc.timberwall_door"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.timberwall_door_open"
+
+[[object]]
+id = "loc.timberwall_door_open"
+inherit = "loc.timberwall_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.timberwall_door"
+
+[[object]]
+id = "loc.wallkit_wooden01_default01_door"
+inherit = "loc.wallkit_wooden01_default01_door"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.wallkit_wooden01_default01_door_open"
+
+[[object]]
+id = "loc.wallkit_wooden01_default01_door_open"
+inherit = "loc.wallkit_wooden01_default01_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.wallkit_wooden01_default01_door"
+
+[[object]]
+id = "loc.vc_elfdoor"
+inherit = "loc.vc_elfdoor"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.vc_elfdooropen"
+
+[[object]]
+id = "loc.vc_elfdooropen"
+inherit = "loc.vc_elfdooropen"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.vc_elfdoor"
+
+[[object]]
+id = "loc.fai_falador_poor_door_flip"
+inherit = "loc.fai_falador_poor_door_flip"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_falador_poor_door_open_flip"
+
+[[object]]
+id = "loc.fai_falador_poor_door_open_flip"
+inherit = "loc.fai_falador_poor_door_open_flip"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_falador_poor_door_flip"
+
+[[object]]
+id = "loc.fai_falador_poor_door_closed_m"
+inherit = "loc.fai_falador_poor_door_closed_m"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_falador_poor_door_open_m"
+
+[[object]]
+id = "loc.fai_falador_poor_door_open_m"
+inherit = "loc.fai_falador_poor_door_open_m"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_falador_poor_door_closed_m"
+
+[[object]]
+id = "loc.fai_falador_poor_door_taller"
+inherit = "loc.fai_falador_poor_door_taller"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_falador_poor_door_open_taller"
+
+[[object]]
+id = "loc.fai_falador_poor_door_open_taller"
+inherit = "loc.fai_falador_poor_door_open_taller"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_falador_poor_door_taller"
+
+[[object]]
+id = "loc.fai_varrock_poor_door_flipped"
+inherit = "loc.fai_varrock_poor_door_flipped"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_varrock_poor_door_open_flipped"
+
+[[object]]
+id = "loc.fai_varrock_poor_door_open_flipped"
+inherit = "loc.fai_varrock_poor_door_open_flipped"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_varrock_poor_door_flipped"
+
+[[object]]
+id = "loc.fai_varrock_door_taller"
+inherit = "loc.fai_varrock_door_taller"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_varrock_door_open_taller"
+
+[[object]]
+id = "loc.fai_varrock_door_open_taller"
+inherit = "loc.fai_varrock_door_open_taller"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_varrock_door_taller"
+
+[[object]]
+id = "loc.canafis_door_offset"
+inherit = "loc.canafis_door_offset"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.canafis_door_open_offset"
+
+[[object]]
+id = "loc.canafis_door_open_offset"
+inherit = "loc.canafis_door_open_offset"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.canafis_door_offset"
+
+[[object]]
+id = "loc.kore2_hos_door_closed"
+inherit = "loc.kore2_hos_door_closed"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.kore2_hos_door_open"
+
+[[object]]
+id = "loc.kore2_hos_door_open"
+inherit = "loc.kore2_hos_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.kore2_hos_door_closed"
+
+[[object]]
+id = "loc.prif_house_square_door_closed"
+inherit = "loc.prif_house_square_door_closed"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.prif_house_square_door_open"
+
+[[object]]
+id = "loc.prif_house_square_door_open"
+inherit = "loc.prif_house_square_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.prif_house_square_door_closed"
+
+[[object]]
+id = "loc.darkm_poor_door_closed"
+inherit = "loc.darkm_poor_door_closed"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.darkm_poor_door_open"
+
+[[object]]
+id = "loc.darkm_poor_door_open"
+inherit = "loc.darkm_poor_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.darkm_poor_door_closed"
+
+[[object]]
+id = "loc.darkm_middle_door_closed"
+inherit = "loc.darkm_middle_door_closed"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.darkm_middle_door_open"
+
+[[object]]
+id = "loc.darkm_middle_door_open"
+inherit = "loc.darkm_middle_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.darkm_middle_door_closed"
+
+[[object]]
+id = "loc.darkm_rich_door_closed"
+inherit = "loc.darkm_rich_door_closed"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.darkm_rich_door_open"
+
+[[object]]
+id = "loc.darkm_rich_door_open"
+inherit = "loc.darkm_rich_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.darkm_rich_door_closed"
+
+[[object]]
+id = "loc.dorgesh_nursery_door_closed"
+inherit = "loc.dorgesh_nursery_door_closed"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dorgesh_nursery_door_open"
+
+[[object]]
+id = "loc.dorgesh_nursery_door_open"
+inherit = "loc.dorgesh_nursery_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dorgesh_nursery_door_closed"
+
+[[object]]
+id = "loc.dorgesh_inner_door_closed"
+inherit = "loc.dorgesh_inner_door_closed"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dorgesh_inner_door_open"
+
+[[object]]
+id = "loc.dorgesh_inner_door_open"
+inherit = "loc.dorgesh_inner_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dorgesh_inner_door_closed"
+
+[[object]]
+id = "loc.dorgesh_inner_door_posh_closed"
+inherit = "loc.dorgesh_inner_door_posh_closed"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dorgesh_inner_door_posh_open"
+
+[[object]]
+id = "loc.dorgesh_inner_door_posh_open"
+inherit = "loc.dorgesh_inner_door_posh_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.dorgesh_inner_door_posh_closed"
+
+[[object]]
+id = "loc.poordoor_vis"
+inherit = "loc.poordoor_vis"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.poordoor_open_vis"
+
+[[object]]
+id = "loc.poordoor_open_vis"
+inherit = "loc.poordoor_open_vis"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.poordoor_vis"
+
+[[object]]
+id = "loc.farming_shed_poordoor"
+inherit = "loc.farming_shed_poordoor"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_barbarian_poordooropen"
+
+
+# Curtains stay on the same tile; the generic door handler would rotate and translate them.
+
+[[object]]
+id = "loc.bankdoor_l"
+inherit = "loc.bankdoor_l"
+contentGroup = "content.closed_left_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.openbankdoor_l"
+"param.opensound" = "synth.DOOR_OPEN"
+
+[[object]]
+id = "loc.openbankdoor_l"
+inherit = "loc.openbankdoor_l"
+contentGroup = "content.opened_left_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.bankdoor_l"
+"param.opensound" = "synth.DOOR_OPEN"
+
+[[object]]
+id = "loc.bankdoor_r"
+inherit = "loc.bankdoor_r"
+contentGroup = "content.closed_right_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.openbankdoor_r"
+"param.opensound" = "synth.DOOR_OPEN"
+
+[[object]]
+id = "loc.openbankdoor_r"
+inherit = "loc.openbankdoor_r"
+contentGroup = "content.opened_right_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.bankdoor_r"
+"param.opensound" = "synth.DOOR_OPEN"
+
+
+[[object]]
+id = "loc.goblin_outpost_poordoor"
+inherit = "loc.goblin_outpost_poordoor"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.goblin_outpost_openpoordoor"
+
+[[object]]
+id = "loc.goblin_outpost_openpoordoor"
+inherit = "loc.goblin_outpost_openpoordoor"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.goblin_outpost_poordoor"
+
+# The north-facing hut's west leaf is left, matching DoubleDoorScript's partner lookup.
+[[object]]
+id = "loc.goblin_outpost_poordoor_double_inner"
+inherit = "loc.goblin_outpost_poordoor_double_inner"
+contentGroup = "content.closed_left_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.goblin_outpost_openpoordoor_double_inner"
+"param.opensound" = "synth.NICEDOOR_OPEN"
+
+[[object]]
+id = "loc.goblin_outpost_openpoordoor_double_inner"
+inherit = "loc.goblin_outpost_openpoordoor_double_inner"
+contentGroup = "content.opened_left_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.goblin_outpost_poordoor_double_inner"
+"param.opensound" = "synth.NICEDOOR_CLOSE"
+"param.closesound" = "synth.NICEDOOR_CLOSE"
+
+[[object]]
+id = "loc.goblin_outpost_poordoor_doubler_inner"
+inherit = "loc.goblin_outpost_poordoor_doubler_inner"
+contentGroup = "content.closed_right_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.goblin_outpost_openpoordoor_doubler_inner"
+"param.opensound" = "synth.NICEDOOR_OPEN"
+
+[[object]]
+id = "loc.goblin_outpost_openpoordoor_doubler_inner"
+inherit = "loc.goblin_outpost_openpoordoor_doubler_inner"
+contentGroup = "content.opened_right_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.goblin_outpost_poordoor_doubler_inner"
+"param.opensound" = "synth.NICEDOOR_CLOSE"
+"param.closesound" = "synth.NICEDOOR_CLOSE"
+
+# Black Knights' Fortress leaves open independently despite being placed in pairs.
+[[object]]
+id = "loc.wild_door"
+inherit = "loc.wild_door"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.wild_door_open"
+
+[[object]]
+id = "loc.wild_door_open"
+inherit = "loc.wild_door_open"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.wild_door"
+
+[[object]]
+id = "loc.fai_falador_castledoubledoorl"
+inherit = "loc.fai_falador_castledoubledoorl"
+contentGroup = "content.closed_left_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_falador_opencastledoubledoorl"
+
+[[object]]
+id = "loc.fai_falador_opencastledoubledoorl"
+inherit = "loc.fai_falador_opencastledoubledoorl"
+contentGroup = "content.opened_left_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_falador_castledoubledoorl"
+
+[[object]]
+id = "loc.fai_falador_castledoubledoorr"
+inherit = "loc.fai_falador_castledoubledoorr"
+contentGroup = "content.closed_right_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_falador_opencastledoubledoorr"
+
+[[object]]
+id = "loc.fai_falador_opencastledoubledoorr"
+inherit = "loc.fai_falador_opencastledoubledoorr"
+contentGroup = "content.opened_right_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_falador_castledoubledoorr"
+
+
+[[object]]
+id = "loc.metalgateclosedl"
+inherit = "loc.metalgateclosedl"
+contentGroup = "content.closed_left_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.metalgateopenl"
+"param.opensound" = "synth.GATE_OPEN"
+
+[[object]]
+id = "loc.metalgateclosedr"
+inherit = "loc.metalgateclosedr"
+contentGroup = "content.closed_right_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.metalgateopenr"
+"param.opensound" = "synth.GATE_OPEN"
+
+[[object]]
+id = "loc.metalgateopenl"
+inherit = "loc.metalgateopenl"
+contentGroup = "content.opened_left_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.metalgateclosedl"
+"param.closesound" = "synth.GATE_CLOSE"
+
+[[object]]
+id = "loc.metalgateopenr"
+inherit = "loc.metalgateopenr"
+contentGroup = "content.opened_right_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.metalgateclosedr"
+"param.closesound" = "synth.GATE_CLOSE"
+
+# TODO: Verify the member-gate open forms; these use inferred metal-gate substitutes.
+[[object]]
+id = "loc.membergatel"
+inherit = "loc.membergatel"
+contentGroup = "content.closed_left_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.metalgateopenl"
+"param.opensound" = "synth.GATE_OPEN"
+
+[[object]]
+id = "loc.membergater"
+inherit = "loc.membergater"
+contentGroup = "content.closed_right_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.metalgateopenr"
+"param.opensound" = "synth.GATE_OPEN"
+
+[[object]]
+id = "loc.oddwall_l"
+inherit = "loc.oddwall_l"
+contentGroup = "content.closed_left_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.openoddwall_l"
+
+[[object]]
+id = "loc.oddwall_r"
+inherit = "loc.oddwall_r"
+contentGroup = "content.closed_right_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.openoddwall_r"
+
+[[object]]
+id = "loc.openoddwall_l"
+inherit = "loc.openoddwall_l"
+contentGroup = "content.opened_left_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.oddwall_l"
+
+[[object]]
+id = "loc.openoddwall_r"
+inherit = "loc.openoddwall_r"
+contentGroup = "content.opened_right_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.oddwall_r"
+
+[[object]]
+id = "loc.fai_varrock_cook_guild_door"
+inherit = "loc.fai_varrock_cook_guild_door"
+contentGroup = "content.closed_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_varrock_cook_guild_door_inactive"
+
+[[object]]
+id = "loc.fai_varrock_cook_guild_door_inactive"
+inherit = "loc.fai_varrock_cook_guild_door_inactive"
+contentGroup = "content.opened_single_door"
+
+[object.params]
+"param.next_loc_stage" = "loc.fai_varrock_cook_guild_door"

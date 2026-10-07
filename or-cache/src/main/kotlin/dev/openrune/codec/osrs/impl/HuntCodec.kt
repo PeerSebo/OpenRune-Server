@@ -36,8 +36,13 @@ class HuntCodec(val custom: Map<Int, HuntModeType>? = emptyMap()) :
             add(DefinitionOpcode(6, enumType<NpcMode>(), HuntModeType::findNewMode))
             add(DefinitionOpcode(7, enumType<HuntNobodyNear>(), HuntModeType::nobodyNear))
 
-            add(DefinitionOpcode(8, OpcodeType.USHORT, HuntModeType::checkNotCombat))
-            add(DefinitionOpcode(9, OpcodeType.USHORT, HuntModeType::checkNotCombatSelf))
+            // These ids need unsigned decoding with an unset sentinel; see nullableVarOpcode.
+            add(nullableVarOpcode(8, HuntModeType::checkNotCombat) { d, v -> d.checkNotCombat = v })
+            add(
+                nullableVarOpcode(9, HuntModeType::checkNotCombatSelf) { d, v ->
+                    d.checkNotCombatSelf = v
+                }
+            )
 
             add(DefinitionOpcode(10, OpcodeType.BOOLEAN, HuntModeType::checkAfk))
 
@@ -88,6 +93,33 @@ class HuntCodec(val custom: Map<Int, HuntModeType>? = emptyMap()) :
     }
 
     override fun createDefinition(): HuntModeType = HuntModeType()
+
+    /**
+     * Unsigned 16-bit varp (opcode 8) or varn (opcode 9) id, with 0xFFFF decoded as unset (-1).
+     *
+     * `.data/raw-cache/server/hunt.toml` uses `varp.lastcombat` (65522 / 0xFFF2).
+     * [OpcodeType.SHORT] would sign-extend it to -14; plain [OpcodeType.USHORT] would
+     * misread the encoded default -1 as id 65535. Both ends must round-trip.
+     *
+     * Encoding still uses `writeShort`, so this decoder correction requires no cache repack.
+     */
+    private fun nullableVarOpcode(
+        opcode: Int,
+        getter: (HuntModeType) -> Int,
+        setter: (HuntModeType, Int) -> Unit,
+    ): DefinitionOpcode<HuntModeType> =
+        DefinitionOpcode(
+            opcode,
+            decode = { buf, def, _ ->
+                val raw = buf.readUnsignedShort()
+                setter(def, if (raw == UNSET_VAR) -1 else raw)
+            },
+            encode = { buf, def -> buf.writeShort(getter(def)) },
+        )
+
+    private companion object {
+        private const val UNSET_VAR = 0xFFFF
+    }
 
     fun <T> varConditionOpcode(
         opcode: Int,

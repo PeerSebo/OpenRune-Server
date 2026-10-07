@@ -6,7 +6,7 @@ internal object InternalNpcMaxHits {
         return (effectiveLevel * effectiveBonus + 320) / 640
     }
 
-    // As of writing this, `styleBonus` is always `9` for npcs (equivalent to `Controlled`).
+    // NPCs use Controlled's +9 style bonus.
     fun calculateEffectiveLevel(visibleLevel: Int, styleBonus: Int = 9): Int {
         return visibleLevel + styleBonus
     }

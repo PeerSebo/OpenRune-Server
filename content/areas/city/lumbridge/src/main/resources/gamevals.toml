@@ -1,14 +1,14 @@
 [gamevals.synth]
-raft_climb = 2454
-raft_jump = 2465
-swamp_cave_insects = 1582
+CLIMBING_LOOP = 2454
+JUMP_FURTHER = 2465
+INSECT_SWARM = 1582
 
 [gamevals.timer]
-swamp_cave_insects = 401
+swamp_cave_insects = 2300
 
 [gamevals.varp]
-lumbridge_tutor_claim = 63630
+lumbridge_tutor_claim = 65000
 lumbridge_advisor_state = 63631
 
 [gamevals.varbit]
-count_check_stronghold_teleport = 63630
+count_check_stronghold_teleport = 65000

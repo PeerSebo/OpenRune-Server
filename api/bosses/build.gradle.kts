@@ -6,7 +6,7 @@ dependencies {
     implementation(libs.guice)
     implementation(projects.api.pluginCommons)
     implementation(projects.api.combat.combatCommons)
-    implementation(projects.api.combat.combatFormulas)
+    api(projects.api.combat.combatFormulas)
     implementation(projects.api.npc)
     implementation(projects.api.player)
     implementation(projects.api.random)
@@ -16,4 +16,13 @@ dependencies {
     implementation(projects.engine.map)
     implementation(projects.engine.plugin)
     implementation(projects.engine.coroutine)
+    testImplementation(projects.api.registry)
+    testImplementation(libs.fastutil)
+    testImplementation(libs.rsprot.api)
+}
+
+tasks.test {
+    workingDir(rootProject.projectDir)
+    inputs.dir(rootProject.file(".data/cache/SERVER"))
+    inputs.file(rootProject.file(".data/gamevals-binary/gamevals.dat"))
 }

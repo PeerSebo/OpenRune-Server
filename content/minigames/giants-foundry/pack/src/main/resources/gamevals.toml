@@ -1,0 +1,68 @@
+[gamevals.dbtable]
+giants_foundry_native_catalogue = 63934
+giants_foundry_metals = 63935
+giants_foundry_ore_pack_outcomes = 63936
+giants_foundry_temperature = 63937
+sleeping_giants_repairs = 63941
+sleeping_giants_supplies = 63942
+sleeping_giants_camera = 63948
+sleeping_giants_scenery = 63949
+
+[gamevals.dbrow]
+giants_foundry_native_catalogue = 61774
+giants_foundry_metal_bronze = 61775
+giants_foundry_metal_iron = 61776
+giants_foundry_metal_steel = 61777
+giants_foundry_metal_mithril = 61778
+giants_foundry_metal_adamant = 61779
+giants_foundry_metal_rune = 61780
+giants_foundry_ore_pack_coal = 61781
+giants_foundry_ore_pack_iron = 61782
+giants_foundry_ore_pack_mithril = 61783
+giants_foundry_ore_pack_adamantite = 61784
+giants_foundry_ore_pack_runite = 61785
+giants_foundry_temperature = 61786
+sleeping_giants_repair_hammer = 61804
+sleeping_giants_repair_grind = 61805
+sleeping_giants_repair_polish = 61806
+sleeping_giants_supplies = 61807
+sleeping_giants_camera_1 = 61838
+sleeping_giants_camera_2 = 61839
+sleeping_giants_camera_3 = 61840
+sleeping_giants_camera_4 = 61841
+sleeping_giants_camera_5 = 61842
+sleeping_giants_camera_6 = 61843
+sleeping_giants_scenery_hammer = 61844
+sleeping_giants_scenery_grindstone = 61845
+sleeping_giants_scenery_polishing_wheel = 61846
+sleeping_giants_scenery_exit = 61847
+sleeping_giants_scenery_crucible = 61848
+sleeping_giants_scenery_jig = 61849
+sleeping_giants_scenery_chest = 61850
+sleeping_giants_scenery_lava = 61851
+sleeping_giants_scenery_waterfall = 61852
+sleeping_giants_scenery_storage = 61853
+sleeping_giants_scenery_supplies = 61854
+sleeping_giants_scenery_power = 61855
+
+[gamevals.varp]
+giants_foundry_pour_pending = 63794
+giants_foundry_pour_generation = 63795
+giants_foundry_started_epoch_low = 64040
+giants_foundry_started_epoch_high = 64041
+giants_foundry_best_quality = 64042
+giants_foundry_best_time = 64043
+giants_foundry_completed = 64044
+giants_foundry_next_sweet_cycle = 64045
+giants_foundry_sweet_until = 64046
+giants_foundry_sweet_claimed = 64047
+giants_foundry_work_station = 64048
+giants_foundry_session_generation = 64049
+giants_foundry_sweet_count = 64050
+giants_foundry_last_work_station = 64051
+giants_foundry_last_work_cycle = 64052
+sleeping_giants_tutorial_commission = 64064
+giants_foundry_last_deposit_count = 64065
+
+[gamevals.timer]
+giants_foundry_process = 135

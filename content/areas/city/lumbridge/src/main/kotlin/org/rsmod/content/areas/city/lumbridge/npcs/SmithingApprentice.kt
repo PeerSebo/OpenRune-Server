@@ -20,7 +20,6 @@ class SmithingApprentice : PluginScript() {
     private suspend fun Dialogue.smithingApprenticeDialogue() {
         when {
             player.baseSmithingLvl >= 29 -> highLevelDialogue()
-            // NOTE: Might be lower than 14, did not check from level 10-13.
             player.baseSmithingLvl >= 14 -> intermediateLevelDialogue()
             else -> lowLevelDialogue()
         }

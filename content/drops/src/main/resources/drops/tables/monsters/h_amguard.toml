@@ -214,6 +214,3 @@ denominator = 52
 obj = "obj.trail_clue_easy_simple001"
 count = 1
 clue_scroll_box = true
-
-
-# Main table pool padding uses a nothing roll (F2P drops removed and/or subtable access missing from wiki parse) (6 weight)

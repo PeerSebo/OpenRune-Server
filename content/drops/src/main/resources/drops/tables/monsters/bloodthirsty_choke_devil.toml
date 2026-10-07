@@ -220,6 +220,3 @@ denominator = 32768
 weight = 1
 obj = "obj.dragon_chainbody"
 count = 1
-
-
-# Main table pool padding uses a nothing roll (F2P drops removed and/or subtable access missing from wiki parse) (11 weight)

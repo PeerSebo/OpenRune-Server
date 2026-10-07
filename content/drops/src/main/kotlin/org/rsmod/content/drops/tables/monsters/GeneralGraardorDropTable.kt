@@ -19,7 +19,7 @@ public val generalGraardorDropTable: RSDropTable<Player, DropRollItem> = RSDropT
     npcs = npcs("npc.godwars_bandos_avatar"),
     guaranteed = rsPlayerGuaranteedTable {
         "obj.nex_frozen_key_bandos" count 1 condition { player ->
-            // Drops Need Manual: Frozen key pieces are only dropped during The Frozen Door miniquest.
+            // TODO: Frozen key pieces are only dropped during The Frozen Door miniquest.
              true
         }
     },
@@ -30,7 +30,7 @@ public val generalGraardorDropTable: RSDropTable<Player, DropRollItem> = RSDropT
         8 weight "obj.rune_platebody" count 1
         6 weight "obj.rune_pickaxe" count 1
         32 weight "obj.coins" count (19500..20000) condition { player ->
-            // Drops Need Manual: Coins come from rolls on multiple loot tables, including GDT and RDT.
+            // TODO: Coins come from rolls on multiple loot tables, including GDT and RDT.
              true
         }
         8 weight "obj.cert_unidentified_snapdragon" count 3
@@ -41,7 +41,7 @@ public val generalGraardorDropTable: RSDropTable<Player, DropRollItem> = RSDropT
         8 weight "obj.cert_magic_logs" count 15..20
         8 weight "obj.naturerune" count 65..70
         1 weight "obj.coins" count (20100..20600) condition { player ->
-            // Drops Need Manual: Coins come from rolls on the unique tables, including the hilt table and the godsword shard table.
+            // TODO: Coins come from rolls on the unique tables, including the hilt table and the godsword shard table.
              true
         }
         boosted {

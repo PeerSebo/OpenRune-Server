@@ -3,10 +3,10 @@ package dtx.core
 public abstract class AbstractRollableBuilder<
         T,
         R,
-        RollableType: Rollable<T, R>,
-        HookType: RollableHooks<T, R>,
-        HookBuilder: AbstractRollableHooksBuilder<T, R, HookType, HookBuilder>,
-        RollableBuilder: AbstractRollableBuilder<T, R, RollableType, HookType, HookBuilder, RollableBuilder>
+        RollableType : Rollable<T, R>,
+        HookType : RollableHooks<T, R>,
+        HookBuilder : AbstractRollableHooksBuilder<T, R, HookType, HookBuilder>,
+        RollableBuilder : AbstractRollableBuilder<T, R, RollableType, HookType, HookBuilder, RollableBuilder>
 >(
     createHookBuilder: () -> HookBuilder
 ) {
@@ -68,7 +68,7 @@ public abstract class AbstractRollableBuilder<
     }
 
     public open fun selectResult(result: R): RollableBuilder {
-        return selectResult {_, _ -> RollResult.Single(result) }
+        return selectResult { _, _ -> RollResult.Single(result) }
     }
 
     public open fun result(result: R): RollableBuilder {

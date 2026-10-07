@@ -1,0 +1,11 @@
+[[varp]]
+id = "varp.vengeance_armed"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.vengeance_last_cast"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"

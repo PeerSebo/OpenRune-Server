@@ -138,7 +138,6 @@ coords = "0_44_158_57_54"
 npc = "npc.vc_smokin_joe"
 coords = "0_45_159_50_37"
 
-## Keldagrim Interiors
 
 [[spawn]]
 npc = "npc.blandebir"
@@ -376,7 +375,6 @@ coords = "0_44_159_33_8"
 npc = "npc.vc_the_beast"
 coords = "0_45_159_33_13"
 
-## Keldagrim Palace
 
 [[spawn]]
 npc = "npc.aluft_gnome_inventor"
@@ -446,7 +444,6 @@ coords = "0_44_159_55_22"
 npc = "npc.xbows_sales_dwarf_keldegrim"
 coords = "0_45_159_5_26"
 
-## Keldagrim Rat Pits
 
 [[spawn]]
 npc = "npc.pitrat_keldagrim_agr"
@@ -612,7 +609,6 @@ coords = "0_30_73_17_18"
 npc = "npc.vc_loki"
 coords = "0_30_73_17_29"
 
-## Keldagrim Tunnel
 
 [[spawn]]
 npc = "npc.death_troll_melee1"
@@ -642,7 +638,6 @@ coords = "0_43_158_19_31"
 npc = "npc.death_troll_melee6"
 coords = "0_43_158_36_19"
 
-## Keldagrim bank
 
 [[spawn]]
 npc = "npc.dwarf_city_banker1"
@@ -652,7 +647,6 @@ coords = "0_44_159_20_29"
 npc = "npc.dwarf_city_banker2"
 coords = "0_44_159_22_29"
 
-## Pickaxe-Is-Mine
 
 [[spawn]]
 npc = "npc.dwarf_city_dwarf_man1"
@@ -661,6 +655,3 @@ coords = "0_45_159_44_37"
 [[spawn]]
 npc = "npc.dwarf_city_shop_pickaxe"
 coords = "0_45_159_45_34"
-
-## Pickaxe-Is-Mine End
-

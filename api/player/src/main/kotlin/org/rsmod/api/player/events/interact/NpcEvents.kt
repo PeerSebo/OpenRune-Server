@@ -7,29 +7,29 @@ import org.rsmod.events.EventBus
 import org.rsmod.game.entity.Npc
 
 public sealed class NpcEvents {
-    public sealed class Op(public val npc: Npc) : OpEvent(npc.id.toLong())
+    public sealed class Op(public val npc: Npc, typeId: Int) : OpEvent(typeId.toLong())
 
-    public class Op1(npc: Npc) : Op(npc)
+    public class Op1(npc: Npc, typeId: Int = npc.id) : Op(npc, typeId)
 
-    public class Op2(npc: Npc) : Op(npc)
+    public class Op2(npc: Npc, typeId: Int = npc.id) : Op(npc, typeId)
 
-    public class Op3(npc: Npc) : Op(npc)
+    public class Op3(npc: Npc, typeId: Int = npc.id) : Op(npc, typeId)
 
-    public class Op4(npc: Npc) : Op(npc)
+    public class Op4(npc: Npc, typeId: Int = npc.id) : Op(npc, typeId)
 
-    public class Op5(npc: Npc) : Op(npc)
+    public class Op5(npc: Npc, typeId: Int = npc.id) : Op(npc, typeId)
 
-    public sealed class Ap(public val npc: Npc) : ApEvent(npc.id.toLong())
+    public sealed class Ap(public val npc: Npc, typeId: Int) : ApEvent(typeId.toLong())
 
-    public class Ap1(npc: Npc) : Ap(npc)
+    public class Ap1(npc: Npc, typeId: Int = npc.id) : Ap(npc, typeId)
 
-    public class Ap2(npc: Npc) : Ap(npc)
+    public class Ap2(npc: Npc, typeId: Int = npc.id) : Ap(npc, typeId)
 
-    public class Ap3(npc: Npc) : Ap(npc)
+    public class Ap3(npc: Npc, typeId: Int = npc.id) : Ap(npc, typeId)
 
-    public class Ap4(npc: Npc) : Ap(npc)
+    public class Ap4(npc: Npc, typeId: Int = npc.id) : Ap(npc, typeId)
 
-    public class Ap5(npc: Npc) : Ap(npc)
+    public class Ap5(npc: Npc, typeId: Int = npc.id) : Ap(npc, typeId)
 }
 
 public sealed class NpcContentEvents {
@@ -85,17 +85,29 @@ public sealed class NpcDefaultEvents {
 }
 
 public sealed class NpcUnimplementedEvents {
-    public sealed class Op(public val npc: Npc) : OpEvent(npc.id.toLong())
+    public sealed class Op(public val npc: Npc, typeId: Int) : OpEvent(typeId.toLong())
 
-    public class Op1(npc: Npc) : Op(npc)
+    public class Op1(npc: Npc, typeId: Int = npc.id) : Op(npc, typeId)
 
-    public class Op2(npc: Npc) : Op(npc)
+    public class Op2(npc: Npc, typeId: Int = npc.id) : Op(npc, typeId)
 
-    public class Op3(npc: Npc) : Op(npc)
+    public class Op3(npc: Npc, typeId: Int = npc.id) : Op(npc, typeId)
 
-    public class Op4(npc: Npc) : Op(npc)
+    public class Op4(npc: Npc, typeId: Int = npc.id) : Op(npc, typeId)
 
-    public class Op5(npc: Npc) : Op(npc)
+    public class Op5(npc: Npc, typeId: Int = npc.id) : Op(npc, typeId)
+
+    public sealed class Ap(public val npc: Npc, typeId: Int) : ApEvent(typeId.toLong())
+
+    public class Ap1(npc: Npc, typeId: Int = npc.id) : Ap(npc, typeId)
+
+    public class Ap2(npc: Npc, typeId: Int = npc.id) : Ap(npc, typeId)
+
+    public class Ap3(npc: Npc, typeId: Int = npc.id) : Ap(npc, typeId)
+
+    public class Ap4(npc: Npc, typeId: Int = npc.id) : Ap(npc, typeId)
+
+    public class Ap5(npc: Npc, typeId: Int = npc.id) : Ap(npc, typeId)
 }
 
 public class NpcTEvents {

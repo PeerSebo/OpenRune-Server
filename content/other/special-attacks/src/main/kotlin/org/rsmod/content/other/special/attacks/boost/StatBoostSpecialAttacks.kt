@@ -50,7 +50,7 @@ class StatBoostSpecialAttacks @Inject constructor(private val worldRepo: WorldRe
         say("Chop chop!")
         anim("seq.dragon_smallaxe_anim")
         spotanim(spot, height = 96, slot = constants.spotanim_slot_combat)
-        soundArea(worldRepo, coords, "synth.clobber", radius = 1)
+        soundArea(worldRepo, coords, "synth.CLOBBER", radius = 1)
         return true
     }
 
@@ -62,7 +62,6 @@ class StatBoostSpecialAttacks @Inject constructor(private val worldRepo: WorldRe
     }
 
     private fun fishstabberDragonHarpoonOr(access: ProtectedAccess): Boolean {
-        // Uses the same seq as Infernal harpoon (or).
         return access.fishstabber(
             "seq.fishstabber_trailblazer",
             "spotanim.sp_attackglow_red",
@@ -95,7 +94,7 @@ class StatBoostSpecialAttacks @Inject constructor(private val worldRepo: WorldRe
         say("Here fishy fishies!")
         anim(seq)
         spotanim(spot)
-        soundArea(worldRepo, coords, "synth.rampage", radius = 1)
+        soundArea(worldRepo, coords, "synth.RAMPAGE", radius = 1)
         return true
     }
 
@@ -120,7 +119,6 @@ class StatBoostSpecialAttacks @Inject constructor(private val worldRepo: WorldRe
     }
 
     private fun rockKnockerInfernalPickaxeOr(access: ProtectedAccess): Boolean {
-        // Uses same seq as Dragon pickaxe (or).
         return access.rockKnocker("seq.rockknocker_trailblazer")
     }
 
@@ -136,7 +134,7 @@ class StatBoostSpecialAttacks @Inject constructor(private val worldRepo: WorldRe
         statBoost("stat.mining", constant = 3, percent = 0)
         say("Smashing!")
         anim(seq)
-        soundArea(worldRepo, coords, "synth.found_gem", radius = 1)
+        soundArea(worldRepo, coords, "synth.FOUND_GEM", radius = 1)
         return true
     }
 }

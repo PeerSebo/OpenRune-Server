@@ -3,8 +3,6 @@ package org.rsmod.api.combat
 import dev.openrune.rscm.RSCM
 import dev.openrune.rscm.RSCMType
 import jakarta.inject.Inject
-import org.rsmod.api.death.NpcAttackValidateHook
-import org.rsmod.api.death.NpcAttackValidateResult
 import org.rsmod.api.combat.commons.CombatAttack
 import org.rsmod.api.combat.manager.PlayerAttackManager
 import org.rsmod.api.combat.manager.RangedAmmoManager
@@ -16,7 +14,10 @@ import org.rsmod.api.combat.player.specialAttackType
 import org.rsmod.api.combat.weapon.WeaponSpeeds
 import org.rsmod.api.config.constants
 import org.rsmod.api.config.refs.params
+import org.rsmod.api.death.NpcAttackValidateHook
+import org.rsmod.api.death.NpcAttackValidateResult
 import org.rsmod.api.npc.isValidTarget
+import org.rsmod.api.player.interact.NpcInteractions
 import org.rsmod.api.player.lefthand
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.player.quiver
@@ -44,6 +45,7 @@ constructor(
     private val ammunition: RangedAmmoManager,
     private val spellsReg: SpellAttackRegistry,
     private val attackValidateHooks: Set<NpcAttackValidateHook>,
+    private val npcInteractions: NpcInteractions,
 ) {
     suspend fun attack(access: ProtectedAccess, target: Npc, attack: CombatAttack.PlayerAttack) {
         when (attack) {
@@ -64,13 +66,10 @@ constructor(
             return
         }
 
-        // Set the next attack clock before executing any special attack, ensuring all attacks
-        // default to the weapon's standard attack delay.
         val attackRate = speeds.actual(player)
         manager.setNextAttackDelay(player, attackRate)
 
-        // Important: Special attack handlers are responsible for explicitly calling `opnpc2` (or a
-        // helper function that does so) to re-engage in combat after performing the special attack.
+        // Special handlers must resume combat explicitly via `opnpc2` (or a helper).
         if (specialAttackType == SpecialAttackType.Weapon) {
             specialAttackType = SpecialAttackType.None
             val activatedSpec = activateMeleeSpecial(npc, attack, specialsReg, specialEnergy)
@@ -87,8 +86,7 @@ constructor(
             }
         }
 
-        // Important: Weapon attack handlers are responsible for explicitly calling `opnpc2` (or a
-        // helper function that does so) to re-engage in combat after performing their attack.
+        // Weapon handlers must resume combat explicitly via `opnpc2` (or a helper).
         val specializedWeapon = weaponsReg.getMelee(attack.weapon)
         if (specializedWeapon != null) {
             val attackHandled = specializedWeapon.attack(this, npc, attack)
@@ -114,13 +112,10 @@ constructor(
             return
         }
 
-        // Set the next attack clock before executing any special attack, ensuring all attacks
-        // default to the weapon's standard attack delay.
         val attackRate = speeds.actual(player)
         manager.setNextAttackDelay(player, attackRate)
 
-        // Important: Special attack handlers are responsible for explicitly calling `opnpc2` (or a
-        // helper function that does so) to re-engage in combat after performing the special attack.
+        // Special handlers must resume combat explicitly via `opnpc2` (or a helper).
         if (specialAttackType == SpecialAttackType.Weapon) {
             specialAttackType = SpecialAttackType.None
             val activatedSpec = activateRangedSpecial(npc, attack, specialsReg, specialEnergy)
@@ -139,8 +134,7 @@ constructor(
 
         val righthandType = getInvObj(attack.weapon)
 
-        // Important: Weapon attack handlers are responsible for explicitly calling `opnpc2` (or a
-        // helper function that does so) to re-engage in combat after performing their attack.
+        // Weapon handlers must resume combat explicitly via `opnpc2` (or a helper).
         val specializedWeapon = weaponsReg.getRanged(attack.weapon)
         if (specializedWeapon != null) {
             val attackHandled = specializedWeapon.attack(this, npc, attack)
@@ -187,10 +181,8 @@ constructor(
             return
         }
 
-        val projanimType = RSCM.getReverseMapping(RSCMType.PROJANIM,projectileID)
+        val projanimType = RSCM.getReverseMapping(RSCMType.PROJANIM, projectileID)
 
-        // All valid ranged weapons require an `attack_anim_stance1` seq type param to be used in
-        // combat.
         val playedAnim = manager.playWeaponFx(player, attack)
         if (!playedAnim) {
             manager.stopCombat(player)
@@ -202,8 +194,10 @@ constructor(
         // has no `proj_launch` param, a "null" (-1) spotanim will still be sent in the same slot
         // and height as usual.
         val launchSpotanim = weaponType.paramOrNull(params.proj_launch)?.id ?: NULL_SPOTANIM_ID
-    
-        val launchSpotanimName = launchSpotanim.takeUnless { it == NULL_SPOTANIM_ID } ?.let { RSCM.getReverseMapping(RSCMType.SPOTANIM, it) }
+        val launchSpotanimName =
+            launchSpotanim.takeUnless { it == NULL_SPOTANIM_ID }?.let {
+                RSCM.getReverseMapping(RSCMType.SPOTANIM, it)
+            }
         spotanim(launchSpotanimName, height = 96, slot = constants.spotanim_slot_combat)
 
         val projanim = manager.spawnProjectile(player, npc, travelSpotanim, projanimType)
@@ -242,13 +236,12 @@ constructor(
         val attackRate = MAGIC_SPELL_ATTACK_RATE
         manager.setNextAttackDelay(player, attackRate)
 
-        val spell = spellsReg[RSCM.getReverseMapping(RSCMType.OBJ,attack.spell.obj.id)]
+        val spell = spellsReg[RSCM.getReverseMapping(RSCMType.OBJ, attack.spell.obj.id)]
         if (spell != null) {
             spell.attack(this, npc, attack)
             return
         }
 
-        // All magic spell attacks must be registered in `SpellAttackRegistry`.
         manager.stopCombat(player)
         mes("You attempt to cast the spell, but nothing happens.")
     }
@@ -263,13 +256,10 @@ constructor(
             return
         }
 
-        // Set the next attack clock before executing any special attack, ensuring all attacks
-        // default to the weapon's standard attack delay.
         val attackRate = MAGIC_STAFF_ATTACK_RATE
         manager.setNextAttackDelay(player, attackRate)
 
-        // Important: Special attack handlers are responsible for explicitly calling `opnpc2` (or a
-        // helper function that does so) to re-engage in combat after performing the special attack.
+        // Special handlers must resume combat explicitly via `opnpc2` (or a helper).
         if (specialAttackType == SpecialAttackType.Weapon) {
             specialAttackType = SpecialAttackType.None
             val activatedSpec = activateMagicSpecial(npc, attack, specialsReg, specialEnergy)
@@ -286,8 +276,7 @@ constructor(
             }
         }
 
-        // Important: Weapon attack handlers are responsible for explicitly calling `opnpc2` (or a
-        // helper function that does so) to re-engage in combat after performing their attack.
+        // Weapon handlers must resume combat explicitly via `opnpc2` (or a helper).
         val specializedWeapon = weaponsReg.getMagic(attack.weapon)
         if (specializedWeapon != null) {
             val attackHandled = specializedWeapon.attack(this, npc, attack)
@@ -296,9 +285,6 @@ constructor(
             }
         }
 
-        // Since most (if not all) powered staves require specialized attack handling logic, they
-        // are expected to be registered as separate weapons in the `WeaponRegistry`. This ensures
-        // their unique behavior is handled explicitly rather than relying on fallback logic.
         manager.stopCombat(player)
         mes("Your staff fails to respond.")
     }
@@ -319,7 +305,11 @@ constructor(
             return false
         }
 
-        val hasAttackOp = npc.visType.hasOp(InteractionOp.Op2.slot)
+        // Multinpc parents (e.g. varp/varbit-keyed npcs such as Elvarg) often carry no ops
+        // themselves; the client resolves and displays the leaf's ops. Mirror that here by
+        // checking the player-relative resolved type - `hasOp` falls back to `npc.visType`
+        // when the npc is not a multinpc (or its leaf is unresolvable).
+        val hasAttackOp = npcInteractions.hasOp(npc, player.vars, InteractionOp.Op2)
         if (!hasAttackOp) {
             mes("You can't attack this npc.")
             return false

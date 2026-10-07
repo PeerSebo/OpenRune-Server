@@ -10,13 +10,11 @@ coords = "0_44_53_54_46"
 npc = "npc.whitewolf_sentry"
 coords = "0_44_53_56_53"
 
-## Catherby
 
 [[spawn]]
 npc = "npc.farming_tools_leprechaun"
 coords = "0_44_53_47_40"
 
-## Ice Mountain
 
 [[spawn]]
 npc = "npc.oracle"
@@ -62,7 +60,6 @@ coords = "0_46_54_61_45"
 npc = "npc.slayer_icefiend_1"
 coords = "0_46_54_62_12"
 
-## White Wolf Mountain Environment
 
 [[spawn]]
 npc = "npc.grim_grimgnash"
@@ -171,6 +168,3 @@ coords = "0_44_54_50_42"
 [[spawn]]
 npc = "npc.wolfpack_leader_whiter"
 coords = "0_44_54_24_41"
-
-## White Wolf Mountain Environment End
-

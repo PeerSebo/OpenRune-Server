@@ -1,9 +1,9 @@
 package dtx.example.rs_tables
 
-import dtx.rs.*
 import dtx.core.RollResult
 import dtx.core.singleRollable
 import dtx.example.*
+import dtx.rs.*
 
 val LongAndCurvedBoneTable = rsWeightedTable<Player, Item> {
     name("Long and Curved Bone table")
@@ -82,7 +82,6 @@ fun clueDrop(clueTier: ClueTier) = singleRollable<Player, Item> {
     }
 }
 
-
 enum class ChampionType {
     Imp, Goblin, Skeleton, Zombie,
     Giant, Hobgoblin, Ghoul, EarthWarrior,
@@ -105,7 +104,6 @@ fun championScroll(type: ChampionType) = singleRollable<Player, Item> {
         target.questPoints > 32
                 && target.isOnMemberWorld()
                 && !target.hasChampionScrollComplete(type)
-
     }
 
     onRollCompleted { target, args, result ->

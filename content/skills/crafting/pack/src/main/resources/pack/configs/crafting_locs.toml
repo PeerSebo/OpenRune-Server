@@ -19,16 +19,6 @@ inherit = "loc.viking_sandpit_noop"
 contentGroup = "content.sandpit"
 
 [[object]]
-id = "loc.sarim_spiralstairs"
-inherit = "loc.sarim_spiralstairs"
-contentGroup = "content.spiralstaircase_up"
-
-[[object]]
-id = "loc.sarim_spiralstairstop"
-inherit = "loc.sarim_spiralstairstop"
-contentGroup = "content.spiralstaircase_down"
-
-[[object]]
 id = "loc.viking_spinningwheel"
 inherit = "loc.viking_spinningwheel"
 contentGroup = "content.crafting_spinning_wheel"

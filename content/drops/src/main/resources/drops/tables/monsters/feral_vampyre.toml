@@ -84,6 +84,3 @@ count = 1
 clue_scroll_box = true
 require_ring_of_wealth = true
 require_wilderness = true
-
-
-# Main table pool padding uses a nothing roll (F2P drops removed and/or subtable access missing from wiki parse) (19 weight)

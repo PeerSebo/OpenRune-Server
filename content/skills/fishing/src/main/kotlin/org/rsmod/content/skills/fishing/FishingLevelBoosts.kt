@@ -9,7 +9,10 @@ class FishingLevelBoosts @Inject constructor(private val areas: AreaChecker) :
     InvisibleLevelMod("stat.fishing") {
     override fun Player.calculateBoost(): Int {
         var boost = 0
-        if (areas.inArea("area.fishing_guild", coords)) {
+        if (
+            areas.inArea("area.fishing_guild", coords) &&
+                !areas.inArea("area.fishing_guild_minnow_platform", coords)
+        ) {
             boost += 7
         }
         return boost

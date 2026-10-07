@@ -8,7 +8,7 @@ rimmington_makeover_mage = 64862
 rimmington_makeover_pronoun = 64863
 
 [gamevals.synth]
-wardrobe_open = 96
-wardrobe_close = 95
-iron_door_close = 68
-phials_exchange = 2417
+WARDROBE_OPEN = 96
+WARDROBE_CLOSE = 95
+GRATE_CLOSE = 68
+TURN_BOOK_PAGE = 2417

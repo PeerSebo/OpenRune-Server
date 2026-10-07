@@ -1,0 +1,5 @@
+[[varp]]
+id = "varp.player_run_restore_blocked_until"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"

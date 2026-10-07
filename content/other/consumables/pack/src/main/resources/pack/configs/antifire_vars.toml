@@ -1,0 +1,35 @@
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_antifire_expires_at"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_antifire_remaining"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_antifire_migrated"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_super_antifire_expires_at"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_super_antifire_remaining"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_super_antifire_migrated"
+scope = "Perm"
+transmit = "Never"

@@ -1,6 +1,8 @@
 package org.rsmod.server.app
 
+import com.github.michaelbull.logging.InlineLogger
 import jakarta.inject.Inject
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicBoolean
 import org.rsmod.api.db.jdbc.EmbeddedSameInstancePostgres
 import org.rsmod.api.net.central.OpenRuneCentralWorldLink
@@ -16,34 +18,61 @@ class GameBootstrap @Inject constructor(
     private val openRuneCentral: OpenRuneCentralWorldLink,
 ) {
     private val serviceManager = ServiceManager.create(services)
+    private val stopRequestWatcher = StopRequestFileWatcher.create(
+        System.getProperty(StopRequestFileWatcher.PROPERTY), serviceManager::shutdown,
+    )
+    private val logger = InlineLogger()
+    private val embeddedShutdownLock = Any()
+    private var embeddedStopped = false
+    private val startupComplete = CountDownLatch(1)
+
+    @Volatile private var startupReady = false
+    private val watchdogStarted = AtomicBoolean(false)
+    private val shutdownCompleted = AtomicBoolean(false)
 
     suspend fun startupUntilReady(): Thread {
-        EmbeddedSameInstancePostgres.ensureStarted(serverConfig)
+        // Install our single lifecycle owner before PostgreSQL starts, including Ctrl+C during
+        // startup. The hook waits for startup's own cleanup or successful initialization.
+        val shutdownHook = Thread(::shutdown, "ShutdownHook")
+        Runtime.getRuntime().addShutdownHook(shutdownHook)
+        // Central must remain available for game logouts. Ktor's independent JVM hook otherwise
+        // stops its listener and connection pool concurrently with the game shutdown hook.
+        System.setProperty("io.ktor.server.engine.ShutdownHook", "false")
         try {
+            EmbeddedSameInstancePostgres.ensureStarted(serverConfig)
             centralEmbedded.startIfConfigured()
             openRuneCentral.startInboundWatch()
             val startupResult = serviceManager.awaitStartup()
             if (startupResult is ServiceManager.StartResult.Error) {
                 throw startupResult.throwable
             }
-            val shutdownHook = Thread(::shutdown, "ShutdownHook")
-            Runtime.getRuntime().addShutdownHook(shutdownHook)
+            startupReady = true
             return shutdownHook
         } catch (t: Throwable) {
-            runCatching { centralEmbedded.stopIfRunning() }
-            EmbeddedSameInstancePostgres.stop()
+            try {
+                stopEmbeddedServices()
+            } catch (cleanupFailure: Throwable) {
+                t.addSuppressed(cleanupFailure)
+            }
             throw t
+        } finally {
+            startupComplete.countDown()
         }
     }
 
     fun awaitShutdown(shutdownHook: Thread) {
+        // The main entry point calls this only after plugin loading and the ready message. A stop
+        // requested during startup remains on disk and is handled after initialization completes.
+        stopRequestWatcher?.start()
+        serviceManager.awaitShutdownRequest()
+        startShutdownWatchdog()
         try {
             serviceManager.awaitShutdownOrThrow()
         } finally {
+            stopEmbeddedServices()
             try {
                 Runtime.getRuntime().removeShutdownHook(shutdownHook)
             } catch (_: IllegalStateException) {
-                // Virtual machine is already in the process of shutting down - can safely noop.
             }
         }
     }
@@ -54,17 +83,33 @@ class GameBootstrap @Inject constructor(
     }
 
     private fun shutdown() {
-        val completed = AtomicBoolean(false)
+        startShutdownWatchdog()
+        try {
+            startupComplete.await()
+            if (startupReady) {
+                serviceManager.shutdown()
+                serviceManager.awaitShutdownOrThrow(
+                    signalTimeoutSecs = SIGNAL_TIMEOUT_SECS,
+                    cleanupTimeoutSecs = CLEANUP_TIMEOUT_SECS,
+                    shutdownTimeoutSecs = SHUTDOWN_TIMEOUT_SECS,
+                )
+            }
+        } finally {
+            stopEmbeddedServices()
+        }
+    }
+
+    private fun startShutdownWatchdog() {
+        if (!watchdogStarted.compareAndSet(false, true)) return
         Thread(
                 {
                     try {
                         Thread.sleep(FORCE_EXIT_AFTER_MS)
-                        if (!completed.get()) {
+                        if (!shutdownCompleted.get()) {
                             EmbeddedSameInstancePostgres.forceStopNow()
                             Runtime.getRuntime().halt(1)
                         }
                     } catch (_: InterruptedException) {
-                        // Shutdown finished before the watchdog fired.
                     }
                 },
                 "shutdown-watchdog",
@@ -73,26 +118,37 @@ class GameBootstrap @Inject constructor(
                 isDaemon = true
                 start()
             }
-        try {
-            serviceManager.shutdown()
-            serviceManager.awaitShutdownOrThrow(
-                signalTimeoutSecs = HOOK_TIMEOUT_SECS,
-                cleanupTimeoutSecs = HOOK_TIMEOUT_SECS,
-                shutdownTimeoutSecs = HOOK_TIMEOUT_SECS,
-            )
-            runCatching { centralEmbedded.stopIfRunning() }
-            EmbeddedSameInstancePostgres.stop()
-        } catch (_: Throwable) {
-            EmbeddedSameInstancePostgres.forceStopNow()
-        } finally {
-            completed.set(true)
+    }
+
+    private fun stopEmbeddedServices() {
+        stopRequestWatcher?.close()
+        // The main waiter and JVM hook may finish together. Both must wait for Central's listener
+        // and pool to close before the owned PostgreSQL process is stopped.
+        synchronized(embeddedShutdownLock) {
+            if (embeddedStopped) return
+            var failure: Throwable? = null
+            try {
+                centralEmbedded.stopIfRunning()
+            } catch (cause: Throwable) {
+                logger.error(cause) { "Embedded Central failed to stop cleanly." }
+                failure = cause
+            } finally {
+                try {
+                    EmbeddedSameInstancePostgres.stop()
+                } catch (cause: Throwable) {
+                    failure?.addSuppressed(cause) ?: run { failure = cause }
+                }
+                embeddedStopped = true
+                shutdownCompleted.set(true)
+            }
+            failure?.let { throw it }
         }
     }
 
     private fun ServiceManager.awaitShutdownOrThrow(
-        signalTimeoutSecs: Int = 30,
-        cleanupTimeoutSecs: Int = 30,
-        shutdownTimeoutSecs: Int = 30,
+        signalTimeoutSecs: Int = SIGNAL_TIMEOUT_SECS,
+        cleanupTimeoutSecs: Int = CLEANUP_TIMEOUT_SECS,
+        shutdownTimeoutSecs: Int = SHUTDOWN_TIMEOUT_SECS,
     ) {
         val result =
             awaitShutdown(
@@ -106,7 +162,11 @@ class GameBootstrap @Inject constructor(
     }
 
     private companion object {
-        private const val HOOK_TIMEOUT_SECS = 5
-        private const val FORCE_EXIT_AFTER_MS = 20_000L
+        // The DB synchronizer allows 120 seconds for pending work; account saves allow a 30-second
+        // drain plus a 30-second emergency callback phase. The watchdog must outlive both.
+        private const val SIGNAL_TIMEOUT_SECS = 125
+        private const val CLEANUP_TIMEOUT_SECS = 30
+        private const val SHUTDOWN_TIMEOUT_SECS = 65
+        private const val FORCE_EXIT_AFTER_MS = 240_000L
     }
 }

@@ -11,16 +11,18 @@ import org.rsmod.api.player.vars.boolVarBit
 import org.rsmod.api.player.vars.intVarBit
 import org.rsmod.api.player.vars.intVarp
 import org.rsmod.api.repo.npc.NpcRepository
-import org.rsmod.content.other.pets.cats.Cats
 import org.rsmod.content.other.pets.dogs.Dogs
 import org.rsmod.game.MapClock
 import org.rsmod.game.entity.Npc
 import org.rsmod.game.entity.NpcList
 import org.rsmod.game.entity.Player
 import org.rsmod.game.entity.npc.NpcUid
+import org.rsmod.game.map.collision.isZoneValid
 import org.rsmod.game.movement.MoveSpeed
 import org.rsmod.map.CoordGrid
+import org.rsmod.routefinder.StepValidator
 import org.rsmod.routefinder.collision.CollisionFlagMap
+import org.rsmod.routefinder.collision.CollisionStrategy
 import org.rsmod.routefinder.flag.CollisionFlag
 
 @Singleton
@@ -32,16 +34,18 @@ constructor(
     private val mapClock: MapClock,
     private val collision: CollisionFlagMap,
 ) {
-    fun hasFollower(player: Player): Boolean = player.followerObj != 0
+    private val steps = StepValidator(collision)
+
+    fun hasFollower(player: Player): Boolean =
+        player.followerObj != 0 || player.vars["varp.pets_cat_following_obj"] != 0 ||
+            player.vars["varp.rocky_following_obj"] != 0
 
     fun followerForm(player: Player): PetForm? =
-        Pets.formForObj(player.followerObj)
-            ?: Cats.formForObj(player.followerObj)
-            ?: Dogs.formForObj(player.followerObj)
+        Pets.formForObj(player.followerObj) ?: Dogs.formForObj(player.followerObj)
 
     fun follower(player: Player): Npc? {
         val packed = player.followerNpc
-        if (packed == NO_FOLLOWER) {
+        if (packed == NO_FOLLOWER || packed == NpcUid.NULL.packed) {
             return null
         }
         val npc = NpcUid(packed).resolve(npcList)
@@ -111,8 +115,8 @@ constructor(
         despawn(player)
     }
 
-    fun onPostTick(player: Player) {
-        if (player.loggingOut || player.followerObj == 0) {
+    fun tick(player: Player) {
+        if (player.loggingOut) {
             return
         }
         val npc = follower(player)
@@ -120,6 +124,7 @@ constructor(
             maintain(player, npc)
             return
         }
+        if (player.followerObj == 0) return
         val form = followerForm(player)
         if (form == null) {
             player.followerObj = 0
@@ -135,17 +140,15 @@ constructor(
 
     fun clearBusy(player: Player) {
         player.followerBusy = false
+        player.followerStuck = 0
     }
 
-    /**
-     * Pets are driven here rather than through [NpcMode.PlayerFollow]. That mode paths a pet the way
-     * a monster approaches its target, which lets it cut corners, shuffle in place once adjacent,
-     * and teleport onto the owner's own tile. The mode is pinned to [NpcMode.None] every cycle
-     * because anything that resets it would otherwise fall back to the npc type's default of
-     * wandering home to its spawn tile.
-     */
     private fun maintain(player: Player, npc: Npc) {
         npc.mode = NpcMode.None
+        if (player.vars["varp.pets_cat_chasing"] != 0) {
+            player.followerStuck = 0
+            return
+        }
         if (player.followerBusy) {
             // Leave the face target alone: the script that parked the pet owns what it looks at.
             releaseWhenRouteEnds(player, npc)
@@ -157,15 +160,11 @@ constructor(
     }
 
     private fun releaseWhenRouteEnds(player: Player, npc: Npc) {
-        if (npc.routeDestination.isEmpty() && !npc.hasMovedThisCycle) {
+        if (npc.routeRequest == null && npc.routeDestination.isEmpty() && !npc.hasMovedThisCycle) {
             player.followerBusy = false
         }
     }
 
-    /**
-     * Trails the owner by heading for the tile they just vacated, which is what produces the natural
-     * following look, instead of repeatedly re-pathing onto whichever tile happens to be adjacent.
-     */
     private fun follow(player: Player, npc: Npc) {
         val sameLevel = npc.coords.level == player.coords.level
         val distance = if (sameLevel) npc.coords.chebyshevDistance(player.coords) else Int.MAX_VALUE
@@ -175,12 +174,23 @@ constructor(
         }
         val settled = distance == 1 && !player.hasMovedThisCycle
         if (settled) {
+            npc.abortRoute()
             return
         }
-        val trail = player.previousCoords
-        val onOwnerTile = trail == player.coords || trail.level != player.coords.level
+        val trail =
+            if (player.hasMovedThisCycle && player.lastProcessedCoord != CoordGrid.NULL) {
+                player.lastProcessedCoord
+            } else {
+                player.previousCoords
+            }
+        val onOwnerTile = trail == player.coords || trail.level != player.coords.level ||
+            trail.chebyshevDistance(player.coords) > 2
         val destination = if (onOwnerTile) besideTile(player) else trail
-        if (destination == npc.coords || npc.routeDestination.lastOrNull() == destination) {
+        if (destination == npc.coords) {
+            npc.abortRoute()
+            return
+        }
+        if (npc.routeDestination.lastOrNull() == destination) {
             return
         }
         npc.walk(destination)
@@ -193,12 +203,14 @@ constructor(
         player.followerStuck = 0
     }
 
-    /** Nearest free tile next to [player], falling back to their own tile when boxed in. */
     private fun besideTile(player: Player): CoordGrid {
         val centre = player.coords
         for ((x, z) in ADJACENT_OFFSETS) {
             val candidate = centre.translate(x, z)
-            if (collision[candidate.x, candidate.z, candidate.level] and BLOCKED_FLAGS == 0) {
+            if (collision.isZoneValid(candidate) &&
+                collision[candidate.x, candidate.z, candidate.level] and BLOCKED_FLAGS == 0 &&
+                steps.canTravel(centre.level, centre.x, centre.z, x, z,
+                    collision = CollisionStrategy.Normal)) {
                 return candidate
             }
         }
@@ -216,9 +228,7 @@ constructor(
             player.followerStuck = stuck
             return
         }
-        player.followerStuck = 0
-        npc.teleport(collision, besideTile(player))
-        npc.facePlayer(player)
+        warpBeside(player, npc)
     }
 
     private fun despawn(player: Player) {

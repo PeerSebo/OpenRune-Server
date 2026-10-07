@@ -119,6 +119,4 @@ denominator = 320
 obj = "obj.warped_sceptre_uncharged"
 count = 1
 
-
 # Unknown wiki drop rate: Clue scroll (hard) [tertiary/Tertiary/Rare]
-# Main table pool padding uses a nothing roll (F2P drops removed and/or subtable access missing from wiki parse) (3 weight)

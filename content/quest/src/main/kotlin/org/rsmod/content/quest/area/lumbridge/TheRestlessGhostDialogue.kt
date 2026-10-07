@@ -371,6 +371,7 @@ internal class TheRestlessGhostDialogue(private val quest: Quest) {
         chatPlayer(neutral, "Okay, I'll try to be.")
     }
 
+    // Recheck inventory after dialogue suspension before granting the amulet.
     private suspend fun Dialogue.giveAmulet(announcement: String) {
         if (access.invAdd(access.inv, Amulet, 1).failure) {
             access.mes(constants.dm_take_invspace)

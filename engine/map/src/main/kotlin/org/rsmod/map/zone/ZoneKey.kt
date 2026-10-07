@@ -3,34 +3,8 @@ package org.rsmod.map.zone
 import org.rsmod.map.CoordGrid
 
 /**
- * [ZoneKey] serves as a unique identifier for individual zones within the game world. A zone
- * represents a specific 8x8x1 area within the map, making it smaller and more granular compared to
- * a map square.
- *
- * This class uses a compact integer representation [packed] to encode the [x], [z], and [level]
- * coordinates of a zone. Unlike [org.rsmod.map.square.MapSquareKey], which identifies an entire map
- * square across all levels (0-3), [ZoneKey] includes the specific level in its identification,
- * allowing more precise localization.
- *
- * ### Example Usage:
- * Given absolute coordinates (3220, 3205, 2) within the game world, you can convert them to a
- * [ZoneKey] by calculating their corresponding zone coordinates and level:
- * ```
- * - Absolute Coordinates: 3220, 3205, 2
- * - ZoneKey:               402,  400, 2
- * ```
- *
- * The [ZoneKey] allows for efficient indexing and retrieval of zones, supporting operations that
- * need to account for both the position on the map and the level of elevation within the game.
- *
- * @property packed The packed integer representation of the zone's coordinates and level.
- * @property x The X coordinate of the zone, ranging from 0 to [CoordGrid.MAP_WIDTH] /
- *   [ZoneGrid.LENGTH].
- * @property z The Z coordinate of the zone, ranging from 0 to [CoordGrid.MAP_LENGTH] /
- *   [ZoneGrid.LENGTH].
- * @property level The level or height coordinate of the zone, ranging from 0 to 3.
- * @constructor Creates a [ZoneKey] instance using local [x], [z], and [level] zone coordinates. To
- *   convert from absolute coordinates, use [fromAbsolute] or [from].
+ * Zone keys identify 8x8-tile zones and include the plane; local coordinates are packed
+ * separately.
  */
 @JvmInline
 public value class ZoneKey(public val packed: Int) {

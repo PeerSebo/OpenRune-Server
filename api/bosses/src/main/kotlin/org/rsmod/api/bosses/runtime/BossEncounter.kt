@@ -4,6 +4,7 @@ import dev.openrune.ServerCacheManager
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
 import dev.openrune.types.NpcServerType
+import java.util.IdentityHashMap
 import kotlin.math.abs
 import kotlin.random.Random
 import org.rsmod.annotations.InternalApi
@@ -27,11 +28,9 @@ class BossEncounter(
     var invulnerable: Boolean = false
     var damageScale: Double = 1.0
     var lethalHandled: Boolean = false
-
-    /** Tick until which multi-tick effects are still running; nothing new may start before it. */
     var busyUntil: Int = 0
+    internal val usedAbilities = mutableSetOf<String>()
 
-    /** The player the latest combat tick ran against; timers fire against it. */
     var lastTarget: Player? = null
 
     /** Bumped on every [transitionTo], so phase timers can tell the phase was (re-)entered. */
@@ -60,7 +59,6 @@ class BossEncounter(
         return released
     }
 
-    /** Hands over every loc this encounter spawned, e.g. to remove them on a delay after death. */
     fun releaseOwnedLocs(): Map<CoordGrid, OwnedLoc> {
         val released = ownedLocs.toMap()
         ownedLocs.clear()
@@ -75,20 +73,6 @@ class BossEncounter(
         epoch++
         busyUntil = tick
     }
-    internal val usedAbilities = mutableSetOf<String>()
-    private var queuedAbility: String? = null
-
-    /** Runs [ability] as the next priority ability once [busyUntil] has passed; replaces any earlier queue. */
-    fun forceNext(ability: String) {
-        require(ability in spec.abilities) { "Ability '$ability' does not exist in boss spec." }
-        queuedAbility = ability
-    }
-
-    /**
-     * Per-encounter attack-rate override (ticks between ability uses). Takes precedence over
-     * [PhaseSpec.attackRate] and [BossStats.attackRate]. Null by default and recreated with the
-     * encounter on respawn, so bosses that never set it are unaffected.
-     */
     var attackRateOverride: Int? = null
 
     /**
@@ -103,7 +87,6 @@ class BossEncounter(
         return tick >= (nextAttackTick ?: (lastAbilityTick + attackRate))
     }
 
-    /** Records [ability] as started by the attack loop on [tick]; call before running it. */
     internal fun startAttack(ability: String, tick: Int) {
         lastAbilityTick = tick
         lastAbilityName = ability
@@ -115,8 +98,9 @@ class BossEncounter(
     internal val firedPhaseEntries = mutableSetOf<String>()
     private val cooldowns = mutableMapOf<String, Int>()
     private val forcedTickLastFired = mutableMapOf<String, Int>()
-    private var rotationCursor = 0
-    private var rotationStarted = false
+    private val forcedWhenFired = mutableSetOf<String>()
+    private var queuedAbility: String? = null
+    private val rotationCursors = IdentityHashMap<Selector.Rotation, Int>()
     private var basicAttackCount = 0
     private var forceAttackThreshold = -1
 
@@ -127,17 +111,20 @@ class BossEncounter(
     val currentPhase: PhaseSpec?
         get() = spec.phases[currentPhaseName]
 
-    /** Switches phase state only; does not run the phase's [PhaseSpec.entry]. */
+    fun forceNext(ability: String) {
+        require(ability in spec.abilities) { "Ability '$ability' does not exist in boss spec." }
+        queuedAbility = ability
+    }
+
     fun transitionTo(phaseName: String, tick: Int) {
-        val from = currentPhaseName
         currentPhaseName = phaseName
         queuedAbility = null
         phaseEnteredTick = tick
         phaseEpoch++
-        rotationCursor = 0
-        rotationStarted = false
+        rotationCursors.clear()
         cooldowns.clear()
         forcedTickLastFired.clear()
+        forcedWhenFired.clear()
         basicAttackCount = 0
         forceAttackThreshold = -1
 
@@ -154,10 +141,25 @@ class BossEncounter(
     }
 
     fun selectAbility(selector: Selector, tick: Int, target: Player? = null): String? {
+        if (tick < busyUntil) return null
+        queuedAbility?.let {
+            queuedAbility = null
+            return it
+        }
         val phase = currentPhase ?: return null
 
         for (forced in phase.forceAbilities) {
-            if (forced.condition != null || forced.attackMin != null) continue
+            val condition = forced.condition ?: continue
+            if (forced.once && forced.ability in forcedWhenFired) continue
+            if (evaluate(condition, target)) {
+                forcedWhenFired += forced.ability
+                return forced.ability
+            }
+        }
+
+        for (forced in phase.forceAbilities) {
+            if (forced.condition != null) continue
+            if (forced.attackMin != null) continue
             val lastFired = forcedTickLastFired[forced.ability] ?: phaseEnteredTick
             if (tick - lastFired >= forced.period) {
                 forcedTickLastFired[forced.ability] = tick
@@ -165,8 +167,7 @@ class BossEncounter(
             }
         }
 
-        val attackForced =
-            phase.forceAbilities.firstOrNull { it.condition == null && it.attackMin != null }
+        val attackForced = phase.forceAbilities.firstOrNull { it.attackMin != null }
         if (attackForced != null) {
             if (forceAttackThreshold < 0) {
                 forceAttackThreshold = randomThreshold(attackForced)
@@ -178,22 +179,21 @@ class BossEncounter(
             }
         }
 
-        val selected = pick(selector, tick, target)
+        val selected = selectEffectAbility(selector, tick, target)
         if (selected != null && attackForced != null) {
             basicAttackCount++
         }
         return selected
     }
 
-    /**
-     * Picks a key from [selector] alone, ignoring the phase's forced abilities; used by
-     * [Effect.Choose] so a nested branch pick can't consume a phase-level force.
-     */
-    fun pick(selector: Selector, tick: Int, target: Player? = null): String? =
+    internal fun selectEffectAbility(selector: Selector, tick: Int, target: Player?): String? =
         when (selector) {
             is Selector.WeightedRandom -> selectWeightedRandom(selector, tick, target)
             is Selector.Rotation -> selectRotation(selector)
         }
+
+    fun pick(selector: Selector, tick: Int, target: Player? = null): String? =
+        selectEffectAbility(selector, tick, target)
 
     fun selectPriorityAbility(tick: Int, target: Player?): String? {
         if (tick < busyUntil) return null
@@ -204,8 +204,11 @@ class BossEncounter(
         val phase = currentPhase ?: return null
         for (forced in phase.forceAbilities) {
             val condition = forced.condition ?: continue
-            if (forced.once && forced.ability in usedAbilities) continue
-            if (evaluate(condition, target)) return forced.ability
+            if (forced.once && forced.ability in forcedWhenFired) continue
+            if (evaluate(condition, target)) {
+                forcedWhenFired += forced.ability
+                return forced.ability
+            }
         }
         return null
     }
@@ -216,11 +219,16 @@ class BossEncounter(
         return if (max == min) min else Random.nextInt(min, max + 1)
     }
 
-    private fun selectWeightedRandom(selector: Selector.WeightedRandom, tick: Int, target: Player? = null): String? {
-        val available = selector.entries.filter { ref ->
-            val onCooldown = cooldowns[ref.ability]?.let { tick - it < ref.cooldown } ?: false
-            !onCooldown && evaluate(ref.requires, target)
-        }
+    private fun selectWeightedRandom(
+        selector: Selector.WeightedRandom,
+        tick: Int,
+        target: Player? = null,
+    ): String? {
+        val available =
+            selector.entries.filter { ref ->
+                val onCooldown = cooldowns[ref.ability]?.let { tick - it < ref.cooldown } ?: false
+                !onCooldown && evaluate(ref.requires, target)
+            }
 
         if (available.isEmpty()) return null
 
@@ -232,6 +240,7 @@ class BossEncounter(
             roll -= ref.weight
             if (roll < 0) {
                 cooldowns[ref.ability] = tick
+                lastAbilityName = ref.ability
                 return ref.ability
             }
         }
@@ -240,14 +249,11 @@ class BossEncounter(
 
     private fun selectRotation(selector: Selector.Rotation): String? {
         if (selector.sequence.isEmpty()) return null
-        if (!rotationStarted) {
-            rotationStarted = true
-            if (selector.randomStart) {
-                rotationCursor = Random.nextInt(selector.sequence.size)
-            }
+        val cursor = rotationCursors.getOrPut(selector) {
+            if (selector.randomStart) Random.nextInt(selector.sequence.size) else 0
         }
-        val ability = selector.sequence[rotationCursor % selector.sequence.size]
-        rotationCursor++
+        val ability = selector.sequence[cursor]
+        rotationCursors[selector] = (cursor + 1) % selector.sequence.size
         return ability
     }
 
@@ -268,7 +274,7 @@ class BossEncounter(
         return when (condition) {
             is Condition.Always -> true
             is Condition.WithinMeleeRange -> {
-                target != null && npc.isWithinDistance(target, 1)
+                target != null && npc.level == target.level && npc.isWithinDistance(target, 1)
             }
             is Condition.HpBelow ->
                 if (condition.inclusive) hpFraction <= condition.fraction else hpFraction < condition.fraction
@@ -282,13 +288,13 @@ class BossEncounter(
             }
             is Condition.LastAbility -> lastAbilityName == condition.ability
             is Condition.TargetWithin -> {
-                if (target == null) return false
+                if (target == null || target.level != npc.level) return false
                 val of = tiles?.tile(condition.of) ?: npc.resolveTile(condition.of, target)
-                target.coords.chebyshevDistance(of) <= condition.distance
+                target.level == of.level && target.coords.chebyshevDistance(of) <= condition.distance
             }
             is Condition.TargetInArc -> {
                 val wanted = Angles.normalise(npc.vars[condition.bearingVarn] + condition.offset)
-                target != null &&
+                target != null && target.level == npc.level &&
                     abs(Angles.delta(Angles.bearing(npc.centreTile, target.coords), wanted)) <= condition.halfArc
             }
             is Condition.TilesEmpty -> {

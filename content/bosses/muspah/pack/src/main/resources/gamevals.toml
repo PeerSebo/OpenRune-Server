@@ -1,0 +1,24 @@
+[gamevals.dbrow]
+instance_muspah = 63056
+
+[gamevals.headbar]
+muspah_soulsplit = 50
+
+[gamevals.varn]
+muspah_damage_since_switch = 19
+muspah_melee_still_ticks = 20
+muspah_hits_since_switch = 64072
+muspah_special_cooldown = 64073
+muspah_pre_soulsplit_hp = 64074
+muspah_pre_soulsplit_max_hp = 64075
+muspah_shield_hp = 64076
+muspah_final_attack_count = 64077
+muspah_last_counted_attack_tick = 64078
+muspah_last_coords = 64079
+muspah_final_phase = 64080
+muspah_shield_broken = 64081
+
+[gamevals.param]
+boss_hp_bar_colour_back = 64082
+boss_hp_bar_colour_sliding = 64083
+boss_hp_bar_colour_remaining = 64084

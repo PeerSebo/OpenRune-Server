@@ -1,0 +1,11 @@
+[[varp]]
+id = "varp.poh_teleport_inside"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.poh_teleport_inside_migrated"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"

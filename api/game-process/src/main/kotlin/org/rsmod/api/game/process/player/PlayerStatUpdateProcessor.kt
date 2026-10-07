@@ -4,7 +4,6 @@ import dev.openrune.ServerCacheManager
 import dev.openrune.rscm.RSCM
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
-import dev.openrune.types.StatType
 import jakarta.inject.Inject
 import org.rsmod.api.player.output.UpdateStat
 import org.rsmod.api.player.stat.stat
@@ -25,7 +24,7 @@ constructor(private val invisibleLevels: InvisibleLevels) {
     private fun Player.updatePendingStats() {
         var nextStat = pendingStatUpdates.nextSetBit(0)
         while (nextStat >= 0) {
-            val statName = RSCM.getReverseMapping(RSCMType.STAT,ServerCacheManager.getStats().getValue(nextStat).id)
+            val statName = RSCM.getReverseMapping(RSCMType.STAT, ServerCacheManager.getStats().getValue(nextStat).id)
             updateStatXp(statName)
             nextStat = pendingStatUpdates.nextSetBit(nextStat + 1)
         }

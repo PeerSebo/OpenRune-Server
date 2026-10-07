@@ -90,4 +90,4 @@ public val alchemicalHydraDropTable: RSDropTable<Player, DropRollItem> = RSDropT
     },
 )
 
-// Unknown wiki drop rates (text rarity — need data collection):
+// TODO: Resolve the unquantified drop rates below.

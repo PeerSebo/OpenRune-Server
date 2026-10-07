@@ -12,7 +12,6 @@ import org.rsmod.game.entity.Player
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
-/** If true, Drew speaks when depositing at the Sandstorm loc just as it was before the 10 July 2024 update. */
 private const val SHOW_DREW_DIALOGUE_ON_DEPOSIT = false
 
 internal const val MAX_STORED = 25_000

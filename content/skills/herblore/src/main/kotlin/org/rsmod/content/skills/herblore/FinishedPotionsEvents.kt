@@ -31,11 +31,14 @@ class FinishedPotionsEvents @Inject constructor(private val random: GameRandom) 
         val item2 = ev.second.internalName
 
         if (isHerbVialMix(item1, item2) || isPestleMix(item1, item2) || isSwampTarMix(item1, item2)) {
+            mes(Constants.dm_default)
             return
         }
 
         val candidates = HerbloreDefinitions.findPotionCandidates(item1, item2)
         if (candidates.isEmpty()) {
+            // Default handlers consume the event, so they must provide their own unmatched feedback.
+            mes(Constants.dm_default)
             return
         }
 
@@ -97,23 +100,31 @@ class FinishedPotionsEvents @Inject constructor(private val random: GameRandom) 
             return
         }
 
-        weakQueue("queue.herblore_finished", 1, FinishedPotionTask(potion, amount, 0))
+        // Queue/callback additions decrement immediately; compensate the two-tick cadence with +1.
+        clearWeakQueue("queue.herblore_finished")
+        weakQueue("queue.herblore_finished", cadence(potion), FinishedPotionTask(potion, amount, 0))
     }
+
+    // Queue values include scheduling compensation; extended anti-venom+ has a distinct cadence.
+    private fun cadence(potion: HerbloreFinishedRow): Int =
+        if (potion.outputPotion.internalName.startsWith("obj.extended_antivenom+")) 4 else 3
 
     private suspend fun ProtectedAccess.processFinishedTick(task: FinishedPotionTask) {
         val potion = task.potion
-        val brewResult = AmuletOfChemistry.rollBrewOutput(player, random, potion)
-        val output = brewResult.output
 
         if (!meetsStatReqs(potion.statReq)) {
             resetAnim()
             return
         }
 
-        if (!potion.hasRequiredMaterials(inv) || (inv.freeSpace() < 1 && !inv.contains(output))) {
+        if (!potion.hasRequiredMaterials(inv)) {
             resetAnim()
             return
         }
+
+        // Roll only after validation: procs consume chemistry charges and can destroy the amulet.
+        val brewResult = AmuletOfChemistry.rollBrewOutput(player, random, potion)
+        val output = brewResult.output
 
         anim("seq.human_herbing_vial")
 
@@ -185,12 +196,19 @@ class FinishedPotionsEvents @Inject constructor(private val random: GameRandom) 
             statAdvance("stat.herblore", potion.xp.toDouble())
         }
 
+        // Sequence 363 has no baked audio; send the potion-making synth.
+        soundSynth("synth.GRIND")
+
         val itemForMessage = if (potion.secondaries.size > 1) {
             potion.unfPot
         } else {
             potion.secondaries.firstOrNull() ?: potion.unfPot
         }
-        mes("You mix the ${itemForMessage.name.lowercase()} into your potion.")
+        if (potion.unfPot.internalName == "obj.vial_coconut_milk") {
+            mes("You put the ${itemForMessage.name.lowercase()} into the vial of coconut milk.")
+        } else {
+            mes("You mix the ${itemForMessage.name.lowercase()} into your potion.")
+        }
 
         if (brewResult.extraDoseApplied) {
             mes("Your amulet of chemistry helps you create an extra dose.")
@@ -206,7 +224,11 @@ class FinishedPotionsEvents @Inject constructor(private val random: GameRandom) 
 
         val created = task.created + 1
         if (created < task.amount) {
-            weakQueue("queue.herblore_finished", 4, FinishedPotionTask(potion, task.amount, created))
+            weakQueue(
+                "queue.herblore_finished",
+                cadence(potion),
+                FinishedPotionTask(potion, task.amount, created),
+            )
         } else {
             resetAnim()
         }

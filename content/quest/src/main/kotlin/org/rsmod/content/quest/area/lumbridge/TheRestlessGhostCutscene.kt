@@ -3,12 +3,12 @@ package org.rsmod.content.quest.area.lumbridge
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
 import org.rsmod.api.player.protect.ProtectedAccess
+import org.rsmod.api.player.recovery.loginExitCoord
 import org.rsmod.api.repo.loc.LocRepository
 import org.rsmod.api.repo.npc.NpcRepository
 import org.rsmod.api.repo.region.RegionRepository
 import org.rsmod.api.repo.region.RegionTemplate
 import org.rsmod.api.repo.world.WorldRepository
-import org.rsmod.api.script.onEvent
 import org.rsmod.api.script.onPlayerLogin
 import org.rsmod.content.quest.area.misthalin.SceneCamera
 import org.rsmod.content.quest.area.misthalin.SceneCreepRate
@@ -17,7 +17,6 @@ import org.rsmod.content.quest.area.misthalin.lockedScene
 import org.rsmod.content.quest.manager.Quest
 import org.rsmod.game.entity.Npc
 import org.rsmod.game.entity.Player
-import org.rsmod.game.entity.player.SessionStateEvent
 import org.rsmod.game.loc.LocAngle
 import org.rsmod.game.loc.LocShape
 import org.rsmod.game.proj.ProjAnim
@@ -59,6 +58,7 @@ internal object ReleaseScene {
         )
 }
 
+// Set the completed stage before the scene, but defer the reward scroll until after teardown.
 internal class TheRestlessGhostCutscene(
     private val quest: Quest,
     private val regionRepo: RegionRepository,
@@ -71,7 +71,6 @@ internal class TheRestlessGhostCutscene(
     private val sceneRegions = HashMap<Long, Region>()
 
     fun ScriptContext.register() {
-        onEvent<SessionStateEvent.PrepareLogin> { restoreRestlessGhostLogin(player) }
         onPlayerLogin { discardLeakedRegion(player) }
     }
 
@@ -182,7 +181,7 @@ internal class TheRestlessGhostCutscene(
         val scene = SceneRegion(region)
 
         // Persist the exit on entry so the next login rebuild uses a valid world coordinate.
-        player.restlessGhostReturnTile = returnTo.packed
+        player.loginExitCoord = returnTo
         player.uuid?.let { uuid -> region?.let { sceneRegions[uuid] = it } }
 
         try {
@@ -196,7 +195,7 @@ internal class TheRestlessGhostCutscene(
                 body(scene)
             }
         } finally {
-            player.restlessGhostReturnTile = 0
+            player.loginExitCoord = null
             player.uuid?.let(sceneRegions::remove)
 
             // Unprotect, never delete - the registry reclaims an unprotected small region once it
@@ -224,14 +223,14 @@ internal class TheRestlessGhostCutscene(
         const val OpenGate = "loc.poordooropen"
 
         const val VanishAnim = "seq.restless_ghost_vanish"
-        const val VanishSound = "synth.shade_sigh"
+        const val VanishSound = "synth.SHADE_SIGH"
         const val SoulSpotanim = "spotanim.restless_ghost_travel_spotanim"
 
         const val ReleaseLine = "Release! Thank you stranger.."
         const val FirstSay = "Release! Thank you"
         const val SecondSay = "stranger.."
 
-        const val CompletionJingle = "jingle.mastermindless"
+        const val CompletionJingle = 152
 
         const val CaptureFrameRate = 100
 

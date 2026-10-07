@@ -20,4 +20,13 @@ dependencies {
     implementation(projects.engine.game)
     implementation(projects.engine.map)
     implementation(projects.engine.plugin)
+    testImplementation(projects.api.attr)
+    testImplementation(projects.api.serverConfig)
+    testImplementation(libs.fastutil)
+}
+
+tasks.test {
+    workingDir(rootProject.projectDir)
+    inputs.dir(rootProject.file(".data/cache/SERVER"))
+    inputs.file(rootProject.file(".data/gamevals-binary/gamevals.dat"))
 }

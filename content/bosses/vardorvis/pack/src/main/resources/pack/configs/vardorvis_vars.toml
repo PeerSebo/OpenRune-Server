@@ -1,0 +1,29 @@
+[[varn]]
+id = "varn.vardorvis_next_head_gaze_tick"
+
+[[varn]]
+id = "varn.vardorvis_last_strangle_tick"
+
+[[varn]]
+id = "varn.vardorvis_strangle_ready_at"
+
+[[varn]]
+id = "varn.vardorvis_next_axes"
+
+[[varp]]
+isServerOnly = true
+id = "varp.overhead_lock_expiration"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.vardorvis_pending_awakened"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.vardorvis_strangle_spores"
+scope = "Temp"
+transmit = "Never"

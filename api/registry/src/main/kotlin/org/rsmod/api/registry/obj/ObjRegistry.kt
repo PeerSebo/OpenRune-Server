@@ -96,7 +96,7 @@ public class ObjRegistry @Inject constructor(private val updates: ZoneUpdateMap)
         findAll(obj.coords).any { it.type == obj.type && it.isVisibleTo(null) }
 
     private fun Obj.canMergeWith(other: Obj, stackable: Boolean): Boolean {
-        if (type != other.type) {
+        if (type != other.type || vars != other.vars) {
             return false
         }
         // Only private objs can merge.
@@ -111,7 +111,7 @@ public class ObjRegistry @Inject constructor(private val updates: ZoneUpdateMap)
     }
 
     private fun Obj.singleCopy(): Obj =
-        Obj(coords, entity.copy(count = 1), creationCycle, receiverId)
+        Obj(coords, entity.copy(count = 1), creationCycle, receiverId, ownerId, vars)
 
     public companion object {
         /**

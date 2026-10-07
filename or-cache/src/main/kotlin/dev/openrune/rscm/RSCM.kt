@@ -2,6 +2,7 @@ package dev.openrune.rscm
 
 import dev.openrune.definition.constants.ConstantProvider
 import dev.openrune.rscm.RSCMType.Companion.RSCM_PREFIXES
+import java.util.concurrent.ConcurrentHashMap
 
 enum class RSCMType(val prefix: String) {
     AREA("area"),
@@ -47,18 +48,14 @@ enum class RSCMType(val prefix: String) {
     companion object {
         val RSCM_PREFIXES = entries.map { it.prefix }.toSet()
     }
-
 }
-
 
 object RSCM {
 
     val NONE = "NONE"
 
-    // O(1) prefix validation instead of scanning with startsWith
     private val PREFIX_SET = RSCM_PREFIXES.toHashSet()
 
-    // Cache for resolved mappings
     private val cache = HashMap<String, Int>(1024)
 
     fun getRSCM(entity: Array<String>): List<Int> = entity.map { getRSCM(it) }
@@ -84,9 +81,37 @@ object RSCM {
         }
     }
 
+    /**
+     * Id-to-name index of one gameval table. [size] is the size of the table it was built from,
+     * so a table that has grown since (through `ConstantProvider.addMapping`) is re-indexed.
+     */
+    private class ReverseIndex(val size: Int, val names: Map<Int, String>)
+
+    private val reverseCache = ConcurrentHashMap<String, ReverseIndex>()
+
+    /**
+     * The gameval name mapped to [value] in [table].
+     *
+     * `ConstantProvider.getReverseMapping` scans the whole table on every call, and combat, stat
+     * updates, shops and interactions ask for names every cycle, so each table is indexed once
+     * here. Like the provider, the first name mapped to an id wins, and an unknown id or table
+     * still throws.
+     */
     fun getReverseMapping(table: RSCMType, value: Int): String {
         if (value == -1) return "-1"
-        return ConstantProvider.getReverseMapping(table.prefix, value)
+        val prefix = table.prefix
+        val mappings = ConstantProvider.mappings[prefix]
+            ?: return ConstantProvider.getReverseMapping(prefix, value)
+        var index = reverseCache[prefix]
+        if (index == null || index.size != mappings.size) {
+            val names = HashMap<Int, String>(mappings.size * 2)
+            for ((name, id) in mappings) {
+                names.putIfAbsent(id, name)
+            }
+            index = ReverseIndex(mappings.size, names)
+            reverseCache[prefix] = index
+        }
+        return index.names[value] ?: ConstantProvider.getReverseMapping(prefix, value)
     }
 
     fun getRSCM(entity: String): Int {
@@ -95,9 +120,7 @@ object RSCM {
         return cache.getOrPut(entity) {
             val prefix = extractPrefix(entity)
 
-            require(prefix in PREFIX_SET) {
-                "Prefix not found for '$prefix'"
-            }
+            require(prefix in PREFIX_SET) { "Prefix not found for '$prefix'" }
 
             ConstantProvider.getMapping(entity)
         }

@@ -1,21 +1,20 @@
 package dev.openrune.pack
 
 import dev.openrune.DirectoryConstants
+import dev.openrune.cache.tools.cs2.Cs2Overrides
 import dev.openrune.cache.tools.cs2.PackCs2
+import dev.openrune.cache.tools.cs2.UnpackDefaultCs2
 import dev.openrune.cache.tools.iftype.PackIfType
 import dev.openrune.cache.tools.tasks.CacheTask
 import dev.openrune.cache.tools.tasks.impl.PackDBTables
-import dev.openrune.cache.tools.tasks.impl.PackWorldMap
 import dev.openrune.cache.tools.tasks.impl.PackModels
+import dev.openrune.cache.tools.tasks.impl.PackSprites
+import dev.openrune.cache.tools.tasks.impl.PackWorldMap
 import dev.openrune.cache.tools.tasks.impl.defs.PackConfig
 import dev.openrune.definition.dbtables.DBTable
 import dev.openrune.gamevals.GameValProvider
-import dev.openrune.cache.tools.cs2.Cs2Overrides
-import dev.openrune.cache.tools.cs2.UnpackDefaultCs2
-import dev.openrune.cache.tools.tasks.impl.PackSprites
 import io.github.classgraph.ClassGraph
 import java.io.File
-
 
 class PluginPacks(val projectRoot: File, val all: List<PluginPack>) {
     val active: List<PluginPack> = all.filter { it.shouldPack(projectRoot) }
@@ -26,6 +25,9 @@ class PluginPacks(val projectRoot: File, val all: List<PluginPack>) {
         pack::class.java.name.substringAfterLast('.').removeSuffix("PluginPack").lowercase()
 
     fun configDirectories(): List<File> = all.mapNotNull { it.configDirectory() }
+
+    fun serverConfigDirectories(): List<File> =
+        configDirectories() + all.mapNotNull { it.serverConfigDirectory() }
 
     fun validate() {
         active.forEach { it.validate(projectRoot) }

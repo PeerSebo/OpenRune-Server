@@ -3,14 +3,9 @@ package org.rsmod.api.server.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.michaelbull.logging.InlineLogger
 import java.nio.file.Path
-import kotlin.io.path.exists
 import kotlin.io.path.notExists
 import kotlin.io.path.writeText
 
-/**
- * When [OpenRuneCentralGameConfig.sameInstance] is enabled, upgrades a legacy `world: 1` in
- * `game.yml` to match [game.example.yml] before [ServerConfig] is loaded.
- */
 internal object SameInstanceCentralWorldMigrator {
     private val logger = InlineLogger()
 

@@ -1,0 +1,26 @@
+[[varp]]
+isServerOnly = true
+id = "varp.giant_boss_unlocks"
+scope = "Perm"
+transmit = "Never"
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.giant_boss_obor_unlocked"
+varp = "varp.giant_boss_unlocks"
+startBit = 0
+endBit = 0
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.giant_boss_bryophyta_unlocked"
+varp = "varp.giant_boss_unlocks"
+startBit = 1
+endBit = 1
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.giant_boss_unlocks_migrated"
+varp = "varp.giant_boss_unlocks"
+startBit = 2
+endBit = 2

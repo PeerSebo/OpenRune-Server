@@ -1,0 +1,7 @@
+package org.rsmod.content.skills.magic.spell.teleports.pack
+
+import dev.openrune.pack.PluginPack
+
+class SpellTeleportsPluginPack : PluginPack() {
+    override fun dbTables() = listOf(standardSpellTeleportsTable())
+}

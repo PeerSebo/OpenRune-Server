@@ -1,0 +1,13 @@
+[gamevals.varp]
+drop_rate_multiplier = 65658
+vardorvis_vestige_progress = 65660
+duke_sucellus_vestige_progress = 65661
+leviathan_vestige_progress = 65662
+whisperer_vestige_progress = 65663
+
+[gamevals.varn]
+awakened_state = 17
+skip_killcount = 18
+
+[gamevals.param]
+killcount_varp_awakened = 65556

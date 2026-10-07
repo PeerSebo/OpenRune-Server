@@ -40,7 +40,15 @@ object GamevalDumper {
 
                 GameValGroupTypes.IFTYPES_V2 -> {
                     val interfaces = elements.mapNotNull { it.elementAs<Interface>() }
+
                     gamevals["interfaces"] = interfaces.map { "${it.name}=${it.id}" }
+
+                    gamevals["components"] =
+                        interfaces.flatMap { iface ->
+                            iface.components.map { comp ->
+                                "${iface.name}:${comp.name}=${comp.packed}"
+                            }
+                        }
                 }
 
                 GameValGroupTypes.IFTYPES -> Unit
@@ -54,9 +62,10 @@ object GamevalDumper {
 
         val outputDir = File("../.data/gamevals-binary").apply { mkdirs() }
         GameValDat.write(File(outputDir, "gamevals.dat"), gamevals.remapNames())
+        GameValMaxIdManifest.writeFromDats(File(".."), rev)
 
         dumpCols(cache, rev)
-        dumpComponents(cache,rev)
+        dumpComponents(cache, rev)
     }
 
     fun dumpComponents(cache: Cache, rev: Int) {

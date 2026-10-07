@@ -7,7 +7,6 @@ import dev.openrune.rscm.RSCMType
 import dev.openrune.types.aconverted.interf.IfButtonOp
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.script.onIfModalButton
-import org.rsmod.api.script.onOpNpc4
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
@@ -23,7 +22,6 @@ private fun ProtectedAccess.holidayMasks(): List<Int> =
  */
 class DiangoHolidayItems : PluginScript() {
     override fun ScriptContext.startup() {
-        onOpNpc4(DIANGO) { openHolidayItems() }
         onIfModalButton("component.rareitems_diango:items") { button ->
             when (button.op) {
                 IfButtonOp.Op1 -> takeItem(button.comsub)

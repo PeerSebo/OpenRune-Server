@@ -109,7 +109,9 @@ class UnfinishedPotionsEvents : PluginScript() {
             return
         }
 
-        weakQueue("queue.herblore_unfinished", 1, UnfinishedPotionTask(potion, amount, 0))
+        // Queue/callback additions decrement immediately; compensate the one-tick cadence with +1.
+        clearWeakQueue("queue.herblore_unfinished")
+        weakQueue("queue.herblore_unfinished", 2, UnfinishedPotionTask(potion, amount, 0))
     }
 
     private suspend fun ProtectedAccess.processUnfinishedTick(task: UnfinishedPotionTask) {
@@ -120,10 +122,10 @@ class UnfinishedPotionsEvents : PluginScript() {
             return
         }
 
+        // The two consumed inputs free enough room for the potion.
         if (
             !inv.contains(potion.herbItem.internalName) ||
-            !inv.contains("obj.vial_water") ||
-            (inv.freeSpace() < 1 && !inv.contains(potion.unfinishedPotion.internalName))
+            !inv.contains("obj.vial_water")
         ) {
             resetAnim()
             return
@@ -149,13 +151,13 @@ class UnfinishedPotionsEvents : PluginScript() {
             return
         }
 
-        statAdvance("stat.herblore", potion.xp.toDouble())
+        soundSynth("synth.GRIND")
         val herbName = potion.herbItem.name.lowercase()
         mes("You put the $herbName into the vial of water.")
 
         val created = task.created + 1
         if (created < task.amount) {
-            weakQueue("queue.herblore_unfinished", 4, UnfinishedPotionTask(potion, task.amount, created))
+            weakQueue("queue.herblore_unfinished", 2, UnfinishedPotionTask(potion, task.amount, created))
         } else {
             resetAnim()
         }
@@ -166,5 +168,4 @@ class UnfinishedPotionsEvents : PluginScript() {
         val amount: Int,
         val created: Int,
     )
-
 }

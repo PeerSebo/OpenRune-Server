@@ -1,4 +1,3 @@
-## Abyss Area Alr
 
 [[spawn]]
 npc = "npc.abyssal_leech"
@@ -156,7 +155,6 @@ coords = "0_47_76_53_18"
 npc = "npc.slayer_abyssal"
 coords = "0_47_76_8_27"
 
-## Abyssal Nexus
 
 [[spawn]]
 npc = "npc.abyssalsire_herohandler"
@@ -366,7 +364,6 @@ coords = "0_48_75_23_35"
 npc = "npc.abyssalsire_tentacle_sleeping_upright"
 coords = "0_48_75_35_35"
 
-## The Abyss
 
 [[spawn]]
 npc = "npc.abyssal_leech"
@@ -703,6 +700,3 @@ coords = "0_47_75_9_23"
 [[spawn]]
 npc = "npc.rcu_zammy_mage2"
 coords = "0_47_75_31_34"
-
-## The Abyss End
-

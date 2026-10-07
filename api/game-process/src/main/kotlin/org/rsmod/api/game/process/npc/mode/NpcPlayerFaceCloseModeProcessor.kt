@@ -17,5 +17,7 @@ constructor(private val playerList: PlayerList) {
         }
     }
 
-    private fun Npc.inCloseDistance(target: Player): Boolean = isWithinDistance(target, 1)
+    /** faceEntity can retain a target after a plane change; reject it before computing distance. */
+    private fun Npc.inCloseDistance(target: Player): Boolean =
+        level == target.level && isWithinDistance(target, 1)
 }

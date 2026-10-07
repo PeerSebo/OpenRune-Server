@@ -1,13 +1,12 @@
 package org.rsmod.content.skills.prayer.items.ashsanctifier
 
+import kotlin.math.min
 import org.rsmod.api.invtx.invAdd
 import org.rsmod.api.invtx.invDel
 import org.rsmod.api.player.vars.intVarBit
 import org.rsmod.game.entity.Player
 import org.rsmod.game.inv.Inventory
 import org.rsmod.game.inv.isType
-import kotlin.math.min
-
 
 internal sealed class AshSanctifierUnchargeResult {
     data object WrongItem : AshSanctifierUnchargeResult()

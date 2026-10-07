@@ -58,23 +58,8 @@ public enum class Direction(public val id: Int, public val xOff: Int, public val
             }
 
         /**
-         * Calculates the angle between two [Bounds]s.
-         *
-         * The angle is determined by the difference in their `x` and `z` coordinates, and is
-         * returned as an integer in the range [0..2047].
-         * - 0 corresponds to South.
-         * - 512 corresponds to West.
-         * - 1024 corresponds to North.
-         * - 1536 corresponds to East.
-         *
-         * The angle is calculated using the `atan2` function, converted to fit our respective unit
-         * system.
-         *
-         * Clarification:
-         *
-         * This function is part of the [Direction] class rather than the [Bounds] class because the
-         * angle it returns is closely tied to the specific angular unit system defined here,
-         * represented by [Direction.angle].
+         * Angle from the centre of [a] to [b], in `0..2047`: South=0, West=512,
+         * North=1024, East=1536. Uses the angular units of [Direction.angle].
          */
         public fun angleBetween(a: Bounds, b: Bounds): Int {
             val dx = a.fineCentreX - b.fineCentreX
@@ -82,29 +67,10 @@ public enum class Direction(public val id: Int, public val xOff: Int, public val
             return (atan2(dx, dz) * 325.94932345220167).toInt() and 2047
         }
 
-        /**
-         * Determines the closest direction from [a] to [b].
-         *
-         * This function calculates the angle between the two bounds using [angleBetween] and
-         * returns the direction that most closely matches that angle.
-         *
-         * @return The closest [Direction] from [a] to [b].
-         * @throws IllegalArgumentException if the bounds are not on the same `level`.
-         */
         public fun between(a: Bounds, b: Bounds): Direction {
             return between(a, b, ALL)
         }
 
-        /**
-         * Determines the closest cardinal direction from [a] to [b].
-         *
-         * This function calculates the angle between the two bounds using [angleBetween] and
-         * returns the cardinal direction (North, South, East, West) that most closely matches that
-         * angle. Only cardinal directions are considered in the calculation.
-         *
-         * @return The closest [CardinalDirection] from [a] to [b].
-         * @throws IllegalArgumentException if the bounds are not on the same `level`.
-         */
         public fun cardinalBetween(a: Bounds, b: Bounds): CardinalDirection {
             return when (val direction = between(a, b, CARDINAL)) {
                 North -> CardinalDirection.North
@@ -115,16 +81,6 @@ public enum class Direction(public val id: Int, public val xOff: Int, public val
             }
         }
 
-        /**
-         * Determines the closest ordinal direction from [a] to [b].
-         *
-         * This function calculates the angle between the two bounds using [angleBetween] and
-         * returns the ordinal direction (NorthWest, NorthEast, SouthWest, SouthEast) that most
-         * closely matches that angle. Only ordinal directions are considered in the calculation.
-         *
-         * @return The closest [OrdinalDirection] from [a] to [b].
-         * @throws IllegalArgumentException if the bounds are not on the same `level`.
-         */
         public fun ordinalBetween(a: Bounds, b: Bounds): OrdinalDirection {
             return when (val direction = between(a, b, ORDINAL)) {
                 NorthWest -> OrdinalDirection.NorthWest

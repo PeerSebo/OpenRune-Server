@@ -2,6 +2,8 @@
 
 package org.rsmod.api.config
 
+import org.rsmod.game.entity.player.RunEnergy
+
 typealias constants = Constants
 
 object Constants {
@@ -21,7 +23,6 @@ object Constants {
     const val lootdrop_duration: Int = 200
     const val shop_default_size: Int = 40
 
-    // Common direction angles for `exactmove`.
     const val em_face_south = 0
     const val em_face_southwest = 256
     const val em_face_west = 512
@@ -31,7 +32,6 @@ object Constants {
     const val em_face_east = 1536
     const val em_face_southeast = 1792
 
-    // Common designated spotanim slots.
     const val spotanim_slot_combat: Int = 1
 
     const val ge_ratelimit_combatkit_uncommon: Int = 15
@@ -39,6 +39,7 @@ object Constants {
 
     // Arbitrary value until I get more info on this var.
     const val ge_recalcusers_normal: Int = 25
+
     // Arbitrary value until I get more info on this var.
     const val ge_recalcusers_low: Int = 10
 
@@ -70,7 +71,7 @@ object Constants {
     const val elemental_weakness_earth = 2
     const val elemental_weakness_fire = 3
 
-    const val run_max_energy = 10_000
+    const val run_max_energy = RunEnergy.MAX
     const val sa_max_energy = 1000
 
     const val skullicon_none = -1

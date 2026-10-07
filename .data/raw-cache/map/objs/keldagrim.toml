@@ -42,11 +42,7 @@ coords = "0_44_159_20_50"
 obj = "obj.rake"
 coords = "0_44_159_36_15"
 
-## Keldagrim Interiors
 
 [[spawn]]
 obj = "obj.pot_empty"
 coords = "1_45_159_38_15"
-
-## Keldagrim Interiors End
-

@@ -1,0 +1,29 @@
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_heart_cooldown_expires_at"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_saturated_heart_expires_at"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_heart_cooldown_remaining"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_saturated_heart_active"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_heart_migrated"
+scope = "Perm"
+transmit = "Never"

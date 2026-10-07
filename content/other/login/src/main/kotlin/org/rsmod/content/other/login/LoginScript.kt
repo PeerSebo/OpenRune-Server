@@ -14,6 +14,7 @@ import net.rsprot.protocol.game.outgoing.misc.player.ChatFilterSettings
 import net.rsprot.protocol.game.outgoing.varp.VarpReset
 import org.rsmod.api.inv.weight.InvWeight
 import org.rsmod.api.net.central.OpenRuneCentralWorldLink
+import org.rsmod.api.net.central.StaffSocialVisibility
 import org.rsmod.api.net.central.writeCentralSocialSnapshot
 import org.rsmod.api.net.central.writeCentralSocialSnapshotEmpty
 import org.rsmod.api.player.output.Camera
@@ -47,6 +48,7 @@ constructor(
     private val invisibleLevels: InvisibleLevels,
     private val config: ServerConfig,
     private val openRuneCentral: OpenRuneCentralWorldLink,
+    private val socialVisibility: StaffSocialVisibility,
 ) : PluginScript() {
     private val statSyncEntries by lazy { statSyncEntries() }
 
@@ -57,9 +59,15 @@ constructor(
     }
 
     private fun Player.engineLogin() {
+        markTutorialComplete()
         sendHighPriority()
         sendLowPriority()
         VarPlayerIntMapSetter.set(this, "varbit.player_in_instance", 0)
+    }
+
+    // Tutorial state must be complete for off-island accounts; otherwise client tutorial restrictions remain active.
+    private fun Player.markTutorialComplete() {
+        VarPlayerIntMapSetter.set(this, "varp.tutorial", TUTORIAL_COMPLETE)
     }
 
     private fun Player.sendHighPriority() {
@@ -83,18 +91,18 @@ constructor(
 
         if (characterId <= 0) {
             mes("Social list did not load: missing character.")
-            writeCentralSocialSnapshotEmpty()
+            writeCentralSocialSnapshotEmpty(socialVisibility)
             return
         }
 
         when (val result = openRuneCentral.socialSnapshot(characterId)) {
             is OpenRuneCentralWorldLink.CentralSocialSnapshotResult.Ok -> {
-                writeCentralSocialSnapshot(result.snapshot)
+                writeCentralSocialSnapshot(result.snapshot, socialVisibility)
             }
 
             is OpenRuneCentralWorldLink.CentralSocialSnapshotResult.Failed -> {
                 mes("Social list did not load: ${result.message}")
-                writeCentralSocialSnapshotEmpty()
+                writeCentralSocialSnapshotEmpty(socialVisibility)
             }
         }
     }
@@ -107,9 +115,7 @@ constructor(
 
     private fun Player.sendWelcomeMessage() {
         val message = realm.config.loginMessage
-        message?.let {
-            mes(it.replace("RS Mod", config.name), ChatType.Welcome)
-        }
+        message?.let { mes(it.replace("RS Mod", config.name), ChatType.Welcome) }
 
         val broadcast = realm.config.loginBroadcast
         broadcast?.let { mes(it, ChatType.Broadcast) }
@@ -129,13 +135,13 @@ constructor(
 
     private fun Player.sendLowPriority() {
         sendInvs()
-        runClientScript(2498, 1, 0, 0)
+        runClientScript("clientscript.[clientscript,account_info_update]", 1, 0, 0)
         resetCam()
-        runClientScript(828, 1)
-        runClientScript(5141)
-        runClientScript(626)
+        runClientScript("clientscript.[clientscript,playermember]", 1)
+        runClientScript("clientscript.[clientscript,script5141]")
+        runClientScript("clientscript.[proc,poll_results_addquestion]")
         sendPlayerOps()
-        runClientScript(876, mapClock.cycle, 0, displayName, "REGULAR")
+        runClientScript("clientscript.[clientscript,script876]", mapClock.cycle, 0, displayName, "REGULAR")
         sendStats()
         sendRun()
         client.write(ResetAnims)
@@ -179,4 +185,8 @@ constructor(
         ServerCacheManager.getStats().values.map { stat ->
             RSCM.getReverseMapping(RSCMType.STAT, stat.id) to stat
         }
+
+    private companion object {
+        private const val TUTORIAL_COMPLETE = 1000
+    }
 }

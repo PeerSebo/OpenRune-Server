@@ -29,7 +29,6 @@ class ImpCatcher @Inject constructor(private val worldRepo: WorldRepository) :
             extra("An Amulet of Accuracy")
         },
         ItemRewardDisplay(AmuletOfAccuracy, zoom = 400),
-        questVarbit = "varbit.imp_catcher_progress",
     ) {
 
     override fun ScriptContext.init() {
@@ -269,7 +268,7 @@ class ImpCatcher @Inject constructor(private val worldRepo: WorldRepository) :
 
             delay(1)
             npc.anim(EnchantSeq)
-            access.soundSynth("synth.mizgog_placebeads")
+            access.soundSynth("synth.MIZGOG_PLACEBEADS")
 
             delay(2)
             if (!deleteBeads()) {
@@ -283,7 +282,7 @@ class ImpCatcher @Inject constructor(private val worldRepo: WorldRepository) :
 
             delay(1)
             access.spotanimMap(worldRepo, EnchantSpotanim, TableCoord, height = 100)
-            access.soundSynth("synth.mizgog_beads")
+            access.soundSynth("synth.MIZGOG_BEADS")
 
             delay(8)
             fadeToBlack()
@@ -333,6 +332,7 @@ class ImpCatcher @Inject constructor(private val worldRepo: WorldRepository) :
         }
         state.completed = true
         quest.completeQuest(access)
+        access.midiJingle(153)
     }
 
     private suspend fun Dialogue.dialogAfterQuest(npc: Npc) {

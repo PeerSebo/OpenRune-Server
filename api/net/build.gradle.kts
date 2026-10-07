@@ -4,6 +4,9 @@ plugins {
 }
 
 dependencies {
+    testImplementation(libs.embedded.postgres)
+    testImplementation(projects.api.route)
+    testImplementation(projects.api.utils.utilsZone)
     implementation(libs.openrune.central)
     implementation(libs.openrune.central.common)
     implementation(libs.openrune.central.worldlink)
@@ -39,6 +42,7 @@ dependencies {
     implementation(projects.api.script)
     implementation(projects.api.serverConfig)
     implementation(projects.api.totp)
+    implementation(projects.api.utils.utilsMap)
     implementation(projects.engine.annotations)
     implementation(projects.engine.coroutine)
     implementation(projects.engine.events)
@@ -47,4 +51,9 @@ dependencies {
     implementation(projects.engine.routefinder)
     implementation(projects.engine.plugin)
     implementation(projects.server.services)
+}
+
+tasks.test {
+    workingDir(rootProject.projectDir)
+    inputs.dir(rootProject.file(".data/cache/SERVER"))
 }

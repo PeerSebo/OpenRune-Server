@@ -1,0 +1,28 @@
+[proc,tog_sidepanel_timer](component $component0, component $component1)
+def_int $duration = %tog_qp_before_return;
+if ($duration <= 0) {
+    $duration = 1;
+}
+def_int $remaining = %tog_countdown;
+if ($remaining < $duration) {
+    $remaining = calc($remaining - 1);
+}
+if ($remaining <= 0) {
+    if_setsize(0, 0, ^setsize_abs, ^setsize_minus, $component1);
+    if_setontimer(null, $component0);
+    return;
+}
+if ($remaining >= $duration) {
+    if_setsize(0, 0, ^setsize_minus, ^setsize_minus, $component1);
+    if_setontimer(null, $component0);
+    return;
+}
+def_int $width = interpolate(0, $remaining, 0, $duration, 16384);
+def_int $clocks = calc($remaining * 30);
+if ($width <= 0 | $clocks <= 0) {
+    if_setsize(0, 0, ^setsize_abs, ^setsize_minus, $component1);
+    if_setontimer(null, $component0);
+    return;
+}
+if_setsize($width, 0, ^setsize_rel, ^setsize_minus, $component1);
+if_setontimer("tog_sidepanel_timer_update($component0, $component1, $width, calc($width / $clocks), clientclock)", $component0);

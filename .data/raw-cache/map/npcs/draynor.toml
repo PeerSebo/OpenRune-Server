@@ -67,15 +67,7 @@ npc = "npc.joe"
 coords = "0_48_50_51_45"
 
 [[spawn]]
-npc = "npc.joe_vis"
-coords = "0_48_50_52_44"
-
-[[spawn]]
 npc = "npc.lady_keli"
-coords = "0_48_50_56_44"
-
-[[spawn]]
-npc = "npc.lady_keli_vis"
 coords = "0_48_50_56_44"
 
 [[spawn]]
@@ -182,25 +174,11 @@ coords = "0_48_50_12_36"
 npc = "npc.young_dark_wizard"
 coords = "0_48_50_13_38"
 
-[[spawn]]
-npc = "npc.wgs_lucien_spy"
-coords = "0_48_51_28_0"
-
-[[spawn]]
-npc = "npc.wgs_lucien_spy"
-coords = "0_48_50_6_40"
-
-[[spawn]]
-npc = "npc.wgs_spy2"
-coords = "0_48_50_31_59"
-
-## Draynor Aggies House
 
 [[spawn]]
 npc = "npc.aggie"
 coords = "0_48_50_14_59"
 
-## Draynor Bank
 
 [[spawn]]
 npc = "npc.banker1"
@@ -218,7 +196,6 @@ coords = "0_48_50_18_42"
 npc = "npc.banker2"
 coords = "0_48_50_18_43"
 
-## Draynor Manor Basement
 
 [[spawn]]
 npc = "npc.rat"
@@ -272,7 +249,6 @@ coords = "0_48_152_40_20"
 npc = "npc.spider"
 coords = "0_48_152_40_21"
 
-## Draynor Northern House Floor
 
 [[spawn]]
 npc = "npc.man"
@@ -282,7 +258,6 @@ coords = "0_48_51_28_15"
 npc = "npc.rat"
 coords = "0_48_51_28_13"
 
-## Draynor Sewers
 
 [[spawn]]
 npc = "npc.malak"
@@ -372,5 +347,14 @@ coords = "0_48_151_14_10"
 npc = "npc.zombie_unarmed_sewer3"
 coords = "0_48_150_52_51"
 
-## Draynor Sewers End
+[[spawn]]
+npc = "npc.wgs_lucien_spy"
+coords = "0_48_51_28_0"
 
+[[spawn]]
+npc = "npc.wgs_lucien_spy"
+coords = "0_48_50_6_40"
+
+[[spawn]]
+npc = "npc.wgs_spy2"
+coords = "0_48_50_31_59"

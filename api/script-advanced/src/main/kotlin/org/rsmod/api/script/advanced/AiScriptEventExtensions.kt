@@ -7,7 +7,6 @@ import org.rsmod.api.npc.events.interact.OpDefaultEvent
 import org.rsmod.api.script.onNpcAccessEvent
 import org.rsmod.plugin.scripts.ScriptContext
 
-/* Player op functions */
 public fun ScriptContext.onDefaultAiOpPlayer1(
     action: suspend StandardNpcAccess.(AiPlayerDefaultEvents.Op1) -> Unit
 ): Unit = onNpcAccessEvent(OpDefaultEvent.ID, action)
@@ -28,7 +27,6 @@ public fun ScriptContext.onDefaultAiOpPlayer5(
     action: suspend StandardNpcAccess.(AiPlayerDefaultEvents.Op5) -> Unit
 ): Unit = onNpcAccessEvent(OpDefaultEvent.ID, action)
 
-/* Player ap functions */
 public fun ScriptContext.onDefaultAiApPlayer1(
     action: suspend StandardNpcAccess.(AiPlayerDefaultEvents.Ap1) -> Unit
 ): Unit = onNpcAccessEvent(ApDefaultEvent.ID, action)

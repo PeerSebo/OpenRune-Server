@@ -25,8 +25,12 @@ constructor(private val playerList: PlayerList, private val stepFactory: StepFac
         }
     }
 
+    /**
+     * Cross-plane targets are outside escape range; planar distance checks cannot represent
+     * them.
+     */
     private fun Npc.inValidDistance(target: Player): Boolean =
-        isWithinDistance(target, VALID_DISTANCE)
+        level == target.level && isWithinDistance(target, VALID_DISTANCE)
 
     private fun Npc.retreatFrom(target: Player) {
         val collision = collisionStrategy
@@ -35,7 +39,6 @@ constructor(private val playerList: PlayerList, private val stepFactory: StepFac
             return
         }
         val dest = retreatDest(target.coords)
-        // This means we've reached the boundary of our spawn point and retreat range.
         val reachedMaxRange = coords == dest
         if (reachedMaxRange) {
             return
@@ -49,12 +52,10 @@ constructor(private val playerList: PlayerList, private val stepFactory: StepFac
     }
 
     private fun Npc.retreatDest(target: CoordGrid): CoordGrid {
-        // Define valid boundary based on spawn point and max retreat range.
         val minX = spawnCoords.x - retreatRange
         val maxX = spawnCoords.x + retreatRange
         val minZ = spawnCoords.z - retreatRange
         val maxZ = spawnCoords.z + retreatRange
-        // Decide the general direction in which the npc will try to retreat.
         val retreatDir = retreatDirection(target)
         val coercedDestX = (coords.x + retreatDir.xOff).coerceIn(minX, maxX)
         val coercedDestZ = (coords.z + retreatDir.zOff).coerceIn(minZ, maxZ)

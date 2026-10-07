@@ -11,12 +11,6 @@ import org.rsmod.game.entity.Player
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
-/**
- * Tells the client which quests the active [QuestRequirementPolicy] treats as complete, so
- * client-side quest locks (spellbooks, teleports, prayers, ...) agree with the server. The
- * overridden `[proc,quest_is_complete]` checks this list before the real quest varps, leaving
- * actual quest progress and the quest journal untouched.
- */
 class QuestPolicySyncScript : PluginScript() {
     private val questIdsByKey: Map<String, Int> by lazy {
         DbHelper.table("dbtable.quest").associate { row ->

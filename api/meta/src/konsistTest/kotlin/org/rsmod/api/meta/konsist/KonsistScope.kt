@@ -10,7 +10,6 @@ import com.lemonappdev.konsist.api.ext.list.withKDoc
 
 object KonsistScope : KoScope by Konsist.scopeFromProject()
 
-// NOTE: Filling this out as needed.
 fun KonsistScope.allKDocs(): List<KoKDocDeclaration> {
     val classes = classes()
     val interfaces = interfaces()

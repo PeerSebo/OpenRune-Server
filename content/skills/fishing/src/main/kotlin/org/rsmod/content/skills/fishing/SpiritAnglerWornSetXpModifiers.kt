@@ -13,7 +13,8 @@ class SpiritAnglerWornSetXpModifiers : StatXpMod("stat.fishing") {
         val hat = hat.isType("obj.trawler_reward_hat") || hat.isType("obj.spirit_angler_hat")
         val top = torso.isType("obj.trawler_reward_top") || torso.isType("obj.spirit_angler_top")
         val legs = legs.isType("obj.trawler_reward_legs") || legs.isType("obj.spirit_angler_legs")
-        val boots = feet.isType("obj.trawler_reward_boots") || feet.isType("obj.spirit_angler_boots")
+        val boots =
+            feet.isType("obj.trawler_reward_boots") || feet.isType("obj.spirit_angler_boots")
 
         var bonus = 0.0
         if (hat) bonus += 0.004

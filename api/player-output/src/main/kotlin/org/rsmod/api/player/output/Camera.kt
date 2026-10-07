@@ -2,27 +2,16 @@ package org.rsmod.api.player.output
 
 import net.rsprot.protocol.game.outgoing.camera.CamLookAtV2
 import net.rsprot.protocol.game.outgoing.camera.CamLookAtV3
+import net.rsprot.protocol.game.outgoing.camera.CamMode
 import net.rsprot.protocol.game.outgoing.camera.CamMoveToV2
 import net.rsprot.protocol.game.outgoing.camera.CamMoveToV3
 import net.rsprot.protocol.game.outgoing.camera.CamReset
 import net.rsprot.protocol.game.outgoing.camera.CamShake
 import net.rsprot.protocol.game.outgoing.camera.CamUnlock
+import net.rsprot.protocol.game.outgoing.camera.OculusSync
 import org.rsmod.game.entity.Player
 import org.rsmod.map.CoordGrid
 
-/**
- * The shake axes the client understands, as documented on [CamShake].
- *
- * ```
- * | Id |  Type   |    Observed Movement   |
- * |----|:-------:|:----------------------:|
- * | 0  | X-axis  |     Left and right     |
- * | 1  | Y-axis  |       Up and down      |
- * | 2  | Z-axis  | Forwards and backwards |
- * | 3  | Y-angle | Panning left and right |
- * | 4  | X-angle |   Panning up and down  |
- * ```
- */
 public enum class CamShakeAxis(public val id: Int) {
     LEFT_RIGHT(0),
     UP_DOWN(1),
@@ -32,6 +21,29 @@ public enum class CamShakeAxis(public val id: Int) {
 }
 
 public object Camera {
+    public fun freeCamera(player: Player, enabled: Boolean) {
+        player.client.write(CamMode(if (enabled) 1 else 0))
+    }
+
+    public fun syncOculus(player: Player, resetCounter: Int) {
+        player.client.write(OculusSync(resetCounter))
+    }
+
+    /**
+     * The shake axes the client understands, as documented on [CamShake].
+     *
+     * ```
+     * | Id |  Type   |    Observed Movement   |
+     * |----|:-------:|:----------------------:|
+     * | 0  | X-axis  |     Left and right     |
+     * | 1  | Y-axis  |       Up and down      |
+     * | 2  | Z-axis  | Forwards and backwards |
+     * | 3  | Y-angle | Panning left and right |
+     * | 4  | X-angle |   Panning up and down  |
+     * ```
+     */
+    public val shakeAxes: IntRange = 0..4
+
     public fun camReset(player: Player) {
         player.client.write(CamReset)
     }
@@ -85,27 +97,30 @@ public object Camera {
     }
 
     /** Each axis stacks independently and keeps shaking until explicitly reset. */
-    public fun camShake(
-        player: Player,
-        axis: CamShakeAxis,
-        random: Int,
-        amplitude: Int,
-        rate: Int,
-    ) {
+    public fun camShake(player: Player, axis: Int, random: Int, amplitude: Int, rate: Int) {
+        require(axis in shakeAxes) { "`axis` must be within range [0..4]. (axis=$axis)" }
         require(random in 0..255) { "`random` must be within range [0..255]. (random=$random)" }
         require(amplitude in 0..255) {
             "`amplitude` must be within range [0..255]. (amplitude=$amplitude)"
         }
         require(rate in 0..255) { "`rate` must be within range [0..255]. (rate=$rate)" }
-        player.client.write(CamShake(axis.id, random, amplitude, rate))
+        player.client.write(CamShake(axis, random, amplitude, rate))
     }
 
-    public fun camShakeReset(player: Player, axis: CamShakeAxis) {
+    public fun camShake(player: Player, axis: CamShakeAxis, random: Int, amplitude: Int, rate: Int) {
+        camShake(player, axis.id, random, amplitude, rate)
+    }
+
+    public fun camShakeReset(player: Player, axis: Int) {
         camShake(player, axis, random = 0, amplitude = 0, rate = 0)
     }
 
+    public fun camShakeReset(player: Player, axis: CamShakeAxis) {
+        camShakeReset(player, axis.id)
+    }
+
     public fun camShakeResetAll(player: Player) {
-        for (axis in CamShakeAxis.entries) {
+        for (axis in shakeAxes) {
             camShakeReset(player, axis)
         }
     }

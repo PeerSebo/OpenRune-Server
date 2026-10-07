@@ -6,15 +6,15 @@ import dev.openrune.util.Wearpos
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import org.rsmod.api.area.checker.AreaChecker
+import org.rsmod.api.death.NpcDeathDropContext
+import org.rsmod.api.death.NpcDeathDropHook
 import org.rsmod.api.player.events.prayer.PrayerSkillAction
 import org.rsmod.api.player.events.skilling.SkillingActionCompleteEvent
 import org.rsmod.api.player.events.skilling.SkillingActionContext
+import org.rsmod.api.player.stat.statAdvance
+import org.rsmod.api.player.stat.statHeal
 import org.rsmod.api.player.vars.boolVarBit
 import org.rsmod.api.player.vars.intVarBit
-import org.rsmod.api.death.NpcDeathDropContext
-import org.rsmod.api.death.NpcDeathDropHook
-import org.rsmod.api.player.stat.statAdvance
-import org.rsmod.api.player.stat.statBoost
 import org.rsmod.api.table.prayer.SkillPrayerRow
 import org.rsmod.events.EventBus
 import org.rsmod.game.entity.Player
@@ -52,7 +52,12 @@ constructor(
             return false
         }
 
-        val prayerXp = row.exp.toDouble() / 2
+        val morytaniaEliteDiaryComplete = player.morytaniaDiaryEliteComplete
+        val prayerXp = if (morytaniaEliteDiaryComplete) {
+            row.xpTenths / 10.0
+        } else {
+            row.xpTenths / 10.0 / 2
+        }
         player.statAdvance("stat.prayer", prayerXp)
 
         eventBus.publish(SkillingActionCompleteEvent(player = player, context =
@@ -82,12 +87,13 @@ constructor(
             return
         }
 
+        // Restore with statHeal; statBoost can exceed the base Prayer level.
         if (player.isBonecrusherNecklacePrayerSource(source)) {
-            player.statBoost("stat.prayer", restore, 0)
+            player.statHeal("stat.prayer", restore, 0)
             return
         }
         if (player.isDragonboneNecklaceInvCrushPrayer(source)) {
-            player.statBoost("stat.prayer", restore, 0)
+            player.statHeal("stat.prayer", restore, 0)
         }
     }
 
@@ -133,6 +139,8 @@ constructor(
 }
 
 private var Player.bonecrusherCharges by intVarBit("varbit.charges_bonecrusher_quantity")
+
+private val Player.morytaniaDiaryEliteComplete by boolVarBit("varbit.morytania_diary_elite_complete")
 
 private fun InvObj?.isCrusherItem(): Boolean {
     if (this == null) {

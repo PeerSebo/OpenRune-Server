@@ -2,6 +2,8 @@ package org.rsmod.content.interfaces.settings.scripts
 
 import dev.openrune.ServerCacheManager
 import dev.openrune.definition.type.StructType
+import dev.openrune.rscm.RSCM.asRSCM
+import dev.openrune.rscm.RSCMType
 import dev.openrune.types.enums.enum
 
 data class SettingCategory(private val struct: StructType) {
@@ -11,7 +13,7 @@ data class SettingCategory(private val struct: StructType) {
     val settings: List<Setting> = populateSettings()
 
     private fun populateSettings(): List<Setting> {
-        val enumId = struct.params?.get(SETTINGS_CATEGORY_SETTINGS_LIST_PARAM) as? Int ?: return emptyList()
+        val enumId = struct.params?.get(SETTINGS_CATEGORY_SETTINGS_LIST_PARAM.asRSCM(RSCMType.PARAM)) as? Int ?: return emptyList()
 
         return enum<Int, Int>(enumId).filterValuesNotNull().values.mapNotNull { settingId ->
             ServerCacheManager.getStruct(settingId)?.let(::Setting)
@@ -22,6 +24,6 @@ data class SettingCategory(private val struct: StructType) {
         "SettingCategory(id=$id, name='$name', settings=$settings)"
 
     companion object {
-        private const val SETTINGS_CATEGORY_SETTINGS_LIST_PARAM = 745
+        private const val SETTINGS_CATEGORY_SETTINGS_LIST_PARAM = "param.settings_category_settings_list"
     }
 }

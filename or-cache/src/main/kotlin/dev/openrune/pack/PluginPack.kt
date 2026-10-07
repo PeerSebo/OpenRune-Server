@@ -19,6 +19,8 @@ abstract class PluginPack {
 
     fun configDirectory(): File? = resourceDirectory(CONFIGS)
 
+    fun serverConfigDirectory(): File? = resourceDirectory("server")
+
     fun modelDirectory(): File? = resourceDirectory(MODELS)
 
     fun spriteDirectory(): File? = resourceDirectory(SPRITES)

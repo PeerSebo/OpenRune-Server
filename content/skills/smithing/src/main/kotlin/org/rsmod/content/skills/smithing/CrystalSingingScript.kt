@@ -1,6 +1,5 @@
 package org.rsmod.content.skills.smithing
 
-import org.rsmod.api.attr.AttributeKey
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.player.stat.craftingLvl
 import org.rsmod.api.player.stat.smithingLvl
@@ -11,6 +10,7 @@ import org.rsmod.content.skills.Material
 import org.rsmod.content.skills.SkillMultiConfig
 import org.rsmod.content.skills.SkillMultiEntry
 import org.rsmod.content.skills.openSkillMulti
+import org.rsmod.content.skills.smithing.configs.SmithingParams
 import org.rsmod.content.skills.smithing.util.SmithingUtils
 import org.rsmod.game.inv.Inventory
 import org.rsmod.plugin.scripts.PluginScript
@@ -25,11 +25,9 @@ class CrystalSingingScript : PluginScript() {
     private val itemsByOutput = crystalItems.associateBy { it.output.internalName }
 
     override fun ScriptContext.startup() {
-        onOpLoc1("loc.prif_singing_bowl") {
-            openCrystalSinging()
-        }
+        onOpLoc1("loc.prif_singing_bowl") { openCrystalSinging() }
 
-        onPlayerQueueWithArgs<CrystalSingTask>("queue.smithing_crystal_singing") {
+        onPlayerQueueWithArgs<CrystalSingTask>(SmithingParams.CRYSTAL_SING_QUEUE) {
             processSingTask(it.args)
         }
     }
@@ -45,32 +43,33 @@ class CrystalSingingScript : PluginScript() {
                 verb = "make",
                 entries = available.map(::toEntry),
                 maxCountProvider = { inventory, entry ->
-                    itemsByOutput[entry.internal]
-                        ?.let { maxCraftCount(inventory, it) }
-                        ?: 0
+                    itemsByOutput[entry.internal]?.let { maxCraftCount(inventory, it) } ?: 0
                 },
-            ),
+            )
         ) { selection ->
             val item = itemsByOutput[selection.entry.internal] ?: return@openSkillMulti
             startSinging(item, selection.amount)
         }
     }
 
-    private fun toEntry(item: SmithingCrystalSingingRow): SkillMultiEntry = SkillMultiEntry(
-        item.output.internalName,
-        item.input.zip(item.inputAmount).map { (material, amount) ->
+    private fun toEntry(item: SmithingCrystalSingingRow): SkillMultiEntry =
+        SkillMultiEntry(
+            item.output.internalName,
+            item.input.zip(item.inputAmount).map { (material, amount) ->
                 Material(material.internalName, amount)
             },
         )
 
     private fun ProtectedAccess.canUseItem(item: SmithingCrystalSingingRow): Boolean {
-        if (player.smithingLvl < item.statReq.first().t1 || player.craftingLvl < item.statReq.first().t1) {
+        if (
+            player.smithingLvl < item.statReq.first().t1 ||
+                player.craftingLvl < item.statReq.first().t1
+        ) {
             return false
         }
 
         return item.input.zip(item.inputAmount).any { (material, _) ->
-            material.internalName != crystalShardInternal &&
-                inv.contains(material.internalName)
+            material.internalName != crystalShardInternal && inv.contains(material.internalName)
         }
     }
 
@@ -87,23 +86,24 @@ class CrystalSingingScript : PluginScript() {
             return
         }
 
-        queueNext(item, amount, completed = 0)
+        // Re-confirming replaces a still-running chain instead of stacking a second one.
+        clearWeakQueue(SmithingParams.CRYSTAL_SING_QUEUE)
+        scheduleSingCycle(CrystalSingTask(item, amount, completed = 0))
     }
 
-    private suspend fun ProtectedAccess.confirmSinging(
-        item: SmithingCrystalSingingRow,
-    ): Boolean {
-        if (player.attr[CRYSTAL_DONT_ASK_AGAIN] == true) {
+    private suspend fun ProtectedAccess.confirmSinging(item: SmithingCrystalSingingRow): Boolean {
+        if (SmithingState.skipCrystalConfirmation(player)) {
             return true
         }
 
-        val materialsText = item.input.zip(item.inputAmount)
-            .filterNot { (material, _) ->
-                material.internalName == crystalShardInternal
-            }.joinToString(" and ") { (material, amount) ->
-                val name = SmithingUtils.itemName(material)
-                "${SmithingUtils.countLiteral(amount)} ${SmithingUtils.pluralize(name, amount)}"
-            }
+        val materialsText =
+            item.input
+                .zip(item.inputAmount)
+                .filterNot { (material, _) -> material.internalName == crystalShardInternal }
+                .joinToString(" and ") { (material, amount) ->
+                    val name = SmithingUtils.itemName(material)
+                    "${SmithingUtils.countLiteral(amount)} ${SmithingUtils.pluralize(name, amount)}"
+                }
 
         val shortName = item.shortname ?: SmithingUtils.itemName(item.output)
 
@@ -126,78 +126,85 @@ class CrystalSingingScript : PluginScript() {
         ) {
             1 -> true
             2 -> {
-                player.attr[CRYSTAL_DONT_ASK_AGAIN] = true
+                SmithingState.setSkipCrystalConfirmation(player, true)
                 true
             }
             else -> false
         }
     }
 
-    private suspend fun ProtectedAccess.processSingTask(
-        task: CrystalSingTask,
-    ) {
+    private suspend fun ProtectedAccess.processSingTask(task: CrystalSingTask) {
         if (!canProduce(task.item)) {
             resetAnim()
             return
         }
 
-        performSing(task.item)
+        if (!performSing(task.item)) {
+            resetAnim()
+            return
+        }
 
         val completed = task.completed + 1
-        if (completed >= task.amount || !canProduce(task.item)) {
-            return
+        if (completed < task.amount && hasMaterials(task.item)) {
+            scheduleSingCycle(task.copy(completed = completed))
+        } else {
+            resetAnim()
         }
-
-        queueNext(task.item, task.amount, completed)
     }
 
-    private fun ProtectedAccess.queueNext(item: SmithingCrystalSingingRow, amount: Int, completed: Int, ) {
-        weakQueue(
-            "queue.smithing_crystal_singing",
-            1,
-            CrystalSingTask(item, amount, completed),
-        )
+    private fun ProtectedAccess.scheduleSingCycle(task: CrystalSingTask) {
+        anim(SmithingParams.CRYSTAL_SING_ANIM)
+        soundSynth(SmithingParams.CRYSTAL_SING_SOUND)
+        smithQueue(SmithingParams.CRYSTAL_SING_QUEUE, SmithingParams.CRYSTAL_SING_TICKS, task)
     }
 
-    private fun ProtectedAccess.performSing(item: SmithingCrystalSingingRow, ) {
-        anim("seq.prif_crystal_singing")
-        soundSynth("synth.crystal_sing")
-
-        val removed = item.input.zip(item.inputAmount).all { (material, amount) ->
-            invDel(inv, material.internalName, amount).success
+    private fun ProtectedAccess.performSing(item: SmithingCrystalSingingRow): Boolean {
+        val crafted =
+            tryProduce(
+                inputs =
+                    item.input.zip(item.inputAmount).map { (material, amount) ->
+                        material.internalName to amount
+                    },
+                output = item.output.internalName,
+                outputCount = 1,
+            )
+        if (!crafted) {
+            return false
         }
-
-        if (!removed) {
-            return
-        }
-
-        invAdd(inv, item.output.internalName, 1)
 
         statAdvance("stat.smithing", item.xp.toDouble())
         statAdvance("stat.crafting", item.xp.toDouble())
+        return true
     }
 
-    private suspend fun ProtectedAccess.canProduce(item: SmithingCrystalSingingRow, ): Boolean {
-        val missingMaterials = item.input.zip(item.inputAmount).mapNotNull { (material, required) ->
-            val missing = required - inv.count(material.internalName)
-
-            if (missing > 0) {
-                SmithingUtils.itemName(material) to missing
-            } else {
-                null
-            }
+    private fun ProtectedAccess.hasMaterials(item: SmithingCrystalSingingRow): Boolean =
+        item.input.zip(item.inputAmount).all { (material, required) ->
+            inv.count(material.internalName) >= required
         }
 
-        if (missingMaterials.isNotEmpty()) {
-            val missingText = missingMaterials.joinToString(", ") { (name, amount) ->
-                "${SmithingUtils.countLiteral(amount)} ${name.lowercase()}"
+    private suspend fun ProtectedAccess.canProduce(item: SmithingCrystalSingingRow): Boolean {
+        val missingMaterials =
+            item.input.zip(item.inputAmount).mapNotNull { (material, required) ->
+                val missing = required - inv.count(material.internalName)
+
+                if (missing > 0) {
+                    SmithingUtils.itemName(material) to missing
+                } else {
+                    null
+                }
             }
+
+        if (missingMaterials.isNotEmpty()) {
+            val missingText =
+                missingMaterials.joinToString(", ") { (name, amount) ->
+                    "${SmithingUtils.countLiteral(amount)} ${name.lowercase()}"
+                }
 
             val outputName = SmithingUtils.itemName(item.output)
 
             mesbox(
                 "You need $missingText to make " +
-                    "${SmithingUtils.prefixAn(outputName).lowercase()}.",
+                    "${SmithingUtils.prefixAn(outputName).lowercase()}."
             )
 
             return false
@@ -210,18 +217,14 @@ class CrystalSingingScript : PluginScript() {
         )
     }
 
-    private fun maxCraftCount(inventory: Inventory, item: SmithingCrystalSingingRow, ): Int =
+    private fun maxCraftCount(inventory: Inventory, item: SmithingCrystalSingingRow): Int =
         item.input.zip(item.inputAmount).minOfOrNull { (material, required) ->
             inventory.count(material.internalName) / required
-        }?: 0
+        } ?: 0
 
     private data class CrystalSingTask(
         val item: SmithingCrystalSingingRow,
         val amount: Int,
         val completed: Int,
     )
-
-    private companion object {
-        private val CRYSTAL_DONT_ASK_AGAIN = AttributeKey<Boolean>(persistenceKey = "crystal_singing_dont_ask_again")
-    }
 }

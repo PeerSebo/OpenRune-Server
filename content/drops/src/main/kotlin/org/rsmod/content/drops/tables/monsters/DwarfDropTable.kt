@@ -2,15 +2,13 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.api.droptable.ringNothing
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.content.drops.tables.shared.SharedDropTables
-import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.api.droptable.ringNothing
-import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.content.drops.tables.shared.SharedDropTables
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -25,7 +23,7 @@ public val dwarfDropTable: RSDropTable<Player, DropRollItem> = RSDropTable(
         2 weight "obj.bronze_battleaxe" count 1
         1 weight "obj.iron_battleaxe" count 1
         7 weight "obj.bolt" count (2..12) condition { player ->
-            // Drops Need Manual: Only dropped in members worlds.
+            // TODO: Only dropped in members worlds.
              true
         }
         4 weight "obj.chaosrune" count 2

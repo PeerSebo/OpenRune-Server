@@ -179,7 +179,7 @@ class NvPMagicAccuracyTest {
                 Matchup(expectedAccuracy = 79.92).withNpcSource(test_npcs.dagannoth_prime),
                 Matchup(expectedAccuracy = 82.95)
                     .withNpcSource(test_npcs.dagannoth_prime)
-                    .withBlockStance(CombatStance.Stance4) // Unarmed "Block" stance.
+                    .withBlockStance(CombatStance.Stance4)
                     .withMagicLevel(magicLvl = 50)
                     .withPrayers("varbit.prayer_augury"),
                 Matchup(expectedAccuracy = 51.11)

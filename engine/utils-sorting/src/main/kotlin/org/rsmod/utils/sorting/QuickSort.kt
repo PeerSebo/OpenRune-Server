@@ -1,32 +1,7 @@
 package org.rsmod.utils.sorting
 
-/**
- * This object contains variations of the quicksort algorithm, each with a unique partitioning
- * strategy.
- */
 public object QuickSort {
-    /**
-     * Sorts the given [list] using an `alternating` quicksort algorithm.
-     *
-     * This implementation partitions the list such that elements are compared in an alternating
-     * fashion based on their index parity. Specifically, elements at even indices are treated
-     * differently than those at odd indices when compared to the pivot.
-     *
-     * **Implementation details:**
-     * - The pivot is initially swapped to the end to simplify partitioning. After partitioning, it
-     *   is restored to its correct position.
-     * - The condition checks whether an element's index is odd or even to determine how it is
-     *   swapped during partitioning. Elements **less than the pivot** always move, elements
-     *   **greater than the pivot** never move, and elements **equal to the pivot move only if they
-     *   are at an odd index**.
-     *
-     * @param list The [MutableList] to sort. **This list will be mutated during sorting.**
-     * @param low The inclusive start index of the range to sort.
-     * @param high The inclusive end index of the range to sort.
-     * @param compare A comparison function to determine the order of elements. Returns a negative
-     *   integer, zero, or a positive integer if the first argument is less than, equal to, or
-     *   greater than the second, respectively.
-     */
+    /** Equal pivot values move only at odd indices; preserve this tie ordering. */
     public fun <T> alternating(
         list: MutableList<T>,
         low: Int = 0,
@@ -67,28 +42,6 @@ public object QuickSort {
         }
     }
 
-    /**
-     * Sorts the given [arr] using an `alternating` quicksort algorithm.
-     *
-     * This implementation partitions the array such that elements are compared in an alternating
-     * fashion based on their index parity. Specifically, elements at even indices are treated
-     * differently than those at odd indices when compared to the pivot.
-     *
-     * **Implementation details:**
-     * - The pivot is initially swapped to the end to simplify partitioning. After partitioning, it
-     *   is restored to its correct position.
-     * - The condition checks whether an element's index is odd or even to determine how it is
-     *   swapped during partitioning. Elements **less than the pivot** always move, elements
-     *   **greater than the pivot** never move, and elements **equal to the pivot move only if they
-     *   are at an odd index**.
-     *
-     * @param arr The [Array] to sort. **This array will be mutated during sorting.**
-     * @param low The inclusive start index of the range to sort.
-     * @param high The inclusive end index of the range to sort.
-     * @param compare A comparison function to determine the order of elements. Returns a negative
-     *   integer, zero, or a positive integer if the first argument is less than, equal to, or
-     *   greater than the second, respectively.
-     */
     public fun <T> alternating(
         arr: Array<T>,
         low: Int = 0,
@@ -129,26 +82,7 @@ public object QuickSort {
         }
     }
 
-    /**
-     * Sorts the given [list] using a `lessThanZero` quicksort algorithm.
-     *
-     * This implementation partitions the list such that elements are moved to the left of the pivot
-     * if the result of the [compare] function is **less than 0**.
-     *
-     * **Implementation details:**
-     * - The pivot is initially swapped to the end to simplify partitioning. After partitioning, it
-     *   is restored to its correct position.
-     * - Unlike traditional quicksort, which typically moves elements **less than or equal to** the
-     *   pivot to the left partition, this implementation **only moves elements strictly less than
-     *   the pivot**. Elements equal to the pivot remain in the right partition.
-     *
-     * @param list The [MutableList] to sort. **This list will be mutated during sorting.**
-     * @param low The inclusive start index of the range to sort.
-     * @param high The inclusive end index of the range to sort.
-     * @param compare A comparison function to determine the order of elements. Returns a negative
-     *   integer, zero, or a positive integer if the first argument is less than, equal to, or
-     *   greater than the second, respectively.
-     */
+    /** Equal pivot values remain in the right partition. */
     public fun <T> lessThanZero(
         list: MutableList<T>,
         low: Int = 0,
@@ -189,26 +123,6 @@ public object QuickSort {
         }
     }
 
-    /**
-     * Sorts the given [arr] using a `lessThanZero` quicksort algorithm.
-     *
-     * This implementation partitions the array such that elements are moved to the left of the
-     * pivot if the result of the [compare] function is **less than 0**.
-     *
-     * **Implementation details:**
-     * - The pivot is initially swapped to the end to simplify partitioning. After partitioning, it
-     *   is restored to its correct position.
-     * - Unlike traditional quicksort, which typically moves elements **less than or equal to** the
-     *   pivot to the left partition, this implementation **only moves elements strictly less than
-     *   the pivot**. Elements equal to the pivot remain in the right partition.
-     *
-     * @param arr The [Array] to sort. **This array will be mutated during sorting.**
-     * @param low The inclusive start index of the range to sort.
-     * @param high The inclusive end index of the range to sort.
-     * @param compare A comparison function to determine the order of elements. Returns a negative
-     *   integer, zero, or a positive integer if the first argument is less than, equal to, or
-     *   greater than the second, respectively.
-     */
     public fun <T> lessThanZero(
         arr: Array<T>,
         low: Int = 0,
@@ -249,26 +163,7 @@ public object QuickSort {
         }
     }
 
-    /**
-     * Sorts the given [list] using a `lessThanOne` quicksort algorithm.
-     *
-     * This implementation partitions the list such that elements are moved to the left of the pivot
-     * if the result of the [compare] function is **less than 1**.
-     *
-     * **Implementation details:**
-     * - The pivot is initially swapped to the end to simplify partitioning. After partitioning, it
-     *   is restored to its correct position.
-     * - Unlike [lessThanZero], this implementation **moves elements less than or equal to the
-     *   pivot** to the left partition. Elements greater than the pivot remain in the right
-     *   partition.
-     *
-     * @param list The [MutableList] to sort. **This list will be mutated during sorting.**
-     * @param low The inclusive start index of the range to sort.
-     * @param high The inclusive end index of the range to sort.
-     * @param compare A comparison function to determine the order of elements. Returns a negative
-     *   integer, zero, or a positive integer if the first argument is less than, equal to, or
-     *   greater than the second, respectively.
-     */
+    /** Equal pivot values move into the left partition. */
     public fun <T> lessThanOne(
         list: MutableList<T>,
         low: Int = 0,
@@ -309,26 +204,6 @@ public object QuickSort {
         }
     }
 
-    /**
-     * Sorts the given [arr] using a `lessThanOne` quicksort algorithm.
-     *
-     * This implementation partitions the array such that elements are moved to the left of the
-     * pivot if the result of the [compare] function is **less than 1**.
-     *
-     * **Implementation details:**
-     * - The pivot is initially swapped to the end to simplify partitioning. After partitioning, it
-     *   is restored to its correct position.
-     * - Unlike [lessThanZero], this implementation **moves elements less than or equal to the
-     *   pivot** to the left partition. Elements greater than the pivot remain in the right
-     *   partition.
-     *
-     * @param arr The [Array] to sort. **This array will be mutated during sorting.**
-     * @param low The inclusive start index of the range to sort.
-     * @param high The inclusive end index of the range to sort.
-     * @param compare A comparison function to determine the order of elements. Returns a negative
-     *   integer, zero, or a positive integer if the first argument is less than, equal to, or
-     *   greater than the second, respectively.
-     */
     public fun <T> lessThanOne(
         arr: Array<T>,
         low: Int = 0,

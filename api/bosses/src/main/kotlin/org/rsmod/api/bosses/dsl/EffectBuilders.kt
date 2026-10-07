@@ -132,6 +132,14 @@ fun tileAoE(
     type: HitType,
 ): Effect = Effect.TileAoE(tiles, telegraph, damage, type)
 
+fun tileAoE(
+    center: TargetExpr.Single,
+    radius: Int,
+    telegraph: TelegraphSpec? = null,
+    damage: DamageExpr,
+    type: HitType,
+): Effect = Effect.TileAoE(center, radius, telegraph, damage, type)
+
 fun debris(
     telegraph: String,
     damage: DamageExpr,
@@ -387,7 +395,12 @@ class RotationBuilder internal constructor() {
     internal fun build(): Selector.Rotation = Selector.Rotation(sequence)
 }
 
-// Re-exports for clean spec authoring
+fun accuracy(on: DamageExpr, miss: DamageExpr = DamageExpr.Fixed(0)): DamageExpr.Accuracy =
+    DamageExpr.Accuracy(on, miss)
+
+fun DamageExpr.withAccuracy(miss: DamageExpr = DamageExpr.Fixed(0)): DamageExpr.Accuracy =
+    DamageExpr.Accuracy(this, miss)
+
 typealias Roll = DamageExpr.Roll
 typealias Accuracy = DamageExpr.Accuracy
 typealias Fixed = DamageExpr.Fixed

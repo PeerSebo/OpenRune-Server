@@ -1,0 +1,59 @@
+[[varp]]
+id = "varp.magic_offering_ready"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.magic_cure_ready"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.magic_vigour_ready"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.magic_shadow_ready"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.magic_mark_ready"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.magic_charge_ready"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.magic_shadow_until"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.magic_charge_until"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.magic_mark_until"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.magic_tan_hard"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"

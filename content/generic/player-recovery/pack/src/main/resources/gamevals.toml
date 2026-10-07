@@ -1,0 +1,8 @@
+[gamevals.varp]
+player_login_exit_coord = 63674
+player_login_exit_pending = 63675
+player_login_exit_migrated = 63676
+player_run_restore_blocked_until = 63783
+player_instance_id_low = 63870
+player_instance_id_high = 63871
+player_instance_id_present = 63872

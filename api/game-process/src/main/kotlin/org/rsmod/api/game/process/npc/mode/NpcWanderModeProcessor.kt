@@ -44,6 +44,8 @@ constructor(@CoreRandom private val random: GameRandom, private val collision: C
 
     private fun Npc.processSpawnRetreat() {
         if (coords == spawnCoords) {
+            // Stationary NPCs retain their facing. Scripted periodic re-facing must not become
+            // generic random glances.
             return
         }
         if (shouldRespawn) {

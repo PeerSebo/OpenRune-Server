@@ -1,0 +1,17 @@
+[[varp]]
+id = "varp.diary_lumbridge_oak_stage"
+scope = "Temp"
+transmit = "Never"
+isServerOnly = true
+
+[[varp]]
+id = "varp.diary_lumbridge_ring_reset_day"
+scope = "Perm"
+transmit = "Never"
+isServerOnly = true
+
+[[varp]]
+id = "varp.diary_lumbridge_amulet_stage"
+scope = "Temp"
+transmit = "Never"
+isServerOnly = true

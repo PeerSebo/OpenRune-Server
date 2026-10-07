@@ -1,0 +1,16 @@
+[gamevals.varp]
+poh_teleport_inside = 63800
+poh_teleport_inside_migrated = 63801
+poh_login_exit_coord = 63873
+
+[gamevals.dbtable]
+sawmill_planks = 63938
+
+[gamevals.dbrow]
+sawmill_plank_plain = 61787
+sawmill_plank_oak = 61788
+sawmill_plank_teak = 61789
+sawmill_plank_mahogany = 61790
+sawmill_plank_camphor = 61791
+sawmill_plank_ironwood = 61792
+sawmill_plank_rosewood = 61793

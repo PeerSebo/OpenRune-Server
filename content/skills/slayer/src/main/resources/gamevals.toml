@@ -13,8 +13,6 @@ available_in_wilderness=65522
 
 [gamevals.varbit]
 slayer_combat_check=65471
-slayer_streak=65470
-slayer_wildy_streak=65469
 slayer_superior_active=65468
 slayer_turael_intro_complete=65467
 slayer_konar_intro_complete=65466
@@ -24,14 +22,12 @@ slayer_krystilia_edgeville_spawn_active=65463
 slayer_duradel_notes_received=65462
 slayer_task_tips=65461
 slayer_expeditious_charges=65460
-slayer_total_tasks_done=65459
 slayer_slaughter_charges=65457
-slayer_mortimer_tasks_done=65525
-slayer_mortimer_streak=65524
 slayer_choose_amount_1=65523
 slayer_choose_amount_2=65522
 slayer_choose_amount_3=65521
 slayer_last_mortimer_amount=65520
+# Previous Mortimer modifiers need separate storage; reusing active-modifier bits corrupts the current task.
 slayer_last_mortimer_modifier_id=65458
 slayer_last_mortimer_modifier_value=65456
 slayer_last_mortimer_modifier_negative=65455

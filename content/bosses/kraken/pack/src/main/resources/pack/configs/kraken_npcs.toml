@@ -1,0 +1,68 @@
+# Both whirlpool and visible forms need rooted combat routing; the original type remains assigned.
+[[npc]]
+isServerOnly = true
+id = "npc.slayer_kraken_boss"
+inherit = "npc.slayer_kraken_boss"
+defaultMode = "None"
+moveRestrict = "NoMove"
+attackRange = 10
+maxRange = 16
+giveChase = false
+respawnRate = 15
+[npc.params]
+"param.boss_hp_bar_mode" = 1
+"param.killcount_varp" = "varp.total_kraken_boss_kills"
+"param.attackrate" = 4
+"param.attack_anim" = "seq.swan_queen_spellcast"
+"param.defend_anim" = "seq.swan_queen_defend"
+"param.death_anim" = "seq.swan_queen_death"
+"param.elemental_weakness_percent"=50
+"param.elemental_weakness_type"=2
+
+[[npc]]
+isServerOnly = true
+id = "npc.slayer_kraken_boss_whirlpool"
+inherit = "npc.slayer_kraken_boss_whirlpool"
+defaultMode = "None"
+moveRestrict = "NoMove"
+attackRange = 10
+maxRange = 16
+giveChase = false
+respawnRate = 15
+[npc.params]
+"param.killcount_varp" = "varp.total_kraken_boss_kills"
+"param.attackrate" = 4
+"param.death_anim" = "seq.swan_queen_death"
+
+[[npc]]
+isServerOnly = true
+id = "npc.slayer_kraken_boss_tentacle"
+inherit = "npc.slayer_kraken_boss_tentacle"
+defaultMode = "None"
+moveRestrict = "NoMove"
+attackRange = 10
+maxRange = 16
+giveChase = false
+respawnRate = 15
+[npc.params]
+"param.attackrate" = 4
+"param.attack_anim" = "seq.tentacle_monster_attack"
+"param.defend_anim" = "seq.tentacle_monster_block"
+"param.death_anim" = "seq.tentacle_monster_death"
+"param.elemental_weakness_percent"=50
+"param.elemental_weakness_type"=2
+
+[[npc]]
+isServerOnly = true
+id = "npc.slayer_kraken_boss_tentacle_whirlpool"
+inherit = "npc.slayer_kraken_boss_tentacle_whirlpool"
+defaultMode = "None"
+moveRestrict = "NoMove"
+attackRange = 10
+maxRange = 16
+giveChase = false
+respawnRate = 15
+[npc.params]
+"param.attackrate" = 4
+"param.death_anim" = "seq.tentacle_monster_death"
+

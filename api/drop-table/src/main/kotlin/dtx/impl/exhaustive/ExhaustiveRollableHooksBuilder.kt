@@ -2,7 +2,7 @@ package dtx.impl.exhaustive
 
 import dtx.core.AbstractRollableHooksBuilder
 
-public open class ExhaustiveRollableHooksBuilder<T, R>: AbstractRollableHooksBuilder<
+public open class ExhaustiveRollableHooksBuilder<T, R> : AbstractRollableHooksBuilder<
         T,
         R,
         ExhaustiveRollableHooks<T, R>,

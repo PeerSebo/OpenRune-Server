@@ -238,11 +238,7 @@ coords = "0_46_90_50_53"
 npc = "npc.spider_nocombat2"
 coords = "0_46_90_55_41"
 
-## Camdozaal Tiled Floor
 
 [[spawn]]
 npc = "npc.camdozaal_ramarno_entrance_multi"
 coords = "0_46_90_7_19"
-
-## Camdozaal Tiled Floor End
-

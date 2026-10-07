@@ -14,11 +14,13 @@ import org.rsmod.api.account.loader.request.AccountLoadAuth
 import org.rsmod.api.account.loader.request.AccountLoadCallback
 import org.rsmod.api.account.loader.request.AccountLoadResponse
 import org.rsmod.api.account.loader.request.isNewAccount
-import org.rsmod.api.attr.AttributeKey
+import org.rsmod.api.account.saver.journal.AccountSaveLease
+import org.rsmod.api.account.saver.journal.SaveRevisionStore
 import org.rsmod.api.db.jdbc.GameDatabase
 import org.rsmod.api.net.central.CentralAuthResult
 import org.rsmod.api.net.central.InflightCentralAuth
 import org.rsmod.api.net.central.OpenRuneCentralWorldLink
+import org.rsmod.api.player.recovery.takeLoginExitCoord
 import org.rsmod.api.player.vars.boolVarBit
 import org.rsmod.api.realm.RealmConfig
 import org.rsmod.api.registry.account.AccountRegistry
@@ -58,10 +60,7 @@ class AccountLoadResponseHook(
 
     private var inflightCentralAuth: InflightCentralAuth? = null
 
-    internal fun kickoffInflightCentralAuth(
-        accountName: String,
-        loginCharacterId: Int?,
-    ) {
+    internal fun kickoffInflightCentralAuth(accountName: String, loginCharacterId: Int?) {
         if (!openRuneCentral.isEnabled) {
             return
         }
@@ -69,17 +68,10 @@ class AccountLoadResponseHook(
             return
         }
         inflightCentralAuth =
-            openRuneCentral.beginAuthenticate(
-                accountName,
-                inputPassword,
-                loginCharacterId,
-            )
+            openRuneCentral.beginAuthenticate(accountName, inputPassword, loginCharacterId)
     }
 
-    private data class PendingTrustedDevice(
-        val deviceId: Int,
-        val verifiedAt: LocalDateTime,
-    )
+    private data class PendingTrustedDevice(val deviceId: Int, val verifiedAt: LocalDateTime)
 
     override fun invoke(response: AccountLoadResponse) {
         try {
@@ -132,8 +124,6 @@ class AccountLoadResponseHook(
     }
 
     private fun validateAndQueueLogin(response: AccountLoadResponse.Ok.LoadAccount) {
-        // Note: We could move this branch to `handleLoadResponse`, but we intentionally keep it
-        // here to mirror the production login flow.
         val twoFactor = response.account.twoFactorAuth
         if (twoFactor.twoFactorConfirmed) {
             val storedSecret = twoFactor.twoFactorSecret
@@ -168,7 +158,8 @@ class AccountLoadResponseHook(
         // `last_login`. Row with `last_login` set but `last_logout` null = DB corruption,
         // legacy schema drift, or partial write — not same as first login (both null).
         val inconsistentSessionTimestamps =
-            response.account.characterData.lastLogin != null && response.account.characterData.lastLogout == null
+            response.account.characterData.lastLogin != null &&
+                response.account.characterData.lastLogout == null
         if (inconsistentSessionTimestamps) {
             logger.error {
                 "Character last_login set but last_logout null (invalid row) — login aborted: " +
@@ -208,17 +199,15 @@ class AccountLoadResponseHook(
             }
         }
 
-    private data class ResolvedTrustedDevice(
-        val deviceId: Int,
-        val isNewDevice: Boolean,
-    )
+    private data class ResolvedTrustedDevice(val deviceId: Int, val isNewDevice: Boolean)
 
     private fun resolveVerifiedTrustedDevice(
         account: AccountData,
         auth: AccountLoadAuth.CodeInput,
     ): ResolvedTrustedDevice =
         when (auth) {
-            is AccountLoadAuth.AuthCodeInputUntrusted -> ResolvedTrustedDevice(randomInt(), isNewDevice = true)
+            is AccountLoadAuth.AuthCodeInputUntrusted ->
+                ResolvedTrustedDevice(randomInt(), isNewDevice = true)
             is AccountLoadAuth.AuthCodeInputTrusted -> {
                 val reauthDeviceId = TrustedDeviceReauthStore.take(account.accountName)
                 if (reauthDeviceId != null) {
@@ -291,20 +280,19 @@ class AccountLoadResponseHook(
     }
 
     private fun applyCentralStaffFromPending(player: Player) {
-        pendingCentralRights?.takeIf { it.isNotBlank() }?.let { rights ->
-            player.modLevel = Rights.fromRightsColumn(rights)
-        }
+        pendingCentralRights
+            ?.takeIf { it.isNotBlank() }
+            ?.let { rights -> player.modLevel = Rights.fromRightsColumn(rights) }
         pendingCentralRights = null
     }
 
-    public val LOGIN_EXIT_COORD: AttributeKey<Int> = AttributeKey(persistenceKey = "instance_exit_coord")
-
     private fun Player.applyConfigTransforms(config: RealmConfig) {
         if (!newAccount) {
-            val hasExit = attr[LOGIN_EXIT_COORD]
-            if (hasExit != null) {
-                coords = CoordGrid(hasExit)
-                attr.remove(LOGIN_EXIT_COORD)
+            val exit = takeLoginExitCoord()
+            if (exit != null) {
+                coords = exit
+            } else if (RegionRegistry.inWorkingArea(coords)) {
+                coords = config.spawnCoord
             }
             recoverAbandonedInstance(config.spawnCoord)
             return
@@ -320,9 +308,6 @@ class AccountLoadResponseHook(
         }
     }
 
-    // Since logins are processed on the game thread, we isolate player-specific failures to prevent
-    // them from affecting the server. Exceptions are caught, logged, and a generic failure response
-    // is sent to the player's channel.
     private fun safeHandleGameLogin(player: Player, loadResponse: AccountLoadResponse.Ok) {
         val startedAt = System.nanoTime()
         try {
@@ -331,7 +316,8 @@ class AccountLoadResponseHook(
             writeErrorResponse(LoginResponse.ConnectFail)
             logger.error(e) { "Error handling login for player: $player" }
         } finally {
-            val elapsedMs = java.util.concurrent.TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startedAt)
+            val elapsedMs =
+                java.util.concurrent.TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startedAt)
             if (!loginTimingLogs) {
                 return
             }
@@ -366,7 +352,9 @@ class AccountLoadResponseHook(
                 )
             }
         val duplicateCheckMs =
-            java.util.concurrent.TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - duplicateCheckStart)
+            java.util.concurrent.TimeUnit.NANOSECONDS.toMillis(
+                System.nanoTime() - duplicateCheckStart
+            )
         if (loginTimingLogs && duplicateCheckMs >= GAME_LOGIN_TIMING_INFO_MS) {
             logger.info {
                 "Login duplicate-check user='${player.username}' characterId=$characterId elapsed=${duplicateCheckMs}ms"
@@ -399,11 +387,16 @@ class AccountLoadResponseHook(
             return
         }
 
-        eventBus.publish(SessionStateEvent.PrepareLogin(player))
+        val saveLease = database.withTransactionBlocking { connection ->
+            SaveRevisionStore.claim(connection, player)
+        }
+        AccountSaveLease.apply(player, saveLease)
+
         val response = player.createLoginResponse(slotId, loadResponse.auth)
         val responseStart = System.nanoTime()
         val session = channelResponses.writeSuccessfulResponse(response, loginBlock)
-        val responseMs = java.util.concurrent.TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - responseStart)
+        val responseMs =
+            java.util.concurrent.TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - responseStart)
 
         val disconnectionHook = Runnable { player.clientDisconnected.set(true) }
         session.setDisconnectionHook(disconnectionHook)
@@ -423,8 +416,13 @@ class AccountLoadResponseHook(
             persistTrustedDevicesIfNeeded(loadResponse.account.accountId, player)
             eventBus.publish(SessionStateEvent.Login(player))
             eventBus.publish(SessionStateEvent.EngineLogin(player))
-            val eventsMs = java.util.concurrent.TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - eventsStart)
-            if (loginTimingLogs && (eventsMs >= GAME_LOGIN_TIMING_INFO_MS || responseMs >= GAME_LOGIN_TIMING_INFO_MS)) {
+            val eventsMs =
+                java.util.concurrent.TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - eventsStart)
+            if (
+                loginTimingLogs &&
+                    (eventsMs >= GAME_LOGIN_TIMING_INFO_MS ||
+                        responseMs >= GAME_LOGIN_TIMING_INFO_MS)
+            ) {
                 logger.info {
                     "Login game-thread phases user='${player.username}' duplicateCheck=${duplicateCheckMs}ms " +
                         "writeResponse=${responseMs}ms events=${eventsMs}ms"
@@ -486,10 +484,7 @@ class AccountLoadResponseHook(
         inflightCentralAuth = null
     }
 
-    private fun runCentralAuth(
-        accountName: String,
-        loginCharacterId: Int,
-    ): Boolean {
+    private fun runCentralAuth(accountName: String, loginCharacterId: Int): Boolean {
         val result = resolveCentralAuth(accountName, loginCharacterId)
         return when (result) {
             is CentralAuthResult.Ok -> {
@@ -510,10 +505,7 @@ class AccountLoadResponseHook(
         }
     }
 
-    private fun resolveCentralAuth(
-        accountName: String,
-        loginCharacterId: Int,
-    ): CentralAuthResult {
+    private fun resolveCentralAuth(accountName: String, loginCharacterId: Int): CentralAuthResult {
         val inflight = inflightCentralAuth
         if (inflight != null) {
             inflightCentralAuth = null
@@ -529,7 +521,6 @@ class AccountLoadResponseHook(
     private companion object {
         private const val ONLINE_SESSION_STALE_SECONDS = 120L
 
-        /** Once the game update timer hits this value, we reject any further login requests. */
         private const val UPDATE_TIMER_REJECT_BUFFER = 25
 
         private const val GAME_LOGIN_TIMING_INFO_MS = 100L

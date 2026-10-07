@@ -3,7 +3,6 @@ package org.rsmod.api.player.stat
 import dev.openrune.ServerCacheManager
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
-import dev.openrune.types.StatType
 import kotlin.math.min
 import org.rsmod.annotations.InternalApi
 import org.rsmod.api.player.ui.PlayerInterfaceUpdates
@@ -46,8 +45,9 @@ public object PlayerSkillXP {
     private fun Player.checkLevelUp(internal: String) {
         val baseLevel = statBase(internal)
 
-        val stat = ServerCacheManager.getStats(internal.asRSCM(RSCMType.STAT))
-            ?: error("No stat found for $internal")
+        val stat =
+            ServerCacheManager.getStats(internal.asRSCM(RSCMType.STAT))
+                ?: error("No stat found for $internal")
 
         if (baseLevel >= stat.maxLevel) {
             return
@@ -64,7 +64,7 @@ public object PlayerSkillXP {
             }
 
             engineQueueChangeStat(stat)
-            engineQueueAdvanceStat(stat)
+            engineQueueAdvanceStat(stat, newLevel)
         }
 
         val combatLevel = calculateCombatLevel(this)

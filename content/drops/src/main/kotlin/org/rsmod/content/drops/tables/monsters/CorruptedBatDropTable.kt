@@ -2,13 +2,12 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.api.droptable.ringNothing
 import org.rsmod.api.droptable.rsPlayerGuaranteedTable
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.api.droptable.DropRollItem
-import org.rsmod.api.droptable.ringNothing
-import org.rsmod.api.droptable.RegisterDropTable
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -29,7 +28,7 @@ public val corruptedBatDropTable: RSDropTable<Player, DropRollItem> = RSDropTabl
     },
     tertiaries = rsPlayerTertiaryTable {
         1 outOf 4 weight "obj.gauntlet_generic_component_hm" count 1 condition { player ->
-            // Drops Need Manual: Guaranteed after killing three of the low-level monsters (Corrupted Rat
+            // TODO: Guaranteed after killing three of the low-level monsters (Corrupted Rat
              true
         }
     },

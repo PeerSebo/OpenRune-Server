@@ -20,8 +20,7 @@ class WoodsmanTutor : PluginScript() {
 
     private suspend fun Dialogue.woodsmanDialogue() {
         when {
-            player.baseWoodcuttingLvl >= 99 -> TODO("Mastery dialogue")
-            player.baseWoodcuttingLvl in 29..98 -> highLevelMenu()
+            player.baseWoodcuttingLvl >= 29 -> highLevelMenu()
             player.baseWoodcuttingLvl in 20..28 -> intermediateLevelMenu()
             else -> lowLevelMenu()
         }
@@ -260,8 +259,6 @@ class WoodsmanTutor : PluginScript() {
     }
 
     private suspend fun Dialogue.giveAxeIfRequired() {
-        // NOTE: Once woodcutting axes are defined to the appropriate objs, we can remove the
-        // specific bronze axe condition. Or we can keep it; doesn't make a difference.
         if ("obj.bronze_axe" in player.inv || "content.woodcutting_axe" in player.inv) {
             return
         }
@@ -287,7 +284,6 @@ class WoodsmanTutor : PluginScript() {
         if (add.success) {
             chatNpc(neutral, "Ah, you've lost your tinderbox have you? Have another!")
         } else {
-            // Yes - typo is on purpose.
             chatNpc(
                 neutral,
                 "You don't seem to have any space so I canm't give you another tinderbox.",

@@ -2,19 +2,16 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
 import org.rsmod.api.droptable.rsPlayerGuaranteedTable
+import org.rsmod.api.droptable.rsPlayerPrerollTable
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.api.droptable.rsPlayerPrerollTable
-import org.rsmod.api.droptable.dropRollable
-import org.rsmod.content.drops.tables.shared.SharedDropTables
-import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.content.drops.brimstoneKeyRoll
-import org.rsmod.content.drops.hasCompletedQuest
-import org.rsmod.content.drops.isOnQuest
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.content.drops.hasCompletedQuest
+import org.rsmod.content.drops.tables.shared.SharedDropTables
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -24,7 +21,7 @@ public val steelDragonDropTable: RSDropTable<Player, DropRollItem> = RSDropTable
     npcs = npcs("npc.kourend_steel_dragon", "npc.steel_dragon", "npc.steel_dragon_strongholdcave"),
     guaranteed = rsPlayerGuaranteedTable {
         "obj.steel_bar" count 5 condition { player ->
-            // Drops Need Manual: Steel bars are dropped in bank note form if players have completed the elite Karamja Diary and are killing steel dragons in the Brimhaven Dungeon.
+            // TODO: Steel bars are dropped in bank note form if players have completed the elite Karamja Diary and are killing steel dragons in the Brimhaven Dungeon.
              true
         }
     },

@@ -5,10 +5,13 @@ import java.util.EnumSet
 import kotlin.collections.plusAssign
 import org.rsmod.api.combat.commons.magic.MagicSpellChecks
 import org.rsmod.api.combat.commons.magic.Spellbook
+import org.rsmod.api.combat.commons.magic.hasMagicCharge
+import org.rsmod.api.combat.commons.magic.hasMarkOfDarkness
+import org.rsmod.api.combat.formulas.SlayerHelmCombatChecks
 import org.rsmod.api.combat.formulas.attributes.CombatSpellAttributes
 import org.rsmod.api.combat.formulas.attributes.CombatStaffAttributes
 import org.rsmod.api.config.constants
-import org.rsmod.api.config.refs.BaseParams
+import org.rsmod.api.player.back
 import org.rsmod.api.player.front
 import org.rsmod.api.player.hands
 import org.rsmod.api.player.hat
@@ -22,11 +25,8 @@ import org.rsmod.api.random.GameRandom
 import org.rsmod.game.entity.Player
 import org.rsmod.game.inv.isAnyType
 import org.rsmod.game.inv.isType
-import org.rsmod.game.type.getOrNull
 
 public class CombatMagicAttributeCollector {
-    // `random` is an explicit parameter to indicate that this function relies on randomness
-    // for certain effects, such as the Brimstone ring proc.
     public fun spellCollect(
         player: Player,
         spell: ItemServerType,
@@ -74,7 +74,7 @@ public class CombatMagicAttributeCollector {
             attributes += CombatSpellAttributes.BrimstonePassive
         }
 
-        if (player.vars["varbit.buff_mark_of_darkness_disabled"] == 1) {
+        if (player.hasMarkOfDarkness) {
             attributes += CombatSpellAttributes.MarkOfDarkness
         }
 
@@ -91,8 +91,16 @@ public class CombatMagicAttributeCollector {
             attributes += CombatSpellAttributes.BoltSpell
         }
 
-        val chargeBuffCooldown = player.vars["varbit.buff_charge_spell_disabled"]
-        if (MagicSpellChecks.isGodSpell(spell) && chargeBuffCooldown > 0) {
+        val matchingCape = when {
+            spell.isType("obj.60_saradomin_strike") -> player.back.isAnyType(
+                "obj.saradomin_cape", "obj.ma2_saradomin_cape", "obj.skillcape_max_saradomin2")
+            spell.isType("obj.60_claws_of_guthix") -> player.back.isAnyType(
+                "obj.guthix_cape", "obj.ma2_guthix_cape", "obj.skillcape_max_guthix2")
+            spell.isType("obj.60_flames_of_zamorak") -> player.back.isAnyType(
+                "obj.zamorak_cape", "obj.ma2_zamorak_cape", "obj.skillcape_max_zamorak2")
+            else -> false
+        }
+        if (matchingCape && player.hasMagicCharge) {
             attributes += CombatSpellAttributes.ChargeSpell
         }
 
@@ -116,8 +124,7 @@ public class CombatMagicAttributeCollector {
             attributes += CombatSpellAttributes.SalveAmuletI
         }
 
-        val helmType = getOrNull(player.hat)
-        if (helmType != null && helmType.hasImbuedBlackMaskAttribute()) {
+        if (SlayerHelmCombatChecks.providesImbuedRangedMagicTaskBoost(helm)) {
             attributes += CombatSpellAttributes.BlackMaskI
         }
 
@@ -180,8 +187,6 @@ public class CombatMagicAttributeCollector {
         return attributes
     }
 
-    // `random` is an explicit parameter to indicate that this function relies on randomness
-    // for certain effects, such as the Brimstone ring proc.
     public fun staffCollect(player: Player, random: GameRandom): EnumSet<CombatStaffAttributes> {
         val attributes = EnumSet.noneOf(CombatStaffAttributes::class.java)
 
@@ -203,8 +208,7 @@ public class CombatMagicAttributeCollector {
             attributes += CombatStaffAttributes.SalveAmuletI
         }
 
-        val helmType = getOrNull(player.hat)
-        if (helmType != null && helmType.hasImbuedBlackMaskAttribute()) {
+        if (SlayerHelmCombatChecks.providesImbuedRangedMagicTaskBoost(player.hat)) {
             attributes += CombatStaffAttributes.BlackMaskI
         }
 
@@ -233,9 +237,5 @@ public class CombatMagicAttributeCollector {
         }
 
         return attributes
-    }
-
-    private fun ItemServerType.hasImbuedBlackMaskAttribute(): Boolean {
-        return param(BaseParams.blackmask_imbued) != 0 || param(BaseParams.slayer_helm_imbued) != 0
     }
 }

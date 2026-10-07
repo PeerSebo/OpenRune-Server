@@ -1,0 +1,32 @@
+[[npc]]
+isServerOnly = true
+id = "npc.hespori"
+inherit = "npc.hespori"
+defaultMode = "None"
+moveRestrict = "NoMove"
+wanderRange = 0
+attackRange = 16
+maxRange = 20
+giveChase = false
+[npc.params]
+"param.boss_hp_bar_mode" = 1
+"param.attackrate" = 6
+"param.attack_anim" = "seq.hespori_attack_ranged"
+"param.defend_anim" = "seq.hespori_ready"
+"param.death_anim" = "seq.hespori_death"
+"param.death_sound" = "synth.HESPORI_DEATH_01"
+"param.elemental_weakness_percent"=100
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.hespori_healer_active"
+inherit = "npc.hespori_healer_active"
+defaultMode = "None"
+moveRestrict = "NoMove"
+wanderRange = 0
+giveChase = false
+[npc.params]
+"param.defend_anim" = "seq.hespori_healer_ready"
+"param.death_anim" = "seq.hespori_healer_alive_to_dead"
+

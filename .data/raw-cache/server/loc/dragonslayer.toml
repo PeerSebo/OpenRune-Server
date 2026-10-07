@@ -1,0 +1,13 @@
+
+[[object]]
+id = "loc.fai_dwarf_trapdoor_down"
+inherit = "loc.fai_dwarf_trapdoor_down"
+contentGroup = "content.dungeonladder_down"
+
+[object.params]
+"param.climb_anim" = "seq.human_pickupfloor"
+
+[[object]]
+id = "loc.ladder_from_cellar_directional"
+inherit = "loc.ladder_from_cellar_directional"
+contentGroup = "content.dungeonladder_up"

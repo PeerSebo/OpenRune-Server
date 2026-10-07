@@ -5,15 +5,25 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 object DirectoryConstants {
+    val PLUGINS_PATH: Path = Paths.get("plugins")
     val DATA_PATH: Path = Paths.get(".data")
     val CACHE_PATH: Path = DATA_PATH.resolve("cache")
-    val CS2_PATH: Path = userAppDataDir()
-        .resolve(projectAppName())
-        .resolve("cs2")
-    val PLUGINS_PATH: Path = Paths.get("plugins")
+    private val CS2_WORKSPACE_PATH: Path = Paths.get("../.data/cs2").toAbsolutePath().normalize()
+
+    // Generated compiler inputs belong to this checkout and cache revision. A shared AppData
+    // directory can silently reuse another checkout's symbols or a different minor revision.
+    val CS2_PATH: Path
+        get() {
+            val (major, minor) = revision
+            val version = if (minor >= 0) "$major.$minor" else "$major-default"
+            return CS2_WORKSPACE_PATH.resolve(version)
+        }
 
     fun cleanCs2() {
-        val dir = CS2_PATH.toFile()
+        val dir = CS2_PATH.toFile().canonicalFile
+        check(dir.toPath().parent == CS2_WORKSPACE_PATH.toFile().canonicalFile.toPath()) {
+            "Refusing to clean CS2 outside the generated project workspace: $dir"
+        }
 
         if (!dir.exists()) {
             println("No CS2 directory at ${dir.absolutePath}")

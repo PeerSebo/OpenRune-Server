@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.parallel.ResourceLock
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.rsmod.annotations.InternalApi
@@ -19,6 +20,7 @@ import org.rsmod.game.entity.Npc
 import org.rsmod.game.entity.Player
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ResourceLock("ServerCacheManager")
 internal class AncientSpellEffectsTest {
     @BeforeAll
     fun loadCache() {
@@ -44,14 +46,14 @@ internal class AncientSpellEffectsTest {
             val target = npc("npc.man")
             AncientSpellEffects(landing).apply(spell, player(), target, damage = 5, sceptre)
             // The first poison hit is queued immediately, consuming one point of severity.
-            assertEquals(severity - 1, target.vars["varn.poison_severity"])
+            assertEquals(severity - 1, target.vars["varn.npc_poison_severity"])
         }
 
         @Test
         fun `does not poison when the 1 in 8 roll fails`() {
             val target = npc("npc.man")
             AncientSpellEffects(missing).apply(AncientSpell.SmokeBarrage, player(), target, 5, false)
-            assertEquals(0, target.vars["varn.poison_severity"])
+            assertEquals(0, target.vars["varn.npc_poison_severity"])
         }
 
         @Test
@@ -72,7 +74,7 @@ internal class AncientSpellEffectsTest {
         fun `does not poison poison-immune npcs`() {
             val target = npc("npc.cow")
             AncientSpellEffects(landing).apply(AncientSpell.SmokeBarrage, player(), target, 5, false)
-            assertEquals(0, target.vars["varn.poison_severity"])
+            assertEquals(0, target.vars["varn.npc_poison_severity"])
         }
 
         @Test

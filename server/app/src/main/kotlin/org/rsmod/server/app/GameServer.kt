@@ -39,10 +39,10 @@ import org.rsmod.game.obj.Obj
 import org.rsmod.game.obj.ObjEntity
 import org.rsmod.game.obj.ObjScope
 import org.rsmod.map.CoordGrid
+import org.rsmod.plugin.loader.ExternalPluginLoader
 import org.rsmod.plugin.module.PluginModule
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
-import org.rsmod.plugin.loader.ExternalPluginLoader
 import org.rsmod.server.install.GameNetworkRsaGenerator
 import org.rsmod.server.install.GameServerLogbackCopy
 import org.rsmod.server.shared.loader.PluginModuleLoader
@@ -50,7 +50,10 @@ import org.rsmod.server.shared.loader.PluginScriptLoader
 
 fun main(args: Array<String>): Unit = GameServer().main(args)
 
-class GameServer(private val skipTypeVerificationOverride: Boolean? = null) :
+class GameServer(
+    private val skipTypeVerificationOverride: Boolean? = null,
+    private val excludedPluginScripts: Set<String> = emptySet(),
+) :
     CliktCommand(name = "server") {
     private val logger = InlineLogger()
 
@@ -75,9 +78,6 @@ class GameServer(private val skipTypeVerificationOverride: Boolean? = null) :
 
     private lateinit var serverConfig: ServerConfig
 
-    // When the app is run in integration tests, the GameServer is constructed directly and Clikt
-    // args are not parsed. In that case, we fall back to the explicit override to avoid accessing
-    // the uninitialized `skipTypeVerificationOption` delegate.
     private val skipTypeVerification: Boolean
         get() = skipTypeVerificationOverride ?: skipTypeVerificationOption
 
@@ -123,7 +123,7 @@ class GameServer(private val skipTypeVerificationOverride: Boolean? = null) :
     }
 
     private fun loadModules(): Collection<AbstractModule> {
-        logger.info { "Loading plugin modules..." }
+        logger.debug { "Loading plugin modules..." }
         return PluginModuleLoader.load(PluginModule::class.java) +
             ExternalPluginLoader.loadModulesAtBoot()
     }
@@ -168,17 +168,17 @@ class GameServer(private val skipTypeVerificationOverride: Boolean? = null) :
     }
 
     private fun loadConfig(injector: Injector): ServerConfig {
-        logger.info { "Loading server config..." }
+        logger.debug { "Loading server config..." }
         val config = injector.getInstance(ServerConfig::class.java)
-        logger.info { "Loaded server config: $config" }
+        logger.debug { "Loaded server config: $config" }
         return config
     }
 
     private fun loadScripts(injector: Injector) {
-        logger.info { "Loading plugin scripts..." }
+        logger.debug { "Loading plugin scripts..." }
         val scriptLoader = injector.getInstance(PluginScriptLoader::class.java)
         val scripts =
-            scriptLoader.load(PluginScript::class.java, injector) +
+            scriptLoader.load(PluginScript::class.java, injector, excludedClassNames = excludedPluginScripts) +
                 ExternalPluginLoader.loadScriptsAtBoot(injector)
         val scriptContext = injector.getInstance(ScriptContext::class.java)
         val timings = mutableListOf<Pair<String, Duration>>()
@@ -186,7 +186,7 @@ class GameServer(private val skipTypeVerificationOverride: Boolean? = null) :
             val (_, duration) = measureTimedValue { startupPluginScript(script, scriptContext) }
             timings += script::class.java.name to duration
         }
-        logger.info {
+        logger.debug {
             val slowest =
                 timings.sortedByDescending { it.second }.take(10).joinToString { (name, dur) ->
                     "$name=$dur"
@@ -195,7 +195,7 @@ class GameServer(private val skipTypeVerificationOverride: Boolean? = null) :
         }
         // Map spawns are queued via addDelayed during loadMap so onNpcSpawn handlers exist
         // first. Flush them here before opening login so players never see entities pop in.
-        logger.info { "Spawning map entities..." }
+        logger.debug { "Spawning map entities..." }
         injector.getInstance(EntityDelayedProcess::class.java).flush()
         injector.getInstance(PluginScriptBootGate::class.java).markReady()
         logger.info { "Loaded ${scripts.size} script${if (scripts.size == 1) "" else "s"}." }
@@ -206,7 +206,7 @@ class GameServer(private val skipTypeVerificationOverride: Boolean? = null) :
         phases: MutableMap<String, Duration>,
         bootMark: TimeSource.Monotonic.ValueTimeMark,
     ) {
-        logger.info { "Loading server bootstrap..." }
+        logger.debug { "Loading server bootstrap..." }
         lateinit var bootstrap: GameBootstrap
         timedPhase(phases, "bootstrap-get") {
             bootstrap = injector.getInstance(GameBootstrap::class.java)
@@ -225,7 +225,8 @@ class GameServer(private val skipTypeVerificationOverride: Boolean? = null) :
 
         val total = bootMark.elapsedNow()
         val breakdown = phases.entries.joinToString { (name, duration) -> "$name=$duration" }
-        logger.info { "Server ready in $total ($breakdown)" }
+        logger.debug { "Startup phases: $breakdown" }
+        logger.info { "Server ready in $total" }
 
         // Releases plugin jars from disk locks (Windows in particular) now that boot has fully
         // loaded everything, so they can be rebuilt/replaced on disk without ::plugindisable-ing
@@ -248,14 +249,12 @@ class GameServer(private val skipTypeVerificationOverride: Boolean? = null) :
         block: () -> T,
     ): T {
         val (result, duration) = measureTimedValue(block)
-        phases?.put(name, duration)
+        if (phases != null) {
+            synchronized(phases) { phases[name] = duration }
+        }
         return result
     }
 
-    /**
-     * Checks if all configurations required to run the server properly are in place. If not, the
-     * appropriate installation tasks are run before resuming the normal game app boot-up.
-     */
     private fun ensureProperInstallation() {
         val gameCacheDirExists = gameCacheDir.isDirectory()
         val vanillaCacheDirExists = vanillaCacheDir.isDirectory()
@@ -272,13 +271,5 @@ class GameServer(private val skipTypeVerificationOverride: Boolean? = null) :
         }
     }
 
-    /**
-     * Thrown to immediately abort the current server startup process when a cache update requires a
-     * server restart.
-     *
-     * After performing the necessary cache update and calling `startApplication` to restart the
-     * server, this exception is thrown to ensure that no further initialization occurs in the
-     * current execution context. It is caught at the top level and safely ignored.
-     */
     private class ServerRestartException : Exception()
 }

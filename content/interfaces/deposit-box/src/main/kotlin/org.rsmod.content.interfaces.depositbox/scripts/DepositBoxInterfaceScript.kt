@@ -41,7 +41,6 @@ constructor(private val eventBus: EventBus, private val bankInv: BankInvScript) 
         onIfModalButton(DepositBoxConstants.COMP_QUANTITY_5) { depositQuantityMode = QuantityMode.Five }
         onIfModalButton(DepositBoxConstants.COMP_QUANTITY_10) { depositQuantityMode = QuantityMode.Ten }
         onIfModalButton(DepositBoxConstants.COMP_QUANTITY_ALL) { depositQuantityMode = QuantityMode.All }
-        /* An X input that exactly matches a preset button (1/5/10) selects that button instead */
         onIfModalButton(DepositBoxConstants.COMP_QUANTITY_X) {
             val input = countDialog()
             if (input <= 0) {
@@ -76,7 +75,6 @@ constructor(private val eventBus: EventBus, private val bankInv: BankInvScript) 
         }
     }
 
-    /** Preset quantity button matching an exact amount, or null if only "X" can represent it. */
     private fun presetQuantityMode(amount: Int): QuantityMode? =
         when (amount) {
             1 -> QuantityMode.One
@@ -94,7 +92,6 @@ constructor(private val eventBus: EventBus, private val bankInv: BankInvScript) 
         enableMainInventory()
     }
 
-    /** Item options are drawn dynamically by the cache (`bank_depositbox_drawslot`). op1 becomes the selected quantity. */
     private fun Player.setItemEvents() {
         ifSetEvents(
             DepositBoxConstants.COMP_ITEMS,
@@ -110,7 +107,6 @@ constructor(private val eventBus: EventBus, private val bankInv: BankInvScript) 
         )
     }
 
-    /** op1 = selected quantity (mirrors the left-click), op2-4 = 1/5/10, op5 = X prompt, op6 = All, op10 = Examine. */
     private suspend fun ProtectedAccess.itemOp(slot: Int, op: IfButtonOp) {
         if (inv[slot] == null) {
             return
@@ -120,7 +116,7 @@ constructor(private val eventBus: EventBus, private val bankInv: BankInvScript) 
             IfButtonOp.Op2 -> depositInventoryItem(bankInv, slot, 1)
             IfButtonOp.Op3 -> depositInventoryItem(bankInv, slot, 5)
             IfButtonOp.Op4 -> depositInventoryItem(bankInv, slot, 10)
-            IfButtonOp.Op5 -> { //x quantity
+            IfButtonOp.Op5 -> {
                 val input = countDialog()
                 if (input > 0) {
                     depositInventoryItem(bankInv, slot, input)
@@ -132,7 +128,6 @@ constructor(private val eventBus: EventBus, private val bankInv: BankInvScript) 
         }
     }
 
-    /** Clicking a worn item unequips it into the inventory rather than depositing it. */
     private fun ProtectedAccess.wornOp(wornSlot: Int, op: IfButtonOp) {
         if (op == IfButtonOp.Op10) {
             objExamine(worn, wornSlot)
@@ -147,8 +142,6 @@ constructor(private val eventBus: EventBus, private val bankInv: BankInvScript) 
         }
     }
 
-    /** The box has its own inventory grid, so the real inventory is swapped to the no-ops variant (to gray things out).
-     * It's an overlay swap (not a modal), so the other side-panel tabs stay usable since that's the accurate behavior. */
     private fun Player.disableMainInventory() {
         ifCloseOverlay(DepositBoxConstants.INVENTORY_INTERFACE, eventBus)
         ifOpenSub(
@@ -159,7 +152,6 @@ constructor(private val eventBus: EventBus, private val bankInv: BankInvScript) 
         )
     }
 
-    /** Swaps the normal inventory back in, which re-runs the standard inventory open (restoring its events and draw).*/
     private fun Player.enableMainInventory() {
         ifCloseOverlay(DepositBoxConstants.INVENTORY_DISABLED, eventBus)
         ifOpenSub(

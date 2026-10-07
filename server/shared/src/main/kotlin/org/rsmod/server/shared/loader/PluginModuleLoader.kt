@@ -8,8 +8,7 @@ import org.rsmod.plugin.scan.PluginClasspathScan
 
 object PluginModuleLoader {
     private val logger = InlineLogger()
-
-    fun <T : PluginModule> load(type: Class<T>): Collection<T> {
+    fun <T : PluginModule> load(type: Class<T>, packages: Array<String> = emptyArray()): Collection<T> {
         val modules = mutableListOf<T>()
         val timings = mutableListOf<Pair<String, Duration>>()
         val infoList = PluginClasspathScan.scan.getSubclasses(type).directOnly()
@@ -23,7 +22,7 @@ object PluginModuleLoader {
             timings += info.name to duration
             modules += instance
         }
-        logger.info {
+        logger.debug {
             val constructTotal = timings.fold(Duration.ZERO) { acc, (_, dur) -> acc + dur }
             val slowest =
                 timings.sortedByDescending { it.second }.take(10).joinToString { (name, dur) ->

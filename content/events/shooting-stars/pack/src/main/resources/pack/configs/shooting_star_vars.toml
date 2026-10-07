@@ -1,0 +1,30 @@
+[[varp]]
+id = "varp.shooting_star_mining"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.shooting_star_discoverer_bonus"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.shooting_star_all_time_dust"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.shooting_star_seen"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.shooting_star_state_migrated"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+

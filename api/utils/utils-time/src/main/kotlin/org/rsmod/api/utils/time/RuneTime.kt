@@ -6,7 +6,6 @@ import java.util.concurrent.TimeUnit
 
 private val startDate = LocalDate.of(2002, 2, 27).atStartOfDay()
 
-/** Returns the number of days elapsed since [startDate]. */
 public fun runeday(): Int {
     val now = LocalDate.now().atStartOfDay()
     return Duration.between(startDate, now).toDays().toInt()

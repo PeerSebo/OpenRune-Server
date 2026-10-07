@@ -96,7 +96,6 @@ obj = "obj.trail_elite_emote_exp1"
 count = 1
 clue_scroll_box = true
 
-
 # Unknown wiki drop rate: Air rune [main/Runes and ammunition/Uncommon]
 # Unknown wiki drop rate: Fire rune [main/Runes and ammunition/Uncommon]
 # Unknown wiki drop rate: Blood rune [main/Runes and ammunition/Common]
@@ -118,4 +117,3 @@ clue_scroll_box = true
 # Unknown wiki drop rate: Super restore(4) [main/Consumables/Common]
 # Unknown wiki drop rate: Coins [main/Other/Uncommon]
 # Unknown wiki drop rate: Ecumenical key shard [main/Other/Common]
-# Main table pool padding uses a nothing roll (F2P drops removed and/or subtable access missing from wiki parse) (254 weight)

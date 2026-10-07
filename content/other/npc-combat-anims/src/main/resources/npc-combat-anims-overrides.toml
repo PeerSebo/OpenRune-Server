@@ -1,0 +1,26 @@
+# Overrides replace generated NPC combat fields.
+
+npc = [
+    { id = "npc.young_dark_wizard", proj_travel = "spotanim.waterstrike_travel" },
+    { id = "npc.fai_dark_wizard_young_1", proj_travel = "spotanim.waterstrike_travel" },
+    { id = "npc.fai_dark_wizard_young_2", proj_travel = "spotanim.waterstrike_travel" },
+    { id = "npc.qip_ds_young_dark_wizard1", proj_travel = "spotanim.waterstrike_travel" },
+    { id = "npc.qip_ds_young_dark_wizard2", proj_travel = "spotanim.waterstrike_travel" },
+    { id = "npc.bearded_dark_wizard", proj_travel = "spotanim.earthstrike_travel" },
+    { id = "npc.fai_dark_wizard_old_1", proj_travel = "spotanim.earthstrike_travel" },
+    { id = "npc.fai_dark_wizard_old_2", proj_travel = "spotanim.earthstrike_travel" },
+    { id = "npc.qip_ds_young_dark_wizard3", proj_travel = "spotanim.earthstrike_travel" },
+    { id = "npc.qip_ds_young_dark_wizard4", proj_travel = "spotanim.earthstrike_travel" },
+    { id = "npc.fai_varrock_guard02_f", attack_anim = "seq.human_sword_stab", attack_type = "category.attacktype_stab", attack_sound = 2549, defend_anim = "seq.human_shield_defence", defend_sound = 506, death_anim = "seq.human_death", death_sound = 505 },
+    { id = "npc.fai_varrock_guard02_f_variant01", attack_anim = "seq.human_sword_stab", attack_type = "category.attacktype_stab", attack_sound = 2549, defend_anim = "seq.human_shield_defence", defend_sound = 506, death_anim = "seq.human_death", death_sound = 505 },
+    { id = "npc.fai_varrock_guard02_f_variant02", attack_anim = "seq.human_sword_stab", attack_type = "category.attacktype_stab", attack_sound = 2549, defend_anim = "seq.human_shield_defence", defend_sound = 506, death_anim = "seq.human_death", death_sound = 505 },
+    { id = "npc.hillgiant_boss", attack_sound = 448, defend_sound = 451, death_sound = 450 },
+    { id = "npc.skull_skeleton", attack_anim = "seq.skeleton_update_attack_weapon", attack_type = "category.attacktype_slash", attack_sound = 776, defend_anim = "seq.skeleton_update_defend", defend_sound = 779, death_anim = "seq.skeleton_update_death", death_sound = 777 },
+    { id = "npc.barrows_guthan", attack_anim = "seq.barrow_guthan_crush", attack_type = "category.attacktype_crush", attack_sound = 2562, defend_anim = "seq.barrow_guthan_defend" },
+    { id = "npc.barrows_torag", attack_anim = "seq.barrow_torag_crush", attack_type = "category.attacktype_crush", attack_sound = 2567, defend_anim = "seq.human_blunt_block" },
+    { id = "npc.dragonslayer_ghost_1_key", attack_sound = 3755, defend_sound = 3757, death_sound = 3756 },
+    { id = "npc.dragonslayer_ghost_2", attack_sound = 3755, defend_sound = 3757, death_sound = 3756 },
+    { id = "npc.dragonslayer_ghost_3", attack_sound = 3755, defend_sound = 3757, death_sound = 3756 },
+    { id = "npc.dragonslayer_ghost_4", attack_sound = 3755, defend_sound = 3757, death_sound = 3756 },
+    { id = "npc.dragonslayer_ghost_5", attack_sound = 3755, defend_sound = 3757, death_sound = 3756 },
+]

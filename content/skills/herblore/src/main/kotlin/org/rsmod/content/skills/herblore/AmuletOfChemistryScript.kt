@@ -1,9 +1,9 @@
 package org.rsmod.content.skills.herblore
 
 import org.rsmod.api.player.protect.ProtectedAccess
-import org.rsmod.api.script.onOpHeld2
 import org.rsmod.api.script.onOpHeld3
-import org.rsmod.api.script.onOpWorn1
+import org.rsmod.api.script.onOpHeld4
+import org.rsmod.api.script.onOpWorn2
 import org.rsmod.game.inv.isType
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
@@ -11,28 +11,34 @@ import org.rsmod.plugin.scripts.ScriptContext
 class AmuletOfChemistryScript : PluginScript() {
 
     override fun ScriptContext.startup() {
-        AmuletOfChemistry.AMULET_TYPES.forEach { amulet ->
-            onOpHeld2(amulet) { openOptions(it.slot) }
-            onOpHeld3(amulet) { breakAmulet(it.slot) }
-            onOpWorn1(amulet) { openOptionsWorn() }
+        val checkable = listOf(BASE_AMULET, "obj.amulet_of_chemistry_imbued_charged")
+        checkable.forEach { amulet ->
+            onOpHeld3(amulet) { openOptions(it.slot) }
+            onOpWorn2(amulet) { openOptionsWorn() }
         }
+        onOpHeld4(BASE_AMULET) { breakAmulet(it.slot) }
     }
 
     private suspend fun ProtectedAccess.openOptions(slot: Int) {
-        inv[slot]?.takeIf { amulet -> AmuletOfChemistry.AMULET_TYPES.any { amulet.isType(it) } } ?: return
-        showOptionsMenu()
+        val amulet = inv[slot]?.takeIf { amulet -> AmuletOfChemistry.AMULET_TYPES.any { amulet.isType(it) } } ?: return
+        showOptionsMenu(alchemistsAmulet = !amulet.isType(BASE_AMULET))
     }
 
     private suspend fun ProtectedAccess.openOptionsWorn() {
         if (!AmuletOfChemistry.isWearing(player)) {
             return
         }
-        showOptionsMenu()
+        showOptionsMenu(alchemistsAmulet = AmuletOfChemistry.isAlchemistsAmulet(player))
     }
 
-    private suspend fun ProtectedAccess.showOptionsMenu() {
+    private suspend fun ProtectedAccess.showOptionsMenu(alchemistsAmulet: Boolean) {
+        val maxCharges = if (alchemistsAmulet) AmuletOfChemistry.ALCHEMIST_MAX_CHARGES else AmuletOfChemistry.MAX_CHARGES
+        val charges = player.chemistryChargeCount(maxCharges)
+        if (alchemistsAmulet) {
+            mesbox("Alchemist's amulet ($charges charges).")
+            return
+        }
         val stop = player.shouldStopBrewingOnChemistryCrumble()
-        val charges = player.chemistryChargeCount()
         val stopOnCrumble = choice2(
             choice1 = "Continue making potions when the amulet crumbles.",
             result1 = false,
@@ -54,7 +60,7 @@ class AmuletOfChemistryScript : PluginScript() {
     }
 
     private suspend fun ProtectedAccess.breakAmulet(slot: Int) {
-        val amulet = inv[slot]?.takeIf { item -> AmuletOfChemistry.AMULET_TYPES.any { item.isType(it) } } ?: return
+        inv[slot]?.takeIf { it.isType(BASE_AMULET) } ?: return
         val confirmed = choice2(
             choice1 = "Break the amulet of chemistry?",
             result1 = true,
@@ -65,11 +71,14 @@ class AmuletOfChemistryScript : PluginScript() {
         if (!confirmed) {
             return
         }
-        val typeName = AmuletOfChemistry.AMULET_TYPES.firstOrNull { amulet.isType(it) } ?: return
-        if (invDel(inv, typeName, 1, slot = slot).failure) {
+        if (invDel(inv, BASE_AMULET, 1, slot = slot).failure) {
             return
         }
         AmuletOfChemistry.resetCharges(player)
         mes("You destroy the amulet. Your next amulet of chemistry will have 5 charges.")
+    }
+
+    private companion object {
+        const val BASE_AMULET = "obj.amulet_of_chemistry"
     }
 }

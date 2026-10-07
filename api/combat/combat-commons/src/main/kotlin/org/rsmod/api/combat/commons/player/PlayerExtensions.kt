@@ -4,6 +4,7 @@ import dev.openrune.ServerCacheManager
 import dev.openrune.rscm.RSCM
 import dev.openrune.rscm.RSCMType
 import dev.openrune.types.ItemServerType
+import dev.openrune.types.SequenceServerType
 import kotlin.math.min
 import org.rsmod.api.config.refs.params
 import org.rsmod.api.player.hit.modifier.PlayerHitModifier
@@ -27,7 +28,7 @@ public fun Player.queueCombatRetaliate(source: Npc, delay: Int = 1) {
 }
 
 public fun ProtectedAccess.combatRetaliate(uid: NpcUid, flinchDelay: Int) {
-    if (autoRetaliateDisabled || isBusy2) {
+    if (autoRetaliateDisabled || isBusy2 || player.routeRequest != null) {
         return
     }
     val source = findUid(uid) ?: return
@@ -45,7 +46,7 @@ public fun Player.queueCombatRetaliate(source: Player, delay: Int = 1) {
 
 public fun ProtectedAccess.combatRetaliate(uid: PlayerUid, flinchDelay: Int) {
     preventLogout("You can't log out until 10 seconds after the end of combat.", 16)
-    if (autoRetaliateDisabled || isBusy2) {
+    if (autoRetaliateDisabled || isBusy2 || player.routeRequest != null) {
         return
     }
     val source = findUid(uid) ?: return
@@ -57,17 +58,22 @@ public fun ProtectedAccess.combatRetaliate(uid: PlayerUid, flinchDelay: Int) {
     opPlayer2(source)
 }
 
+/** Defend delay uses 20 ms client cycles; magic hits never play a defend animation. */
 public fun Player.finishNpcHit(
     source: Npc,
     delay: Int,
     type: HitType,
     damage: Int,
     modifier: PlayerHitModifier,
-    penetration: Int = 0,
+    defendClientDelay: Int = 0,
+    prayerPenetration: Int = 0,
 ): Hit {
-    queueCombatRetaliate(source)
-    val hit = queueHit(source, delay, type, damage, modifier, penetration = penetration)
-    combatPlayDefendAnim()
+    // Retaliation and damage land together; existing combat and walking take priority.
+    queueCombatRetaliate(source, delay.coerceAtLeast(1))
+    val hit = queueHit(source, delay, type, damage, modifier = modifier, prayerPenetration = prayerPenetration)
+    if (type != HitType.Magic) {
+        combatPlayDefendAnim(defendClientDelay)
+    }
     return hit
 }
 
@@ -78,16 +84,52 @@ public fun Player.combatPlayDefendAnim(clientDelay: Int = 0) {
     anim(defendAnim, delay = clientDelay)
 }
 
-private fun resolveDefendAnim(righthand: ItemServerType?, lefthand: ItemServerType?): String {
+/**
+ * Resolve symbols at the call site: failure in a static initializer would disable all player
+ * damage for the JVM lifetime.
+ */
+private const val OFFHAND_SHIELD_CATEGORY: String = "category.shield"
+
+private const val OFFHAND_DEFENDER_CATEGORY: String = "category.defender"
+
+private const val SHIELD_DEFEND_ANIM: String = "seq.human_shield_defence"
+
+private const val DEFENDER_DEFEND_ANIM: String = "seq.warguild_parry_defend"
+
+private const val UNARMED_DEFEND_ANIM: String = "seq.human_unarmedblock"
+
+/**
+ * Use paramOrNull for off-hand overrides: param supplies an unarmed default even when no
+ * override exists. Shield/defender categories then take precedence over the weapon.
+ */
+private fun resolveDefendAnim(
+    righthand: ItemServerType?,
+    lefthand: ItemServerType?,
+): String {
+    if (lefthand != null) {
+        val declared: SequenceServerType? = lefthand.paramOrNull(params.defend_anim)
+        if (declared != null) {
+            return RSCM.getReverseMapping(RSCMType.SEQ, declared.id)
+        }
+        val categoryAnim = resolveOffhandCategoryDefendAnim(lefthand)
+        if (categoryAnim != null) {
+            return categoryAnim
+        }
+    }
     val righthandAnim = righthand?.param(params.defend_anim)
-    val lefthandAnim = lefthand?.param(params.defend_anim)
-    return when {
-        lefthandAnim != null && !lefthandAnim.isType("seq.human_unarmedblock") ->
-            RSCM.getReverseMapping(RSCMType.SEQ, lefthandAnim.id)
-        righthandAnim != null -> RSCM.getReverseMapping(RSCMType.SEQ, righthandAnim.id)
-        else -> "seq.human_unarmedblock"
+    return if (righthandAnim != null) {
+        RSCM.getReverseMapping(RSCMType.SEQ, righthandAnim.id)
+    } else {
+        UNARMED_DEFEND_ANIM
     }
 }
+
+private fun resolveOffhandCategoryDefendAnim(lefthand: ItemServerType): String? =
+    when {
+        lefthand.isCategoryType(OFFHAND_SHIELD_CATEGORY) -> SHIELD_DEFEND_ANIM
+        lefthand.isCategoryType(OFFHAND_DEFENDER_CATEGORY) -> DEFENDER_DEFEND_ANIM
+        else -> null
+    }
 
 public fun Player.combatPlayDefendSpot(ammo: ItemServerType?, clientDelay: Int) {
     val type =

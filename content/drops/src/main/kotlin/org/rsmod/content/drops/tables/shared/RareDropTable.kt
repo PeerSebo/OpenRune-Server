@@ -5,11 +5,6 @@ import dtx.rs.rsWeightedTable
 import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.game.entity.Player
 
-/**
- * Standard OSRS rare drop table (shared subtable).
- *
- * Weights from [[Rare drop table]] on the OSRS Wiki (/128 roll).
- */
 public val rareDropTable: RSWeightedTable<Player, DropRollItem> = rsWeightedTable {
     name("Rare drop table")
     21 weight DropRollItem("obj.coins", 3000)

@@ -1,4 +1,3 @@
-## Lighthouse Dungeon
 
 [[spawn]]
 npc = "npc.horror_dagannoth_medium"
@@ -91,4 +90,3 @@ coords = "0_39_156_30_51"
 [[spawn]]
 npc = "npc.horror_lighthousekeeeper_injured"
 coords = "0_39_72_22_25"
-

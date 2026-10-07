@@ -1,7 +1,5 @@
 package org.rsmod.api.inv
 
-import dev.openrune.rscm.RSCM
-import dev.openrune.rscm.RSCMType
 import dev.openrune.types.ItemServerType
 import dev.openrune.util.Wearpos
 import org.rsmod.api.config.refs.params
@@ -35,19 +33,8 @@ public class WearposScript : PluginScript() {
     override fun ScriptContext.startup() {
         onWearposChange { player.disableSpecialAttack(wearpos) }
 
-        // Note: At this point, the official game sends a few content-specific vars. While we
-        // generally aim for emulation accuracy, sending these vars here - between more
-        // "engine"-esque logic - would hurt maintainability. Handling them would require either:
-        // 1) Introducing a new event and publishing it inside an `onWearposChange` script here, or
-        // 2) Hardcoding conditions for unrelated vars that fall outside this script's scope.
-        //
-        // For documentation purposes, the vars that would be sent here are:
-        // varp 728, 454, 518, 491, 3413, 3160, 3158, and 3159.
-        //
-        // - varp 454: Treasure Trail-related
-        // - varps 491, 3413: Runecrafting altar-related
-        // - varps 3158–3160: "Buff bar" cs2 script-related
-        // - The rest are currently unknown.
+        // Content-specific varps belong in content hooks: 454 is Treasure Trails, 491/3413
+        // Runecrafting, 3158-3160 the buff bar; 728/518 remain unidentified.
 
         onWearposChange { player.sendSoundAndPlayerOp(objType) }
         onWearposChange { player.validateWeaponVars(wearpos) }

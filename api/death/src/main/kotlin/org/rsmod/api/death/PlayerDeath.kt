@@ -1,23 +1,29 @@
 package org.rsmod.api.death
 
-import dev.or2.central.account.Rights
 import dev.openrune.ServerCacheManager
 import dev.openrune.rscm.RSCM
 import dev.openrune.rscm.RSCMType
+import dev.or2.central.account.Rights
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import org.rsmod.api.area.checker.AreaChecker
 import org.rsmod.api.area.checker.isInWildernessBasic
+import org.rsmod.api.death.grave.GraveManager
+import org.rsmod.api.mechanics.stun.Stun
+import org.rsmod.api.mechanics.toxins.Toxin.cureAllToxins
+import org.rsmod.api.mechanics.toxins.ToxinImmunity
 import org.rsmod.api.player.death.DEATH_CAUSE_ATTR
 import org.rsmod.api.player.death.DeathCause
-import org.rsmod.api.player.hasProtectItemPrayer
-import org.rsmod.api.player.hook.TeleportType
-import org.rsmod.api.mechanics.toxins.Toxin.cureAllToxins
 import org.rsmod.api.player.deathResetTimers
 import org.rsmod.api.player.disablePrayers
+import org.rsmod.api.player.hasProtectItemPrayer
+import org.rsmod.api.player.hit.PlayerAbsorption
+import org.rsmod.api.player.hook.TeleportType
+import org.rsmod.api.player.midiJingle
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.player.vars.boolVarBit
 import org.rsmod.api.player.vars.intVarp
+import org.rsmod.api.repo.world.WorldRepository
 import org.rsmod.game.MapClock
 import org.rsmod.game.entity.Player
 import org.rsmod.map.CoordGrid
@@ -30,34 +36,48 @@ constructor(
     private val drops: PlayerDeathDrops,
     private val handlingResolver: PlayerDeathHandlingResolver,
     private val cleanupHooks: Set<PlayerDeathCleanupHook>,
+    private val itemHooks: Set<PlayerDeathItemHook>,
+    private val respawnHooks: Set<PlayerRespawnHook>,
     private val areaChecker: AreaChecker,
+    private val worldRepo: WorldRepository,
+    private val redirectHooks: Set<PlayerDeathRedirectHook> = emptySet(),
+    private val sequenceHooks: Set<PlayerDeathSequenceHook> = emptySet(),
 ) {
     private var Player.specialAttackType by intVarp("varp.sa_attack")
     private var Player.inInstance by boolVarBit("varbit.player_in_instance")
     private var Player.insideWilderness by boolVarBit("varbit.inside_wilderness")
 
     public suspend fun death(access: ProtectedAccess) {
+        for (hook in sequenceHooks) {
+            if (hook.handle(access)) return
+        }
         access.deathSequence()
     }
 
     private suspend fun ProtectedAccess.deathSequence() {
-        val respawn = CoordGrid(0, 50, 50, 21, 18)
+        val respawn = respawnHooks.firstNotNullOfOrNull { it.respawn(player) } ?: DEFAULT_RESPAWN
         val randomRespawn = mapFindSquareLineOfWalk(respawn, minRadius = 0, maxRadius = 2)
 
         stopAction()
         delay(2)
-        soundSynth("synth.human_death")
+        soundSynth("synth.HUMAN_DEATH")
+        worldRepo.soundAreaExcept(player, "synth.HUMAN_DEATH", except = player, radius = DEATH_SOUND_RADIUS)
         anim("seq.human_death")
         delay(4)
         combatClearQueue()
         clearQueue("queue.death")
 
         val deathCoords = player.coords
-        handleDeathDrops(player, deathCoords)
+        val graveCreated = handleDeathDrops(player, deathCoords)
 
         midiSong("midi.stop_music")
-        midiJingle("jingle.air_guitar_jingle")
+        player.midiJingle(DEATH_JINGLE_GROUP)
         mes("Oh dear, you are dead!")
+        if (graveCreated) {
+            // The grave message follows the death message; the one-tick separation is not
+            // implemented here.
+            mes(GraveManager.GRAVE_CREATED_MESSAGE)
+        }
         telejump(randomRespawn ?: respawn, TeleportType.Exempt)
         resetAnim()
         resetPlayerState()
@@ -78,30 +98,38 @@ constructor(
         )
     }
 
-    private fun handleDeathDrops(player: Player, deathCoords: CoordGrid) {
-        val bypassAdmin = player.deathDropsBypassAdmin()
-        player.attr.remove(DEATH_DROPS_BYPASS_ADMIN_ATTR)
-        if (player.modLevel.isAtLeast(Rights.ADMINISTRATOR) && !bypassAdmin) return
+    private fun handleDeathDrops(player: Player, deathCoords: CoordGrid): Boolean {
+        val bypassAdmin = player.consumeAdminDeathDropBypass()
+        if (player.modLevel.isAtLeast(Rights.ADMINISTRATOR) && !bypassAdmin) return false
 
         val killer = when (val cause = player.attr[DEATH_CAUSE_ATTR]) {
             is DeathCause.ByPlayer -> cause.killer
             else -> player.attr[DEATH_KILLER_ATTR]
         }
 
-        val context = buildContext(player, deathCoords, killer)
+        val originalContext = buildContext(player, deathCoords, killer)
+        val recovery = PlayerDeathRecovery.resolve(originalContext, redirectHooks)
+        val context = recovery.context
         val handling = handlingResolver.resolve(context)
 
+        for (hook in itemHooks) {
+            // Container releases must use the same accessible recovery tile as carried items.
+            hook.beforeDrops(context.copy(coords = recovery.coords), handling)
+        }
+
         val result = drops.selectDrops(player, context, handling)
-        drops.applyDrops(player, result, handling, deathCoords)
-        drops.spawnRemains(deathCoords, handling)
+        val recoveryCoords = recovery.coords
+        val graveCreated = drops.applyDrops(player, result, handling, recoveryCoords)
+        drops.spawnRemains(recoveryCoords, handling)
 
         player.attr.remove(DEATH_KILLER_ATTR)
         player.attr.remove(DEATH_CAUSE_ATTR)
+        return graveCreated
     }
 
     private fun buildContext(player: Player, deathCoords: CoordGrid, killer: Player?): PlayerDeathContext {
         val wildernessLevel = deathCoords.wildernessLevel()
-        val recentPvp = wasRecentlyHitByPlayer(player)
+        val recentPvp = player.wasRecentlyHitByPlayer(mapClock.cycle)
 
         return PlayerDeathContext(
             player = player,
@@ -120,11 +148,13 @@ constructor(
 
     private fun ProtectedAccess.resetPlayerState() {
         player.disablePrayers()
-        player.cureAllToxins()
+        player.resetDeathToxins()
+        player.resetDeathCombatEffects()
         player.deathResetTimers()
 
         player.specialAttackType = 0
         player.skullIcon = null
+        player.attr.removeIf { it.resetOnDeath }
 
         for (hook in cleanupHooks) {
             hook.cleanup(player)
@@ -136,12 +166,14 @@ constructor(
         minimapReset()
     }
 
-    private fun wasRecentlyHitByPlayer(player: Player): Boolean {
-        val lastHitTick = player.attr[LAST_PVP_HIT_TICK_ATTR] ?: return false
-        return (mapClock - lastHitTick) <= RECENT_PVP_HIT_TICKS
-    }
-
     private companion object {
+        private const val DEATH_SOUND_RADIUS = 10
+
+        private val DEFAULT_RESPAWN = CoordGrid(0, 50, 50, 21, 18)
+
+        // Playable archive groups differ from JINGLE gameval IDs; see Player.midiJingle.
+        private const val DEATH_JINGLE_GROUP = 90
+
         private fun CoordGrid.wildernessLevel(): Int {
             if (!isInWildernessBasic()) return -1
             val y = z
@@ -153,4 +185,14 @@ constructor(
             }
         }
     }
+}
+
+internal fun Player.resetDeathCombatEffects() {
+    Stun.clear(this)
+    PlayerAbsorption.clear(this)
+}
+
+internal fun Player.resetDeathToxins() {
+    cureAllToxins()
+    ToxinImmunity.clear(this)
 }

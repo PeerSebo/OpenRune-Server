@@ -14,7 +14,6 @@ public fun ScriptContext.onDestroyHeld(action: HeldDropEvents.Destroy.() -> Unit
 public fun ScriptContext.onReleaseHeld(action: HeldDropEvents.Release.() -> Unit): Unit =
     onEvent(action)
 
-/** Used for inv objs that are given a special `Op9` while in the bankside inv interface. */
 public fun ScriptContext.onOpBankside(
     type: ItemServerType,
     action: HeldBanksideEvents.Type.() -> Unit,

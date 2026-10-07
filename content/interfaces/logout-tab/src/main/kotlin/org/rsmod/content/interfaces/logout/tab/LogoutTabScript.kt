@@ -1,6 +1,7 @@
 package org.rsmod.content.interfaces.logout.tab
 
 import jakarta.inject.Inject
+import org.rsmod.api.player.events.PlayerLogoutRequest
 import org.rsmod.api.player.protect.ProtectedAccessLauncher
 import org.rsmod.api.player.ui.ifClose
 import org.rsmod.api.script.onIfOverlayButton
@@ -14,7 +15,11 @@ class LogoutTabScript
 constructor(private val eventBus: EventBus, private val protectedAccess: ProtectedAccessLauncher) :
     PluginScript() {
     override fun ScriptContext.startup() {
-        onIfOverlayButton("component.logout:logout") { player.requestLogout() }
+        onIfOverlayButton("component.logout:logout") {
+            val request = PlayerLogoutRequest(player)
+            eventBus.publish(request)
+            if (!request.consumed) player.requestLogout()
+        }
     }
 
     private fun Player.requestLogout() {

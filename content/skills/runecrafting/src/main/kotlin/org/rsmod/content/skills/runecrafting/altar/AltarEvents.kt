@@ -16,13 +16,13 @@ import org.rsmod.api.stats.xpmod.XpModifiers
 import org.rsmod.api.table.runecrafting.RunecraftingAltarsRow
 import org.rsmod.content.skills.runecrafting.action.RunecraftAction.craftOurania
 import org.rsmod.content.skills.runecrafting.action.RunecraftAction.craftRune
+import org.rsmod.content.skills.runecrafting.action.RunecraftAction.craftSunfire
+import org.rsmod.content.skills.runecrafting.essencepouch.EssencePouch
 import org.rsmod.map.CoordGrid
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
-class AltarEvents @Inject constructor(
-    private val xpMods: XpModifiers,
-) : PluginScript() {
+class AltarEvents @Inject constructor(private val xpMods: XpModifiers) : PluginScript() {
     override fun ScriptContext.startup() {
         val altars = RunecraftingAltarsRow.all()
         for (altar in altars) {
@@ -34,16 +34,23 @@ class AltarEvents @Inject constructor(
         }
 
         registerOuraniaAltar()
+        registerSunfireShrine()
         registerElementalCatalyticAccess(altars)
     }
 
     private fun ScriptContext.registerOuraniaAltar() {
-        onOpLoc1("loc.rc_zmi_dungeon_cracked_center_altar") {
-            craftOurania(xpMods)
-        }
+        onOpLoc1("loc.rc_zmi_dungeon_cracked_center_altar") { craftOurania(xpMods) }
     }
 
-    private fun ScriptContext.registerElementalCatalyticAccess(altars: List<RunecraftingAltarsRow>) {
+    // The Shrine of Ralos op1 is Bask; rune crafting uses item-on-loc handlers.
+    private fun ScriptContext.registerSunfireShrine() {
+        onOpLocU("loc.ralos_shrine", EssencePouch.PURE_ESSENCE) { craftSunfire(xpMods) }
+        onOpLocU("loc.ralos_shrine", EssencePouch.DAEYALT_ESSENCE) { craftSunfire(xpMods) }
+    }
+
+    private fun ScriptContext.registerElementalCatalyticAccess(
+        altars: List<RunecraftingAltarsRow>
+    ) {
         val elementalEntrances =
             altars
                 .filter { it.altarObject.internalName in elementalAltarLocs }
@@ -57,44 +64,46 @@ class AltarEvents @Inject constructor(
                 .toMap()
 
         listOf(
-            "loc.airtemple_ruined_old",
-            "loc.airtemple_ruined_new",
-            "loc.watertemple_ruined_old",
-            "loc.watertemple_ruined_new",
-            "loc.earthtemple_ruined_old",
-            "loc.earthtemple_ruined_new",
-            "loc.firetemple_ruined_old",
-            "loc.firetemple_ruined_new"
-        ).forEach { ruin ->
-            onOpLocU(ruin, "obj.elemental_talisman") {
-                val entrance = nearestEntrance(elementalEntrances) ?: return@onOpLocU
-                telejump(entrance)
+                "loc.airtemple_ruined_old",
+                "loc.airtemple_ruined_new",
+                "loc.watertemple_ruined_old",
+                "loc.watertemple_ruined_new",
+                "loc.earthtemple_ruined_old",
+                "loc.earthtemple_ruined_new",
+                "loc.firetemple_ruined_old",
+                "loc.firetemple_ruined_new",
+            )
+            .forEach { ruin ->
+                onOpLocU(ruin, "obj.elemental_talisman") {
+                    val entrance = nearestEntrance(elementalEntrances) ?: return@onOpLocU
+                    telejump(entrance)
+                }
             }
-        }
 
         listOf(
-            "loc.mindtemple_ruined_old",
-            "loc.mindtemple_ruined_new",
-            "loc.bodytemple_ruined_old",
-            "loc.bodytemple_ruined_new",
-            "loc.cosmictemple_ruined_old",
-            "loc.cosmictemple_ruined_new",
-            "loc.chaostemple_ruined_old",
-            "loc.chaostemple_ruined_new",
-            "loc.naturetemple_ruined_old",
-            "loc.naturetemple_ruined_new",
-            "loc.lawtemple_ruined_old",
-            "loc.lawtemple_ruined_new",
-            "loc.deathtemple_ruined_old",
-            "loc.deathtemple_ruined_new",
-            "loc.wrathtemple_ruined_0op",
-            "loc.wrathtemple_ruined_1op"
-        ).forEach { ruin ->
-            onOpLocU(ruin, "obj.catalytic_talisman") {
-                val entrance = nearestEntrance(catalyticEntrances) ?: return@onOpLocU
-                telejump(entrance)
+                "loc.mindtemple_ruined_old",
+                "loc.mindtemple_ruined_new",
+                "loc.bodytemple_ruined_old",
+                "loc.bodytemple_ruined_new",
+                "loc.cosmictemple_ruined_old",
+                "loc.cosmictemple_ruined_new",
+                "loc.chaostemple_ruined_old",
+                "loc.chaostemple_ruined_new",
+                "loc.naturetemple_ruined_old",
+                "loc.naturetemple_ruined_new",
+                "loc.lawtemple_ruined_old",
+                "loc.lawtemple_ruined_new",
+                "loc.deathtemple_ruined_old",
+                "loc.deathtemple_ruined_new",
+                "loc.wrathtemple_ruined_0op",
+                "loc.wrathtemple_ruined_1op",
+            )
+            .forEach { ruin ->
+                onOpLocU(ruin, "obj.catalytic_talisman") {
+                    val entrance = nearestEntrance(catalyticEntrances) ?: return@onOpLocU
+                    telejump(entrance)
+                }
             }
-        }
 
         onOpHeld4("obj.elemental_talisman") {
             val entrance = nearestEntrance(elementalEntrances) ?: return@onOpHeld4
@@ -119,15 +128,11 @@ class AltarEvents @Inject constructor(
             }
 
             altar.talisman?.let { talisman ->
-                onOpLocU(ruin.internalName, talisman.internalName) {
-                    enterRuins(entrance)
-                }
+                onOpLocU(ruin.internalName, talisman.internalName) { telejump(entrance) }
             }
 
             altar.tiara?.let { tiaraDef ->
-                onOpLocU(ruin.internalName, tiaraDef.item.internalName) {
-                    enterRuins(entrance)
-                }
+                onOpLocU(ruin.internalName, tiaraDef.item.internalName) { telejump(entrance) }
             }
         }
     }
@@ -136,9 +141,19 @@ class AltarEvents @Inject constructor(
         if (altar.altarObject.internalName == "loc.rc_zmi_dungeon_cracked_center_altar") {
             return
         }
+        if (altar.altarObject.internalName == "loc.ralos_shrine") {
+            return
+        }
 
-        onOpLoc1(altar.altarObject.internalName) {
-            craftRune(altar.rune, xpMods)
+        onOpLoc1(altar.altarObject.internalName) { craftRune(altar.rune, xpMods) }
+
+        val essences = altar.rune.input.mapTo(mutableSetOf()) { it.internalName }
+        if (EssencePouch.PURE_ESSENCE in essences) {
+            essences += EssencePouch.DAEYALT_ESSENCE
+            essences += EssencePouch.GUARDIAN_ESSENCE
+        }
+        for (essence in essences) {
+            onOpLocU(altar.altarObject.internalName, essence) { craftRune(altar.rune, xpMods) }
         }
     }
 
@@ -146,9 +161,16 @@ class AltarEvents @Inject constructor(
         val exitPortal = altar.exitPortal ?: return
         val exit = altar.exit ?: return
         onOpLoc1(exitPortal.internalName) {
-            mes("You step through the portal...", ChatType.Spam)
-            telejump(exit)
-            soundSynth("synth.teleport_all")
+            if (vars["varbit.gotr_is_playing"] == 1) {
+                telejump(CoordGrid(3615, 9491, 0))
+                if (coords == CoordGrid(3615, 9491, 0) && vars["varbit.gotr_colourful_fade_disabled"] == 0) {
+                    fadeOverlay(0x744499, 64, 0x744499, 255, 60)
+                    closeFadeOverlay(2)
+                }
+                spam("You step through the portal and find yourself back in the temple.")
+            } else {
+                telejump(exit)
+            }
         }
     }
 
@@ -174,37 +196,38 @@ class AltarEvents @Inject constructor(
     private fun ScriptContext.registerTalismanLocate(altar: RunecraftingAltarsRow) {
         val entrance = altar.exit ?: return
         val talisman = altar.talisman ?: return
-        onOpHeld4(talisman.internalName) {
-            locateAltar(entrance)
-        }
+        onOpHeld4(talisman.internalName) { locateAltar(entrance) }
     }
 
     private fun ProtectedAccess.enterRuins(entrance: CoordGrid) {
         mes("You feel a powerful force take hold of you...", ChatType.Spam)
         telejump(entrance)
-        soundSynth("synth.teleport_all")
+        soundSynth("synth.TELEPORT_ALL")
     }
 
     private fun ProtectedAccess.locateAltar(altarCoords: CoordGrid) {
         val dx = altarCoords.x - player.coords.x
         val dz = altarCoords.z - player.coords.z
 
-        val direction = when {
-            dx > 0 && dz > 0 -> "north-east"
-            dx < 0 && dz > 0 -> "north-west"
-            dx > 0 && dz < 0 -> "south-east"
-            dx < 0 && dz < 0 -> "south-west"
-            dx == 0 && dz > 0 -> "north"
-            dx == 0 && dz < 0 -> "south"
-            dz == 0 && dx > 0 -> "east"
-            dz == 0 && dx < 0 -> "west"
-            else -> "unknown"
-        }
+        val direction =
+            when {
+                dx > 0 && dz > 0 -> "north-east"
+                dx < 0 && dz > 0 -> "north-west"
+                dx > 0 && dz < 0 -> "south-east"
+                dx < 0 && dz < 0 -> "south-west"
+                dx == 0 && dz > 0 -> "north"
+                dx == 0 && dz < 0 -> "south"
+                dz == 0 && dx > 0 -> "east"
+                dz == 0 && dx < 0 -> "west"
+                else -> "unknown"
+            }
 
         mes("The talisman pulls towards the $direction.")
     }
 
-    private fun ProtectedAccess.canEnterRuinsWithoutTalisman(altar: RunecraftingAltarsRow): Boolean {
+    private fun ProtectedAccess.canEnterRuinsWithoutTalisman(
+        altar: RunecraftingAltarsRow
+    ): Boolean {
         if (playerHasRunecraftCape()) {
             return true
         }
@@ -232,12 +255,7 @@ class AltarEvents @Inject constructor(
 
     private companion object {
         val elementalAltarLocs =
-            setOf(
-                "loc.air_altar",
-                "loc.water_altar",
-                "loc.earth_altar",
-                "loc.fire_altar",
-            )
+            setOf("loc.air_altar", "loc.water_altar", "loc.earth_altar", "loc.fire_altar")
 
         val catalyticAltarLocs =
             setOf(

@@ -27,7 +27,6 @@ fun Player.openBank(eventBus: EventBus): Boolean {
     return true
 }
 
-/** Opens bank but does not send any events such as `if_setevent`s */
 fun Player.openBankWithoutEvents(eventBus: EventBus): Boolean {
     if (IronmanRestrictions.blockUimBank(this)) {
         return false
@@ -39,7 +38,7 @@ fun Player.openBankWithoutEvents(eventBus: EventBus): Boolean {
 }
 
 internal fun Player.highlightNoClickClear() {
-    runClientScript(3407, "component.bankside:bankside_highlight".asRSCM(RSCMType.COMPONENT))
+    runClientScript("clientscript.[clientscript,highlight_noclick_clear]", "component.bankside:bankside_highlight".asRSCM(RSCMType.COMPONENT))
 }
 
 internal fun Player.setBanksideExtraOps() {
@@ -146,7 +145,6 @@ private val WornBonuses.Bonuses.finalMagicDmg: String
 private val WornBonuses.Bonuses.magicDmgSuffix: String
     get() = if (magicDmgAdditive == 0) "" else "<col=be66f4> ($magicDmgAdditive%)</col>"
 
-// Undead bonus has a trailing whitespace when bonus is at 0.
 private val WornBonuses.Bonuses.undeadSuffix: String
     get() = if (undead == 0) " " else if (undeadMeleeOnly) " (melee)" else " (all styles)"
 

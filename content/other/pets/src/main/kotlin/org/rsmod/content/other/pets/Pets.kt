@@ -4,7 +4,7 @@ import org.rsmod.api.table.PetsRow
 
 object Pets {
     val all: List<Pet> =
-        PetsRow.all().groupBy { it.pet }.values.map { rows ->
+        PetsRow.all().filterNot { it.pet == "rocky" }.groupBy { it.pet }.values.map { rows ->
             val base = rows.first { it.base }
             val forms = listOf(base) + rows.filter { !it.base }
             Pet(

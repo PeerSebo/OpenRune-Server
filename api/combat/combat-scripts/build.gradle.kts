@@ -1,6 +1,5 @@
 plugins {
     id("base-conventions")
-
 }
 
 kotlin {
@@ -34,4 +33,12 @@ dependencies {
     implementation(projects.engine.game)
     implementation(projects.engine.map)
     implementation(projects.engine.plugin)
+    testImplementation(projects.engine.coroutine)
+    testImplementation(projects.engine.routefinder)
+    testImplementation(projects.api.market)
+}
+
+tasks.test {
+    workingDir(rootProject.projectDir)
+    inputs.dir(rootProject.file(".data/cache/SERVER"))
 }

@@ -2,8 +2,8 @@ package org.rsmod.api.net.rsprot.handlers
 
 import com.github.michaelbull.logging.InlineLogger
 import jakarta.inject.Inject
-import net.rsprot.protocol.game.incoming.npcs.OpNpc
 import net.rsprot.protocol.game.incoming.npcs.OpNpcV2
+import org.rsmod.api.player.events.PlayerNpcClick
 import org.rsmod.api.player.interact.NpcInteractions
 import org.rsmod.api.player.output.clearMapFlag
 import org.rsmod.api.player.protect.clearPendingAction
@@ -68,6 +68,10 @@ constructor(
             logger.debug { "OpNpc invalid op blocked: op=${message.op}, npc=$npc" }
             return
         }
+
+        val input = PlayerNpcClick(player, npc, message.interactionOp)
+        eventBus.publish(input)
+        if (input.consumed) { player.clearMapFlag(); return }
 
         player.clearPendingAction(eventBus)
         player.faceNpc(npc)

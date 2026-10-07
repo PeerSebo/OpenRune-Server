@@ -169,6 +169,7 @@ class HitBuilder internal constructor() {
 
     /** Percentage (0-100) of a protection prayer's block this hit ignores, optionally only [whenever]. */
     fun penetration(percent: Int, whenever: Condition? = null) {
+        require(percent in 0..100)
         penetrationPercent = percent
         penetrationWhen = whenever
     }
@@ -188,6 +189,7 @@ class HitBuilder internal constructor() {
     }
 
     fun lifesteal(percent: Int) {
+        require(percent in 0..100)
         lifestealPercent = percent
     }
 
@@ -228,6 +230,10 @@ internal constructor(private val builder: HitBuilder, private val range: IntRang
     /** Same as [roll] (random value in [range] when the hit resolves). */
     fun random() {
         builder.commitDamage(DamageExpr.Roll(range))
+    }
+
+    fun rollWithAccuracy(miss: DamageExpr = DamageExpr.Fixed(0)) {
+        builder.commitDamage(DamageExpr.Accuracy(DamageExpr.Roll(range), miss))
     }
 }
 
@@ -518,6 +524,16 @@ class AbilityBuilder {
         type: HitType,
     ) {
         effects += Effect.TileAoE(tiles, telegraph, damage, type)
+    }
+
+    fun tileAoE(
+        center: TargetExpr.Single,
+        radius: Int,
+        telegraph: TelegraphSpec? = null,
+        damage: DamageExpr,
+        type: HitType,
+    ) {
+        effects += Effect.TileAoE(center, radius, telegraph, damage, type)
     }
 
     fun summon(

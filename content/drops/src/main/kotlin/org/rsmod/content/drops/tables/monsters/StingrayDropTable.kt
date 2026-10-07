@@ -73,7 +73,7 @@ public val stingrayDropTable: RSDropTable<Player, DropRollItem> = RSDropTable(
     },
     tertiaries = rsPlayerTertiaryTable {
         1 outOf 10 weight "obj.sailing_stingray_skin" count 1 condition { player ->
-            // Drops Need Manual: Only dropped while on an applicable bounty task.
+            // TODO: Only dropped while on an applicable bounty task.
              true
         }
         1 outOf 2 weight "obj.sailing_stingray_fin" count 1
@@ -83,7 +83,7 @@ public val stingrayDropTable: RSDropTable<Player, DropRollItem> = RSDropTable(
     },
 )
 
-// Unknown wiki drop rates (text rarity — need data collection):
+// TODO: Resolve the unquantified drop rates below.
 //   - Grimy kwuarm [main/1/{{#expr:1/({{#var:hdt}}*5) round 1}}]
 //   - Grimy cadantine [main/1/{{#expr:1/({{#var:hdt}}*4) round 1}}]
 //   - Grimy lantadyme [main/1/{{#expr:1/({{#var:hdt}}*3) round 1}}]

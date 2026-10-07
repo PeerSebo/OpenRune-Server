@@ -1,0 +1,84 @@
+[[varp]]
+id = "varp.varplayer_5753"
+scope = "Temp"
+longValue = true
+
+[[varp]]
+id = "varp.ge_tax_slot_long_0"
+scope = "Temp"
+longValue = true
+
+[[varp]]
+id = "varp.ge_itemsink_price_long_0"
+scope = "Temp"
+longValue = true
+
+[[varp]]
+id = "varp.ge_tax_slot_long_1"
+scope = "Temp"
+longValue = true
+
+[[varp]]
+id = "varp.ge_itemsink_price_long_1"
+scope = "Temp"
+longValue = true
+
+[[varp]]
+id = "varp.ge_tax_slot_long_2"
+scope = "Temp"
+longValue = true
+
+[[varp]]
+id = "varp.ge_itemsink_price_long_2"
+scope = "Temp"
+longValue = true
+
+[[varp]]
+id = "varp.ge_tax_slot_long_3"
+scope = "Temp"
+longValue = true
+
+[[varp]]
+id = "varp.ge_itemsink_price_long_3"
+scope = "Temp"
+longValue = true
+
+[[varp]]
+id = "varp.ge_tax_slot_long_4"
+scope = "Temp"
+longValue = true
+
+[[varp]]
+id = "varp.ge_itemsink_price_long_4"
+scope = "Temp"
+longValue = true
+
+[[varp]]
+id = "varp.ge_tax_slot_long_5"
+scope = "Temp"
+longValue = true
+
+[[varp]]
+id = "varp.ge_itemsink_price_long_5"
+scope = "Temp"
+longValue = true
+
+[[varp]]
+id = "varp.ge_tax_slot_long_6"
+scope = "Temp"
+longValue = true
+
+[[varp]]
+id = "varp.ge_itemsink_price_long_6"
+scope = "Temp"
+longValue = true
+
+[[varp]]
+id = "varp.ge_tax_slot_long_7"
+scope = "Temp"
+longValue = true
+
+[[varp]]
+id = "varp.ge_itemsink_price_long_7"
+scope = "Temp"
+longValue = true

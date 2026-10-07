@@ -7,7 +7,6 @@ public data class DatabaseConfig(
     public val jdbcUrl: String,
     public val user: String,
     public val password: String,
-    /** Same-instance embedded PostgreSQL JVM process, not an external game DB. */
     public val usesEmbeddedPostgres: Boolean,
 ) {
     public companion object {

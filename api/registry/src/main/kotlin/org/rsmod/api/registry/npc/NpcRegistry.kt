@@ -93,23 +93,11 @@ constructor(
         zoneAdd(npc, to)
     }
 
-    /**
-     * Returns a sequence of all [Npc]s in the given [zone].
-     *
-     * _Note: This function does **not** filter out "hidden" npcs (e.g., those that are respawning).
-     * If you want to exclude these, filter the result using `Npc.isValidTarget`._
-     */
     public fun findAll(zone: ZoneKey): Sequence<Npc> {
         val entries = zones[zone] ?: return emptySequence()
         return entries.entries.asSequence()
     }
 
-    /**
-     * Returns a sequence of all [Npc]s in the given [coords].
-     *
-     * _Note: This function does **not** filter out "hidden" npcs (e.g., those that are respawning).
-     * If you want to exclude these, filter the result using `Npc.isValidTarget`._
-     */
     public fun findAll(coords: CoordGrid): Sequence<Npc> =
         findAll(ZoneKey.from(coords)).filter { it.coords == coords }
 

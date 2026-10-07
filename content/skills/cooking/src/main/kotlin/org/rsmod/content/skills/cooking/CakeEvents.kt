@@ -1,11 +1,14 @@
 package org.rsmod.content.skills.cooking
 
+import jakarta.inject.Inject
 import org.rsmod.api.player.protect.ProtectedAccess
+import org.rsmod.api.player.stat.cookingLvl
 import org.rsmod.api.script.onOpHeldU
+import org.rsmod.api.stats.xpmod.XpModifiers
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
-class CakeEvents : PluginScript() {
+class CakeEvents @Inject constructor(private val xpMods: XpModifiers) : PluginScript() {
 
     override fun ScriptContext.startup() {
         onOpHeldU("obj.cake_tin", "obj.egg") { tryCake() }
@@ -33,9 +36,15 @@ class CakeEvents : PluginScript() {
     }
 
     private fun ProtectedAccess.addChocolate() {
+        if (player.cookingLvl < 50) {
+            mes("You need a Cooking level of 50 to make a chocolate cake.")
+            return
+        }
         invDel(inv, "obj.cake", 1)
         invDel(inv, "obj.chocolate_bar", 1)
         invAdd(inv, "obj.chocolate_cake", 1)
         mes("You add the chocolate to the cake.")
+        val xpModifier = xpMods.get(player, "stat.cooking")
+        statAdvance("stat.cooking", 30.0 * xpModifier)
     }
 }

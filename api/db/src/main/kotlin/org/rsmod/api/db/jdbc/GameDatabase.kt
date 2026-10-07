@@ -1,15 +1,17 @@
 package org.rsmod.api.db.jdbc
 
+import dev.or2.central.db.FlywayMigrator
 import jakarta.inject.Inject
 import jakarta.inject.Provider
 import java.sql.Connection
 import java.sql.SQLException
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 import kotlinx.coroutines.delay
 import org.rsmod.api.db.Database
 import org.rsmod.api.db.DatabaseConfig
 import org.rsmod.api.db.DatabaseConnection
 import org.rsmod.api.db.util.DatabaseRollbackException
-import dev.or2.central.db.FlywayMigrator
 
 public class GameDatabase
 @Inject
@@ -17,6 +19,7 @@ constructor(
     private val configProvider: Provider<DatabaseConfig>,
 ) : Database {
     private lateinit var connection: Connection
+    private val transactionLock = ReentrantLock()
 
     public fun connect(connector: GameConnection) {
         check(!::connection.isInitialized) { "Connection already initialized." }
@@ -29,14 +32,14 @@ constructor(
             try {
                 connection.rollback()
             } catch (_: Throwable) {
-                // ignore
+                // Preserve the original transaction failure if rollback also fails.
             }
             throw t
         }
         this.connection = connection
     }
 
-    public fun close() {
+    public fun close(): Unit = transactionLock.withLock {
         assertValidConnection()
         this.connection.close()
     }
@@ -58,14 +61,13 @@ constructor(
             }
         }
 
-    /** Blocking variant for the game thread (avoids [runBlocking] coroutine overhead). */
-    public fun <T> withTransactionBlocking(block: (DatabaseConnection) -> T): T {
+    public fun <T> withTransactionBlocking(block: (DatabaseConnection) -> T): T = transactionLock.withLock {
         assertValidConnection()
         try {
             val wrapped = DatabaseConnection(connection)
             val result = block(wrapped)
             connection.commit()
-            return result
+            result
         } catch (t: Throwable) {
             try {
                 connection.rollback()
@@ -77,15 +79,20 @@ constructor(
     }
 
     private suspend fun <T> withConnection(block: (Connection) -> T): T {
-        assertValidConnection()
         repeat(MAX_ATTEMPTS - 1) {
             try {
-                return block(connection)
+                return transactionLock.withLock {
+                    assertValidConnection()
+                    block(connection)
+                }
             } catch (_: SQLException) {
                 delay(BACKOFF_MILLIS)
             }
         }
-        return block(connection)
+        return transactionLock.withLock {
+            assertValidConnection()
+            block(connection)
+        }
     }
 
     private fun assertValidConnection() {

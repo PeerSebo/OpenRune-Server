@@ -36,10 +36,10 @@ restockCycles = 320
 [[inventory.stock]]
 obj = "obj.mithril_platebody"
 count = 4
-restockCycles = -1
+restockCycles = 100
 
 [[inventory.stock]]
 obj = "obj.adamant_platebody"
 count = 3
-restockCycles = -1
+restockCycles = 100
 

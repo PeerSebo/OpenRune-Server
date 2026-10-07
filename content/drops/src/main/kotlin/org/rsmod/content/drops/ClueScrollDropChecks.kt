@@ -14,10 +14,8 @@ public enum class ClueScrollTier {
     Master,
 }
 
-/** X Marks the Spot — clue scrolls become scroll boxes after completion. Stub defaults to false. */
 public fun Player.hasCompletedXMarksTheSpot(): Boolean = hasCompletedQuest(X_MARKS_THE_SPOT_QUEST)
 
-/** Easy Combat Achievements reward tier unlocked (improves clue drop rate). Stub defaults to true. */
 public fun Player.hasUnlockedEasyCombat(): Boolean = true
 
 public fun Player.hasUnlockedMediumCombat(): Boolean = true
@@ -72,10 +70,6 @@ public fun clueScrollTierForObj(obj: String): ClueScrollTier? {
 
 public fun clueScrollBoxObj(tier: ClueScrollTier): String = "obj.league_clue_box_${tier.name.lowercase()}"
 
-/**
- * For [transformObj] on clue scroll drops: returns the scroll box obj when X Marks the Spot is
- * complete, otherwise null to keep the default scroll item.
- */
 public fun Player.clueScrollTransformObj(scrollObj: String): String? {
     if (!hasCompletedXMarksTheSpot()) {
         return null

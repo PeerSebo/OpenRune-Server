@@ -1,0 +1,5 @@
+[[varp]]
+id = "varp.drop_rate_multiplier"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"

@@ -1,6 +1,0 @@
-[[varbit]]
-isServerOnly = true
-id = "varbit.imp_catcher_progress"
-varp = "varp.imp"
-startBit = 0
-endBit = 1

@@ -10,7 +10,7 @@ import org.rsmod.api.player.input.ResumePauseButtonInput
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.game.inv.Inventory
 
-private const val SKILLMULTI_SETUP_SCRIPT = 2046
+private const val SKILLMULTI_SETUP_SCRIPT = "clientscript.[clientscript,skillmulti_setup]"
 private const val SKILLMULTI_ITEM_SLOTS = 18
 private const val CHATBOX_UNCLAMP_VARBIT = "varbit.chatmodal_unclamp"
 
@@ -22,6 +22,8 @@ data class SkillMultiSelection(
 data class SkillMultiEntry(
     val internal: String,
     val materials: List<Material> = emptyList(),
+    // MAKE_SETS entries must supply the output count for the label prefix.
+    val perSetCount: Int? = null,
 ) {
 
     val item: ItemServerType
@@ -52,14 +54,19 @@ data class SkillMultiConfig(
     val verb: String,
     val entries: List<SkillMultiEntry>,
     val maxCountProvider: ((Inventory, SkillMultiEntry) -> Int)? = null,
+    val titleOverride: String? = null,
+    // Override script 2046's final argument for menus that do not repeat maxCount.
+    val trailingArg: Int? = null,
 ) {
 
     val title: String
-        get() = if (entries.size == 1) {
-            "How many would you like to $verb?"
-        } else {
-            "What would you like to $verb?"
-        }
+        get() =
+            titleOverride
+                ?: when {
+                    actionType == SkillingActionType.MAKE_SETS -> "How many sets would you like to $verb?"
+                    entries.size == 1 -> "How many would you like to $verb?"
+                    else -> "What would you like to $verb?"
+                }
 }
 
 class SkillMultiBuilder {
@@ -124,7 +131,6 @@ suspend fun ProtectedAccess.openSkillMulti(
     onComplete: suspend (SkillMultiSelection) -> Unit = {},
 ) {
 
-
     val available = config.entries.mapNotNull { entry ->
         val amount = config.maxCountProvider?.invoke(inv, entry)
             ?: entry.maxCount(inv)
@@ -142,7 +148,7 @@ suspend fun ProtectedAccess.openSkillMulti(
 
     vars[CHATBOX_UNCLAMP_VARBIT] = 1
 
-    runClientScript(2379)
+    runClientScript("clientscript.[clientscript,toplevel_chatbox_resetbackground]")
 
     ifOpenSub(
         "interface.skillmulti",
@@ -150,10 +156,12 @@ suspend fun ProtectedAccess.openSkillMulti(
         IfSubType.Modal,
     )
 
+    // Button events must cover maxCount, including stacked-resource amounts above 28.
+    val maxCount = available.maxOfOrNull { it.second } ?: 0
     for (i in available.indices) {
         ifSetEvents(
             validButtons[i],
-            0..28,
+            0..maxCount,
             IfEvent.PauseButton
         )
     }
@@ -226,6 +234,10 @@ private fun skillmultiSetupArgs(
 
         available.forEach { (entry, _) ->
             append('|')
+            if (actionType == SkillingActionType.MAKE_SETS && entry.perSetCount != null) {
+                append(entry.perSetCount)
+                append(' ')
+            }
             append(entry.item.name)
         }
     }
@@ -235,7 +247,7 @@ private fun skillmultiSetupArgs(
         add(labels)
         add(maxCount)
         addAll(itemIds)
-        add(maxCount)
+        add(config.trailingArg ?: maxCount)
     }
 }
 

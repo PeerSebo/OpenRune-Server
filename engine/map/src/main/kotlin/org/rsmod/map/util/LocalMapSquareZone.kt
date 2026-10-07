@@ -3,20 +3,7 @@ package org.rsmod.map.util
 import org.rsmod.map.CoordGrid
 import org.rsmod.map.zone.ZoneKey
 
-/**
- * [LocalMapSquareZone] represents a local 8x8 zone index within a single 64x64 map square.
- *
- * The index is packed into an integer using three components:
- * - `x`: The zone X index in the map square, ranging from 0 to 7.
- * - `z`: The zone Z index in the map square, ranging from 0 to 7.
- * - `level`: The level or height coordinate, ranging from 0 to 3.
- *
- * This class is **not** semantically equivalent to `ZoneGrid`, which represents a coordinate within
- * a single 8x8 zone. In contrast, [LocalMapSquareZone] refers to which zone is being addressed
- * within a map square.
- *
- * @property packed The packed integer representation of the zone index within a 64x64 map square.
- */
+/** Local zone index inside a map square: eight zones per side, each containing 8x8 tiles. */
 @JvmInline
 public value class LocalMapSquareZone(public val packed: Int) {
     public val x: Int
@@ -36,10 +23,6 @@ public value class LocalMapSquareZone(public val packed: Int) {
     public override fun toString(): String = "LocalMapSquareZone(x=$x, z=$z, level=$level)"
 
     public companion object {
-        /**
-         * This value represents the number of zones per side of a map square. Therefore, a map
-         * square covers an `8 x 8` zone area in the x and z directions.
-         */
         public const val LENGTH: Int = 8
 
         public const val Z_BIT_COUNT: Int = 3

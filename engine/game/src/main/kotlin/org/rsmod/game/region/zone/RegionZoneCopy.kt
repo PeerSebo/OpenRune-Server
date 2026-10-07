@@ -28,9 +28,6 @@ public value class RegionZoneCopy(public val packed: Int) {
         flag: RegionZoneFlag?,
     ) : this(pack(rotation, normalKey.x, normalKey.z, normalKey.level, flag?.bitmask ?: 0))
 
-    /**
-     * Constructs a [ZoneKey] associated to the `Normal` zone that this [RegionZoneCopy] represents.
-     */
     public fun normalZone(): ZoneKey = ZoneKey(normalX, normalZ, normalLevel)
 
     override fun toString(): String =

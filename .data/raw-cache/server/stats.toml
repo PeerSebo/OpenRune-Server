@@ -118,7 +118,6 @@ displayName = "construction"
 isServerOnly = true
 id = "stat.sailing"
 displayName = "sailing"
-unreleased = true
 
 [[stat]]
 isServerOnly = true

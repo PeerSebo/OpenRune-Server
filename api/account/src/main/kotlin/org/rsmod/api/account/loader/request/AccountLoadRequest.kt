@@ -5,30 +5,16 @@ public sealed class AccountLoadRequest {
     public abstract val accountName: String
     public abstract val callback: AccountLoadCallback
 
-    /**
-     * Account requests that only require read access to the database or other account-related
-     * storage services.
-     *
-     * Properly labeling requests as read or write enables systems to optimize operations based on
-     * access type. For example, read-only requests can be executed in parallel - even in systems
-     * which benefit from concurrent reads but not concurrent writes on a single writer DB.
-     */
+    /** Read-only requests may run concurrently; do not use this request type for writes. */
     public sealed class ReadOnly : AccountLoadRequest()
 
     public data class StrictSearch(
         override val auth: AccountLoadAuth,
         override val accountName: String,
         override val callback: AccountLoadCallback,
-    ) : ReadOnly()
+    ) : WriteRequired()
 
-    /**
-     * Account requests that require write access to the database or other account-related storage
-     * services.
-     *
-     * Properly labeling requests as read or write enables systems to optimize operations based on
-     * access type. For example, read-only requests can be executed in parallel - even in systems
-     * which benefit from concurrent reads but not concurrent writes on a single writer DB.
-     */
+    /** Writes must use this request type to avoid concurrent read-only dispatch. */
     public sealed class WriteRequired : AccountLoadRequest()
 
     public data class SearchOrCreateWithPassword(

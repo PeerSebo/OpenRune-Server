@@ -41,12 +41,11 @@ object ParamMapper {
         const val RANGED_DEFENCE_BONUS = 9
         const val MELEE_STRENGTH_BONUS = 10
         const val RANGED_STRENGTH_BONUS = 12
-        const val ATTACK_RATE = 14 // Attack rate in ticks
+        const val ATTACK_RATE = 14
         const val MAGIC_DAMAGE_BONUS = 65
-        const val DRACONIC = 190 // 1 = If is draconic
-        const val GOLEM = 1178 // 1 = If is Golem
-        const val KALPHITE = 1353 // 1 = If is Kalphite
-        const val DEATH_DROP = 46 // What to drop on death Bones/Ashes etc.
-
+        const val DRACONIC = 190
+        const val GOLEM = 1178
+        const val KALPHITE = 1353
+        const val DEATH_DROP = 46
     }
 }

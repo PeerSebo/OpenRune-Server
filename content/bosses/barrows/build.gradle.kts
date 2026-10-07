@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     implementation(projects.api.pluginCommons)
+    implementation(projects.api.mechanics.dig)
     implementation(projects.api.areaChecker)
     implementation(projects.api.bosses)
     implementation(projects.api.dropTable)

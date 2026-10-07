@@ -5,6 +5,7 @@ import org.rsmod.api.invtx.invAdd
 import org.rsmod.api.invtx.invDel
 import org.rsmod.api.player.events.interact.HeldUEvents
 import org.rsmod.api.player.protect.ProtectedAccess
+import org.rsmod.api.player.vars.boolVarBit
 import org.rsmod.api.script.onOpHeldU
 import org.rsmod.api.script.onPlayerQueueWithArgs
 import org.rsmod.api.table.herblore.HerbloreBarbarianMixesRow
@@ -13,8 +14,11 @@ import org.rsmod.content.skills.SkillMultiConfig
 import org.rsmod.content.skills.SkillMultiEntry
 import org.rsmod.content.skills.SkillingActionType
 import org.rsmod.content.skills.openSkillMulti
+import org.rsmod.game.entity.Player
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
+
+private var Player.learnedBarbarianHerblore by boolVarBit("varbit.brut_herb_potion")
 
 class BarbarianMixesEvents : PluginScript() {
 
@@ -35,6 +39,11 @@ class BarbarianMixesEvents : PluginScript() {
         }
 
         if (candidates.isEmpty()) {
+            return
+        }
+
+        if (!player.learnedBarbarianHerblore) {
+            mes("You don't know how to make barbarian potions yet.")
             return
         }
 
@@ -107,7 +116,9 @@ class BarbarianMixesEvents : PluginScript() {
             return
         }
 
-        weakQueue("queue.herblore_barbarian_mix", 1, BarbarianMixTask(mix, amount, 0))
+        // Skillmulti callbacks add before queue decrement; compensate the one-tick cadence with +1.
+        clearWeakQueue("queue.herblore_barbarian_mix")
+        weakQueue("queue.herblore_barbarian_mix", 2, BarbarianMixTask(mix, amount, 0))
     }
 
     private suspend fun ProtectedAccess.processBarbarianMixTick(task: BarbarianMixTask) {
@@ -118,9 +129,9 @@ class BarbarianMixesEvents : PluginScript() {
             return
         }
 
+        // Both consumed inputs free enough room for the mix.
         if (!inv.contains(mix.twoDosePotion.internalName) ||
-            !inv.contains(mix.mixIngredient.internalName) ||
-            (inv.freeSpace() < 1 && !inv.contains(mix.barbarianMix.internalName))
+            !inv.contains(mix.mixIngredient.internalName)
         ) {
             resetAnim()
             return
@@ -155,7 +166,7 @@ class BarbarianMixesEvents : PluginScript() {
 
         val created = task.created + 1
         if (created < task.amount) {
-            weakQueue("queue.herblore_barbarian_mix", 4, BarbarianMixTask(mix, task.amount, created))
+            weakQueue("queue.herblore_barbarian_mix", 2, BarbarianMixTask(mix, task.amount, created))
         } else {
             resetAnim()
         }

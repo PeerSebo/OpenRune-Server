@@ -28,7 +28,6 @@ class GameServerCleanInstall : CliktCommand(name = "clean-install") {
         deleteCacheDir()
         deleteRsaKeys()
         Path("game.yml").deleteIfExists()
-
     }
 
     @OptIn(ExperimentalPathApi::class)

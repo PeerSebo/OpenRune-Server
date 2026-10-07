@@ -30,11 +30,7 @@ coords = "0_21_151_15_30"
 npc = "npc.varlamore_cockatrice_moon01"
 coords = "0_21_151_8_16"
 
-## Streambound Cavern Roof Lights Larger
 
 [[spawn]]
 npc = "npc.varlamore_cockatrice_moon01"
 coords = "0_21_151_11_28"
-
-## Streambound Cavern Roof Lights Larger End
-

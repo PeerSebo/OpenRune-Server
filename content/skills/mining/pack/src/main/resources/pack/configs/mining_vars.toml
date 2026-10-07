@@ -1,0 +1,11 @@
+[[varp]]
+isServerOnly = true
+id = "varp.mining_last_pickaxe"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.mining_pre_smelt_ore"
+scope = "Temp"
+transmit = "Never"

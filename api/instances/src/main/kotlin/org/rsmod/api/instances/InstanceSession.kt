@@ -28,6 +28,16 @@ class InstanceSession(
 
     var bossFightStartTick: Int? = null
 
+    /**
+     * Gates new occupants of server-hosted sessions; existing occupants may re-enter or leave.
+     * Closed lobbies route new arrivals to a fresh session. Always true for owner-bound sessions;
+     * [resetState] restores true.
+     */
+    var acceptingPlayers: Boolean = true
+
+    fun acceptsNewPlayers(): Boolean =
+        acceptingPlayers && !isFull() && state !is SessionState.Grace
+
     var state: SessionState = SessionState.Active
         private set
 
@@ -39,6 +49,13 @@ class InstanceSession(
         timeWarningsSent.clear()
         graceWarningsSent.clear()
         gracePending = false
+    }
+
+    fun awaitFirstEntry(currentTick: Int) {
+        check(!isServerOwned && occupants.isEmpty())
+        state = SessionState.Reclaim(
+            currentTick + spec.reclaimTicks.coerceAtLeast(DEFAULT_EMPTY_INSTANCE_RECLAIM_TICKS),
+        )
     }
 
     fun elapsedTicks(currentTick: Int): Int =
@@ -57,6 +74,12 @@ class InstanceSession(
         }
     }
 
+    /**
+     * Drops [player] from [occupants]. A server-hosted session is **never** wound down by this -
+     * it does not enter [SessionState.Reclaim] and it keeps running for everyone still inside, so
+     * a single player leaving a minigame mid-round leaves the round intact. Owner-bound sessions
+     * start their reclaim countdown once the last occupant is gone.
+     */
     fun removeOccupant(player: Long, currentTick: Int) {
         occupants -= player
         if (
@@ -93,6 +116,7 @@ class InstanceSession(
 
     fun resetState() {
         state = SessionState.Active
+        acceptingPlayers = true
         arenaExpired = false
         gracePending = false
         bossFightStartTick = null

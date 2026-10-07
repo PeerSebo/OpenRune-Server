@@ -50,7 +50,7 @@ class KreeArra @Inject constructor(deps: BossDeps) : BossPluginScript(deps) {
                             AllInRadius(radius = ROOM_RADIUS),
                             Effect.Projectile(
                                 spotanim = "spotanim.godwars_armadyl_avatar_wind_attack_spotanim",
-                                hit = Effect.Hit(damage = Roll(0..69), type = Ranged),
+                                hit = Effect.Hit(damage = Roll(0..69).withAccuracy(), type = Ranged),
                             ),
                         )
                     )
@@ -60,8 +60,9 @@ class KreeArra @Inject constructor(deps: BossDeps) : BossPluginScript(deps) {
                 ability("magic") {
                     anim("seq.godwars_armadyl_avatar_wind_attack")
                     projectile(
+                        // TODO: Use magic accuracy against ranged defence, as specified by Mod Ash.
                         spotanim = "spotanim.godwars_armadyl_avatar_magic_attack_spotanim",
-                        hit = Effect.Hit(damage = Roll(0..21), type = Magic),
+                        hit = Effect.Hit(damage = Roll(0..21).withAccuracy(), type = Magic),
                     )
                 }
 
@@ -69,7 +70,8 @@ class KreeArra @Inject constructor(deps: BossDeps) : BossPluginScript(deps) {
                 ability("claw") {
                     anim("seq.godwars_armadyl_avatar_claw_attack")
                     hit {
-                        damage(0..25).roll()
+                        // TODO: Verify the melee cap: the wiki lists 26; this spec uses 25.
+                        damage(0..25).rollWithAccuracy()
                         type(Melee)
                     }
                 }

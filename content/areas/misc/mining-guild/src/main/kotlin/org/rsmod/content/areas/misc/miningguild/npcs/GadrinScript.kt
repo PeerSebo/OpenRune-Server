@@ -1,8 +1,13 @@
 package org.rsmod.content.areas.misc.miningguild.npcs
 
+import dev.openrune.ServerCacheManager
+import dev.openrune.rscm.RSCM.asRSCM
+import org.rsmod.api.invtx.invTransaction
+import org.rsmod.api.invtx.select
 import org.rsmod.api.player.dialogue.Dialogue
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.player.stat.baseMiningLvl
+import org.rsmod.api.player.stat.statBase
 import org.rsmod.api.script.onOpNpc1
 import org.rsmod.game.entity.Npc
 import org.rsmod.plugin.scripts.PluginScript
@@ -109,11 +114,18 @@ class GadrinScript : PluginScript() {
             )
             return
         }
-        if (access.invDel(inv, "obj.coins", count = CAPE_PRICE).failure) {
-            return
+        val trimmed = ServerCacheManager.getStats().values.any {
+            !it.unreleased && it.internalName != "stat.mining" &&
+                player.statBase(it.internalName) >= MAX_LEVEL
         }
-        access.invAdd(inv, "obj.skillcape_mining")
-        access.invAdd(inv, "obj.skillcape_mining_hood")
+        val cape = if (trimmed) "obj.skillcape_mining_trimmed" else "obj.skillcape_mining"
+        val purchase = player.invTransaction(inv) {
+            val inventory = select(inv)
+            delete { from = inventory; obj = "obj.coins".asRSCM(); strictCount = CAPE_PRICE }
+            insert { into = inventory; obj = cape.asRSCM(); strictCount = 1 }
+            insert { into = inventory; obj = "obj.skillcape_mining_hood".asRSCM(); strictCount = 1 }
+        }
+        if (!purchase.success) return
         chatNpc(happy, "Thanks very much, master miner.")
     }
 

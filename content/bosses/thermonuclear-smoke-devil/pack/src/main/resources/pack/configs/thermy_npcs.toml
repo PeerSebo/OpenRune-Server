@@ -1,0 +1,31 @@
+[[npc]]
+isServerOnly = true
+id = "npc.smoke_devil_boss"
+inherit = "npc.smoke_devil_boss"
+hitpoints = 240
+attack = 230
+strength = 220
+defence = 360
+ranged = 310
+magic = 1
+moveRestrict = "PassThru"
+attackRange = 8
+maxRange = 30
+respawnRate = 15
+[npc.params]
+"param.boss_hp_bar_mode" = 1
+"param.killcount_varp" = "varp.kc_thermonuclear_smoke_devil"
+"param.attackrate" = 2
+"param.attack_anim" = "seq.lore_dust_devil_attack"
+"param.defend_anim" = "seq.lore_dust_devil_defend"
+"param.death_anim" = "seq.lore_dust_devil_death"
+"param.defence_stab" = 11
+"param.defence_slash" = 4
+"param.defence_crush" = 9
+"param.defence_magic" = 800
+"param.defence_light" = 900
+"param.defence_standard" = 900
+"param.defence_heavy" = 900
+"param.elemental_weakness_percent"=20
+"param.elemental_weakness_type"=0
+

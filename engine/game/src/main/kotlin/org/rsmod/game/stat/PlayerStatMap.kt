@@ -1,9 +1,7 @@
 package org.rsmod.game.stat
 
-import dev.openrune.rscm.RSCM
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
-import dev.openrune.types.StatType
 import it.unimi.dsi.fastutil.bytes.Byte2ByteOpenHashMap
 import it.unimi.dsi.fastutil.bytes.Byte2IntOpenHashMap
 import org.rsmod.annotations.InternalApi

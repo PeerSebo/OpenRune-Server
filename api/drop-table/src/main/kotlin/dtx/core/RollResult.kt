@@ -2,9 +2,9 @@ package dtx.core
 
 public sealed interface RollResult<R> {
 
-    public data object Nothing: RollResult<Nothing>
-    public data class Single<R>(val result: R): RollResult<R>
-    public data class ListOf<R>(val results: List<R>): RollResult<R>
+    public data object Nothing : RollResult<Nothing>
+    public data class Single<R>(val result: R) : RollResult<R>
+    public data class ListOf<R>(val results: List<R>) : RollResult<R>
 
     public companion object {
         public fun <R> Nothing(): RollResult<R> = Nothing as RollResult<R>
@@ -47,7 +47,6 @@ public fun <R> List<RollResult<R>>.flattenToList(): RollResult.ListOf<R> {
     }
 
     return RollResult.ListOf(listsResult.results + singles)
-
 }
 
 public fun <R> RollResult<R>.flatten(): RollResult<R> = when (this) {

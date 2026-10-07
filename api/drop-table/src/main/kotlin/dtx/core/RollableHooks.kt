@@ -1,7 +1,5 @@
 package dtx.core
 
-import dtx.table.DefaultTableHooksBuilder
-
 public interface RollableHooks<T, R> {
 
     /**
@@ -24,7 +22,6 @@ public interface RollableHooks<T, R> {
      */
     public fun transformResult(withTarget: T, result: RollResult<R>): RollResult<R>
 
-
     /**
      * This is a 1.2.0 onSelect replacement.
      */
@@ -38,7 +35,7 @@ public interface RollableHooks<T, R> {
     }
 }
 
-public data object DefaultRollableHooks: RollableHooks<Any?, Any?> {
+public data object DefaultRollableHooks : RollableHooks<Any?, Any?> {
 
     override fun includeInRoll(onTarget: Any?, otherArgs: ArgMap): Boolean {
         return true
@@ -67,7 +64,7 @@ internal data class RollableHooksImpl<T, R>(
     val onVetoFunc: OnVetoRoll<T, R> = RollableHooks.Default<T, R>()::onRollVetoed,
     val transformFunc: TransformResult<T, R> = RollableHooks.Default<T, R>()::transformResult,
     val onRollCompleteFunc: OnSelect<T, R> = RollableHooks.Default<T, R>()::onRollCompleted,
-): RollableHooks<T, R> {
+) : RollableHooks<T, R> {
 
     override fun includeInRoll(onTarget: T, otherArgs: ArgMap): Boolean {
         return shouldIncludeFunc(onTarget, otherArgs)
@@ -90,7 +87,7 @@ internal data class RollableHooksImpl<T, R>(
     }
 }
 
-public abstract class AbstractRollableHooksBuilder<T, R, Hooks: RollableHooks<T, R>, Builder: AbstractRollableHooksBuilder<T, R, Hooks, Builder>> {
+public abstract class AbstractRollableHooksBuilder<T, R, Hooks : RollableHooks<T, R>, Builder : AbstractRollableHooksBuilder<T, R, Hooks, Builder>> {
 
     public var shouldIncludeFunc: ShouldInclude<T> = RollableHooks.Default<T, R>()::includeInRoll
     public var vetoFunc: VetoRoll<T> = RollableHooks.Default<T, R>()::vetoRoll
@@ -157,7 +154,7 @@ public abstract class AbstractRollableHooksBuilder<T, R, Hooks: RollableHooks<T,
     }
 }
 
-public open class DefaultRollableHooksBuilder<T, R>: AbstractRollableHooksBuilder<T, R, RollableHooks<T, R>, DefaultRollableHooksBuilder<T, R>>() {
+public open class DefaultRollableHooksBuilder<T, R> : AbstractRollableHooksBuilder<T, R, RollableHooks<T, R>, DefaultRollableHooksBuilder<T, R>>() {
 
     init {
         construct {

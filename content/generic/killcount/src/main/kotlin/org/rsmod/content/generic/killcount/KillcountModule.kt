@@ -14,12 +14,9 @@ public class KillcountModule : PluginModule() {
     }
 }
 
-/**
- * Increments the player's killcount varp for the killed npc.
- */
 public class KillcountNpcKillHook @Inject constructor() : NpcDeathKillHook {
     override fun onKill(context: NpcDeathKillContext) {
-        if (context.npc.vars["varn.skip_killcount"] == 1) return
+        if (context.npc.vars["varn.skip_killcount"] != 0) return
         val varp = context.npc.paramOrNull(BaseParams.killcount_varp) ?: return
         val notify = context.npc.paramOrNull(BaseParams.killcount_notify) ?: true
         val count = context.hero.vars[varp] + 1

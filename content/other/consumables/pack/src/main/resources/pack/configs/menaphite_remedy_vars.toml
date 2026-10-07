@@ -1,0 +1,17 @@
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_menaphite_remedy_expires_at"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_menaphite_remedy_remaining"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_menaphite_remedy_migrated"
+scope = "Perm"
+transmit = "Never"

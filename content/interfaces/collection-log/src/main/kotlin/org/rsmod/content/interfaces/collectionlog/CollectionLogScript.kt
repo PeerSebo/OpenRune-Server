@@ -207,7 +207,6 @@ class CollectionLogScript @Inject constructor(private val eventBus: EventBus) : 
             val value = countVarps.getOrNull(i)?.let { vars[it] } ?: 0
             VarPlayerIntMapSetter.set(this, COUNT_TARGET_VARPS[i], value)
         }
-        // Placeholder until we have system that saves PBs
         for (varp in PB_TARGET_VARPS) {
             VarPlayerIntMapSetter.set(this, varp, 0)
         }

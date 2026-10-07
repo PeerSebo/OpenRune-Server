@@ -4,19 +4,15 @@ import org.rsmod.game.entity.util.PathingEntityCommon
 
 @JvmInline
 public value class Hitmark(public val packed: Long) {
-    /** The hitmark id shown to the entity (player) that took the hit. */
     public val self: Int
         get() = ((packed shr HITMARK_SELF_BIT_OFFSET) and HITMARK_ID_BIT_MASK).toInt()
 
-    /** The hitmark id shown to the entity (player) that dealt the hit. */
     public val source: Int
         get() = ((packed shr HITMARK_SOURCE_BIT_OFFSET) and HITMARK_ID_BIT_MASK).toInt()
 
-    /** The hitmark id shown to other players that see the hit. */
     public val public: Int
         get() = ((packed shr HITMARK_PUBLIC_BIT_OFFSET) and HITMARK_ID_BIT_MASK).toInt()
 
-    /** Returns `true` when the hitmark should only be visible to "self" and "source." */
     public val isPrivate: Boolean
         get() = public == HITMARK_ID_BIT_MASK.toInt()
 
@@ -77,7 +73,7 @@ public value class Hitmark(public val packed: Long) {
             ")"
 
     public companion object {
-        public const val HITMARK_ID_BIT_COUNT: Int = 8 // 3 hitmark ids represented; 24 total bits.
+        public const val HITMARK_ID_BIT_COUNT: Int = 8
         public const val DAMAGE_BIT_COUNT: Int = 15
         public const val DELAY_BIT_COUNT: Int = 8
         public const val SOURCE_INDEX_BIT_COUNT: Int = 17

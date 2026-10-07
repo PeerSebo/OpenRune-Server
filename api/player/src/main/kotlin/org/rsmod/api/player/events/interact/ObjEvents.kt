@@ -1,5 +1,8 @@
 package org.rsmod.api.player.events.interact
 
+import dev.openrune.definition.type.widget.ComponentType
+import dev.openrune.types.ItemServerType
+import org.rsmod.events.EventBus
 import org.rsmod.game.obj.Obj
 
 public sealed class ObjEvents {
@@ -84,4 +87,120 @@ public sealed class ObjDefaultEvents {
     public class Ap4(obj: Obj) : Ap(obj)
 
     public class Ap5(obj: Obj) : Ap(obj)
+}
+
+public class ObjTEvents {
+    public class Op(
+        public val obj: Obj,
+        public val comsub: Int,
+        public val objType: ItemServerType?,
+        type: ItemServerType,
+        component: ComponentType,
+    ) : OpEvent(EventBus.composeLongKey(type.id, component.packed))
+
+    public class Ap(
+        public val obj: Obj,
+        public val comsub: Int,
+        public val objType: ItemServerType?,
+        type: ItemServerType,
+        component: ComponentType,
+    ) : ApEvent(EventBus.composeLongKey(type.id, component.packed))
+}
+
+public class ObjTContentEvents {
+    public class Op(
+        public val obj: Obj,
+        public val comsub: Int,
+        public val objType: ItemServerType?,
+        component: ComponentType,
+        content: Int,
+    ) : OpEvent(EventBus.composeLongKey(content, component.packed))
+
+    public class Ap(
+        public val obj: Obj,
+        public val comsub: Int,
+        public val objType: ItemServerType?,
+        component: ComponentType,
+        content: Int,
+    ) : ApEvent(EventBus.composeLongKey(content, component.packed))
+}
+
+public class ObjTDefaultEvents {
+    public class Op(
+        public val obj: Obj,
+        public val comsub: Int,
+        public val objType: ItemServerType?,
+        public val type: ItemServerType,
+        component: ComponentType,
+    ) : OpEvent(component.packed.toLong())
+
+    public class Ap(
+        public val obj: Obj,
+        public val comsub: Int,
+        public val objType: ItemServerType?,
+        public val type: ItemServerType,
+        component: ComponentType,
+    ) : ApEvent(component.packed.toLong())
+}
+
+public class ObjUEvents {
+    public class Op(
+        public val obj: Obj,
+        public val invSlot: Int,
+        public val objType: ItemServerType,
+        type: ItemServerType,
+    ) : OpEvent(EventBus.composeLongKey(type.id, objType.id))
+
+    public class Ap(
+        public val obj: Obj,
+        public val invSlot: Int,
+        public val objType: ItemServerType,
+        type: ItemServerType,
+    ) : ApEvent(EventBus.composeLongKey(type.id, objType.id))
+}
+
+public class ObjUContentEvents {
+    public class Op(
+        public val obj: Obj,
+        public val invSlot: Int,
+        public val objType: ItemServerType,
+        groundContent: Int,
+    ) : OpEvent(EventBus.composeLongKey(groundContent, objType.id))
+
+    public class Ap(
+        public val obj: Obj,
+        public val invSlot: Int,
+        public val objType: ItemServerType,
+        groundContent: Int,
+    ) : ApEvent(EventBus.composeLongKey(groundContent, objType.id))
+}
+
+public class ObjUDefaultEvents {
+    public class OpType(
+        public val obj: Obj,
+        public val invSlot: Int,
+        public val objType: ItemServerType,
+        type: ItemServerType,
+    ) : OpEvent(type.id.toLong())
+
+    public class ApType(
+        public val obj: Obj,
+        public val invSlot: Int,
+        public val objType: ItemServerType,
+        type: ItemServerType,
+    ) : ApEvent(type.id.toLong())
+
+    public class OpContent(
+        public val obj: Obj,
+        public val invSlot: Int,
+        public val objType: ItemServerType,
+        groundContent: Int,
+    ) : OpEvent(groundContent.toLong())
+
+    public class ApContent(
+        public val obj: Obj,
+        public val invSlot: Int,
+        public val objType: ItemServerType,
+        groundContent: Int,
+    ) : ApEvent(groundContent.toLong())
 }

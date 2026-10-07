@@ -43,31 +43,8 @@ public class RouteFinding(
     private var bufWriterIndex = 0
 
     /**
-     * Creates a validated [Route] from ([srcX], [srcZ]) to ([destX], [destZ]) on height [level]
-     * avoiding obstacles in the appropriate manner respective to the given [collision] strategy.
-     *
-     * @param destWidth the _absolute_ width of the destination. This value should _not_ be changed
-     *   when passing the width of a rotated loc. (it is done for us within the function)
-     * @param destLength the _absolute_ length of the destination. Similar to [destWidth], this
-     *   value should _not_ be changed or altered for rotated locs.
-     * @param locAngle the angle of the target loc being used as the destination. If the path is
-     *   meant for something that is _not_ a loc, this value should be passed or left as the
-     *   default 0.
-     * @param locShape the shape of the target loc being used as the destination. If the path is
-     *   meant for something that is _not_ a loc, this value should be passed or left as the default
-     *   -1.
-     * @param blockAccessFlags packed directional bitflags that should be blocked off when a "reach
-     *   strategy" (AKA exit strategy) is checked. This can be seen in locs such as staircases,
-     *   where all directions excluding the direction with access to the steps are "blocked." (see
-     *   [org.rsmod.routefinder.flag.BlockAccessFlag])
-     * @return [Route.FAILED] if there is no valid path from source to destination coordinates. If
-     *   validated route could _not_ reach destination, but [moveNear] flag is enabled and
-     *   [findClosestApproachPoint] returns true - route is returned with [Route.alternative] as
-     *   true, [Route.success] as false and a partial [Route.waypoints] list. Otherwise, if route
-     *   successfully reaches the destination - route is returned with [Route.success] as true,
-     *   [Route.alternative] as false and a full [Route.waypoints] list.
-     * @throws IllegalArgumentException if coordinates are out of bounds. `x` and `z` cannot be over
-     *   14-bits - 1, or a value of 16383. `level` cannot be over 2-bits - 1, or a value of 3.
+     * Pass unrotated destination dimensions. A moveNear alternative is a partial route with
+     * alternative=true and success=false.
      */
     public fun findRoute(
         level: Int,
@@ -1712,36 +1689,8 @@ public class RouteFinding(
 
     public companion object {
         /**
-         * Calculates coordinates for [sourceX]/[sourceZ] to move to interact with
-         * [targetX]/[targetZ] We first determine the cardinal direction of the source relative to
-         * the target by comparing if the source lies to the left or right of diagonal \ and
-         * anti-diagonal / lines.
-         *
-         * ```
-         * \ <= North <= /
-         *  +------------+  >
-         *  |            |  East
-         *  +------------+  <
-         * / <= South <= \
-         * ```
-         *
-         * We then further bisect the area into three section relative to the south-west tile
-         * (zero):
-         * 1. Greater than zero: follow their diagonal until the target side is reached (clamped at
-         *    the furthest most tile)
-         * 2. Less than zero: zero minus the size of the source
-         * 3. Equal to zero: move directly towards zero / the south-west coordinate
-         *
-         * ```
-         * <  \ 0 /   <   /
-         *     +---------+
-         *     |         |
-         *     +---------+
-         * ```
-         *
-         * This method is equivalent to returning the last coordinate in a sequence of steps towards
-         * south-west when moving ordinal then cardinally until entity side comes into contact with
-         * another.
+         * Planar result always has level 0; callers must restore the source plane before using
+         * it as a world coordinate.
          */
         public fun naiveDestination(
             sourceX: Int,

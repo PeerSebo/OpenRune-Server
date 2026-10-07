@@ -21,10 +21,11 @@ import org.rsmod.api.bosses.runtime.encounter
 import org.rsmod.api.bosses.runtime.removeLocs
 import org.rsmod.api.bosses.runtime.repeatTick
 import org.rsmod.api.bosses.runtime.spawnOwnedNpc
-import org.rsmod.api.bosses.runtime.suppressAttacks
+import org.rsmod.api.bosses.runtime.suppressAttacksUntil
 import org.rsmod.api.bosses.spec.BossSpec
 import org.rsmod.api.bosses.spec.Condition
 import org.rsmod.api.death.NpcDeath
+import org.rsmod.api.instances.InstanceId
 import org.rsmod.api.instances.InstanceManager
 import org.rsmod.api.instances.InstanceSession
 import org.rsmod.api.npc.apPlayer2
@@ -32,6 +33,7 @@ import org.rsmod.api.npc.interact.AiPlayerInteractions
 import org.rsmod.api.player.hit.queueHit
 import org.rsmod.api.player.isValidTarget
 import org.rsmod.api.player.output.soundSynth
+import org.rsmod.api.player.vars.intVarp
 import org.rsmod.api.route.RayCastValidator
 import org.rsmod.api.route.RouteFactory
 import org.rsmod.api.route.walkTo
@@ -201,7 +203,7 @@ internal constructor(
     private companion object {
         private const val FIGHT_PHASE = "fight"
         private const val ENRAGED_PHASE = "enraged"
-        private const val HIT_SYNTH = "synth.leviathan_hit"
+        private const val HIT_SYNTH = "synth.DT2_LEVBOSS_HIT_IMPACT_01"
         private const val HIT_SYNTH_RADIUS = 15
         private const val BITE_MAX_HIT = 50
         private const val BITE_RANGE = 5
@@ -219,7 +221,7 @@ internal constructor(
         private const val SPECIAL_DAMAGE_PERCENT = 67
         private const val INSIDE_AURA_DAMAGE_PERCENT = 150
         private const val ENRAGE_MESSAGE = "<col=ff289d>The Leviathan focuses on you intensely...</col>"
-        private const val PATHFINDER_SPAWN_SYNTH = "synth.leviathan_pathfinder_spawn"
+        private const val PATHFINDER_SPAWN_SYNTH = "synth.DT2_LEVBOSS_RANGED_IMPACT_SOUND_01"
         private const val PATHFINDER_SPAWN_DELAY = LeviathanFights.PATHFINDER_SPAWN_DELAY
 
         private val SHADOW_SPELLS =
@@ -245,7 +247,11 @@ constructor(
     private val aiPlayerInteractions: AiPlayerInteractions,
 ) {
     private val fights: MutableMap<Npc, LeviathanFight> = IdentityHashMap()
-    private val pendingSpawns: MutableSet<Long> = HashSet()
+    private var Player.pendingSpawn by intVarp("varp.leviathan_pending_spawn")
+
+    private fun hasPendingSpawn(session: InstanceSession): Boolean = deps.playerList.any {
+        instances.sessionForPlayer(it)?.id == session.id && it.pendingSpawn != 0
+    }
 
     fun registerExtensions() {
         deps.extensionRegistry.register(SUMMON_PATHFINDER_EXT) { _, npc, _, _ -> summonPathfinder(npc) }
@@ -262,19 +268,30 @@ constructor(
     }
 
     fun hasBoss(session: InstanceSession): Boolean =
-        session.id.value in pendingSpawns || bossOf(session) != null
+        hasPendingSpawn(session) || bossOf(session) != null
 
     fun bossOf(session: InstanceSession): Npc? =
         fights.keys.firstOrNull { it.isSlotAssigned && instances.instanceForNpc(it) == session.id }
 
     fun scheduleSpawn(session: InstanceSession, player: Player, delay: Int) {
-        if (!pendingSpawns.add(session.id.value)) return
-        deps.worldQueues.add(delay) {
-            pendingSpawns.remove(session.id.value)
-            if (instances.sessionForPlayer(player)?.id != session.id) return@add
-            if (bossOf(session) != null) return@add
+        if (hasPendingSpawn(session)) return
+        val uid = player.uid
+        val token = deps.mapClock.cycle + delay + 1
+        player.pendingSpawn = token
+        deps.worldQueues.addDeferred(delay) {
+            if (player.uid != uid ||
+                deps.playerList[player.slotId] !== player ||
+                instances.sessionForPlayer(player)?.id != session.id ||
+                player.pendingSpawn != token
+            ) return@addDeferred
+            clearPendingSpawn(player)
+            if (!player.isValidTarget() || bossOf(session) != null) return@addDeferred
             spawn(session, player)
         }
+    }
+
+    fun clearPendingSpawn(player: Player) {
+        player.pendingSpawn = 0
     }
 
     private fun spawn(session: InstanceSession, player: Player) {
@@ -296,8 +313,11 @@ constructor(
         npc.anim(RISE_SEQ)
         player.soundSynth(RISE_SYNTH)
         hpBar.onOpen(player, npc)
-        deps.suppressAttacks(npc, FIRST_VOLLEY_DELAY)
-        deps.worldQueues.add(1) { if (npc.isSlotAssigned) refacePlayer(npc, player) }
+        deps.suppressAttacksUntil(npc, FIRST_VOLLEY_DELAY)
+        val uid = player.uid
+        deps.worldQueues.addDeferred(1) {
+            if (isActive(fight) && player.uid == uid && player.isValidTarget()) refacePlayer(npc, player)
+        }
         npc.apPlayer2(player, aiPlayerInteractions)
         watchAbandonment(fight)
     }
@@ -306,7 +326,7 @@ constructor(
         deps.repeatTick(
             ticks = Int.MAX_VALUE,
             onTick = { _ ->
-                if (fight.ended || !fight.npc.isSlotAssigned) return@repeatTick false
+                if (!isActive(fight)) return@repeatTick false
                 if (arenaLocs.arenaPlayers(fight).isEmpty()) {
                     fight.absentTicks++
                     if (fight.absentTicks >= ABANDON_TICKS) {
@@ -325,6 +345,10 @@ constructor(
         npc.resetFaceEntity()
         npc.facePlayer(target)
     }
+
+    private fun isActive(fight: LeviathanFight): Boolean =
+        fights[fight.npc] === fight && !fight.ended &&
+            fight.npc.isSlotAssigned && fight.npc.isVisible && fight.npc.hitpoints > 0
 
     private fun animateTails(fight: LeviathanFight) {
         sessionOf(fight.npc)?.let(arenaLocs::animateTails)
@@ -387,8 +411,12 @@ constructor(
         }
         for (player in arenaLocs.arenaPlayers(fight)) {
             val arrival = LeviathanArena.smokeDelay(centre, player.coords) / CYCLES_PER_TICK
-            deps.worldQueues.add(max(0, arrival)) {
-                if (fight.ended || !player.isValidTarget() || !hasLineOfSight(fight, player.coords)) return@add
+            val uid = player.uid
+            deps.worldQueues.addDeferred(max(1, arrival)) {
+                if (!isActive(fight) || player.uid != uid ||
+                    arenaLocs.arenaPlayers(fight).none { it === player } ||
+                    !hasLineOfSight(fight, player.coords)
+                ) return@addDeferred
                 player.queueHit(npc, 1, HitType.Typeless, deps.random.of(0, SMOKE_MAX_HIT), deps.playerHitModifier)
             }
         }
@@ -414,7 +442,7 @@ constructor(
                 mapSpot(PATHFINDER_SPAWN_SPOTANIM, middle.translate(dx, dz), delay = delay, height = PATHFINDER_SPAWN_HEIGHT)
             }
         }
-        deps.worldQueues.add(PATHFINDER_SPAWN_DELAY) { spawnPathfinder(fight, sw) }
+        deps.worldQueues.addDeferred(PATHFINDER_SPAWN_DELAY) { spawnPathfinder(fight, sw) }
     }
 
     private fun pathfinderStartCorner(fight: LeviathanFight): Int {
@@ -428,20 +456,20 @@ constructor(
     }
 
     private fun spawnPathfinder(fight: LeviathanFight, sw: CoordGrid) {
-        if (fight.ended || !fight.npc.isSlotAssigned) return
+        if (!isActive(fight)) return
         val pathfinder = deps.spawnOwnedNpc(fight.npc, PATHFINDER_NPC, sw) ?: return
         pathfinder.mode = NpcMode.None
         pathfinder.anim(PATHFINDER_SPAWN_SEQ)
         fight.pathfinder = pathfinder
         val next = fight.arena.at(LeviathanArena.PATHFINDER_CORNERS[(fight.pathfinderCorner + 1) % 4])
         pathfinder.faceSquare(next)
-        deps.worldQueues.add(PATHFINDER_WALK_DELAY) { patrol(fight) }
+        deps.worldQueues.addDeferred(PATHFINDER_WALK_DELAY) { patrol(fight) }
         watchAura(fight)
     }
 
     private fun patrol(fight: LeviathanFight) {
         val pathfinder = fight.pathfinder ?: return
-        if (fight.ended || !pathfinder.isSlotAssigned) return
+        if (!isActive(fight) || !pathfinder.isSlotAssigned) return
         fight.pathfinderCorner = (fight.pathfinderCorner + 1) % LeviathanArena.PATHFINDER_CORNERS.size
         val dest = fight.arena.at(LeviathanArena.PATHFINDER_CORNERS[fight.pathfinderCorner])
         pathfinder.walkTo(routeFactory, dest) { patrol(fight) }
@@ -451,7 +479,7 @@ constructor(
         deps.repeatTick(
             ticks = Int.MAX_VALUE,
             onTick = { _ ->
-                if (fight.ended || fight.pathfinder?.isSlotAssigned != true) return@repeatTick false
+                if (!isActive(fight) || fight.pathfinder?.isSlotAssigned != true) return@repeatTick false
                 arenaLocs.arenaPlayers(fight).filter { insideAura(fight, it) }.forEach { it.tint(AURA_TINT) }
                 true
             },
@@ -469,7 +497,8 @@ constructor(
         val border = AURA_BORDER
         val sw = pathfinder.coords
         val size = LeviathanArena.PATHFINDER_SIZE
-        return player.coords.x in (sw.x - border)..(sw.x + size - 1 + border) &&
+        return player.level == pathfinder.level &&
+            player.coords.x in (sw.x - border)..(sw.x + size - 1 + border) &&
             player.coords.z in (sw.z - border)..(sw.z + size - 1 + border)
     }
 
@@ -508,7 +537,7 @@ constructor(
         arenaLocs.setBoat(session, escape = false)
         arenaLocs.setHandholds(session, LeviathanArenaLocs.HANDHOLDS_EXIT_LOC)
         deps.worldQueues.add(RESPAWN_TICKS) {
-            if (bossOf(session) != null || session.id.value in pendingSpawns) return@add
+            if (bossOf(session) != null || hasPendingSpawn(session)) return@add
             val coords = instances.resolveCoord(session, LeviathanArena.BOSS_SPAWN) ?: return@add
             val arena = Arena.forBoss(coords)
             val player =
@@ -538,6 +567,8 @@ constructor(
 
     fun ensureTails(session: InstanceSession) = arenaLocs.ensureTails(session)
 
+    fun clearSessionTails(instanceId: InstanceId) = arenaLocs.clearSessionTails(instanceId)
+
     private fun mapSpot(spot: String, tile: CoordGrid, delay: Int = 0, height: Int = 0) {
         deps.worldRepo.spotanimMap(SpotanimType(spot.asRSCM(RSCMType.SPOTANIM)), tile, height, delay)
     }
@@ -557,7 +588,7 @@ constructor(
 
         private val RISE_FACE = CoordGrid(2064, 6369, 0)
         private const val RISE_SEQ = "seq.npc_leviathan_01_spawn"
-        private const val RISE_SYNTH = "synth.leviathan_rise"
+        private const val RISE_SYNTH = "synth.DT2_LEVBOSS_SPAWN_03"
         private const val FIRST_VOLLEY_DELAY = 4
         private const val ABANDON_TICKS = 5
 
@@ -566,7 +597,7 @@ constructor(
 
         private val CARDINALS = listOf(0 to 1, 1 to 0, 0 to -1, -1 to 0)
 
-        private const val LIGHTNING_SHOT_SYNTH = "synth.leviathan_lightning_shot"
+        private const val LIGHTNING_SHOT_SYNTH = "synth.DT2_LEVBOSS_LIGHTNING_ATTACK_01"
         private const val BEAM_GROUND_SPOTANIM = "spotanim.vfx_leviathan_360_ground"
         private const val BEAM_GROUND_BASE_DELAY = 2
         private const val BEAM_GROUND_STEP_DELAY = 2
@@ -594,7 +625,7 @@ constructor(
         const val PATHFINDER_SPAWN_DELAY = 3
         private const val PATHFINDER_WALK_DELAY = 3
 
-        private const val DEATH_SYNTH = "synth.leviathan_death"
+        private const val DEATH_SYNTH = "synth.DT2_LEVBOSS_DEATH_02"
         private const val DEATH_SYNTH_DELAY = 9
     }
 }

@@ -1,4 +1,3 @@
-## Tzhaar City Region
 
 [[spawn]]
 npc = "npc.inferno_master"
@@ -491,4 +490,3 @@ coords = "0_39_80_27_29"
 [[spawn]]
 npc = "npc.tzhaar_xil6"
 coords = "0_39_80_34_19"
-

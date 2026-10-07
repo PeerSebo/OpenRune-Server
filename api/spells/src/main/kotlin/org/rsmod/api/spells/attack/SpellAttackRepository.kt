@@ -1,6 +1,5 @@
 package org.rsmod.api.spells.attack
 
-import dev.openrune.types.ItemServerType
 import jakarta.inject.Inject
 
 public class SpellAttackRepository @Inject constructor(private val registry: SpellAttackRegistry) {
@@ -13,7 +12,6 @@ public class SpellAttackRepository @Inject constructor(private val registry: Spe
         when (result) {
             SpellAttackRegistry.Result.Add.AlreadyAdded -> error("Spell already mapped: $spell")
             SpellAttackRegistry.Result.Add.Success -> {
-                /* no-op */
             }
         }
     }

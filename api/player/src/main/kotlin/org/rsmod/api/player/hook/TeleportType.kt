@@ -13,6 +13,9 @@ public enum class TeleportType {
     /** Minigame teleports - cannot be used anywhere in the Wilderness. */
     Minigame,
 
+    /** Wilderness levers ignore depth, while retaining teleport-block and area hooks. */
+    Lever,
+
     /** Bypasses wilderness teleport restrictions (e.g. admin commands). */
     Exempt,
 }

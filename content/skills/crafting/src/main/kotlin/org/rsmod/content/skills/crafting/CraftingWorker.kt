@@ -4,6 +4,8 @@ import dev.openrune.ServerCacheManager
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
 import jakarta.inject.Inject
+import org.rsmod.api.player.events.PlayerAction
+import org.rsmod.api.player.events.PlayerActionCompleteEvent
 import org.rsmod.api.player.output.ChatType
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.player.stat.craftingLvl
@@ -19,11 +21,11 @@ import org.rsmod.content.skills.crafting.util.holdsCostumeNeedle
 import org.rsmod.content.skills.crafting.util.holdsImcandoHammer
 import org.rsmod.content.skills.crafting.util.meetsUnlocks
 import org.rsmod.content.skills.openSkillMulti
+import org.rsmod.content.skills.skillSuccess
 import org.rsmod.game.entity.Player
 import org.rsmod.game.loc.BoundLocInfo
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
-import skillSuccess
 
 private var Player.craftingThreadUses by intVarBit("varbit.crafting_thread_uses")
 
@@ -209,6 +211,11 @@ suspend fun ProtectedAccess.canCraft(product: CraftingProduct, verbose: Boolean)
 }
 
 suspend fun ProtectedAccess.craftOnce(product: CraftingProduct): Boolean {
+    // Recheck after the previous cycle may have consumed the last thread or a boost expired.
+    if (!canCraft(product, verbose = false)) {
+        return false
+    }
+
     val removed = mutableListOf<Pair<String, Int>>()
     for (material in product.inputs) {
         if (invDel(inv, material.internal, material.count).success) {
@@ -242,6 +249,7 @@ suspend fun ProtectedAccess.craftOnce(product: CraftingProduct): Boolean {
     }
 
     advanceCraftingXp(CraftingConstants.STAT_CRAFTING, product.xp)
+    publish(PlayerActionCompleteEvent(player, PlayerAction.CraftItem, product.output, count = product.outputCount))
     product.extraXp.forEach { advanceCraftingXp(it.stat, it.xp) }
     val resultDialogue = product.resultDialogue
     if (resultDialogue != null) {

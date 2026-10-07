@@ -3,17 +3,6 @@ package org.rsmod.game.queue
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 
-/**
- * Caches "default" and "labelled" script bindings for [EngineQueueType]s.
- *
- * Engine queues are commonly checked and invoked during each game cycle, especially when there is
- * player activity (e.g., movement through the map). Without this cache, events like zone entry and
- * exit would require repeated lookups to determine whether the associated engine queue scripts
- * should be added to a player's engine queue list.
- *
- * While not prohibitively expensive, this overhead is avoidable. This cache provides a fast and
- * simple solution to reduce lookup costs.
- */
 public class EngineQueueCache {
     private val labelled = Long2ObjectOpenHashMap<ClassLoader?>()
     private val defaults = Int2ObjectOpenHashMap<ClassLoader?>()

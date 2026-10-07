@@ -2,20 +2,17 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
+import dtx.rs.rsWeightedTable
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.api.droptable.nothing
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import dtx.rs.rsWeightedTable
-import org.rsmod.content.drops.tables.shared.SharedDropTables
-import org.rsmod.content.drops.tables.shared.doubleRollHerbDropTable
-import org.rsmod.content.drops.tables.shared.herbDropTable
-import org.rsmod.content.drops.tables.shared.tripleRollHerbDropTable
-import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.content.drops.brimstoneKeyRoll
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.api.droptable.nothing
-import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.content.drops.tables.shared.SharedDropTables
+import org.rsmod.content.drops.tables.shared.doubleRollHerbDropTable
+import org.rsmod.content.drops.tables.shared.tripleRollHerbDropTable
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -43,7 +40,7 @@ public val deviantSpectreDropTable: RSDropTable<Player, DropRollItem> = RSDropTa
     },
     tertiaries = rsPlayerTertiaryTable {
         1 outOf 1 weight "obj.trail_elite_emote_exp1" count 1 condition { player ->
-            // Drops Need Manual: The clue scroll and casket are only dropped when completing an elite clue scroll asking you to kill an aberrant spectre.
+            // TODO: The clue scroll and casket are only dropped when completing an elite clue scroll asking you to kill an aberrant spectre.
              true
         }
         1 outOf 1 weight "obj.trail_reward_casket_elite" count 1

@@ -1446,7 +1446,6 @@ coords = "0_22_58_16_6"
 npc = "npc.zeah_lizardshaman_2"
 coords = "0_22_57_26_63"
 
-## Arceuus
 
 [[spawn]]
 npc = "npc.arceuus_bartender"
@@ -1816,7 +1815,6 @@ coords = "1_24_59_41_44"
 npc = "npc.trobin_arceuus_focus"
 coords = "1_24_59_41_43"
 
-## Arceuus Library
 
 [[spawn]]
 npc = "npc.arceuus_darkwizard_reading_notalk"
@@ -1862,7 +1860,6 @@ coords = "0_25_59_52_50"
 npc = "npc.raidquest_library_archive_guardian"
 coords = "0_25_59_24_32"
 
-## Arceuus bank
 
 [[spawn]]
 npc = "npc.arceuus_banker_1_east"
@@ -1896,7 +1893,6 @@ coords = "0_25_58_37_28"
 npc = "npc.arceuus_banker_2_west"
 coords = "0_25_58_37_34"
 
-## Arceuus temple
 
 [[spawn]]
 npc = "npc.arceuus_cleric"
@@ -1918,13 +1914,11 @@ coords = "1_26_59_45_7"
 npc = "npc.arcquest_mori_postquest"
 coords = "2_26_59_42_23"
 
-## Arcis
 
 [[spawn]]
 npc = "npc.vmq1_itzla"
 coords = "0_25_58_52_45"
 
-## Bank Deposit Box
 
 [[spawn]]
 npc = "npc.hosidius_banker_f_east"
@@ -1938,7 +1932,6 @@ coords = "0_27_56_18_16"
 npc = "npc.hosidius_banker_m_east"
 coords = "0_27_56_18_15"
 
-## Blood Altar
 
 [[spawn]]
 npc = "npc.arceuus_bloodguardian"
@@ -1952,7 +1945,6 @@ coords = "0_26_59_54_48"
 npc = "npc.small_bat"
 coords = "0_27_60_4_0"
 
-## Dark Altar
 
 [[spawn]]
 npc = "npc.arceuus_darkguardian"
@@ -2002,7 +1994,6 @@ coords = "0_26_60_50_48"
 npc = "npc.small_bat"
 coords = "0_26_60_60_50"
 
-## Farming Guild
 
 [[spawn]]
 npc = "npc.0_19_58_memberfish"
@@ -2128,7 +2119,6 @@ coords = "0_19_58_59_37"
 npc = "npc.lovakengj_minecart_farming_guild"
 coords = "0_19_58_3_25"
 
-## Farming Guild Interior
 
 [[spawn]]
 npc = "npc.butterfly2"
@@ -2258,7 +2248,6 @@ coords = "0_19_58_20_15"
 npc = "npc.master_farmer_2"
 coords = "0_19_58_48_13"
 
-## Farming Guild bank
 
 [[spawn]]
 npc = "npc.farming_guild_banker1"
@@ -2268,13 +2257,11 @@ coords = "0_19_58_32_48"
 npc = "npc.farming_guild_banker2"
 coords = "0_19_58_33_48"
 
-## Filamina's Wares
 
 [[spawn]]
 npc = "npc.arceuus_staffshop"
 coords = "0_26_58_4_16"
 
-## Giant Pit
 
 [[spawn]]
 npc = "npc.giant"
@@ -2328,7 +2315,6 @@ coords = "0_22_56_40_28"
 npc = "npc.giant6"
 coords = "0_22_56_32_22"
 
-## Great Kourend Statue
 
 [[spawn]]
 npc = "npc.vmq1_bandit_1_varrock"
@@ -2342,7 +2328,6 @@ coords = "0_25_57_38_20"
 npc = "npc.vmq1_knight_2_castle"
 coords = "0_25_57_31_22"
 
-## Hosidius
 
 [[spawn]]
 npc = "npc.akd_pandur_hosidius"
@@ -2564,13 +2549,11 @@ coords = "0_27_56_2_28"
 npc = "npc.zeah_woman3"
 coords = "0_27_56_39_19"
 
-## Jennifer
 
 [[spawn]]
 npc = "npc.shayzien_generalstore"
 coords = "0_23_56_47_7"
 
-## Kebos Interior
 
 [[spawn]]
 npc = "npc.cow2_calf"
@@ -2592,7 +2575,6 @@ coords = "0_19_57_28_48"
 npc = "npc.rat_indoors"
 coords = "0_19_57_41_40"
 
-## Kebos Lowlands
 
 [[spawn]]
 npc = "npc.hunting_bird_jungle"
@@ -2834,7 +2816,6 @@ coords = "0_20_56_43_18"
 npc = "npc.zeah_lizardman_3_vp"
 coords = "0_20_56_43_2"
 
-## Kourend Castle
 
 [[spawn]]
 npc = "npc.akd_asteros_arceuus"
@@ -2988,7 +2969,6 @@ coords = "0_25_57_25_34"
 npc = "npc.zeah_head_councillor"
 coords = "1_25_57_20_25"
 
-## Kourend Castle Back Courtyard
 
 [[spawn]]
 npc = "npc.kourend_guard_f2"
@@ -3026,7 +3006,6 @@ coords = "2_24_57_59_24"
 npc = "npc.zeah_ranger"
 coords = "2_24_57_59_26"
 
-## Kourend Castle Carpet
 
 [[spawn]]
 npc = "npc.banker1"
@@ -3036,7 +3015,6 @@ coords = "2_25_57_12_31"
 npc = "npc.deadman_banker_grey_north"
 coords = "2_25_57_11_31"
 
-## Kourend Catacombs Dungeon
 
 [[spawn]]
 npc = "npc.cata_adventurer1"
@@ -3762,7 +3740,6 @@ coords = "0_25_156_56_3"
 npc = "npc.kourend_spectre"
 coords = "0_25_156_57_6"
 
-## Kourend Catacombs Dungeon Water
 
 [[spawn]]
 npc = "npc.cata_pirate"
@@ -4112,13 +4089,11 @@ coords = "0_25_157_7_9"
 npc = "npc.kourend_steel_dragon"
 coords = "0_25_157_9_2"
 
-## Kourend Houses
 
 [[spawn]]
 npc = "npc.lesser_demon"
 coords = "2_26_57_16_30"
 
-## Little Munty's Little Shop
 
 [[spawn]]
 npc = "npc.lovakengj_generalstore"
@@ -4128,13 +4103,11 @@ coords = "0_24_58_15_37"
 npc = "npc.spider"
 coords = "0_24_58_19_40"
 
-## Little Shop of Horace
 
 [[spawn]]
 npc = "npc.hosidius_generalstore"
 coords = "0_27_56_45_4"
 
-## Lovakengj
 
 [[spawn]]
 npc = "npc.bat"
@@ -4752,7 +4725,6 @@ coords = "0_23_58_52_38"
 npc = "npc.vulcana_lovakengj"
 coords = "0_23_58_11_36"
 
-## Mahogany Homes
 
 [[spawn]]
 npc = "npc.con_contract_client_10"
@@ -4778,7 +4750,6 @@ coords = "0_27_56_59_8"
 npc = "npc.spider"
 coords = "0_27_55_23_13"
 
-## Mess
 
 [[spawn]]
 npc = "npc.hosidius_mess_cat"
@@ -4892,13 +4863,11 @@ coords = "0_25_56_36_49"
 npc = "npc.hosidius_servery_waiter_s"
 coords = "0_25_56_36_36"
 
-## Mess Hall Kitchen
 
 [[spawn]]
 npc = "npc.hosidius_servery_chef"
 coords = "0_25_56_46_43"
 
-## Mount Karuulm
 
 [[spawn]]
 npc = "npc.bat"
@@ -4992,7 +4961,6 @@ coords = "0_20_59_17_20"
 npc = "npc.slayer_master_8"
 coords = "0_20_59_28_8"
 
-## Mount Quidamortem
 
 [[spawn]]
 npc = "npc.0_19_55_brut_fishing_spot"
@@ -5190,7 +5158,6 @@ coords = "0_19_54_50_43"
 npc = "npc.troll_mountain_goat_smaller"
 coords = "0_19_54_50_40"
 
-## Npc
 
 [[spawn]]
 npc = "npc.lovakengj_blast_hopperguard"
@@ -5220,7 +5187,6 @@ coords = "0_23_60_7_33"
 npc = "npc.spider"
 coords = "0_23_60_26_32"
 
-## Piliar
 
 [[spawn]]
 npc = "npc.rat_indoors"
@@ -5230,13 +5196,11 @@ coords = "1_27_58_63_25"
 npc = "npc.vmq1_bandit_2_varrock"
 coords = "0_28_58_1_27"
 
-## Regath's Wares
 
 [[spawn]]
 npc = "npc.arceuus_generalstore"
 coords = "0_26_58_56_12"
 
-## Shayzien
 
 [[spawn]]
 npc = "npc.giantspider2"
@@ -5474,7 +5438,6 @@ coords = "0_23_56_27_4"
 npc = "npc.zeah_woman3"
 coords = "0_24_55_8_42"
 
-## Shayzien Bank
 
 [[spawn]]
 npc = "npc.shayzien_banker_f_east"
@@ -5488,7 +5451,6 @@ coords = "0_23_56_14_7"
 npc = "npc.shayzien_banker_m_east"
 coords = "0_23_56_14_9"
 
-## Shayzien Combat Ring
 
 [[spawn]]
 npc = "npc.shayzien_armour_1_challenge"
@@ -5510,7 +5472,6 @@ coords = "0_24_56_5_35"
 npc = "npc.shayzien_armour_5_challenge"
 coords = "0_24_56_11_39"
 
-## Shayzien Encampment
 
 [[spawn]]
 npc = "npc.crab_1"
@@ -6044,7 +6005,6 @@ coords = "0_23_56_59_44"
 npc = "npc.shiro_shayzien"
 coords = "1_23_56_14_51"
 
-## Shayzien Graveyard Of Heroes
 
 [[spawn]]
 npc = "npc.akd_jorra"
@@ -6094,7 +6054,6 @@ coords = "0_23_55_8_39"
 npc = "npc.zeah_man2"
 coords = "0_23_55_37_43"
 
-## Shayzien Interiors Cobble
 
 [[spawn]]
 npc = "npc.osten"
@@ -6160,7 +6119,6 @@ coords = "0_23_55_60_25"
 npc = "npc.vmq1_guard_sergeant_roof"
 coords = "0_23_55_60_25"
 
-## Shayzien Shayzia Ruin
 
 [[spawn]]
 npc = "npc.shayzien_bandit_1"
@@ -6178,25 +6136,17 @@ coords = "0_24_56_51_13"
 npc = "npc.shayzien_bandit_3"
 coords = "0_24_56_48_12"
 
-## Skotizo
 
-[[spawn]]
-npc = "npc.cata_boss"
-coords = "0_35_88_31_29"
-
-## The Queen of Thieves
 
 [[spawn]]
 npc = "npc.akd_tomas_lawry_kingstown"
 coords = "0_26_57_12_35"
 
-## Thyria's Wares
 
 [[spawn]]
 npc = "npc.arceuus_runeshop"
 coords = "0_26_58_58_33"
 
-## Tithe Farm
 
 [[spawn]]
 npc = "npc.hosidius_evilgrapegirl"
@@ -6206,7 +6156,6 @@ coords = "1_28_54_5_44"
 npc = "npc.hosidius_tithe_farmer"
 coords = "0_28_54_7_42"
 
-## Wintertodt Arena
 
 [[spawn]]
 npc = "npc.wint_area_npc"
@@ -6284,7 +6233,6 @@ coords = "0_25_62_41_28"
 npc = "npc.wint_wizard"
 coords = "0_25_62_41_50"
 
-## Wintertodt Camp
 
 [[spawn]]
 npc = "npc.wint_master_pyromancer"
@@ -6326,7 +6274,6 @@ coords = "0_25_61_35_42"
 npc = "npc.wint_wcguild_rep"
 coords = "0_25_61_29_35"
 
-## Woodcutting Guild
 
 [[spawn]]
 npc = "npc.duck"
@@ -6380,7 +6327,6 @@ coords = "0_25_54_50_43"
 npc = "npc.wcguild_nesty"
 coords = "0_25_54_15_58"
 
-## Xeric's Lookout
 
 [[spawn]]
 npc = "npc.akd_lydia_fullore_lookout"
@@ -6398,7 +6344,6 @@ coords = "1_24_55_54_8"
 npc = "npc.akd_vulcana_lovakengj"
 coords = "2_24_55_57_12"
 
-## Zeah Snowy Northern Region
 
 [[spawn]]
 npc = "npc.akd_ice_block"
@@ -6472,7 +6417,6 @@ coords = "0_25_61_48_25"
 npc = "npc.wint_cluehunter"
 coords = "0_24_61_39_47"
 
-## Zeah Woodland Areas
 
 [[spawn]]
 npc = "npc.0_18_57_memberfish"
@@ -10337,6 +10281,3 @@ coords = "1_27_58_20_20"
 [[spawn]]
 npc = "npc.zeah_woman_outside"
 coords = "0_26_57_10_26"
-
-## Zeah Woodland Areas End
-

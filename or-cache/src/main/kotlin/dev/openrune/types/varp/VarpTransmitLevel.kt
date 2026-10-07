@@ -1,11 +1,8 @@
 package dev.openrune.types.varp
 
 public enum class VarpTransmitLevel(public val id: Int) {
-    /** Varp is never transmitted to clients. */
     Never(0),
-    /** Varp is transmitted to clients only when its value has changed. */
     OnSetDifferent(1),
-    /** Varp will always transmit to clients even when its value has not changed. */
     OnSetAlways(2);
 
     public val never: Boolean

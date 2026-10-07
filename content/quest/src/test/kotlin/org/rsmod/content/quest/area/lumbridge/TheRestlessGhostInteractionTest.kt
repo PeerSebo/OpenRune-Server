@@ -34,6 +34,8 @@ import org.rsmod.api.player.interact.LocUInteractions
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.player.protect.ProtectedAccessContextFactory
 import org.rsmod.api.player.protect.clearPendingAction
+import org.rsmod.api.player.recovery.loginExitCoord
+import org.rsmod.api.player.recovery.takeLoginExitCoord
 import org.rsmod.api.player.vars.VarPlayerIntMapSetter
 import org.rsmod.api.registry.controller.ControllerRegistry
 import org.rsmod.api.registry.loc.LocRegistry
@@ -181,9 +183,9 @@ class TheRestlessGhostInteractionTest {
         val f = Fixture(TheRestlessGhostStage.HasAmulet)
         f.coffin("loc.shutghostcoffin", InteractionOp.Op1)
         f.finish()
-        assertNotEquals(0, f.player.restlessGhostRisingTile)
+        assertNotEquals(0, f.player.vars["varp.restless_ghost_rising_tile"])
         f.timer("timer.restless_ghost_coffin_ghost")
-        assertEquals(0, f.player.restlessGhostRisingTile)
+        assertEquals(0, f.player.vars["varp.restless_ghost_rising_tile"])
         assertEquals(1, f.npcs.count { it.isType("npc.ghostx") })
         f.coffin("loc.shutghostcoffin", InteractionOp.Op1)
         f.finish()
@@ -208,7 +210,7 @@ class TheRestlessGhostInteractionTest {
         assertEquals(1, f.player.vars["varp.qp"])
         assertEquals(1125, f.player.statMap.getXP("stat.prayer"))
         assertEquals(0, f.player.inv.count("obj.ghostskull"))
-        assertEquals(0, f.player.restlessGhostReturnTile)
+        assertNull(f.player.loginExitCoord)
         assertEquals(ReleaseScene.ReturnTile, f.player.coords)
         assertEquals(0, f.player.vars["varbit.cutscene_status"])
         assertTrue(f.player.ui.containsModal("interface.questscroll"))
@@ -222,7 +224,7 @@ class TheRestlessGhostInteractionTest {
         val f = Fixture(TheRestlessGhostStage.Complete)
         f.coffin("loc.shutghostcoffin", InteractionOp.Op1)
         f.finish()
-        assertEquals(0, f.player.restlessGhostRisingTile)
+        assertEquals(0, f.player.vars["varp.restless_ghost_rising_tile"])
         f.timer("timer.restless_ghost_coffin_ghost")
         assertTrue(f.npcs.none { it.isType("npc.ghostx") })
     }
@@ -230,12 +232,12 @@ class TheRestlessGhostInteractionTest {
     @Test fun `login recovery returns to the graveyard and clears its saved exit`() {
         val f = Fixture()
         f.player.coords = CoordGrid(2000, 8000)
-        f.player.restlessGhostReturnTile = ReleaseScene.ReturnTile.packed
-        restoreRestlessGhostLogin(f.player)
+        f.player.loginExitCoord = ReleaseScene.ReturnTile
+        f.player.takeLoginExitCoord()?.let { f.player.coords = it }
         assertEquals(ReleaseScene.ReturnTile, f.player.coords)
-        assertEquals(0, f.player.restlessGhostReturnTile)
+        assertNull(f.player.loginExitCoord)
         f.player.coords = CoordGrid(3222, 3218)
-        restoreRestlessGhostLogin(f.player)
+        f.player.takeLoginExitCoord()?.let { f.player.coords = it }
         assertEquals(CoordGrid(3222, 3218), f.player.coords)
     }
 
@@ -247,7 +249,7 @@ class TheRestlessGhostInteractionTest {
         val quest = Quest(
             id = 120, key = "quest_restlessghost", rowID = 0, displayName = "The Restless Ghost",
             mapElement = null, startCoord = null, maxSteps = TheRestlessGhostStage.Complete,
-            questPoints = 1, questVarp = "varp.prieststart", questVarbit = "varbit.restless_ghost_progress",
+            questPoints = 1, questVarp = "varp.prieststart", questVarbit = null,
             rewards = rewards { xp("stat.prayer", 1125.0); extra("A Ghostspeak Amulet") },
             itemDisplay = ItemRewardDisplay("obj.ghostskull"),
         )
@@ -288,9 +290,8 @@ class TheRestlessGhostInteractionTest {
             val storage = LocZoneStorage()
             val normal = LocRegistryNormal(updates, collision, storage)
             val npcRegistry = NpcRegistry(npcs, collision, events)
-            regions = RegionRegistry(RegionListSmall(), RegionListLarge(), RegionListWorldEntity(),
-                normal, collision, storage, npcRegistry,
-                ControllerRegistry(clock, ControllerList()), ZonePlayerActivityBitSet())
+            regions = RegionRegistry(RegionListSmall(), RegionListLarge(), normal, collision, storage, npcRegistry,
+                ControllerRegistry(clock, ControllerList()), ZonePlayerActivityBitSet(), RegionListWorldEntity())
             val locs = LocRepository(clock, LocRegistry(storage, normal,
                 LocRegistryRegion(updates, collision, storage, regions)), regions)
             npcRepo = NpcRepository(clock, npcRegistry, npcs)
@@ -407,7 +408,7 @@ class TheRestlessGhostInteractionTest {
 
         @OptIn(InternalApi::class)
         @JvmStatic @BeforeAll fun cache() {
-            ServerCacheManager.init(240).close()
+            ServerCacheManager.init(241).close()
             for ((owner, name) in listOf(
                 "org.rsmod.api.invtx.InvTransactionsScriptKt" to "cachedInventoryTransactions",
                 "org.rsmod.api.invtx.VirtualInvTransactionsKt" to "cachedPlayerItemStorage",

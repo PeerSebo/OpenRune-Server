@@ -1,3 +1,5 @@
+# TODO: Brimstone key drop rates for level 69 and 71 mountain trolls are 1/292 and 1/268 respectively.
+
 id = "Mountain troll Drops"
 npcs = ["npc.death_troll_melee1", "npc.death_troll_melee2", "npc.death_troll_melee3", "npc.death_troll_melee4", "npc.death_troll_melee5", "npc.death_troll_melee6", "npc.death_troll_melee7", "npc.troll_melee1"]
 brimstone_key_roll = true
@@ -133,7 +135,3 @@ numerator = 1
 denominator = 5013
 obj = "obj.dorgesh_construction_bone_curved"
 count = 1
-
-
-# Main table pool padding uses a nothing roll (F2P drops removed and/or subtable access missing from wiki parse) (19 weight)
-# Drops need manual rate (konar_key): Brimstone key drop rates for level 69 and 71 mountain trolls are 1/292 and 1/268 respectively.

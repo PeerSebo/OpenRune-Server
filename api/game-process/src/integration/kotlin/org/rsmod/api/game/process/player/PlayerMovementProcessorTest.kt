@@ -42,24 +42,18 @@ class PlayerMovementProcessorTest {
                 move(target)
                 tempMoveSpeed = MoveSpeed.Walk
 
-                // Go over the next few steps to assert route is iterating as expected.
                 repeat(5) { index ->
                     val steps = 1 + index
                     process()
                     assertEquals(targetCoords.translateZ(-1), routeDestination.peekLast())
-                    // Process should only be allowing 1 step at a time due to the temp move speed
-                    // set to "Walk."
                     assertEquals(sourceCoords.translateZ(steps), coords)
-                    // Temp move speed flag should not be reset under these circumstances.
                     assertEquals(MoveSpeed.Walk, tempMoveSpeed)
                 }
 
-                // After this process, the player should have reached the waypoint destination
-                // and be next to the target.
                 process()
                 assertEquals(target.coords.translateZ(-1), coords)
                 assertTrue(routeDestination.isEmpty())
-                // Now the temp move speed should have been reset.
+
                 assertNull(tempMoveSpeed)
             }
         }
@@ -105,7 +99,6 @@ class PlayerMovementProcessorTest {
     @Test
     fun GameTestState.`consume waypoints only on arrival`() = runBasicGameTest {
         val movement = PlayerMovementProcessor(collision, routeFactory, stepFactory, eventBus)
-        // North of Lumbridge fountain.
         val start = CoordGrid(3221, 3228)
         val dest = CoordGrid(3220, 3226)
         val waypoints = listOf(start.translate(xOffset = -1, zOffset = 0), dest)
@@ -128,7 +121,6 @@ class PlayerMovementProcessorTest {
     fun GameTestState.`finish off walking when coords are odd-tiles away`() = runBasicGameTest {
         val movement = PlayerMovementProcessor(collision, routeFactory, stepFactory, eventBus)
         val start = CoordGrid(3200, 3200)
-        /* verify running > 1 tile does _not_ queue extended-info update */
         withPlayer {
             coords = start
             routeRequest = RouteRequestCoord(start.translateX(2))
@@ -138,7 +130,6 @@ class PlayerMovementProcessorTest {
             assertEquals(MoveSpeed.Run, moveSpeed)
             assertEquals(start.translateX(2), coords)
         }
-        /* now verify running within one-tile distance */
         withPlayer {
             coords = start
             routeRequest = RouteRequestCoord(start.translateX(1))
@@ -153,17 +144,12 @@ class PlayerMovementProcessorTest {
     @TestWithArgs(StandardMoveSpeedProvider::class)
     fun `correct move speed steps per process`(speed: MoveSpeed, state: GameTestState) =
         state.runBasicGameTest {
-            // Utilize a new collision state so that collision flags do not
-            // interfere with test.
             withCollisionState {
                 val startCoords = CoordGrid(3200, 3200, 0)
-                // Allocate an empty zone with no collision flags.
                 it.collision.allocateIfAbsent(startCoords.x, startCoords.z, startCoords.level)
                 val eventBus = state.eventBus
                 val movement =
                     PlayerMovementProcessor(it.collision, it.routeFactory, it.stepFactory, eventBus)
-                // If we want to support more than 7 steps, allocate
-                // neighbouring zones.
                 check(speed.steps < 8)
                 withPlayer {
                     val expectedCoords = startCoords.translateZ(speed.steps)

@@ -1,4 +1,3 @@
-## Abandoned Mine 1
 
 [[spawn]]
 npc = "npc.bat"
@@ -84,7 +83,6 @@ coords = "0_53_150_42_36"
 npc = "npc.small_bat"
 coords = "0_53_150_44_36"
 
-## Abandoned Mine 2
 
 [[spawn]]
 npc = "npc.hauntedmine_suprise_ghost_hidden"
@@ -214,7 +212,6 @@ coords = "0_43_71_59_23"
 npc = "npc.skeletal_miner_sitting"
 coords = "0_43_71_61_27"
 
-## Abandoned Mine 3
 
 [[spawn]]
 npc = "npc.hauntedmine_cart1"
@@ -232,7 +229,6 @@ coords = "0_42_70_27_36"
 npc = "npc.hauntedmine_cart4"
 coords = "0_42_70_51_48"
 
-## Abandoned Mine 4
 
 [[spawn]]
 npc = "npc.bat"
@@ -334,7 +330,6 @@ coords = "0_43_70_7_18"
 npc = "npc.small_bat"
 coords = "0_43_70_9_15"
 
-## Abandoned Mine 5
 
 [[spawn]]
 npc = "npc.possessed_pickaxe_stationary"
@@ -368,7 +363,6 @@ coords = "0_42_69_47_19"
 npc = "npc.possessed_pickaxe_stationary"
 coords = "0_42_69_50_23"
 
-## Abandoned Mine 6
 
 [[spawn]]
 npc = "npc.crane_posessed_mine"
@@ -417,6 +411,3 @@ coords = "0_43_69_41_30"
 [[spawn]]
 npc = "npc.hauntedmine_boss_key"
 coords = "0_43_69_36_39"
-
-## Abandoned Mine 6 End
-

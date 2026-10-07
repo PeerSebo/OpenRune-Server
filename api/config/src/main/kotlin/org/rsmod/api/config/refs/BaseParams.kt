@@ -59,12 +59,22 @@ object BaseParams {
     val statreq2_skill: ParamStat = param("statreq2_skill")
     val statreq2_level: ParamInt = param("statreq2_level")
 
+    // Equipment may declare seven stat requirements; checking only the first two lets high-tier
+    // requirements be bypassed.
+    val statreq3_skill: ParamStat = param("statreq3_skill")
+    val statreq3_level: ParamInt = param("statreq3_level")
+    val statreq4_skill: ParamStat = param("statreq4_skill")
+    val statreq4_level: ParamInt = param("statreq4_level")
+    val statreq5_skill: ParamStat = param("statreq5_skill")
+    val statreq5_level: ParamInt = param("statreq5_level")
+    val statreq6_skill: ParamStat = param("statreq6_skill")
+    val statreq6_level: ParamInt = param("statreq6_level")
+    val statreq7_skill: ParamStat = param("statreq7_skill")
+    val statreq7_level: ParamInt = param("statreq7_level")
+
     /**
-     * Unlike [statreq1_level] and [statreq2_level], this level requirement is not used when
-     * equipping objs but applies to specific skill-related actions.
-     *
-     * For example, arrows can be wielded without meeting a ranged level requirement, but they
-     * cannot be used in combat unless the equipped bow meets this `levelrequire` threshold.
+     * This requirement gates using the item for a skill, independently of equipment
+     * requirements.
      */
     val levelrequire: ParamInt = param("levelrequire")
     val no_bank: ParamInt = param("no_bank")
@@ -153,10 +163,10 @@ object BaseParams {
     val hitmark_max: ParamHitmark = param("hitmark_max")
     val headbar: ParamHeadbar = param("headbar")
     val boss_hp_bar_mode: ParamInt = param("boss_hp_bar_mode")
-    val hitpoints_locked: ParamBool = param("hitpoints_locked")
     val boss_hp_bar_colour_back: ParamInt = param("boss_hp_bar_colour_back")
     val boss_hp_bar_colour_sliding: ParamInt = param("boss_hp_bar_colour_sliding")
     val boss_hp_bar_colour_remaining: ParamInt = param("boss_hp_bar_colour_remaining")
+    val hitpoints_locked: ParamBool = param("hitpoints_locked")
     val rewarditem: ParamObj = param("rewarditem")
     val next_npc_stage: ParamNpc = param("next_npc_stage")
     val bankside_extraop_flip: ParamBool = param("bankside_extraop_conditional_flip")
@@ -224,6 +234,6 @@ object BaseParams {
     val next_loc_stage: ParamLoc = param("next_loc_stage")
     val translate_level: ParamInt = param("translate_level")
     val killcount_varp: ParamVarp = param("killcount_varp")
-    val killcount_notify: ParamBool = param("killcount_notify")
     val killcount_varp_awakened: ParamVarp = param("killcount_varp_awakened")
+    val killcount_notify: ParamBool = param("killcount_notify")
 }

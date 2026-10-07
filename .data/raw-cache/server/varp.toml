@@ -818,6 +818,131 @@ transmit = "Never"
 
 [[varp]]
 isServerOnly = true
+id = "varp.smithing_ring_of_forging_used"
+scope = "Perm"
+transmit = "Never"
+
+# Bits 0-4: course ID; bits 5-8: next obstacle. TODO: Verify mid-lap persistence.
+[[varp]]
+isServerOnly = true
+id = "varp.agility_course_progress"
+scope = "Perm"
+transmit = "Never"
+
+# Epoch minute of the last mark spawn; persisted across logout.
+[[varp]]
+isServerOnly = true
+id = "varp.agility_marks_last_spawn"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.agility_laps_gnome"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.agility_laps_draynor"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.agility_laps_alkharid"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.agility_laps_varrock"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.levelup_max_total_celebrated"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.skill_guide_v2_default_applied"
+scope = "Perm"
+transmit = "Never"
+
+
+[[varp]]
+isServerOnly = true
+id = "varp.agility_laps_canifis"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.agility_laps_falador"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.agility_laps_seers"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.agility_laps_pollnivneach"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.agility_laps_rellekka"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.agility_laps_ardougne"
+scope = "Perm"
+transmit = "Never"
+
+# Epoch minute seeded (0 = empty); real-time growth continues while logged out.
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_birdhouse_seeded_1"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_birdhouse_seeded_2"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_birdhouse_seeded_3"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hunter_birdhouse_seeded_4"
+scope = "Perm"
+transmit = "Never"
+
+# Epoch minute saplings mature (0 = none); wall time survives logout and server restarts.
+[[varp]]
+isServerOnly = true
+id = "varp.farming_seedling_ready"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
 id = "varp.kc_demonic_gorilla"
 scope = "Perm"
 transmit = "Never"
@@ -830,30 +955,18 @@ transmit = "Never"
 
 [[varp]]
 isServerOnly = true
-id = "varp.overhead_lock_expiration"
-scope = "Temp"
-transmit = "Never"
-
-[[varp]]
-isServerOnly = true
-id = "varp.drop_rate_multiplier"
+id = "varp.mahogany_homes_points"
 scope = "Perm"
 transmit = "Never"
 
 [[varp]]
 isServerOnly = true
-[[varp]]
-id = "varp.wilderness_boss_fee_nowarn"
-scope = "Perm"
-transmit = "Never"
-
-[[varp]]
-id = "varp.barrows_state"
+id = "varp.mahogany_homes_contracts_completed"
 scope = "Perm"
 transmit = "Never"
 
 [[varp]]
 isServerOnly = true
-id = "varp.barrows_state"
+id = "varp.mahogany_homes_contract_state"
 scope = "Perm"
 transmit = "Never"

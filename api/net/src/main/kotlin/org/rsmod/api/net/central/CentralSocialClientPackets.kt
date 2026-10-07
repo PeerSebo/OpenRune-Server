@@ -36,11 +36,18 @@ private fun nextPrivateMessageCounter(worldId: Int): Int {
 }
 
 /**
- * Packet order matches the original OpenRune-Central integration (commit bbf8e6a31):
- * [FriendListLoaded] first, then private chat filter, then bulk friend/ignore lists.
+ * Initialize social packets before login completion so the client accepts subsequent presence
+ * updates.
  */
-fun Player.writeCentralSocialSnapshot(snapshot: WorldLinkFrameSpecs.CentralSocialSnapshot) {
+fun Player.writeCentralSocialSnapshot(
+    snapshot: WorldLinkFrameSpecs.CentralSocialSnapshot,
+    visibility: StaffSocialVisibility,
+) {
     client.write(FriendListLoaded)
+    fun key(name: String) = name.lowercase().replace('_', ' ').replace('\u00a0', ' ').trim()
+    tradeSocial = org.rsmod.game.entity.PlayerTradeSocial(snapshot.tradeChat,
+        snapshot.friends.flatMap { listOfNotNull(it.displayName, it.previousDisplayName) }.map(::key).toSet(),
+        snapshot.ignores.flatMap { listOfNotNull(it.displayName, it.previousDisplayName) }.map(::key).toSet())
     client.write(ChatFilterSettingsPrivateChat(snapshot.privateChat))
 
     val friendEntries =
@@ -70,7 +77,7 @@ fun Player.writeCentralSocialSnapshot(snapshot: WorldLinkFrameSpecs.CentralSocia
             }
         }
 
-    client.write(UpdateFriendList(friendEntries))
+    client.write(UpdateFriendList(visibility.snapshot(this, friendEntries)))
 
     val ignoreEntries =
         snapshot.ignores.map { ignore ->
@@ -85,7 +92,9 @@ fun Player.writeCentralSocialSnapshot(snapshot: WorldLinkFrameSpecs.CentralSocia
     client.write(UpdateIgnoreList(ignoreEntries))
 }
 
-fun Player.writeCentralSocialSnapshotEmpty() {
+fun Player.writeCentralSocialSnapshotEmpty(visibility: StaffSocialVisibility) {
+    tradeSocial = null
+    visibility.clear(this)
     client.write(FriendListLoaded)
     client.write(ChatFilterSettingsPrivateChat(0))
     client.write(UpdateFriendList(emptyList()))
@@ -95,7 +104,13 @@ fun Player.writeCentralSocialSnapshotEmpty() {
 fun Player.writeCentralFriendPresence(
     push: ServerFriendPresencePayload,
     serverConfig: ServerConfig,
+    visibility: StaffSocialVisibility,
 ) {
+    tradeSocial = tradeSocial?.let { current ->
+        val names = listOfNotNull(push.friendDisplayName, push.friendPreviousDisplayName)
+            .map { it.lowercase().replace('_', ' ').replace('\u00a0', ' ').trim() }
+        current.copy(friends = current.friends + names)
+    }
     val friend =
         if (push.friendWorldId > 0) {
             UpdateFriendList.OnlineFriend(
@@ -120,7 +135,7 @@ fun Player.writeCentralFriendPresence(
                 notes = "",
             )
         }
-    client.write(UpdateFriendList(listOf(friend)))
+    client.write(UpdateFriendList(listOf(visibility.presence(this, friend))))
 }
 
 fun Player.writeCentralPrivateMessage(
@@ -146,14 +161,11 @@ fun Player.writeCentralPrivateMessage(
             worldMessageCounter = counter,
             chatCrownType = push.senderCrown,
             message = push.message,
-        ),
+        )
     )
 }
 
-private fun formatWorldName(
-    worldId: Int,
-    serverConfig: ServerConfig? = null,
-): String {
+private fun formatWorldName(worldId: Int, serverConfig: ServerConfig? = null): String {
     val label = if (worldId > 300) worldId - 300 else worldId
     val prefix = serverConfig?.name ?: "OpenRune"
     return "$prefix $label"

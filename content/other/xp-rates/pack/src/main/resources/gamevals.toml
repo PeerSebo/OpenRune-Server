@@ -1,0 +1,5 @@
+[gamevals.varp]
+xp_rates_personal_hundredths = 63790
+xp_rates_personal_migrated = 63791
+xp_rates_levels_reset = 63792
+xp_rates_levels_reset_migrated = 63793

@@ -1,8 +1,8 @@
 package org.rsmod.content.skills.runecrafting.magic
 
 import dev.openrune.ServerCacheManager
-import dev.openrune.rscm.RSCMType
 import dev.openrune.rscm.RSCM.asRSCM
+import dev.openrune.rscm.RSCMType
 import jakarta.inject.Inject
 import org.rsmod.api.combat.manager.MagicRuneManager
 import org.rsmod.api.combat.manager.MagicRuneManager.Companion.isFailure
@@ -15,10 +15,10 @@ import org.rsmod.content.skills.runecrafting.magic.MagicImbue.deactivate
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
-class MagicImbueEvents @Inject constructor(
-    private val spells: MagicSpellRegistry,
-    private val runes: MagicRuneManager,
-) : PluginScript() {
+class MagicImbueEvents
+@Inject
+constructor(private val spells: MagicSpellRegistry, private val runes: MagicRuneManager) :
+    PluginScript() {
     override fun ScriptContext.startup() {
         onPlayerQueue(MagicImbue.EXPIRE_QUEUE) {
             deactivate()
@@ -26,19 +26,15 @@ class MagicImbueEvents @Inject constructor(
         }
 
         val spellObj =
-            ServerCacheManager.getItem("obj.82_magic_imbue".asRSCM(RSCMType.OBJ))
-                ?: return
+            ServerCacheManager.getItem("obj.82_magic_imbue".asRSCM(RSCMType.OBJ)) ?: return
         val spell = spells.getObjSpell(spellObj) ?: return
 
-        onIfOverlayButton(spell.component) {
-            castMagicImbue()
-        }
+        onIfOverlayButton(spell.component) { castMagicImbue() }
     }
 
     private fun ProtectedAccess.castMagicImbue() {
         val spellObj =
-            ServerCacheManager.getItem("obj.82_magic_imbue".asRSCM(RSCMType.OBJ))
-                ?: return
+            ServerCacheManager.getItem("obj.82_magic_imbue".asRSCM(RSCMType.OBJ)) ?: return
         val spell = spells.getObjSpell(spellObj) ?: return
 
         val result = runes.attemptCast(player, spell)

@@ -14,6 +14,7 @@ import org.rsmod.game.entity.npc.NpcStateEvents
 import org.rsmod.map.zone.ZoneKey
 import org.rsmod.plugin.scripts.ScriptContext
 
+// TODO: Apply the ranged slam to every player in the room, with independent accuracy rolls.
 class GeneralGraardor @Inject constructor(deps: BossDeps) : BossPluginScript(deps) {
 
     private val generalId by lazy { GENERAL.asRSCM(RSCMType.NPC) }
@@ -41,7 +42,7 @@ class GeneralGraardor @Inject constructor(deps: BossDeps) : BossPluginScript(dep
                 ability("melee") {
                     anim("seq.godwars_bandos_attack")
                     hit {
-                        damage(0..60).roll()
+                        damage(0..60).rollWithAccuracy()
                         type(Melee)
                     }
                 }
@@ -52,7 +53,8 @@ class GeneralGraardor @Inject constructor(deps: BossDeps) : BossPluginScript(dep
                     projectile(
                         spotanim = "spotanim.godwars_bandos_proj",
                         travel = "projanim.godwars_bandos_ranged",
-                        hit = Effect.Hit(damage = Roll(15..35), type = Ranged)
+                        // Mod Ash: 15-35 damage is conditional on a successful accuracy roll.
+                        hit = Effect.Hit(damage = Roll(15..35).withAccuracy(), type = Ranged)
                     )
                 }
 

@@ -156,7 +156,6 @@ coords = "0_48_155_57_34"
 obj = "obj.steel_arrowheads"
 coords = "0_48_156_53_13"
 
-## Varrock Sewers
 
 [[spawn]]
 obj = "obj.bodyrune"
@@ -213,6 +212,3 @@ coords = "0_49_154_41_24"
 [[spawn]]
 obj = "obj.red_spiders_eggs"
 coords = "0_49_154_43_25"
-
-## Varrock Sewers End
-

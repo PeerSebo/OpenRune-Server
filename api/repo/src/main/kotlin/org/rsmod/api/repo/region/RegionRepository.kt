@@ -2,26 +2,13 @@ package org.rsmod.api.repo.region
 
 import jakarta.inject.Inject
 import org.rsmod.api.registry.region.RegionRegistry
+import org.rsmod.api.registry.region.RegionRegistryResult
 import org.rsmod.api.registry.region.isSuccess
 import org.rsmod.game.region.Region
 import org.rsmod.map.zone.ZoneGrid
 import org.rsmod.map.zone.ZoneKey
 
 public class RegionRepository @Inject constructor(private val registry: RegionRegistry) {
-    /**
-     * Attempts to allocate a region using the provided [template].
-     *
-     * The function determines whether the region should be **small** or **large** based on the
-     * template configuration. If the template represents a **large** region, it calls [addLarge].
-     * Otherwise, it attempts to allocate a small region via [addSmall].
-     *
-     * If no space is available for a **small** region, the function will automatically attempt to
-     * allocate a **large** region instead.
-     *
-     * @return The allocated [Region], or `null` if allocation fails due to capacity limits.
-     * @see [addSmall]
-     * @see [addLarge]
-     */
     public fun add(template: RegionTemplate): Region? =
         if (template.isLargeRegion()) {
             addLarge(template)
@@ -29,16 +16,6 @@ public class RegionRepository @Inject constructor(private val registry: RegionRe
             addSmall(template)
         }
 
-    /**
-     * Attempts to allocate a **small** region. If there is no available space in the small-region
-     * working area, this function will attempt to allocate a **large** region instead.
-     *
-     * If there is no available space in either the small-region or large-region working areas, this
-     * function will return `null`.
-     *
-     * This behavior follows the original intended mechanic, where a small region that cannot be
-     * allocated due to restricted space falls back to a large region.
-     */
     private fun addSmall(template: RegionTemplate): Region? {
         val result = registerSmall(template)
         if (result !is Result.Add.Success) {
@@ -66,6 +43,33 @@ public class RegionRepository @Inject constructor(private val registry: RegionRe
     public fun isValid(region: Region): Boolean {
         if (region.slot == Region.INVALID_SLOT) return false
         return registry.isValid(region.slot, region.uid)
+    }
+
+    public fun del(region: Region): Boolean {
+        if (!isValid(region)) return true
+        val result = registry.unregister(region)
+        if (result !is RegionRegistryResult.Delete.Success) return false
+        registry.unprotect(region.uid)
+        return true
+    }
+
+    public fun addWorldEntity(template: RegionTemplate): Region? {
+        val result = registry.registerWorldEntity()
+        if (!result.isSuccess()) return null
+        val region = result.region
+        try {
+            val copyZones = template.build(region.southWestZone)
+            require(copyZones.backing.keys.all { packed ->
+                val coords = ZoneKey(packed).toCoords()
+                coords.x in region.southWest.x until region.northEast.x &&
+                    coords.z in region.southWest.z until region.northEast.z
+            }) { "World entity template exceeds its 64-tile deck allocation." }
+            registry.build(region, copyZones)
+        } catch (cause: Exception) {
+            del(region)
+            throw cause
+        }
+        return region
     }
 
     public fun registerSmall(template: RegionTemplate): Result.Add {

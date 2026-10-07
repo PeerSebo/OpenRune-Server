@@ -1,0 +1,17 @@
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_hunter_heal_due_at"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_hunter_heal_amount"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_hunter_heal_effect"
+scope = "Temp"
+transmit = "Never"

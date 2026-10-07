@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class ZoneKeyDocTest {
-    /** @see [ZoneKey] */
     @Test
     fun `validate Example Usage code`() {
         val zoneKey = ZoneKey.fromAbsolute(3220, 3205, 2)

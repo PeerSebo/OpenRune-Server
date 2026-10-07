@@ -1,7 +1,6 @@
 package org.rsmod.api.npc.interact
 
 import com.github.michaelbull.logging.InlineLogger
-import dev.openrune.types.ItemServerType
 import jakarta.inject.Inject
 import org.rsmod.api.npc.access.StandardNpcAccess
 import org.rsmod.api.npc.events.interact.AiPlayerUContentEvents

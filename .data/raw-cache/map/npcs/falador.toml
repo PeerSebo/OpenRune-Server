@@ -494,13 +494,11 @@ coords = "1_46_52_45_10"
 npc = "npc.wyson"
 coords = "0_47_52_19_51"
 
-## Cassie's Shield Shop
 
 [[spawn]]
 npc = "npc.cassie"
 coords = "0_46_52_35_55"
 
-## Falador General Store
 
 [[spawn]]
 npc = "npc.generalassistant4"
@@ -514,7 +512,6 @@ coords = "0_46_52_13_58"
 npc = "npc.lost_property_merchant_standard"
 coords = "1_46_52_9_62"
 
-## Falador Hairdresser
 
 [[spawn]]
 npc = "npc.fai_falador_guard2"
@@ -524,7 +521,6 @@ coords = "0_46_52_0_48"
 npc = "npc.hairdresser"
 coords = "0_46_52_2_51"
 
-## Falador Party Room
 
 [[spawn]]
 npc = "npc.partyroom_barmaid"
@@ -546,7 +542,6 @@ coords = "0_47_52_44_45"
 npc = "npc.secret_ghost7"
 coords = "1_47_52_45_50"
 
-## Falador Square Fountain
 
 [[spawn]]
 npc = "npc.fai_falador_guard1_variant01"
@@ -556,7 +551,6 @@ coords = "0_47_52_28_27"
 npc = "npc.fai_falador_guard2_f"
 coords = "0_47_52_33_27"
 
-## Falador east bank
 
 [[spawn]]
 npc = "npc.deadman_banker_grey_north"
@@ -582,7 +576,6 @@ coords = "0_47_52_5_25"
 npc = "npc.falador_banker"
 coords = "0_47_52_6_25"
 
-## Falador west bank
 
 [[spawn]]
 npc = "npc.banker2"
@@ -604,13 +597,11 @@ coords = "0_46_52_4_38"
 npc = "npc.deadman_banker_grey_north"
 coords = "0_46_52_5_38"
 
-## Flynn's Mace Market
 
 [[spawn]]
 npc = "npc.flynn"
 coords = "0_46_52_7_58"
 
-## Mahogany Homes
 
 [[spawn]]
 npc = "npc.con_contract_client_4"
@@ -624,7 +615,6 @@ coords = "0_47_52_30_38"
 npc = "npc.falador_man4"
 coords = "1_47_52_28_17"
 
-## South Falador Farm
 
 [[spawn]]
 npc = "npc.calf"
@@ -669,6 +659,3 @@ coords = "0_47_51_3_50"
 [[spawn]]
 npc = "npc.imp"
 coords = "0_47_51_7_50"
-
-## South Falador Farm End
-

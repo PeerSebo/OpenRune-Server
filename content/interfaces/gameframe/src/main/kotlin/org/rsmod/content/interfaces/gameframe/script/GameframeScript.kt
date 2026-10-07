@@ -1,7 +1,6 @@
 package org.rsmod.content.interfaces.gameframe.script
 
 import dev.openrune.ServerCacheManager
-import dev.openrune.definition.type.widget.ComponentType
 import dev.openrune.definition.type.widget.IfEvent
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
@@ -9,6 +8,7 @@ import jakarta.inject.Inject
 import org.rsmod.api.player.cinematic.Cinematic
 import org.rsmod.api.player.output.ClientScripts
 import org.rsmod.api.player.output.runClientScript
+import org.rsmod.api.player.protect.NonInterruptingComponents
 import org.rsmod.api.player.ui.ifOpenOverlay
 import org.rsmod.api.player.ui.ifOpenTop
 import org.rsmod.api.player.ui.ifSetEvents
@@ -29,7 +29,6 @@ import org.rsmod.game.entity.Player
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
-
 var Player.gameframeTopLevel by intVarBit("varbit.gameframe_toplevel")
 private var Player.stoneArrangements by boolVarBit("varbit.resizable_stone_arrangement")
 lateinit var gameframes: Map<Int, Gameframe>
@@ -44,6 +43,13 @@ class GameframeScript @Inject internal constructor(private val eventBus: EventBu
     override fun ScriptContext.startup() {
         loadAll()
 
+        // Side-stone clicks are client tab selection; do not launch an action that cancels ongoing content.
+        for (toplevel in listOf("toplevel", "toplevel_osrs_stretch", "toplevel_pre_eoc")) {
+            for (stone in 0..13) {
+                NonInterruptingComponents.register("component.$toplevel:stone$stone")
+            }
+        }
+
         onPlayerInit { player.openLoginGameframe() }
 
         for ((topLevel, gameframe) in gameframes) {
@@ -55,7 +61,7 @@ class GameframeScript @Inject internal constructor(private val eventBus: EventBu
             onIfMoveSub(target) { player.moveSetEvents(event) }
         }
         onIfMoveSub("component.toplevel_osrs_stretch:xp_drops") { player.moveXpDrops() }
-        
+
         onIfMoveSub("component.toplevel_osrs_stretch:tli_listener") { player.moveEhcListener() }
 
         onPlayerSoftQueueWithArgs("queue.client_mode") { player.changeGameframe(args) }
@@ -80,7 +86,7 @@ class GameframeScript @Inject internal constructor(private val eventBus: EventBu
     public fun Player.queueGameframeMove(gameframe: Gameframe) {
         val settingsClientMode = ui.frameResizable != gameframe.resizable
         if (settingsClientMode) {
-            runClientScript(3998, gameframe.clientMode)
+            runClientScript("clientscript.[clientscript,settings_client_mode]", gameframe.clientMode)
         }
         val previous = gameframes.getValue(gameframeTopLevel)
         gameframeTopLevel = gameframe.topLevel.asRSCM(RSCMType.INTERFACE)
@@ -110,15 +116,7 @@ class GameframeScript @Inject internal constructor(private val eventBus: EventBu
             return GameframeMove(from = from, dest = dest, intermediate = intermediate)
         }
 
-        /*
-        * This is required for emulation purposes and might also be required for an edge case within
-        * the client/cs2. This can be seen when going from a fixed gameframe to a resizable one.
-        * If the `resizable_stone_arrangement` has to be changed to match the target gameframe, the
-        * client will receive two `if_opentop` + `if_movesub` sequences. One going from the current
-        * gameframe toplevel to a gameframe toplevel that matches the current stone arrangement var
-        * and is resizable, followed by a second `if_opentop` + `if_movesub` group going from this
-        * intermediate gameframe to the original target gameframe.
-        */
+        // Preserve repeated gameframe writes: fixed-to-resizable transitions depend on their ordering.
         private fun Player.resolveIntermediate(from: Gameframe, dest: Gameframe): Gameframe? {
             val requiresIntermediate =
                 dest.resizable && !from.resizable && stoneArrangements != dest.stoneArrangement
@@ -131,7 +129,6 @@ class GameframeScript @Inject internal constructor(private val eventBus: EventBu
         private fun Gameframe.hasFlags(resizable: Boolean, stoneArrangements: Boolean): Boolean {
             return this.resizable == resizable && this.stoneArrangement == stoneArrangements
         }
-
     }
 
     public fun Player.changeGameframe(move: GameframeMove) {
@@ -150,12 +147,7 @@ class GameframeScript @Inject internal constructor(private val eventBus: EventBu
             } else {
                 moveGameframe(from, dest, eventBus)
             }
-            // TODO(content):
-            //  After 1 cycle, cs2 `settings_interface_scaling` and `buff_bar_layout_redraw` are
-            //  sent. However, I am unsure how it is scheduled. This action does not seem to be
-            //  stalled by modals and does not force-close them. A soft timer seems highly unlikely,
-            //  but it would be the only way to achieve this behavior. We will wait until we have
-            //  more information before adding this.
+            // TODO: Verify how settings_interface_scaling and buff_bar_layout_redraw are scheduled one cycle later.
         }
 
         this.ifOpenOverlay(if (orbsMinimized && dest.resizable) "interface.orbs_nomap" else "interface.orbs", "component.toplevel_osrs_stretch:orbs", eventBus)

@@ -38,14 +38,12 @@ public class NpcQueueList {
         val prev = node.prev
         val next = node.next
 
-        // If `prev` is null that means `node` was the first node.
         if (prev == null) {
             first = next
         } else {
             prev.next = next
         }
 
-        // If `next` is null that means `node` was the last node.
         if (next == null) {
             last = prev
         } else {

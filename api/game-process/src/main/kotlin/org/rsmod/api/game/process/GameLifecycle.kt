@@ -11,6 +11,8 @@ public sealed class GameLifecycle : UnboundEvent {
 
     public data object EndCycle : GameLifecycle()
 
+    public data object PreShutdown : GameLifecycle()
+
     public data object Shutdown : GameLifecycle()
 
     public data object UpdateInfo : GameLifecycle()

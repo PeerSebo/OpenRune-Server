@@ -2,591 +2,200 @@ package org.rsmod.api.mechanics.toxins
 
 import org.rsmod.api.attr.AttributeKey
 import org.rsmod.api.player.output.mes
+import org.rsmod.api.player.vars.VarPlayerIntMapSetter
+import org.rsmod.api.player.vars.boolVarp
+import org.rsmod.api.player.vars.intVarp
 import org.rsmod.game.entity.Player
 import org.rsmod.game.entity.timerAt
 
 public object ToxinImmunity {
-    private val poisonUntil =
-        AttributeKey<Int>(
-            resetOnDeath = true,
-            temp = true,
-        )
+    private var Player.poisonUntil by intVarp("varp.toxin_poison_immunity_until")
+    private var Player.venomUntil by intVarp("varp.toxin_venom_immunity_until")
+    private var Player.warnedPoisonUntil by intVarp("varp.toxin_poison_immunity_warned_until")
+    private var Player.poisonDisplayUntil by intVarp("varp.toxin_poison_immunity_display_until")
+    private var Player.savedPoisonTicks by intVarp("varp.toxin_poison_immunity_remaining")
+    private var Player.savedVenomTicks by intVarp("varp.toxin_venom_immunity_remaining")
+    private var Player.savedPoisonWarning by boolVarp("varp.toxin_poison_immunity_warned")
+    private var Player.immunityMigrated by boolVarp("varp.toxin_immunity_migrated")
 
-    private val venomUntil =
-        AttributeKey<Int>(
-            resetOnDeath = true,
-            temp = true,
-        )
+    public fun hasPoisonImmunity(player: Player): Boolean =
+        remaining(player.poisonUntil, player.currentMapClock) > 0
 
-    private val warnedPoisonUntil =
-        AttributeKey<Int>(
-            resetOnDeath = true,
-            temp = true,
-        )
+    public fun hasVenomImmunity(player: Player): Boolean =
+        remaining(player.venomUntil, player.currentMapClock) > 0
 
-    private val poisonDisplayUntil =
-        AttributeKey<Int>(
-            resetOnDeath = true,
-            temp = true,
-        )
-
-    private val savedPoisonTicks =
-        AttributeKey<Int>(
-            persistenceKey =
-                "mechanics.toxins.poison_immunity_remaining",
-        )
-
-    private val savedVenomTicks =
-        AttributeKey<Int>(
-            persistenceKey =
-                "mechanics.toxins.venom_immunity_remaining",
-        )
-
-    private val savedPoisonWarning =
-        AttributeKey<Boolean>(
-            persistenceKey =
-                "mechanics.toxins.poison_immunity_warned",
-        )
-
-    public fun hasPoisonImmunity(
-        player: Player,
-    ): Boolean =
-        remaining(
-            player = player,
-            key = poisonUntil,
-        ) > 0
-
-    public fun hasVenomImmunity(
-        player: Player,
-    ): Boolean =
-        remaining(
-            player = player,
-            key = venomUntil,
-        ) > 0
-
-    public fun grantImmunity(
-        player: Player,
-        poisonDuration: Int,
-        venomDuration: Int = 0,
-    ) {
-        if (
-            poisonDuration <= 0 &&
-            venomDuration <= 0
-        ) {
-            return
-        }
-
-        val now =
-            player.currentMapClock
-
+    public fun grantImmunity(player: Player, poisonDuration: Int, venomDuration: Int = 0) {
+        if (poisonDuration <= 0 && venomDuration <= 0) return
+        val now = player.currentMapClock
         if (poisonDuration > 0) {
-            val expiresAt =
-                now + poisonDuration
-
-            val current =
-                player.attr.getOrDefault(
-                    poisonUntil,
-                    -1,
-                )
-
-            if (expiresAt > current) {
-                player.attr[poisonUntil] =
-                    expiresAt
-
-                player.attr.remove(
-                    warnedPoisonUntil,
-                )
+            val expiresAt = now + poisonDuration
+            if (expiresAt > player.poisonUntil) {
+                player.poisonUntil = expiresAt
+                player.warnedPoisonUntil = 0
             }
         }
-
         if (venomDuration > 0) {
-            val expiresAt =
-                now + venomDuration
-
-            val current =
-                player.attr.getOrDefault(
-                    venomUntil,
-                    -1,
-                )
-
-            player.attr[venomUntil] =
-                maxOf(
-                    current,
-                    expiresAt,
-                )
+            player.venomUntil = maxOf(player.venomUntil, now + venomDuration)
         }
-
-        restartImmunityDisplay(
-            player = player,
-            clock = now,
-        )
-
-        rearmTimer(
-            player = player,
-            clock = now,
-        )
+        restartImmunityDisplay(player, now)
+        rearmTimer(player, now)
     }
 
-    public fun onTimer(
-        player: Player,
-    ) {
-        val now =
-            player.currentMapClock
+    public fun onTimer(player: Player) {
+        val now = player.currentMapClock
+        val venomExpiry = player.venomUntil
+        val venomExpired = venomExpiry > 0 && venomExpiry <= now
+        if (venomExpired) player.venomUntil = 0
 
-        val venomExpiry =
-            player.attr[venomUntil]
+        val poisonDisplayExpiry = player.poisonDisplayUntil
+        val poisonDisplayExpired = poisonDisplayExpiry > 0 && poisonDisplayExpiry <= now
+        if (poisonDisplayExpired) player.poisonDisplayUntil = 0
 
-        val venomExpired =
-            venomExpiry != null &&
-                venomExpiry <= now
-
-        if (venomExpired) {
-            player.attr.remove(
-                venomUntil,
-            )
-        }
-
-        val poisonDisplayExpiry =
-            player.attr[poisonDisplayUntil]
-
-        val poisonDisplayExpired =
-            poisonDisplayExpiry != null &&
-                poisonDisplayExpiry <= now
-
-        if (poisonDisplayExpired) {
-            player.attr.remove(
-                poisonDisplayUntil,
-            )
-        }
-
-        val poisonExpiry =
-            player.attr[poisonUntil]
-
-        if (
-            poisonExpiry != null &&
-            poisonExpiry <= now
-        ) {
-            player.attr.remove(
-                poisonUntil,
-            )
-
-            player.attr.remove(
-                warnedPoisonUntil,
-            )
-
-            player.attr.remove(
-                poisonDisplayUntil,
-            )
-
-            snapshot(
-                player = player,
-                clock = now,
-            )
-
-            Toxin.syncStatusOrbs(
-                player = player,
-                clock = now,
-            )
-
-            player.mes(
-                "Your poison resistance has worn off.",
-            )
-
-            rearmTimer(
-                player = player,
-                clock = now,
-            )
+        val poisonExpiry = player.poisonUntil
+        if (poisonExpiry > 0 && poisonExpiry <= now) {
+            player.poisonUntil = 0
+            player.warnedPoisonUntil = 0
+            player.poisonDisplayUntil = 0
+            snapshot(player, now)
+            Toxin.syncStatusOrbs(player, clock = now)
+            player.mes("Your poison resistance has worn off.")
+            rearmTimer(player, now)
             return
         }
-
-        if (poisonExpiry != null) {
-            val remaining =
-                poisonExpiry - now
-
-            val warnedFor =
-                player.attr[warnedPoisonUntil]
-
-            if (
-                remaining <= WARNING_LEAD &&
-                warnedFor != poisonExpiry
-            ) {
-                player.attr[warnedPoisonUntil] =
-                    poisonExpiry
-
-                player.mes(
-                    "Your poison resistance is about to wear off.",
-                )
-            }
+        if (poisonExpiry > 0 && poisonExpiry - now <= WARNING_LEAD &&
+            player.warnedPoisonUntil != poisonExpiry
+        ) {
+            player.warnedPoisonUntil = poisonExpiry
+            player.mes("Your poison resistance is about to wear off.")
         }
-
-        snapshot(
-            player = player,
-            clock = now,
-        )
-
-        /*
-         * Once venom immunity ends, restart the buff bar using
-         * the remaining poison-immunity duration.
-         */
-        val venomActive =
-            remaining(
-                player = player,
-                key = venomUntil,
-                clock = now,
-            ) > 0
-
-        val restartPoisonDisplay =
-            poisonExpiry != null &&
-                !venomActive &&
-                (
-                    venomExpired ||
-                        poisonDisplayExpired
-                    )
-
-        if (restartPoisonDisplay) {
-            restartImmunityDisplay(
-                player = player,
-                clock = now,
-            )
+        snapshot(player, now)
+        val venomActive = remaining(player.venomUntil, now) > 0
+        if (poisonExpiry > 0 && !venomActive && (venomExpired || poisonDisplayExpired)) {
+            restartImmunityDisplay(player, now)
         } else {
-            Toxin.syncStatusOrbs(
-                player = player,
-                clock = now,
-            )
+            Toxin.syncStatusOrbs(player, clock = now)
         }
-
-        rearmTimer(
-            player = player,
-            clock = now,
-        )
+        rearmTimer(player, now)
     }
 
-    internal fun statusOrbValue(
-        player: Player,
-        clock: Int =
-            player.currentMapClock,
-    ): Int? {
-        val venomRemaining =
-            remaining(
-                player = player,
-                key = venomUntil,
-                clock = clock,
-            )
-
-        if (venomRemaining > 0) {
-            val units =
-                timerUnits(
-                    venomRemaining,
-                )
-
-            return -(
-                VENOM_IMMUNITY_OFFSET +
-                    units
-                )
-        }
-
-        val poisonRemaining =
-            remaining(
-                player = player,
-                key = poisonUntil,
-                clock = clock,
-            )
-
-        if (poisonRemaining <= 0) {
-            return null
-        }
-
-        val units =
-            timerUnits(
-                poisonRemaining,
-            )
-
-        return -units.coerceAtMost(
-            VENOM_IMMUNITY_OFFSET,
-        )
+    public fun clear(player: Player) {
+        clearRuntime(player)
+        player.savedPoisonTicks = 0
+        player.savedVenomTicks = 0
+        player.savedPoisonWarning = false
+        player.immunityMigrated = true
+        migrateLegacyState(player)
+        Toxin.syncStatusOrbs(player)
     }
 
-    private fun timerUnits(
-        remaining: Int,
-    ): Int =
-        (
-            remaining +
-                IMMUNITY_UNIT_TICKS -
-                1
-            ) / IMMUNITY_UNIT_TICKS
-
-    private fun restartImmunityDisplay(
-        player: Player,
-        clock: Int,
-    ) {
-        Toxin.syncStatusOrbs(
-            player = player,
-            restartAntipoisonBuff = true,
-            clock = clock,
-        )
-
-        armPoisonDisplayTimer(
-            player = player,
-            clock = clock,
-        )
+    internal fun statusOrbValue(player: Player, clock: Int = player.currentMapClock): Int? {
+        val venomRemaining = remaining(player.venomUntil, clock)
+        if (venomRemaining > 0) return -(VENOM_IMMUNITY_OFFSET + timerUnits(venomRemaining))
+        val poisonRemaining = remaining(player.poisonUntil, clock)
+        if (poisonRemaining <= 0) return null
+        return -timerUnits(poisonRemaining).coerceAtMost(VENOM_IMMUNITY_OFFSET)
     }
 
-    private fun armPoisonDisplayTimer(
-        player: Player,
-        clock: Int,
-    ) {
-        val poisonRemaining =
-            remaining(
-                player = player,
-                key = poisonUntil,
-                clock = clock,
-            )
+    private fun timerUnits(remaining: Int): Int =
+        (remaining + IMMUNITY_UNIT_TICKS - 1) / IMMUNITY_UNIT_TICKS
 
-        val venomRemaining =
-            remaining(
-                player = player,
-                key = venomUntil,
-                clock = clock,
-            )
-
-        /*
-         * While venom immunity is active, the anti-venom buff
-         * is displayed instead. The poison display begins after
-         * the venom phase ends.
-         */
-        if (
-            poisonRemaining <= 0 ||
-            venomRemaining > 0
-        ) {
-            player.attr.remove(
-                poisonDisplayUntil,
-            )
-            return
+    private fun restartImmunityDisplay(player: Player, clock: Int) {
+        Toxin.syncStatusOrbs(player, restartAntipoisonBuff = true, clock = clock)
+        val poisonRemaining = remaining(player.poisonUntil, clock)
+        val venomRemaining = remaining(player.venomUntil, clock)
+        player.poisonDisplayUntil = if (poisonRemaining <= 0 || venomRemaining > 0) {
+            0
+        } else {
+            clock + minOf(poisonRemaining, MAX_POISON_DISPLAY_TICKS)
         }
-
-        player.attr[poisonDisplayUntil] =
-            clock +
-                minOf(
-                    poisonRemaining,
-                    MAX_POISON_DISPLAY_TICKS,
-                )
     }
 
-    private fun rearmTimer(
-        player: Player,
-        clock: Int =
-            player.currentMapClock,
-    ) {
-        val delays =
-            mutableListOf<Int>()
-
-        val poisonExpiry =
-            player.attr[poisonUntil]
-
-        if (
-            poisonExpiry != null &&
-            poisonExpiry > clock
-        ) {
-            val remaining =
-                poisonExpiry - clock
-
-            val warnedFor =
-                player.attr[warnedPoisonUntil]
-
-            delays += if (
-                warnedFor != poisonExpiry &&
-                remaining > WARNING_LEAD
-            ) {
+    private fun rearmTimer(player: Player, clock: Int) {
+        val delays = mutableListOf<Int>()
+        val poisonExpiry = player.poisonUntil
+        if (poisonExpiry > clock) {
+            val remaining = poisonExpiry - clock
+            delays += if (player.warnedPoisonUntil != poisonExpiry && remaining > WARNING_LEAD) {
                 remaining - WARNING_LEAD
             } else {
                 remaining
             }
         }
-
-        remaining(
-            player = player,
-            key = venomUntil,
-            clock = clock,
-        ).takeIf { it > 0 }?.let(delays::add)
-
-        remaining(
-            player = player,
-            key = poisonDisplayUntil,
-            clock = clock,
-        ).takeIf { it > 0 }?.let(delays::add)
-
+        remaining(player.venomUntil, clock).takeIf { it > 0 }?.let(delays::add)
+        remaining(player.poisonDisplayUntil, clock).takeIf { it > 0 }?.let(delays::add)
         player.clearTimer(TIMER)
-
-        val delay =
-            delays.minOrNull()
-                ?: return
-
-        player.timerAt(
-            timer = TIMER,
-            mapClock = clock,
-            cycles = delay.coerceAtLeast(1),
-        )
+        val delay = delays.minOrNull() ?: return
+        player.timerAt(TIMER, mapClock = clock, cycles = delay.coerceAtLeast(1))
     }
 
-    private fun remaining(
-        player: Player,
-        key: AttributeKey<Int>,
-        clock: Int = player.currentMapClock,
-    ): Int =
-        (
-            player.attr.getOrDefault(
-                key,
-                -1,
-            ) - clock
-            ).coerceAtLeast(0)
+    private fun remaining(expiry: Int, clock: Int): Int = (expiry - clock).coerceAtLeast(0)
 
-    internal fun onLogin(
-        player: Player,
-        clock: Int,
-    ) {
-        val poisonRemaining =
-            player.attr.getOrDefault(
-                savedPoisonTicks,
-                0,
-            )
-
-        val venomRemaining =
-            player.attr.getOrDefault(
-                savedVenomTicks,
-                0,
-            )
-
+    internal fun onLogin(player: Player, clock: Int) {
+        migrateLegacyState(player)
+        val poisonRemaining = player.savedPoisonTicks
+        val venomRemaining = player.savedVenomTicks
         if (poisonRemaining > 0) {
-            val expiresAt =
-                clock + poisonRemaining
-
-            player.attr[poisonUntil] =
-                expiresAt
-
-            if (
-                player.attr.getOrDefault(
-                    savedPoisonWarning,
-                    false,
-                )
-            ) {
-                player.attr[warnedPoisonUntil] =
-                    expiresAt
-            } else {
-                player.attr.remove(
-                    warnedPoisonUntil,
-                )
-            }
+            player.poisonUntil = clock + poisonRemaining
+            player.warnedPoisonUntil = if (player.savedPoisonWarning) player.poisonUntil else 0
         } else {
-            player.attr.remove(poisonUntil)
-            player.attr.remove(warnedPoisonUntil)
-            player.attr.remove(savedPoisonTicks)
-            player.attr.remove(savedPoisonWarning)
+            player.poisonUntil = 0
+            player.warnedPoisonUntil = 0
+            player.savedPoisonTicks = 0
+            player.savedPoisonWarning = false
         }
-
         if (venomRemaining > 0) {
-            player.attr[venomUntil] =
-                clock + venomRemaining
+            player.venomUntil = clock + venomRemaining
         } else {
-            player.attr.remove(venomUntil)
-            player.attr.remove(savedVenomTicks)
+            player.venomUntil = 0
+            player.savedVenomTicks = 0
         }
-
-        restartImmunityDisplay(
-            player = player,
-            clock = clock,
-        )
-
-        rearmTimer(
-            player = player,
-            clock = clock,
-        )
+        restartImmunityDisplay(player, clock)
+        rearmTimer(player, clock)
     }
 
-    internal fun onLogout(
-        player: Player,
-    ) {
-        snapshot(
-            player = player,
-            clock = player.currentMapClock,
-        )
+    internal fun onLogout(player: Player) {
+        snapshot(player, player.currentMapClock)
     }
 
-    private fun snapshot(
-        player: Player,
-        clock: Int,
-    ) {
-        val poisonRemaining =
-            remaining(
-                player = player,
-                key = poisonUntil,
-                clock = clock,
-            )
+    private fun snapshot(player: Player, clock: Int) {
+        val poisonRemaining = remaining(player.poisonUntil, clock)
+        player.savedPoisonTicks = poisonRemaining
+        player.savedVenomTicks = remaining(player.venomUntil, clock)
+        player.savedPoisonWarning = poisonRemaining > 0 && player.warnedPoisonUntil == player.poisonUntil
+    }
 
-        val venomRemaining =
-            remaining(
-                player = player,
-                key = venomUntil,
-                clock = clock,
-            )
+    private fun clearRuntime(player: Player) {
+        player.poisonUntil = 0
+        player.venomUntil = 0
+        player.warnedPoisonUntil = 0
+        player.poisonDisplayUntil = 0
+        player.clearTimer(TIMER)
+    }
 
-        saveRemaining(
-            player = player,
-            key = savedPoisonTicks,
-            remaining = poisonRemaining,
-        )
-
-        saveRemaining(
-            player = player,
-            key = savedVenomTicks,
-            remaining = venomRemaining,
-        )
-
-        val poisonExpiry =
-            player.attr[poisonUntil]
-
-        val warned =
-            poisonExpiry != null &&
-                player.attr[warnedPoisonUntil] ==
-                poisonExpiry
-
-        if (
-            poisonRemaining > 0 &&
-            warned
-        ) {
-            player.attr[savedPoisonWarning] =
-                true
-        } else {
-            player.attr.remove(
-                savedPoisonWarning,
-            )
+    private fun migrateLegacyState(player: Player) {
+        val shouldImport = !player.immunityMigrated
+        for ((symbol, name) in listOf(
+            "varp.toxin_poison_immunity_remaining" to "mechanics.toxins.poison_immunity_remaining",
+            "varp.toxin_venom_immunity_remaining" to "mechanics.toxins.venom_immunity_remaining",
+        )) {
+            val legacy = AttributeKey<Int>(persistenceKey = name)
+            val value = player.attr[legacy]
+            if (shouldImport && value != null && symbol !in player.vars) {
+                VarPlayerIntMapSetter.set(player, symbol, value.coerceAtLeast(0))
+            }
+            player.attr.remove(legacy)
         }
-    }
-
-    private fun saveRemaining(
-        player: Player,
-        key: AttributeKey<Int>,
-        remaining: Int,
-    ) {
-        if (remaining > 0) {
-            player.attr[key] = remaining
-        } else {
-            player.attr.remove(key)
+        val warning = AttributeKey<Boolean>(persistenceKey = "mechanics.toxins.poison_immunity_warned")
+        if (shouldImport && "varp.toxin_poison_immunity_warned" !in player.vars) {
+            player.savedPoisonWarning = player.attr[warning] == true
         }
+        player.attr.remove(warning)
+        if (shouldImport) player.immunityMigrated = true
     }
 
-    public const val TIMER: String =
-        "timer.toxins"
-
-    private const val IMMUNITY_UNIT_TICKS: Int =
-        30
-
-    private const val WARNING_LEAD: Int =
-        50
-
-    private const val VENOM_IMMUNITY_OFFSET: Int =
-        38
-
-    private const val MAX_POISON_DISPLAY_TICKS: Int =
-        VENOM_IMMUNITY_OFFSET *
-            IMMUNITY_UNIT_TICKS
+    public const val TIMER: String = "timer.toxins"
+    private const val IMMUNITY_UNIT_TICKS: Int = 30
+    private const val WARNING_LEAD: Int = 50
+    private const val VENOM_IMMUNITY_OFFSET: Int = 38
+    private const val MAX_POISON_DISPLAY_TICKS: Int = VENOM_IMMUNITY_OFFSET * IMMUNITY_UNIT_TICKS
 }

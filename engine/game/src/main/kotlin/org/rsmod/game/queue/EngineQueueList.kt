@@ -14,6 +14,21 @@ public class EngineQueueList {
     public val isNotEmpty: Boolean
         get() = size > 0
 
+    internal fun removeAll(type: EngineQueueType, label: Int): Int {
+        var removed = 0
+        var node = first
+        while (node != null) {
+            val next = node.next
+            val queue = node.queue
+            if (queue.type == type.id && queue.label == label) {
+                remove(node)
+                removed++
+            }
+            node = next
+        }
+        return removed
+    }
+
     internal fun add(type: EngineQueueType, args: Any?, label: Int) {
         val queue = Queue(type = type.id, args = args, label = label)
         val node = Node(queue, prev = last)
@@ -35,14 +50,12 @@ public class EngineQueueList {
         val prev = node.prev
         val next = node.next
 
-        // If `prev` is null that means `node` was the first node.
         if (prev == null) {
             first = next
         } else {
             prev.next = next
         }
 
-        // If `next` is null that means `node` was the last node.
         if (next == null) {
             last = prev
         } else {

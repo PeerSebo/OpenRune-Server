@@ -97,11 +97,15 @@ public class AshSanctifierScript @Inject constructor() : PluginScript() {
     }
 
     companion object {
-        fun Player.hasKourendKebosHardDiaryComplete(): Boolean = true
-        fun Player.hasKourendKebosEliteDiaryComplete(): Boolean = true
+        private val Player.kourendKebosDiaryHardComplete by
+            boolVarBit("varbit.kourend_diary_hard_complete")
+        private val Player.kourendKebosDiaryEliteComplete by
+            boolVarBit("varbit.kourend_diary_elite_complete")
+
+        fun Player.hasKourendKebosHardDiaryComplete(): Boolean = kourendKebosDiaryHardComplete
+        fun Player.hasKourendKebosEliteDiaryComplete(): Boolean = kourendKebosDiaryEliteComplete
         var Player.ashSanctifierActivityEnabled by boolVarBit("varbit.ash_sanctifier_activity_enabled")
     }
-
 }
 
 private var ProtectedAccess.ashSanctifierCharges by intVarBit("varbit.charges_ash_sanctifier_quantity")

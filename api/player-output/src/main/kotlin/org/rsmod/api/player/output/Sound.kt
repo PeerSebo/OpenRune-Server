@@ -6,7 +6,6 @@ import dev.openrune.types.aconverted.SynthType
 import net.rsprot.protocol.game.outgoing.sound.SynthSound
 import org.rsmod.game.entity.Player
 
-/** @see [SynthSound] */
 public fun Player.soundSynth(synth: String, loops: Int = 1, delay: Int = 0) {
     client.write(SynthSound(synth.asRSCM(RSCMType.SYNTH), loops, delay))
 }

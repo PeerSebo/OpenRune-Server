@@ -78,7 +78,7 @@ public val armouredKrakenDropTable: RSDropTable<Player, DropRollItem> = RSDropTa
     },
     tertiaries = rsPlayerTertiaryTable {
         1 outOf 2 weight "obj.sailing_armoured_kraken_tentacle" count 1 condition { player ->
-            // Drops Need Manual: Only dropped while on an applicable bounty task.
+            // TODO: Only dropped while on an applicable bounty task.
              true
         }
         1 outOf 10 weight "obj.sailing_armoured_kraken_ink_sac" count 1
@@ -88,4 +88,4 @@ public val armouredKrakenDropTable: RSDropTable<Player, DropRollItem> = RSDropTa
     },
 )
 
-// Unknown wiki drop rates (text rarity — need data collection):
+// TODO: Resolve the unquantified drop rates below.

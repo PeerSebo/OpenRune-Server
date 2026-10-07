@@ -1,4 +1,3 @@
-## Mos Le Harmless
 
 [[spawn]]
 npc = "npc.brain_tranquility"
@@ -1015,4 +1014,3 @@ coords = "0_57_45_24_50"
 [[spawn]]
 npc = "npc.san_fan"
 coords = "0_59_47_48_7"
-

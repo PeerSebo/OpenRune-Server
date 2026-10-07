@@ -5,13 +5,6 @@ import org.rsmod.coroutine.GameCoroutine
 import org.rsmod.game.entity.Controller
 import org.rsmod.map.CoordGrid
 
-/**
- * Manages scoped actions for controllers that implicitly launch a coroutine, allowing functions
- * such as `delay`.
- *
- * This system is extremely similar to `StandardNpcAccess`, however it has no implicit dependencies
- * and is designed to be as lightweight as possible.
- */
 public class StandardConAccess(
     public val controller: Controller,
     private val coroutine: GameCoroutine,

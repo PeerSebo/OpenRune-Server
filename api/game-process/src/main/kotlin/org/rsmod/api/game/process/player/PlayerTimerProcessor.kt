@@ -25,7 +25,6 @@ constructor(
     }
 
     private fun Player.processTimers() {
-        // Early return to avoid redundant expired key filtering.
         if (isAccessProtected) {
             return
         }
@@ -38,8 +37,6 @@ constructor(
             val event = PlayerTimerEvent.Normal(timerType.toInt())
             protectedAccess.launch(this) { eventBus.publish(this, event) }
 
-            // `packedValue` holds the packed (expiry << 32 | interval) if the timer is still
-            // present. If it's `null` it means the script cleared the timer.
             val packedValue = timerMap[timerType]
             if (packedValue != null) {
                 val interval = timerMap.extractInterval(packedValue)
@@ -54,8 +51,6 @@ constructor(
             val event = PlayerTimerEvent.Soft(this, timerType.toInt())
             eventBus.publish(event)
 
-            // `packedValue` holds the packed (expiry << 32 | interval) if the timer is still
-            // present. If it's `null` it means the script cleared the timer.
             val packedValue = softTimerMap[timerType]
             if (packedValue != null) {
                 val interval = softTimerMap.extractInterval(packedValue)

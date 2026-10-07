@@ -21,6 +21,3 @@ quest_mode = "during"
 [[main.entries]]
 weight = 3
 nothing = true
-
-
-# Main table pool padding uses a nothing roll (F2P drops removed and/or subtable access missing from wiki parse) (3 weight)

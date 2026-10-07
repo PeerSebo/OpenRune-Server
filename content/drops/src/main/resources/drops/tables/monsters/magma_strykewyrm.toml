@@ -226,6 +226,4 @@ weight = 1
 obj = "obj.xbows_bolt_tips_sapphire"
 count = "5..10"
 
-
 # Unknown wiki drop rate: Clue scroll (hard) [tertiary/Tertiary/Unknown]
-# Main table pool padding uses a nothing roll (F2P drops removed and/or subtable access missing from wiki parse) (5 weight)

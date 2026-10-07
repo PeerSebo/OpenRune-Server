@@ -1,4 +1,3 @@
-## Balloon animal
 
 [[spawn]]
 npc = "npc.prisonpete_balloon1"
@@ -87,4 +86,3 @@ coords = "0_32_69_40_48"
 [[spawn]]
 npc = "npc.prisonpete_pete"
 coords = "0_32_69_45_50"
-

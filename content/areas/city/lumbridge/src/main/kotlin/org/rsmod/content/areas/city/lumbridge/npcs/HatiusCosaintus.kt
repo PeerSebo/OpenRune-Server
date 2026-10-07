@@ -1,15 +1,22 @@
 package org.rsmod.content.areas.city.lumbridge.npcs
 
+import jakarta.inject.Inject
 import org.rsmod.api.config.constants
 import org.rsmod.api.player.dialogue.Dialogue
 import org.rsmod.api.player.output.ClientScripts.toplevelSidebuttonSwitch
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.script.onOpNpc1
+import org.rsmod.content.interfaces.journal.tab.openAchievementDiaryTab
+import org.rsmod.content.other.achievementdiaries.AchievementDiaryRewards
+import org.rsmod.events.EventBus
 import org.rsmod.game.entity.Npc
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
-class HatiusCosaintus : PluginScript() {
+class HatiusCosaintus @Inject constructor(
+    private val rewards: AchievementDiaryRewards,
+    private val eventBus: EventBus,
+) : PluginScript() {
     override fun ScriptContext.startup() {
         onOpNpc1("npc.hatius_lumbridge_diary") { startDialogue(it.npc) }
     }
@@ -46,8 +53,8 @@ class HatiusCosaintus : PluginScript() {
                 "Eventually, with enough exploration, the inhabitants will " +
                 "reward you",
         )
-        // TODO(content): Open achievement diary overlay
         toplevelSidebuttonSwitch(player, constants.toplevel_details)
+        player.openAchievementDiaryTab(eventBus)
         chatNpc(neutral, "You can see the list of tasks on the side-panel.")
         mainMenu()
     }
@@ -55,13 +62,15 @@ class HatiusCosaintus : PluginScript() {
     private suspend fun Dialogue.achievementDiaryQuestion() {
         chatPlayer(quiz, "I have a question about my Achievement diary.")
         val choice =
-            choice4(
+            choice5(
                 "What is the Achievement Diary?",
                 1,
                 "What are the rewards?",
                 2,
-                "How do I claim the rewards?",
+                "Can I claim my diary rewards?",
                 3,
+                "I have lost my Explorer's ring.",
+                5,
                 "Bye!",
                 4,
             )
@@ -70,6 +79,11 @@ class HatiusCosaintus : PluginScript() {
             2 -> rewardExplanation()
             3 -> claimingRewards()
             4 -> bye()
+            5 -> {
+                if (rewards.reclaimRing(access)) {
+                    chatNpc(happy, "Here is your replacement Explorer's ring.")
+                }
+            }
         }
     }
 
@@ -83,8 +97,8 @@ class HatiusCosaintus : PluginScript() {
                 "Eventually, with enough exploration, the inhabitants will " +
                 "reward you.",
         )
-        // TODO(content): Open achievement diary overlay
         toplevelSidebuttonSwitch(player, constants.toplevel_details)
+        player.openAchievementDiaryTab(eventBus)
         chatNpc(neutral, "You can see the list of tasks on the side-panel.")
         mainMenu()
     }
@@ -135,7 +149,7 @@ class HatiusCosaintus : PluginScript() {
             happy,
             "In addition to the easy rewards, your ring can restore " +
                 "half of your run energy and teleport you to the " +
-                "Draynor cabbage patch three times per day.",
+                "Falador farm cabbage patch three times per day.",
         )
         chatPlayer(happy, "Thanks!")
     }
@@ -169,13 +183,38 @@ class HatiusCosaintus : PluginScript() {
     }
 
     private suspend fun Dialogue.claimingRewards() {
-        chatPlayer(quiz, "How do I claim the rewards?")
-        chatNpc(
-            neutral,
-            "One should complete the tasks in Lumbridge and " +
-                "Draynor so they're ticked off, then speak to me to be " +
-                "rewarded.",
-        )
+        chatPlayer(quiz, "Can I claim my diary rewards?")
+        val tier = choice4("Easy rewards.", 1, "Medium rewards.", 2, "Hard rewards.", 3, "Never mind.", 4)
+        if (tier == 4) return
+        val label = listOf("Easy", "Medium", "Hard")[tier - 1]
+        val minimum = listOf(30, 40, 50)[tier - 1]
+        val result = when (tier) {
+            1 -> rewards.claimEasy(player)
+            2 -> rewards.claimMedium(player)
+            else -> rewards.claimHard(player)
+        }
+        when (result) {
+            AchievementDiaryRewards.ClaimResult.NotComplete ->
+                chatNpc(
+                    neutral,
+                    if (tier == 3) "The Hard diary has eleven tasks. Four still need content " +
+                        "that is not implemented here yet, so its rewards are not available."
+                    else "Complete all twelve $label tasks and claim any earlier rewards first.",
+                )
+            AchievementDiaryRewards.ClaimResult.AlreadyClaimed ->
+                chatNpc(happy, "You have already claimed your $label rewards.")
+            AchievementDiaryRewards.ClaimResult.InventoryFull ->
+                chatNpc(
+                    neutral,
+                    "You'll need two free inventory slots for your ring and antique lamp.",
+                )
+            AchievementDiaryRewards.ClaimResult.Claimed ->
+                chatNpc(
+                    happy,
+                    "Congratulations! Here are your Explorer's ring and an antique lamp. " +
+                        "Rub the lamp to choose a skill of at least level $minimum.",
+                )
+        }
         mainMenu()
     }
 

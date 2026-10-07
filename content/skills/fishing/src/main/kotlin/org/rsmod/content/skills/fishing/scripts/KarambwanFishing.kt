@@ -1,5 +1,6 @@
 package org.rsmod.content.skills.fishing.scripts
 
+import dev.openrune.ServerCacheManager
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
 import dev.openrune.types.ItemServerType
@@ -15,7 +16,6 @@ import org.rsmod.api.script.onOpContentNpcU
 import org.rsmod.api.script.onOpHeldU
 import org.rsmod.api.stats.levelmod.InvisibleLevels
 import org.rsmod.api.stats.xpmod.XpModifiers
-import org.rsmod.game.MapClock
 import org.rsmod.game.entity.Npc
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
@@ -25,87 +25,122 @@ class KarambwanFishing
 constructor(
     private val xpMods: XpModifiers,
     private val invisibleLvls: InvisibleLevels,
-    private val mapClock: MapClock,
 ) : PluginScript() {
 
     private val karambwanType: ItemServerType by lazy {
-        ItemServerType(RAW_KARAMBWAN.asRSCM(RSCMType.OBJ))
+        checkNotNull(ServerCacheManager.getItem(RAW_KARAMBWAN.asRSCM(RSCMType.OBJ))) {
+            "Missing obj type: $RAW_KARAMBWAN"
+        }
     }
 
     override fun ScriptContext.startup() {
         onOpHeldU(KARAMBWANJI, EMPTY_VESSEL) { loadVessel() }
-        onOpContentNpcU("content.karambwan_fishing_spot", LOADED_VESSEL) { opNpc1(it.npc) }
-        onOpContentNpc1("content.karambwan_fishing_spot") { fish(it.npc) }
+        onOpContentNpcU(SPOT, LOADED_VESSEL) { opNpc1(it.npc) }
+        onOpContentNpc1(SPOT) { fish(it.npc) }
     }
 
     private fun ProtectedAccess.loadVessel() {
         invReplace(inv, EMPTY_VESSEL, 1, LOADED_VESSEL)
-        invDel(inv, KARAMBWANJI, 1)
+        invDel(inv, KARAMBWANJI, count = 1)
         mes("You fill the karambwan vessel with karambwanji.")
     }
 
     private fun ProtectedAccess.fish(spot: Npc) {
-        if (player.fishingLvl < 65) {
-            mes("You need a Fishing level of 65 to fish here.")
+        if (player.fishingLvl < LEVEL_REQ) {
+            mes("You need a Fishing level of $LEVEL_REQ to fish here.")
+            bailReset()
             return
         }
 
-        if (invTotal(inv, LOADED_VESSEL) == 0 &&
-            invTotal(inv, EMPTY_VESSEL) > 0 &&
-            invTotal(inv, KARAMBWANJI) > 0
+        if (
+            invTotal(inv, LOADED_VESSEL) == 0 &&
+                invTotal(inv, EMPTY_VESSEL) > 0 &&
+                invTotal(inv, KARAMBWANJI) > 0
         ) {
             invReplace(inv, EMPTY_VESSEL, 1, LOADED_VESSEL)
-            invDel(inv, KARAMBWANJI, 1)
+            invDel(inv, KARAMBWANJI, count = 1)
         }
 
         if (invTotal(inv, LOADED_VESSEL) == 0) {
             mes("You need a karambwan vessel filled with karambwanji to fish here.")
+            bailReset()
             return
         }
 
         if (inv.isFull()) {
-            mes("Your inventory is too full to hold any more fish.")
-            soundSynth("synth.pillory_wrong")
+            mes("You can't carry any more fish.")
+            soundSynth("synth.PILLORY_WRONG")
+            bailReset()
+            return
+        }
+
+        if (actionDelay < mapClock || skillAnimDelay < mapClock) {
+            actionDelay = maxOf(actionDelay, mapClock + ROLL_TICKS)
+            skillAnimDelay = mapClock + ROLL_TICKS
+            // Sequence 623 has no baked audio; karambwan fishing needs its server synth.
+            anim(VESSEL_ANIM)
+            spam("You cast out your vessel...")
+            opNpc1(spot)
             return
         }
 
         if (skillAnimDelay <= mapClock) {
-            skillAnimDelay = mapClock + 4
-            anim("seq.human_fish_onspot")
+            skillAnimDelay = mapClock + ROLL_TICKS
+            anim(VESSEL_ANIM)
         }
 
-        var caught = false
         if (actionDelay < mapClock) {
-            actionDelay = mapClock + 3
+            // A foreign action consumed the clock; re-arm without granting a catch.
+            actionDelay = mapClock + ROLL_TICKS
         } else if (actionDelay == mapClock) {
-            caught = statRandom("stat.fishing", 5, 160, invisibleLvls)
-        }
-
-        if (caught) {
-            invReplace(inv, LOADED_VESSEL, 1, EMPTY_VESSEL)
-            val xp = 50.0 * xpMods.get(player, "stat.fishing")
-            val product =
-                SkillingProduct(
-                    player = player,
-                    skill = "stat.fishing",
-                    item = RAW_KARAMBWAN,
-                    count = 1,
-                    experience = xp,
-                    grantsExperience = true,
-                    source = SkillingProductSource.Fishing(karambwanType),
-                )
-            if (awardSkillingProduct(product) == SkillingAwardResult.Success) {
-                spam("You catch a karambwan!")
+            actionDelay = mapClock + ROLL_TICKS
+            if (statRandom("stat.fishing", SUCCESS_LOW, SUCCESS_HIGH, invisibleLvls)) {
+                invReplace(inv, LOADED_VESSEL, 1, EMPTY_VESSEL)
+                val product =
+                    SkillingProduct(
+                        player = player,
+                        skill = "stat.fishing",
+                        item = RAW_KARAMBWAN,
+                        count = 1,
+                        experience = XP * xpMods.get(player, "stat.fishing"),
+                        source = SkillingProductSource.Fishing(spot, karambwanType),
+                        depletes = false,
+                    )
+                when (awardSkillingProduct(product)) {
+                    SkillingAwardResult.Success -> {
+                        spam("You catch a karambwan!")
+                    }
+                    // If the catch cannot fit, restore the consumed vessel load.
+                    SkillingAwardResult.InventoryFull,
+                    SkillingAwardResult.Cancelled ->
+                        invReplace(inv, EMPTY_VESSEL, 1, LOADED_VESSEL)
+                }
             }
         }
 
         opNpc1(spot)
     }
 
+    private fun ProtectedAccess.bailReset() {
+        if (skillAnimDelay >= mapClock) {
+            resetAnim()
+        }
+    }
+
     private companion object {
-        const val KARAMBWANJI = "obj.tbwt_raw_karambwanji"
-        const val EMPTY_VESSEL = "obj.tbwt_karambwan_vessel"
-        const val LOADED_VESSEL = "obj.tbwt_karambwan_vessel_loaded_with_karambwanji"
-        const val RAW_KARAMBWAN = "obj.tbwt_raw_karambwan"
+        private const val SPOT = "content.fishing_spot_karambwan"
+        private const val KARAMBWANJI = "obj.tbwt_raw_karambwanji"
+        private const val EMPTY_VESSEL = "obj.tbwt_karambwan_vessel"
+        private const val LOADED_VESSEL = "obj.tbwt_karambwan_vessel_loaded_with_karambwanji"
+        private const val RAW_KARAMBWAN = "obj.tbwt_raw_karambwan"
+        private const val VESSEL_ANIM = "seq.human_fish_onspot"
+
+        private const val LEVEL_REQ = 65
+        private const val XP = 50.0
+
+        // Catch cadence is unverified.
+        private const val ROLL_TICKS = 3
+        private const val SUCCESS_LOW = 5
+        private const val SUCCESS_HIGH = 160
     }
 }

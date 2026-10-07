@@ -30,7 +30,7 @@ class QuestPolicySyncScriptTest {
 
     @Test
     fun `virtual-completions sends only the listed quest ids`() {
-        ServerCacheManager.init(240).close()
+        ServerCacheManager.init(241).close()
         QuestRequirements.install(
             QuestRequirementPolicy(
                 QuestRequirementMode.VirtualCompletions,

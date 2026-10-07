@@ -17,4 +17,12 @@ dependencies {
     implementation(projects.api.route)
     implementation(projects.engine.game)
     implementation(projects.engine.plugin)
+    implementation(projects.content.quest)
+    testImplementation(projects.engine.events)
+}
+
+tasks.test {
+    workingDir(rootProject.projectDir)
+    inputs.dir(rootProject.file(".data/cache/SERVER"))
+    inputs.file(rootProject.file(".data/gamevals-binary/gamevals.dat"))
 }

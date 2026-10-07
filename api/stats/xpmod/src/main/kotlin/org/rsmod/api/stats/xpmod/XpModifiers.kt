@@ -1,6 +1,5 @@
 package org.rsmod.api.stats.xpmod
 
-import dev.openrune.types.StatType
 import jakarta.inject.Inject
 import org.rsmod.game.entity.Player
 

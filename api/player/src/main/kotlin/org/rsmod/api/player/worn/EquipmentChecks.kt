@@ -6,7 +6,11 @@ import org.rsmod.game.inv.isType
 
 public object EquipmentChecks {
     public fun isSmokeStaff(obj: InvObj?): Boolean =
-        obj.isAnyType("obj.smoke_battlestaff", "obj.mystic_smoke_battlestaff", "obj.twinflame_staff")
+        obj.isAnyType(
+            "obj.smoke_battlestaff",
+            "obj.mystic_smoke_battlestaff",
+            "obj.twinflame_staff",
+        )
 
     public fun isSoulreaperAxe(obj: InvObj?): Boolean = obj.isType("obj.soulreaper")
 
@@ -112,7 +116,12 @@ public object EquipmentChecks {
     public fun isVoidTop(obj: InvObj?): Boolean = isRegularVoidTop(obj) || isEliteVoidTop(obj)
 
     public fun isRegularVoidTop(obj: InvObj?): Boolean =
-        obj.isAnyType("obj.pest_void_knight_top", "obj.pest_void_knight_top_trouver", "obj.league_3_void_knight_top", "obj.league_3_void_knight_top_trouver")
+        obj.isAnyType(
+            "obj.pest_void_knight_top",
+            "obj.pest_void_knight_top_trouver",
+            "obj.league_3_void_knight_top",
+            "obj.league_3_void_knight_top_trouver",
+        )
 
     public fun isEliteVoidTop(obj: InvObj?): Boolean =
         obj.isAnyType(
@@ -125,7 +134,12 @@ public object EquipmentChecks {
     public fun isVoidRobe(obj: InvObj?): Boolean = isRegularVoidRobe(obj) || isEliteVoidRobe(obj)
 
     public fun isRegularVoidRobe(obj: InvObj?): Boolean =
-        obj.isAnyType("obj.pest_void_knight_robes", "obj.pest_void_knight_robes_trouver", "obj.league_3_void_knight_robes", "obj.league_3_void_knight_robes_trouver")
+        obj.isAnyType(
+            "obj.pest_void_knight_robes",
+            "obj.pest_void_knight_robes_trouver",
+            "obj.league_3_void_knight_robes",
+            "obj.league_3_void_knight_robes_trouver",
+        )
 
     public fun isEliteVoidRobe(obj: InvObj?): Boolean =
         obj.isAnyType(

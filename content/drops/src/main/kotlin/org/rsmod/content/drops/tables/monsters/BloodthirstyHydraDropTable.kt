@@ -2,16 +2,13 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.api.droptable.rsPlayerPrerollTable
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.api.droptable.rsPlayerPrerollTable
-import org.rsmod.api.droptable.dropRollable
-import org.rsmod.content.drops.tables.shared.SharedDropTables
-import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.content.drops.brimstoneKeyRoll
-import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.content.drops.tables.shared.SharedDropTables
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -21,7 +18,7 @@ public val bloodthirstyHydraDropTable: RSDropTable<Player, DropRollItem> = RSDro
     npcs = npcs("npc.league_superior_hydra"),
     preRoll = rsPlayerPrerollTable {
         1 outOf 361 weight "obj.hydra_eye" count 1 condition { player ->
-            // Drops Need Manual: The order players receive the items in are: Hydra's eye, Hydra's fang, and finally Hydra's heart.
+            // TODO: The order players receive the items in are: Hydra's eye, Hydra's fang, and finally Hydra's heart.
              true
         }
         1 outOf 361 weight "obj.hydra_heart" count 1
@@ -90,7 +87,7 @@ public val bloodthirstyHydraDropTable: RSDropTable<Player, DropRollItem> = RSDro
     },
 )
 
-// Unknown wiki drop rates (text rarity — need data collection):
+// TODO: Resolve the unquantified drop rates below.
 //   - Grimy avantoe [main/1/{{#expr:1/(5*{{#var:uht}}) round 2}}]
 //   - Grimy ranarr weed [main/1/{{#expr:1/(4*{{#var:uht}}) round 2}}]
 //   - Grimy snapdragon [main/1/{{#expr:1/(3*{{#var:uht}}) round 2}}]

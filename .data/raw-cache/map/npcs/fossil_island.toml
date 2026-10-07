@@ -698,19 +698,16 @@ coords = "0_58_59_49_59"
 npc = "npc.seabird3"
 coords = "0_58_59_55_55"
 
-## Fossil Island General Store
 
 [[spawn]]
 npc = "npc.fossil_general_store"
 coords = "0_58_59_14_40"
 
-## Fossil Island Hill House Interior
 
 [[spawn]]
 npc = "npc.dallas_jones_fossil_island"
 coords = "0_58_60_49_29"
 
-## Fossil Island Underwater Area
 
 [[spawn]]
 npc = "npc.100_pirate_fish_fantail"
@@ -1208,7 +1205,6 @@ coords = "1_58_160_59_29"
 npc = "npc.fossil_puffer_fish_7"
 coords = "1_58_160_59_46"
 
-## Fossil Island Volcano
 
 [[spawn]]
 npc = "npc.crab_1"
@@ -1254,7 +1250,6 @@ coords = "0_59_58_41_48"
 npc = "npc.fossil_mineguard"
 coords = "0_59_59_42_33"
 
-## Fossil Island Wyvern Task Cave
 
 [[spawn]]
 npc = "npc.ancient_wyvern"
@@ -1376,7 +1371,6 @@ coords = "0_56_160_44_42"
 npc = "npc.wyvern_taloned"
 coords = "0_56_160_50_40"
 
-## Tar Swamp
 
 [[spawn]]
 npc = "npc.fossil_crazy_archaeologist"
@@ -1457,6 +1451,3 @@ coords = "0_57_58_35_34"
 [[spawn]]
 npc = "npc.fossil_tarmonster_bubbles"
 coords = "0_57_59_18_16"
-
-## Tar Swamp End
-

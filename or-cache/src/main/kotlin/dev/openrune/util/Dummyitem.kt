@@ -3,6 +3,7 @@ package dev.openrune.util
 public enum class Dummyitem(public val id: Int) {
     /** Cannot be added into inventories or dropped on floor. */
     GraphicOnly(id = 1),
+
     /** Can be added into inventories, but cannot be dropped on floor. */
     InvOnly(id = 2);
 

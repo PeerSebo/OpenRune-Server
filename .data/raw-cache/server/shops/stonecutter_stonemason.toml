@@ -46,5 +46,5 @@ restockCycles = 100
 [[inventory.stock]]
 obj = "obj.poh_condensed_gold"
 count = 10
-restockCycles = -1
+restockCycles = 100
 

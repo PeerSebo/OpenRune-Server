@@ -2,9 +2,6 @@ package org.rsmod.content.areas.misc.dwarvenmine.npcs
 
 import org.rsmod.api.player.dialogue.Dialogue
 import org.rsmod.api.script.onOpNpc1
-import org.rsmod.api.script.onOpNpc3
-import org.rsmod.content.quest.manager.QuestRequirements
-import org.rsmod.game.entity.Player
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
@@ -16,115 +13,7 @@ class DwarvenMineNpcsScript : PluginScript() {
             onOpNpc1(gangMember) { startDialogue(it.npc) { gangMember() } }
         }
         onOpNpc1("npc.motherlode_guard") { startDialogue(it.npc) { motherlodeGuard() } }
-        onOpNpc1(CART_CONDUCTOR) { startDialogue(it.npc) { conductor() } }
-        onOpNpc3(CART_CONDUCTOR) { startDialogue(it.npc) { conductorTickets() } }
     }
-
-    private suspend fun Dialogue.conductor() {
-        while (true) {
-            when (
-                choice4(
-                    "Who are you?",
-                    1,
-                    "Where can you take me?",
-                    2,
-                    "I'd like to buy a ticket.",
-                    3,
-                    "I have to go.",
-                    4,
-                )
-            ) {
-                1 -> {
-                    chatPlayer(quiz, "Who are you?")
-                    chatNpc(
-                        neutral,
-                        "I'm an employee of Keldagrim Carts. I make sure the carts in this area run on time " +
-                            "and that people pay their fares.",
-                    )
-                }
-                2 -> {
-                    chatPlayer(quiz, "Where can you take me?")
-                    if (player.hasStartedGiantDwarf()) {
-                        chatNpc(neutral, "This track leads right up to Keldagrim. Only stop.")
-                    } else {
-                        chatNpc(
-                            neutral,
-                            "I don't think I'm allowed to take you into the city of Keldagrim, human. Perhaps " +
-                                "when you find another way into the city and talk to someone of importance there " +
-                                "you will be allowed to.",
-                        )
-                    }
-                }
-                3 -> if (buyTicketFromMenu()) return
-                else -> {
-                    chatPlayer(neutral, "I have to go.")
-                    chatNpc(
-                        neutral,
-                        "Just remember, wherever you go, you go there faster through Keldagrim Carts.",
-                    )
-                    return
-                }
-            }
-        }
-    }
-
-    private suspend fun Dialogue.buyTicketFromMenu(): Boolean {
-        chatPlayer(neutral, "I'd like to buy a ticket.")
-        chatNpc(neutral, "One ticket to Keldagrim, that's $TICKET_PRICE coins then.")
-        val charmed = wearsCharmedRing()
-        val choice =
-            if (charmed) {
-                choice3("Buy.", 1, "Don't buy.", 2, "[Charm] Only pay half.", 3)
-            } else {
-                choice2("Buy.", 1, "Don't buy.", 2)
-            }
-        when (choice) {
-            1 -> {
-                if (!purchaseTicket(TICKET_PRICE)) return false
-                chatNpc(happy, "Thanks for your custom!")
-            }
-            2 -> {
-                chatPlayer(neutral, "No thanks, I changed my mind.")
-                return false
-            }
-            else -> {
-                if (!purchaseTicket(TICKET_PRICE / 2)) return false
-                chatNpc(neutral, "This is only ${TICKET_PRICE / 2} coins, I can't let you have a ticket for that.")
-                chatPlayer(happy, "Oh, don't worry. I'll pay you another 75 coins for the next ticket I buy, alright?")
-                chatNpc(neutral, "Well... I suppose so.")
-            }
-        }
-        return true
-    }
-
-    private suspend fun Dialogue.conductorTickets() {
-        val price = if (wearsCharmedRing()) TICKET_PRICE / 2 else TICKET_PRICE
-        if (choice2("Keldagrim ($price coins)", true, "Cancel", false)) {
-            purchaseTicket(price)
-        }
-    }
-
-    private suspend fun Dialogue.purchaseTicket(price: Int): Boolean {
-        val inv = access.inv
-        if (inv.count("obj.coins") < price) {
-            chatPlayer(sad, "I'm sorry, I've run out of money.")
-            return false
-        }
-        if (inv.isFull() && inv.count("obj.coins") != price) {
-            chatNpc(neutral, "I'm sorry, sir, but I don't believe you can hold the ticket.")
-            return false
-        }
-        if (access.invDel(inv, "obj.coins", price).failure) {
-            return false
-        }
-        access.invAdd(inv, TICKET)
-        return true
-    }
-
-    private fun Dialogue.wearsCharmedRing(): Boolean = access.worn.count("obj.ring_of_charos_unlocked") > 0
-
-    private fun Player.hasStartedGiantDwarf(): Boolean =
-        QuestRequirements.isOnQuest(this, GIANT_DWARF) || QuestRequirements.hasCompleted(this, GIANT_DWARF)
 
     private suspend fun Dialogue.boot() {
         chatNpc(neutral, "Hello tall person.")
@@ -238,12 +127,8 @@ class DwarvenMineNpcsScript : PluginScript() {
     }
 
     private companion object {
-        const val CART_CONDUCTOR = "npc.dwarf_city_train_conductor7"
-        const val GIANT_DWARF = "quest_giantdwarf"
-        const val TICKET = "obj.dwarf_minecart_ticket_ice_kelda"
-        const val TICKET_PRICE = 150
-
-        val GANG_MEMBERS =
-            listOf("npc.favour_gangster_dwarf", "npc.favour_gangster_dwarf_2", "npc.favour_gangster_dwarf_3")
+        val GANG_MEMBERS = listOf(
+            "npc.favour_gangster_dwarf", "npc.favour_gangster_dwarf_2", "npc.favour_gangster_dwarf_3",
+        )
     }
 }

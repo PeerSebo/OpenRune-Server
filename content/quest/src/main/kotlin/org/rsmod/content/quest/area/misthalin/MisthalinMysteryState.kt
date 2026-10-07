@@ -1,12 +1,8 @@
 package org.rsmod.content.quest.area.misthalin
 
-import dev.openrune.rscm.RSCM.asRSCM
 import org.rsmod.api.player.protect.ProtectedAccess
-import org.rsmod.api.player.vars.VarPlayerIntMapSetter
 import org.rsmod.api.player.vars.boolVarBit
 import org.rsmod.api.player.vars.intVarBit
-import org.rsmod.api.player.vars.intVarp
-import org.rsmod.game.entity.Player
 import org.rsmod.game.loc.LocAngle
 import org.rsmod.map.CoordGrid
 
@@ -139,25 +135,4 @@ internal object MisthalinCoords {
     val MirrorBoxZ = 4828..4831
 
     val MirrorBlockerSentinel = CoordGrid(1622, 4823, 0)
-}
-
-internal var Player.misthalinReturnTile by intVarp("varp.misthalin_return_tile")
-internal var Player.misthalinMirrorBlocker by intVarp("varp.misthalin_mirror_blocker")
-internal var Player.misthalinReflections by intVarBit("varbit.misthalin_reflections")
-internal var Player.misthalinGemRowSlot by intVarBit("varbit.misthalin_gem_row_slot")
-
-internal fun restoreMisthalinLogin(player: Player) {
-    val saved = player.misthalinReturnTile
-    if (saved == 0) return
-    val destination = CoordGrid(saved)
-    player.coords = if (destination.isOnMisthalinIsland()) destination else MisthalinCoords.IslandLanding
-    player.misthalinReturnTile = 0
-    val stage = player.vars["varbit.mistmyst_progress"]
-    if (stage in MisthalinStage.BossArmed until MisthalinStage.AbigaleKilled) {
-        VarPlayerIntMapSetter.set(player, "varbit.mistmyst_progress", MisthalinStage.SapphireRoomOpen)
-    }
-    val knife = "obj.mistmyst_cutscene_knife".asRSCM()
-    for (inventory in listOf(player.inv, player.worn)) {
-        for (slot in inventory.objs.indices) if (inventory[slot]?.id == knife) inventory[slot] = null
-    }
 }

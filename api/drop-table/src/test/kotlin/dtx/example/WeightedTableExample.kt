@@ -17,7 +17,6 @@ val weightedTableExample = weightedTable<Player, Item> {
 
     2 weight multiChanceTable {
 
-
         // 37.5% chance to include BOTH items
         75.percent chance Item("Goblin Shaman Staff")
         50.percent chance Item("Shamanic Rune", 1 randTo 12)

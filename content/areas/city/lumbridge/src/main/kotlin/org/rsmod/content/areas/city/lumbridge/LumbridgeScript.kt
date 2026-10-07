@@ -21,7 +21,7 @@ constructor(private val locRepo: LocRepository, private val objRepo: ObjReposito
 
     private fun ProtectedAccess.operateWinch() {
         mes("It seems the winch is jammed - I can't move it.")
-        soundSynth("synth.lever")
+        soundSynth("synth.LEVER")
     }
 
     private suspend fun ProtectedAccess.takeAxeFromLogs(loc: BoundLocInfo) {
@@ -37,7 +37,7 @@ constructor(private val locRepo: LocRepository, private val objRepo: ObjReposito
 
         locRepo.change(loc, "loc.log_withoutaxe", 50)
         invAddOrDrop(objRepo, "obj.bronze_axe")
-        soundSynth("synth.take_axe")
+        soundSynth("synth.REMOVE_AXE")
         objbox("obj.bronze_axe", 400, "You take a bronze axe from the logs.")
     }
 }

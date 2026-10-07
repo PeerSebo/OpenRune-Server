@@ -1,6 +1,36 @@
-[gamevals.clientscript]
-quest_available_set = 45550
+# Ambient timers preserve modals; soft queues close them. Timer IDs must fit in a signed Short.
+
+[gamevals.queue]
+
+ernest_complete = 127
+
+prince_ali_key_cast = 108
+
+corscurs_curse_drain = 110
+
+bim_checkal_flex_reply = 112
+
+cowquest_bull_stomp = 113
+cowquest_bull_charge = 114
+
+cowquest_bull_recover = 118
+
+[gamevals.inv]
+neds_rope_shop = 1031
 
 [gamevals.timer]
-quest_scroll_close = 402
-quest_dialogue_close = 403
+bkf_grill_listen_pose = 115
+
+demonslayer_crystal_ball = 116
+
+cowquest_milk_splat = 117
+
+vampyre_slayer_coffin_rise = 119
+vampyre_slayer_coffin_emerge = 120
+vampyre_slayer_count_watch = 121
+vampyre_slayer_candles = 122
+
+restless_ghost_coffin_ghost = 123
+restless_skeleton_attack = 124
+
+cowquest_brutus_respawn = 125

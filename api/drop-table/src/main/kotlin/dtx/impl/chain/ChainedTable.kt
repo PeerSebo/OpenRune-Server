@@ -2,10 +2,8 @@ package dtx.impl.chain
 
 import dtx.core.ArgMap
 import dtx.core.RollResult
-import dtx.core.Rollable
 import dtx.table.Table
 import kotlin.random.Random
-
 
 public interface ChainedTable<T, R> : Table<T, R>, ChainedTableHooks<T, R> {
     override val tableEntries: Collection<ChainRollable<T, R>>

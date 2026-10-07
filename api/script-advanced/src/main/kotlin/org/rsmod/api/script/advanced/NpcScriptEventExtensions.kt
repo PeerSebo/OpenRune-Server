@@ -2,7 +2,6 @@ package org.rsmod.api.script.advanced
 
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
-import dev.openrune.types.NpcServerType
 import org.rsmod.api.player.events.interact.NpcDefaultEvents
 import org.rsmod.api.player.events.interact.NpcUnimplementedEvents
 import org.rsmod.api.player.events.interact.OpDefaultEvent
@@ -10,7 +9,6 @@ import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.script.onProtectedEvent
 import org.rsmod.plugin.scripts.ScriptContext
 
-/* Unimplemented op functions */
 public fun ScriptContext.onUnimplementedOpNpc1(
     type: String,
     action: suspend ProtectedAccess.(NpcUnimplementedEvents.Op1) -> Unit,
@@ -36,7 +34,6 @@ public fun ScriptContext.onUnimplementedOpNpc5(
     action: suspend ProtectedAccess.(NpcUnimplementedEvents.Op5) -> Unit,
 ): Unit = onProtectedEvent<NpcUnimplementedEvents.Op5>(type.asRSCM(RSCMType.NPC), action)
 
-/* Default op functions */
 public fun ScriptContext.onDefaultOpNpc1(
     action: suspend ProtectedAccess.(NpcDefaultEvents.Op1) -> Unit
 ): Unit = onProtectedEvent<NpcDefaultEvents.Op1>(OpDefaultEvent.ID, action)
@@ -57,7 +54,6 @@ public fun ScriptContext.onDefaultOpNpc5(
     action: suspend ProtectedAccess.(NpcDefaultEvents.Op5) -> Unit
 ): Unit = onProtectedEvent<NpcDefaultEvents.Op5>(OpDefaultEvent.ID, action)
 
-/* Default ap functions */
 public fun ScriptContext.onDefaultApNpc1(
     action: suspend ProtectedAccess.(NpcDefaultEvents.Ap1) -> Unit
 ): Unit = onProtectedEvent<NpcDefaultEvents.Ap1>(OpDefaultEvent.ID, action)

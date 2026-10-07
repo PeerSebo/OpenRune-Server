@@ -321,7 +321,10 @@ object SpecValidator {
         private fun effect(effect: Effect, scope: Scope) {
             val name = effect::class.simpleName ?: "Effect"
             when (effect) {
-                is Effect.Run -> requireAbility(effect.ability, scope, "Run")
+                is Effect.Run ->
+                    if (effect.ability !in abilityNames) {
+                        error("${scope.prefix}Run references ability '${effect.ability}' which does not exist.")
+                    }
                 is Effect.ForceNext -> requireAbility(effect.ability, scope, "ForceNext")
                 is Effect.TransitionTo ->
                     if (effect.phase !in phaseNames) {
@@ -329,6 +332,8 @@ object SpecValidator {
                     }
                 is Effect.Wait ->
                     if (effect.ticks <= 0) error("${scope.prefix}Wait ticks '${effect.ticks}' must be greater than 0.")
+                is Effect.Delay ->
+                    if (effect.ticks <= 0) error("${scope.prefix}Delay ticks must be greater than 0.")
                 is Effect.NextAttackIn ->
                     if (effect.ticks < 0) {
                         error("${scope.prefix}NextAttackIn ticks '${effect.ticks}' must not be negative.")
@@ -360,6 +365,7 @@ object SpecValidator {
                         effect(child, scope)
                     }
                 is Effect.Repeat -> {
+                    if (effect.gap < 0) error("${scope.prefix}Repeat gap must be non-negative.")
                     if (effect.times.isEmpty() || effect.times.first < 0) {
                         error("${scope.prefix}Repeat times '${effect.times}' must be a non-empty, non-negative range.")
                     }
@@ -417,6 +423,7 @@ object SpecValidator {
                 is Effect.CamShake -> effect.target?.let { target(it, scope, name) }
                 is Effect.CamReset -> target(effect.target, scope, name)
                 is Effect.Debris -> target(effect.center, scope, name)
+                is Effect.TileAoE -> effect.center?.let { target(it, scope, name) }
                 is Effect.Summon -> target(effect.centeredOn, scope, name)
                 is Effect.Teleport -> target(effect.to, scope, name)
                 is Effect.FaceTile -> target(effect.at, scope, name)

@@ -66,7 +66,7 @@ public val shellbaneGryphonDropTable: RSDropTable<Player, DropRollItem> = RSDrop
     },
     tertiaries = rsPlayerTertiaryTable {
         1 outOf 1 weight "obj.trail_elite_emote_exp1" count 1 condition { player ->
-            // Drops Need Manual: Guaranteed elite clue scroll and reward casket drops only occur when completing an elite clue scroll asking you to kill the Shellbane gryphon.
+            // TODO: Guaranteed elite clue scroll and reward casket drops only occur when completing an elite clue scroll asking you to kill the Shellbane gryphon.
              true
         }
         1 outOf 1 weight "obj.trail_reward_casket_elite" count 1
@@ -81,4 +81,4 @@ public val shellbaneGryphonDropTable: RSDropTable<Player, DropRollItem> = RSDrop
     },
 )
 
-// Unknown wiki drop rates (text rarity — need data collection):
+// TODO: Resolve the unquantified drop rates below.

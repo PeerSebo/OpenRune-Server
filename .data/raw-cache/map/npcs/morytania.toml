@@ -3538,7 +3538,6 @@ coords = "0_58_51_25_16"
 npc = "npc.willothewisp"
 coords = "0_58_51_33_21"
 
-## Abandoned Mine Overworld
 
 [[spawn]]
 npc = "npc.saradominist_zealot"
@@ -3564,13 +3563,11 @@ coords = "0_54_50_4_31"
 npc = "npc.vampire_juve"
 coords = "0_54_50_5_36"
 
-## Araxxor Arena
 
 [[spawn]]
 npc = "npc.araxxor"
 coords = "0_56_153_46_21"
 
-## Araxyte Spider Caves
 
 [[spawn]]
 npc = "npc.araxxor_sister_weave"
@@ -3784,13 +3781,11 @@ coords = "0_57_153_36_47"
 npc = "npc.araxyte_normal"
 coords = "0_57_153_39_48"
 
-## Barrows
 
 [[spawn]]
 npc = "npc.barrows_oldman"
 coords = "0_55_51_44_24"
 
-## Burgh De Rott
 
 [[spawn]]
 npc = "npc.0_54_49_memberfish"
@@ -4228,7 +4223,6 @@ coords = "0_54_50_25_37"
 npc = "npc.templetrek_woman_med"
 coords = "0_54_50_26_36"
 
-## Canifis
 
 [[spawn]]
 npc = "npc.canafis_man1"
@@ -4374,7 +4368,6 @@ coords = "0_54_54_57_33"
 npc = "npc.willothewisp"
 coords = "0_54_54_57_47"
 
-## Canifis Bar Floor
 
 [[spawn]]
 npc = "npc.canafis_man2"
@@ -4416,7 +4409,6 @@ coords = "0_54_54_47_21"
 npc = "npc.werewolfinnkeeper"
 coords = "0_54_54_37_15"
 
-## Canifis bank
 
 [[spawn]]
 npc = "npc.canafis_man6"
@@ -4434,7 +4426,6 @@ coords = "0_54_54_58_23"
 npc = "npc.werewolfbanker"
 coords = "0_54_54_58_25"
 
-## Castle Drakan
 
 [[spawn]]
 npc = "npc.darkm_auctioneer"
@@ -4460,7 +4451,6 @@ coords = "0_55_52_55_3"
 npc = "npc.myreque_pt3_multi_safalaan_castle"
 coords = "0_56_52_0_3"
 
-## Crombwick Manor
 
 [[spawn]]
 npc = "npc.myq5_veliaf_slepe_manor"
@@ -4478,13 +4468,11 @@ coords = "1_58_52_6_30"
 npc = "npc.slepe_damien_vis"
 coords = "1_58_52_6_30"
 
-## Darkmeyer
 
 [[spawn]]
 npc = "npc.myq5_prisoner"
 coords = "0_56_52_36_51"
 
-## Darkmeyer Lower
 
 [[spawn]]
 npc = "npc.darkm_juvenile_01"
@@ -4582,7 +4570,6 @@ coords = "0_57_52_14_19"
 npc = "npc.myq3_paper"
 coords = "0_56_52_43_7"
 
-## Darkmeyer Middle
 
 [[spawn]]
 npc = "npc.caninelle_draynar"
@@ -4744,7 +4731,6 @@ coords = "0_56_52_18_56"
 npc = "npc.vyrewatch_elite_8"
 coords = "0_56_52_40_47"
 
-## Darkmeyer Upper
 
 [[spawn]]
 npc = "npc.alek_constantine"
@@ -4894,13 +4880,11 @@ coords = "0_56_52_15_23"
 npc = "npc.vyrewatch_elite_8"
 coords = "0_56_52_12_29"
 
-## Darkmeyer Upper House Roofs
 
 [[spawn]]
 npc = "npc.lady_shadum"
 coords = "1_56_52_25_10"
 
-## Darkmeyer bank
 
 [[spawn]]
 npc = "npc.darkm_banker_female"
@@ -4918,7 +4902,6 @@ coords = "0_56_52_19_41"
 npc = "npc.darkm_banker_male"
 coords = "0_56_52_21_41"
 
-## Fenkenstrains Castle
 
 [[spawn]]
 npc = "npc.fenk_creature"
@@ -4944,7 +4927,6 @@ coords = "0_55_55_29_43"
 npc = "npc.fenk_gardener_multi_2"
 coords = "0_55_55_31_41"
 
-## Meiyerditch
 
 [[spawn]]
 npc = "npc.myq3_black_market_trader"
@@ -5782,7 +5764,6 @@ coords = "0_56_50_18_9"
 npc = "npc.tob_door_guard"
 coords = "0_56_50_47_17"
 
-## Mortton
 
 [[spawn]]
 npc = "npc.mort_afflicted_man"
@@ -6016,7 +5997,6 @@ coords = "0_54_51_60_51"
 npc = "npc.ulsquire_shauncy_afflicted"
 coords = "0_54_51_40_25"
 
-## Morytania Slayer Tower
 
 [[spawn]]
 npc = "npc.secret_ghost15"
@@ -6462,7 +6442,6 @@ coords = "2_53_55_57_52"
 npc = "npc.small_bat"
 coords = "0_53_55_19_16"
 
-## Morytania Slayer Tower Basement
 
 [[spawn]]
 npc = "npc.slayer_abyssal_strongholdcave"
@@ -6668,13 +6647,11 @@ coords = "3_53_155_32_49"
 npc = "npc.slayer_tower_dungeon_ghost"
 coords = "3_53_155_32_33"
 
-## Old crone
 
 [[spawn]]
 npc = "npc.ahoy_crone"
 coords = "0_54_55_5_38"
 
-## Port Phasmatys
 
 [[spawn]]
 npc = "npc.ahoy_ghost_banker"
@@ -6832,7 +6809,6 @@ coords = "0_57_54_12_43"
 npc = "npc.sarah_corvo"
 coords = "0_57_54_26_12"
 
-## Slepe
 
 [[spawn]]
 npc = "npc.bat"
@@ -7066,7 +7042,6 @@ coords = "0_58_52_45_35"
 npc = "npc.willothewisp"
 coords = "0_58_52_51_9"
 
-## Slepe Church
 
 [[spawn]]
 npc = "npc.chaos_druid"
@@ -7124,7 +7099,6 @@ coords = "0_58_51_26_45"
 npc = "npc.slepe_sister2"
 coords = "0_58_51_27_53"
 
-## Slepe Houses
 
 [[spawn]]
 npc = "npc.nightmare_sleepwalker_pre1"
@@ -7166,13 +7140,11 @@ coords = "0_57_51_47_50"
 npc = "npc.slepe_poor_woman2_inside"
 coords = "0_57_51_59_34"
 
-## Temple Trekking Instances
 
 [[spawn]]
 npc = "npc.templetrek_zombie"
 coords = "0_32_78_39_53"
 
-## ToB bank
 
 [[spawn]]
 npc = "npc.vampyre_banker_female"
@@ -7186,7 +7158,6 @@ coords = "0_57_50_1_6"
 npc = "npc.vampyre_banker_male"
 coords = "0_57_50_4_6"
 
-## Ver Sinhaza
 
 [[spawn]]
 npc = "npc.myq4_bank_guard"
@@ -7279,6 +7250,3 @@ coords = "0_57_50_24_12"
 [[spawn]]
 npc = "npc.tob_stranger"
 coords = "0_57_50_25_23"
-
-## Ver Sinhaza End
-

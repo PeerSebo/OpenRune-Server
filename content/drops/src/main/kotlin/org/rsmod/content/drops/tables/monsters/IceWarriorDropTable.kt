@@ -2,16 +2,14 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
-import org.rsmod.api.droptable.rsPlayerTertiaryTable
-import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.content.drops.tables.shared.SharedDropTables
 import org.rsmod.api.droptable.DropRollItem
-import org.rsmod.content.drops.shouldDropLootingBag
+import org.rsmod.api.droptable.RegisterDropTable
 import org.rsmod.api.droptable.nothing
 import org.rsmod.api.droptable.ringNothing
-import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.api.droptable.rsPlayerTertiaryTable
+import org.rsmod.api.droptable.rsPlayerWeightedTable
+import org.rsmod.content.drops.shouldDropLootingBag
+import org.rsmod.content.drops.tables.shared.SharedDropTables
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -36,7 +34,6 @@ public val iceWarriorDropTable: RSDropTable<Player, DropRollItem> = RSDropTable(
 
         10 weight SharedDropTables.herb
         3 weight SharedDropTables.gem
-        // Pool padding (F2P drops removed / subtable access missing from wiki parse)
         17 weight nothing()
     },
     tertiaries = rsPlayerTertiaryTable {
@@ -47,5 +44,5 @@ public val iceWarriorDropTable: RSDropTable<Player, DropRollItem> = RSDropTable(
     },
 )
 
-// Unknown wiki drop rates (text rarity — need data collection):
+// TODO: Resolve the unquantified drop rates below.
 //   - Frozen tear [tertiary/<ref name=row group=d>Only dropped in Ruins of Tapoyauik</ref>]

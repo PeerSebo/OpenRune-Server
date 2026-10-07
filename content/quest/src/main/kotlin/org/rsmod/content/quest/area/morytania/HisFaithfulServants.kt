@@ -11,7 +11,7 @@ import org.rsmod.api.player.vars.intVarp
 import org.rsmod.api.script.onOpHeld1
 import org.rsmod.api.script.onOpNpc1
 import org.rsmod.content.quest.manager.ItemRewardDisplay
-import org.rsmod.content.quest.manager.QuestRequirements
+import org.rsmod.content.quest.manager.Quest
 import org.rsmod.content.quest.manager.QuestScript
 import org.rsmod.content.quest.manager.rewards
 import org.rsmod.game.entity.Player
@@ -87,7 +87,7 @@ class HisFaithfulServants :
             stage == STAGE_ICON_GIVEN -> afterIconGiven()
             stage >= STAGE_STARTED && hasIcon(player) -> turnInIcon()
             stage >= STAGE_STARTED -> askForIcon()
-            QuestRequirements.hasCompleted(player, "quest_priestinperil") -> startQuest()
+            Quest.get("quest_priestinperil")?.questState(player)?.isCompleted == true -> startQuest()
             else -> standardDialogue()
         }
     }
@@ -175,8 +175,8 @@ class HisFaithfulServants :
     private suspend fun Dialogue.afterIconGiven() {
         chatNpc(happy, "You did it! Now for me.")
         quest.setQuestStage(access, STAGE_ICON_DESTROYED)
-        access.soundSynth("synth.hfs_icon_disintegrate")
-        access.soundSynth("synth.hfs_icon_disintegrate_echo", delay = ICON_ECHO_DELAY)
+        access.soundSynth("synth.SNARE_IMPACT")
+        access.soundSynth("synth.LORE_FIRE_TITAN_DEATH", delay = ICON_ECHO_DELAY)
         objbox("obj.barrows_icon_dust", "Before you can react, the Strange Old Man casts a spell. The icon disintegrates in his hands.")
         chatNpc(happy, "It's all little bits now.")
         chatPlayer(shocked, "What? But why? I thought you needed it!")
@@ -323,7 +323,7 @@ class HisFaithfulServants :
             if (!claim || access.invDel(access.inv, "obj.hfs_reward_lamp").failure) return@startDialogue
             player.lampClaimed = true
             val gained = access.statAdvance("stat.prayer", LAMP_XP)
-            access.soundSynth("synth.found_gem")
+            access.soundSynth("synth.FOUND_GEM")
             mesbox("<col=0000ff>Your wish has been granted!</col> You have been awarded ${"%,d".format(gained)} Prayer experience!")
         }
     }

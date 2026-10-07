@@ -19,13 +19,14 @@ import org.rsmod.events.EventBus
 import org.rsmod.game.entity.Player
 
 public object Cinematic {
-    private var Player.drawDistanceOverride by boolVarBit("varbit.draw_distance_max_override")
     private var Player.camMode by enumVarBit<CameraMode>("varbit.fov_clamp")
     private var Player.minimap by enumVarBit<MinimapState>("varbit.minimap_state")
     private var Player.hideTop by boolVarBit("varbit.cutscene_status")
     private var Player.hideHud by boolVarBit("varbit.gravestone_tli_hide")
     private var Player.acceptAid by boolVarBit("varbit.option_acceptaid")
     private var Player.acceptAidRestore by boolVarBit("varbit.accept_aid_restore")
+    private var Player.hideRoofs by boolVarBit("varbit.option_hide_rooftops")
+    private var Player.drawDistanceOverride by boolVarBit("varbit.draw_distance_max_override")
 
     public fun setCameraMode(player: Player, mode: CameraMode) {
         player.camMode = mode
@@ -52,6 +53,38 @@ public object Cinematic {
     public fun restoreAcceptAid(player: Player) {
         player.acceptAid = player.acceptAidRestore
         player.acceptAidRestore = false
+    }
+
+    /**
+     * option_hide_roofs does not remove roofs for cutscenes; use the draw-distance override
+     * instead.
+     */
+    @Deprecated("Inert for cutscenes; the fix is a level-0-only dynamic region. See the kdoc.")
+    public fun disableRoofs(player: Player): Boolean {
+        val previous = player.hideRoofs
+        player.hideRoofs = true
+        return previous
+    }
+
+    @Deprecated("See disableRoofs.")
+    public fun restoreRoofs(player: Player, previous: Boolean) {
+        player.hideRoofs = previous
+    }
+
+    /**
+     * After changing draw_distance_max_override, run the client draw-distance synchronization
+     * script.
+     */
+    public fun setMaxDrawDistance(player: Player, enabled: Boolean) {
+        player.drawDistanceOverride = enabled
+    }
+
+    /**
+     * Synchronize draw distance on both set and clear; writing the varbit alone leaves cached
+     * client visibility unchanged.
+     */
+    public fun syncDrawDistance(player: Player) {
+        settingsSetDrawDistance(player)
     }
 
     public fun setMinimapState(player: Player, state: MinimapState) {
@@ -82,7 +115,7 @@ public object Cinematic {
         player.ifSetText("component.fade_overlay:message", "")
         player.ifOpenFullOverlay("interface.fade_overlay", eventBus)
         player.runClientScript(
-            948,
+            "clientscript.[clientscript,fade_overlay]",
             startColour,
             startTransparency,
             endColour,
@@ -243,13 +276,5 @@ public object Cinematic {
             IfSubType.Overlay,
             eventBus,
         )
-    }
-
-    public fun setMaxDrawDistance(player: Player, enabled: Boolean) {
-        player.drawDistanceOverride = enabled
-    }
-
-    public fun syncDrawDistance(player: Player) {
-        settingsSetDrawDistance(player)
     }
 }

@@ -77,9 +77,6 @@ constructor(
         return loc
     }
 
-    /**
-     * @param onDespawn See [add].
-     */
     public fun add(
         coords: CoordGrid,
         internal: String,
@@ -168,16 +165,16 @@ constructor(
 
     public fun findExact(coords: CoordGrid, content: String, shape: LocShape): LocInfo? {
         val loc = locReg.findShape(coords, shape.id) ?: return null
-        return loc.takeIf { ServerCacheManager.getObject(it.id)?.contentGroup == content.asRSCM(RSCMType.CONTENT) }
+        return loc.takeIf {
+            ServerCacheManager.getObject(it.id)?.contentGroup == content.asRSCM(RSCMType.CONTENT)
+        }
     }
 
-    public fun findExact(
-        coords: CoordGrid,
-        content: String,
-        type: ObjectServerType,
-    ): LocInfo? {
+    public fun findExact(coords: CoordGrid, content: String, type: ObjectServerType): LocInfo? {
         val loc = locReg.findType(coords, type.id) ?: return null
-        return loc.takeIf { ServerCacheManager.getObject(it.id)?.contentGroup == content.asRSCM(RSCMType.CONTENT) }
+        return loc.takeIf {
+            ServerCacheManager.getObject(it.id)?.contentGroup == content.asRSCM(RSCMType.CONTENT)
+        }
     }
 
     internal fun processDurations() {
@@ -190,37 +187,42 @@ constructor(
     }
 
     private fun processDelDurations() {
-        val triggered = mutableListOf<() -> Unit>()
-        val iterator = delDurations.iterator()
-        while (iterator.hasNext()) {
-            val duration = iterator.next()
-            if (!duration.shouldTrigger()) {
-                continue
-            }
+        val due = drainDue(delDurations) ?: return
+        for (duration in due) {
             if (duration.isValid()) {
                 locReg.add(duration.loc)
-                duration.onTrigger?.let(triggered::add)
+                duration.onTrigger?.invoke()
             }
-            iterator.remove()
         }
-        triggered.forEach { it() }
     }
 
     private fun processAddDurations() {
-        val triggered = mutableListOf<() -> Unit>()
-        val iterator = addDurations.iterator()
+        val due = drainDue(addDurations) ?: return
+        for (duration in due) {
+            if (duration.isValid()) {
+                locReg.del(duration.loc)
+                duration.onTrigger?.invoke()
+            }
+        }
+    }
+
+    /**
+     * Drain expired entries before invoking callbacks; reentrant add/del calls mutate the same
+     * deques and invalidate an active iterator.
+     */
+    private fun drainDue(durations: ArrayDeque<LocCycleDuration>): List<LocCycleDuration>? {
+        var due: MutableList<LocCycleDuration>? = null
+        val iterator = durations.iterator()
         while (iterator.hasNext()) {
             val duration = iterator.next()
             if (!duration.shouldTrigger()) {
                 continue
             }
-            if (duration.isValid()) {
-                locReg.del(duration.loc)
-                duration.onTrigger?.let(triggered::add)
-            }
             iterator.remove()
+            val list = due ?: mutableListOf<LocCycleDuration>().also { due = it }
+            list += duration
         }
-        triggered.forEach { it() }
+        return due
     }
 
     private fun LocCycleDuration.shouldTrigger(): Boolean = mapClock >= triggerCycle
@@ -231,11 +233,6 @@ constructor(
         return regionReg.isValid(slot, uid)
     }
 
-    /**
-     * @param onTrigger For [addDurations], runs after the spawned loc is deleted when the timer
-     *   fires. For [delDurations], runs after the map loc is restored when the timer fires. Only
-     *   invoked when [isValid] is true.
-     */
     private data class LocCycleDuration(
         val loc: LocInfo,
         val triggerCycle: Int,

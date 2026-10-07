@@ -1,0 +1,11 @@
+[[timer]]
+isServerOnly = true
+id = "timer.whisperer_sanity"
+
+[[timer]]
+isServerOnly = true
+id = "timer.whisperer_insanity"
+
+[[timer]]
+isServerOnly = true
+id = "timer.whisperer_fade"

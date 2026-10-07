@@ -22,6 +22,11 @@ internal object TheRestlessGhostRegions {
 }
 
 internal fun assertRestlessGhostSceneCoords() {
+    val template: RegionTemplate = TheRestlessGhostRegions.Graveyard
+    check(template === TheRestlessGhostRegions.Graveyard) {
+        "The Restless Ghost cutscene region template failed to build."
+    }
+
     val originX = TheRestlessGhostRegions.GraveyardZoneX * ZoneSize
     val originZ = TheRestlessGhostRegions.GraveyardZoneZ * ZoneSize
 

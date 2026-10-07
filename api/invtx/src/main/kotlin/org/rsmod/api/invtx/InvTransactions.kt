@@ -37,7 +37,6 @@ public class InvTransactions(
         try {
             transaction.apply(init)
         } catch (_: TransactionCancellation) {
-            /* cancellation is normal */
         }
         val results = transaction.results()
         if (results.success && transaction.autoCommit) {

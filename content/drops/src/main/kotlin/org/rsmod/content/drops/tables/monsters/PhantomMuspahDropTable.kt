@@ -61,7 +61,7 @@ public val phantomMuspahDropTable: RSDropTable<Player, DropRollItem> = RSDropTab
         4 outOf 100 separate "obj.frozen_cache" count 1
         2 outOf 100 separate "obj.ancient_icon" count 1
         1 outOf 100 separate "obj.venator_shard" count 1 condition { player ->
-            // Drops Need Manual: When a Venator shard is received, no regular loot will be dropped alongside it.
+            // TODO: When a Venator shard is received, no regular loot will be dropped alongside it.
              true
         }
         1 outOf 9 separate rsPlayerWeightedTable {
@@ -84,6 +84,10 @@ public val phantomMuspahDropTable: RSDropTable<Player, DropRollItem> = RSDropTab
     },
     tertiaries = rsPlayerTertiaryTable {
         onBuilder { brimstoneKeyRoll() }
+        1 outOf 1 weight "obj.muspah_pet_morph" count 1 condition { player ->
+            // TODO: Guaranteed reward for defeating the boss in under 3:00, provided that the player does not already have one in their possession, or has not already used one on the Muphin pet.
+             true
+        }
         1 outOf 2500 weight "obj.muspahpet" count 1
         1 outOf 28 weight "obj.trail_clue_hard_map001" count 1 transformObj { player ->
              player.clueScrollTransformObj("obj.trail_clue_hard_map001")

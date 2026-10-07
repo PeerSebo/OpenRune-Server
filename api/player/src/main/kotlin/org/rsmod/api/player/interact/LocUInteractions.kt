@@ -31,16 +31,15 @@ public class LocUInteractions @Inject private constructor(private val eventBus: 
 
     public suspend fun interactOp(
         access: ProtectedAccess,
-        target: BoundLocInfo,
         base: BoundLocInfo,
-        locType: ObjectServerType,
         objType: ItemServerType,
         inv: Inventory,
         invSlot: Int,
+        baseType: ObjectServerType = ServerCacheManager.getObject(base.id)!!,
     ) {
         val obj = inv[invSlot]
         if (objectVerify(inv, obj, objType)) {
-            access.opLocU(target, base, invSlot, locType, objType)
+            access.opLocU(base, base, invSlot, baseType, objType)
         }
     }
 
@@ -63,6 +62,10 @@ public class LocUInteractions @Inject private constructor(private val eventBus: 
         }
     }
 
+    /**
+     * Enter with the base loc, then walk its transforms. Starting at the visible leaf loses
+     * parent-bound item-on-loc handlers.
+     */
     public fun ProtectedAccess.opTrigger(
         target: BoundLocInfo,
         base: BoundLocInfo,
@@ -112,7 +115,8 @@ public class LocUInteractions @Inject private constructor(private val eventBus: 
         }
 
         if (locType.category >= 0) {
-            val categoryDefaultEvent = LocUDefaultEvents.OpCategory(base, target, locType, objType, invSlot)
+            val categoryDefaultEvent =
+                LocUDefaultEvents.OpCategory(base, target, locType, objType, invSlot)
             if (eventBus.contains(categoryDefaultEvent::class.java, categoryDefaultEvent.id)) {
                 return categoryDefaultEvent
             }
@@ -123,16 +127,15 @@ public class LocUInteractions @Inject private constructor(private val eventBus: 
 
     public suspend fun interactAp(
         access: ProtectedAccess,
-        target: BoundLocInfo,
         base: BoundLocInfo,
-        locType: ObjectServerType,
         objType: ItemServerType,
         inv: Inventory,
         invSlot: Int,
+        baseType: ObjectServerType = ServerCacheManager.getObject(base.id)!!,
     ) {
         val obj = inv[invSlot]
         if (objectVerify(inv, obj, objType)) {
-            access.apLocU(target, base, locType, objType, invSlot)
+            access.apLocU(base, base, baseType, objType, invSlot)
         }
     }
 
@@ -200,7 +203,8 @@ public class LocUInteractions @Inject private constructor(private val eventBus: 
         }
 
         if (locType.category >= 0) {
-            val categoryDefaultEvent = LocUDefaultEvents.ApCategory(base, target, locType, objType, invSlot)
+            val categoryDefaultEvent =
+                LocUDefaultEvents.ApCategory(base, target, locType, objType, invSlot)
             if (eventBus.contains(categoryDefaultEvent::class.java, categoryDefaultEvent.id)) {
                 return categoryDefaultEvent
             }

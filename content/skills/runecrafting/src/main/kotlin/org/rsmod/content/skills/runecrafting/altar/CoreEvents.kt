@@ -8,15 +8,14 @@ import org.rsmod.content.skills.runecrafting.action.RunecraftAction.craftCore
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
-class CoreEvents @Inject constructor(
-    private val xpMods: XpModifiers,
-) : PluginScript() {
+class CoreEvents @Inject constructor(private val xpMods: XpModifiers) : PluginScript() {
 
-    private val coresByAltar = mapOf(
-        "loc.mind_altar" to "obj.camdozaal_golem_core_mind",
-        "loc.body_altar" to "obj.camdozaal_golem_core_body",
-        "loc.chaos_altar" to "obj.camdozaal_golem_core_chaos"
-    )
+    private val coresByAltar =
+        mapOf(
+            "loc.mind_altar" to "obj.camdozaal_golem_core_mind",
+            "loc.body_altar" to "obj.camdozaal_golem_core_body",
+            "loc.chaos_altar" to "obj.camdozaal_golem_core_chaos",
+        )
 
     override fun ScriptContext.startup() {
         RunecraftingAltarsRow.all().forEach { altar ->

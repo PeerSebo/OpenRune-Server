@@ -1,0 +1,4 @@
+# Overrides apply after generated entries; aggressive=false disables their hunt.
+
+npc = [
+]

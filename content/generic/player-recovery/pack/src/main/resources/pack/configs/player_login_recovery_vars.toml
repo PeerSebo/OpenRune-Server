@@ -1,0 +1,17 @@
+[[varp]]
+id = "varp.player_login_exit_coord"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.player_login_exit_pending"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.player_login_exit_migrated"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"

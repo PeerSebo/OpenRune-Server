@@ -99,9 +99,10 @@ object HerbloreDefinitions {
 
     val swampTars: List<HerbloreSwampTarRow> = HerbloreSwampTarRow.all()
 
-    fun findPotionCandidates(item1: String, item2: String): List<HerbloreFinishedRow> {
-        val potions1 = itemToPotions[item1] ?: emptyList()
-        val potions2 = itemToPotions[item2] ?: emptyList()
-        return (potions1 + potions2).distinct()
-    }
+    fun findPotionCandidates(item1: String, item2: String): List<HerbloreFinishedRow> =
+        itemToPotions[item1].orEmpty().distinct().filter { row ->
+            val base = row.unfPot.internalName
+            val secondaries = row.secondaries.map { it.internalName }
+            (item1 == base && item2 in secondaries) || (item2 == base && item1 in secondaries)
+        }
 }

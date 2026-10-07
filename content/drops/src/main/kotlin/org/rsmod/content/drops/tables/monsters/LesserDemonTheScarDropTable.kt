@@ -2,13 +2,10 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
-import org.rsmod.api.droptable.rsPlayerTertiaryTable
-import org.rsmod.api.droptable.rsPlayerWeightedTable
 import org.rsmod.api.droptable.DropRollItem
-import org.rsmod.api.droptable.nothing
 import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.api.droptable.nothing
+import org.rsmod.api.droptable.rsPlayerWeightedTable
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -19,9 +16,7 @@ public val lesserDemonTheScarDropTable: RSDropTable<Player, DropRollItem> = RSDr
     mainTable = rsPlayerWeightedTable(total = 5000) {
         name("Lesser demon (The Scar) Drops")
         1 weight "obj.champions_challenge_lesserdemon" count 1 condition { player ->
-            // Drops Need Manual: Only dropped if access to Champions' Guild is available, and the Lesser Demon Champion hasn't been previously killed in the Champions' Challenge.
-            // Drops Need Manual: Only confirmed to drop from the level 82 variant; there is insufficient data for the others.
-            // Drops Need Manual: Only dropped if access to Champions' Guild is available, and the Lesser Demon Champion hasn't been previously killed in the Champions' Challenge. Only confirmed to drop from the level 82 variant; there is insufficient data for the others.
+            // TODO: Only dropped if access to Champions' Guild is available, and the Lesser Demon Champion hasn't been previously killed in the Champions' Challenge. Only confirmed to drop from the level 82 variant; there is insufficient data for the others. Only dropped if access to Champions' Guild is available, and the Lesser Demon Champion hasn't been previously killed in the Champions' Challenge. Only confirmed to drop from the level 82 variant; there is insufficient data for the others.
              true
         }
         4999 weight nothing()

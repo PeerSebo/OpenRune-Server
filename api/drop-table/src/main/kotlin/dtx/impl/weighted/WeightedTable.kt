@@ -6,13 +6,13 @@ import dtx.table.Table
 import dtx.table.TableHooks
 import kotlin.random.Random
 
-public interface WeightedTable<T, R>: Table<T, R> {
+public interface WeightedTable<T, R> : Table<T, R> {
 
     public override val tableEntries: Collection<WeightedRollable<T, R>>
 
     public val maxRoll: Double
 
-    public fun <E: WeightedRollable<T, R>> getWeightedEntry(
+    public fun <E : WeightedRollable<T, R>> getWeightedEntry(
         modifier: Double,
         rolled: Double,
         byEntries: Collection<E>,
@@ -44,7 +44,7 @@ public open class WeightedTableImpl<T, R>(
     public override val tableIdentifier: String,
     entries: List<WeightedRollable<T, R>>,
     private val hooks: TableHooks<T, R> = TableHooks.Default()
-): WeightedTable<T, R>, TableHooks<T, R> by hooks {
+) : WeightedTable<T, R>, TableHooks<T, R> by hooks {
 
     override var maxRoll: Double = entries.sumOf { it.weight }
         protected set

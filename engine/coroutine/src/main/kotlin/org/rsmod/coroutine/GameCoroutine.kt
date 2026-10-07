@@ -37,9 +37,14 @@ public class GameCoroutine(public val debugName: String? = null) {
         throw CancellationException()
     }
 
+    /**
+     * Clear the suspension before cancellation resumes it; reentrant coroutine code can install
+     * a new suspension.
+     */
     public fun cancel(exception: CancellationException = CancellationException()) {
-        suspension?.continuation?.resumeWithException(exception)
-        suspension = null
+        val suspension = this.suspension ?: return
+        this.suspension = null
+        suspension.continuation.resumeWithException(exception)
     }
 
     public fun resumeWith(value: Any) {

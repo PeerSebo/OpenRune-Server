@@ -10,8 +10,6 @@ import org.rsmod.api.droptable.rsPlayerWeightedTable
 import org.rsmod.content.drops.brimstoneKeyRoll
 import org.rsmod.content.drops.clueScrollTransformObj
 import org.rsmod.content.drops.dt2Drop
-import org.rsmod.content.drops.shouldDropSanguineTorvaKit
-import org.rsmod.content.drops.vestigeProgressRoll
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -46,8 +44,10 @@ public val theWhispererDropTable: RSDropTable<Player, DropRollItem> = RSDropTabl
         1 weight dt2Drop("obj.chaosrune", 140, 210)
         8 weight dt2Drop("obj.deathrune", 466, 700)
         2 weight dt2Drop("obj.soulrune", 933, 1400)
-        1 outOf 512 separate "obj.soulreaper_axe_staff" count 1
-        3 outOf 512 separate vestigeProgressRoll("varp.whisperer_vestige_progress", "obj.bellator_vestige")
+        1 outOf 512 separate rsPlayerWeightedTable {
+            1 weight "obj.bellator_vestige" count 1
+            1 weight "obj.soulreaper_axe_staff" count 1
+        }
         3 outOf 512 separate "obj.chromium_ingot" count 1
         1 outOf 1536 separate rsPlayerWeightedTable {
             1 weight "obj.virtus_mask" count 1
@@ -55,7 +55,7 @@ public val theWhispererDropTable: RSDropTable<Player, DropRollItem> = RSDropTabl
             1 weight "obj.virtus_legs" count 1
         }
         1 outOf 26 separate "obj.whisperer_tablet" count 1 condition { player ->
-            // Drops Need Manual: The sirenic tablet will become more common at an unknown rate as kill count increases until the first drop is received. Afterwards, the item will no longer be dropped.
+            // TODO: The sirenic tablet will become more common at an unknown rate as kill count increases until the first drop is received. Afterwards, the item will no longer be dropped.
              true
         }
         1 outOf 35 separate "obj.dt2_awakeners_orb" count 1
@@ -69,8 +69,9 @@ public val theWhispererDropTable: RSDropTable<Player, DropRollItem> = RSDropTabl
     },
     tertiaries = rsPlayerTertiaryTable {
         onBuilder { brimstoneKeyRoll() }
-        1 outOf 1 weight "obj.dt2_sanguine_torva_kit" count 1 killCondition { player, npc, _ ->
-            player.shouldDropSanguineTorvaKit(npc, "obj.dt2_sanguine_torva_kit")
+        1 outOf 1 weight "obj.dt2_sanguine_torva_kit" count 1 condition { player ->
+            // TODO: Only when defeated in the awakened encounter as the '''last''' of the four.
+             true
         }
         1 outOf 2000 weight "obj.whispererpet" count 1
         1 outOf 160 weight "obj.trail_clue_easy_simple001" count 1 transformObj { player ->

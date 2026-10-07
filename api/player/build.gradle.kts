@@ -1,15 +1,20 @@
 plugins {
     id("base-conventions")
-
 }
 
 kotlin {
     explicitApi()
 }
 
+tasks.test {
+    workingDir(rootProject.projectDir)
+    inputs.dir(rootProject.file(".data/cache/SERVER"))
+    inputs.file(rootProject.file(".data/gamevals-binary/gamevals.dat"))
+}
+
 dependencies {
-    implementation(libs.kotlin.inline.logger)
-    runtimeOnly(libs.logback.classic)
+    testImplementation(libs.kotlin.coroutines.core)
+    implementation(libs.bundles.logging)
     implementation(libs.fastutil)
     implementation(libs.guice)
     implementation(libs.kotlin.reflect)
@@ -27,7 +32,6 @@ dependencies {
     implementation(projects.api.route)
     implementation(projects.api.generated)
     implementation(projects.api.stats.levelmod)
-
 
     implementation(projects.api.utils.utilsFormat)
     implementation(projects.api.utils.utilsMap)

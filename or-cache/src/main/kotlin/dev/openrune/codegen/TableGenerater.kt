@@ -35,8 +35,6 @@ private const val OUT_TABLES_KT = "../api/generated/src/main/kotlin"
 
 private val cnameEnumTypeMap = ClassName("dev.openrune.types.enums", "EnumTypeMap")
 
-// region Models & naming (gameval / row wrapper)
-
 private val typeList = ClassName("kotlin.collections", "List")
 
 private val classNameDbColHelper = DbColHelper::class.asClassName()
@@ -85,9 +83,6 @@ data class TableDef(
     val columns: List<TableColumn>,
     val sourceTableId: Int,
 )
-
-// endregion
-// region Column sampling (infer optional columns, slot types, DBROW targets)
 
 private data class ColumnMetadata(
     val slotTypes: MutableMap<Int, VarType> = mutableMapOf(),
@@ -194,13 +189,22 @@ private fun dominantDbRowTable(
     return counts.filterValues { it == top }.keys.singleOrNull()?.let { tableIdToName[it] }
 }
 
-// endregion
-// region Cleanup, enum metadata, `row.*(%S, %T)` format helpers
+private fun clearGeneratedTableSources(root: File) {
+    if (!root.exists()) {
+        root.mkdirs()
+        return
+    }
+    check(root.isDirectory) { "Table output path is not a directory: ${root.absolutePath}" }
+    root
+        .walkBottomUp()
+        .filter { it.isFile && it.extension.equals("kt", ignoreCase = true) }
+        .forEach { it.delete() }
+    root
+        .walkBottomUp()
+        .filter { it.isDirectory && it != root && it.listFiles().isNullOrEmpty() }
+        .forEach { it.delete() }
+}
 
-/**
- * `row.$fn(%S, %T, …)` through closing `)`; [afterClose] appends e.g. `.map { … }` (use extra `%T`
- * for row type).
- */
 private fun rowWithCodecsFormat(fn: String, codecs: List<ClassName>, afterClose: String = ")") =
     "row.$fn(%S" + codecs.joinToString("") { ", %T" } + afterClose
 
@@ -225,17 +229,8 @@ private fun distinctEnumIdsInColumn(
 private fun templateEnumId(table: DBTableType?, columnId: Int): Int? =
     table?.columns?.get(columnId)?.values?.firstOrNull()?.asPositiveInt()
 
-// endregion
-// region Orchestration
-
-/** Tuple arities seen across all tables in one [startGeneration] run (written once at the end). */
 private val tupleAritiesGlobal = mutableSetOf<Int>()
 
-/**
- * Emits typed row wrappers under [OUT_TABLES_KT], rewriting only files whose content changed, then
- * writes `Tuples.kt` once with all tuple helpers used by any table, and deletes any leftover
- * `*.kt` from a prior run that wasn't regenerated (e.g. a removed dbtable).
- */
 fun startGeneration(
     elements: List<GameValElement>,
     rows: MutableMap<Int, DBRowType>,
@@ -288,7 +283,6 @@ fun startGeneration(
     tracker.pruneStale()
 }
 
-/** Writes one `*Row` file + companion for a single dbtable. */
 fun generateTable(
     def: TableDef,
     tracker: GeneratedFileTracker,
@@ -366,9 +360,6 @@ fun generateTable(
         .let(tracker::write)
 }
 
-// endregion
-// region Companion + tuple file
-
 private fun rowCompanion(
     rowType: ClassName,
     dbHelper: TypeName,
@@ -412,7 +403,6 @@ private fun rowCompanion(
         )
         .build()
 
-/** Builds `public val` properties on each row wrapper from column metadata. */
 private class RowPropertyCodegen(
     private val def: TableDef,
     private val row: TypeSpec.Builder,
@@ -537,7 +527,9 @@ private class RowPropertyCodegen(
         if (multi) {
             tupleAsLists += n
             val tupleT =
-                tupleClass.parameterizedBy(*slots.map { kotlinTypeForVarType(it, false) }.toTypedArray())
+                tupleClass.parameterizedBy(
+                    *slots.map { kotlinTypeForVarType(it, false) }.toTypedArray()
+                )
             addProp(
                 prop,
                 listType.parameterizedBy(tupleT),

@@ -29,6 +29,8 @@ import org.rsmod.game.interact.InteractionNpc
 import org.rsmod.game.interact.InteractionNpcOp
 import org.rsmod.game.interact.InteractionNpcT
 import org.rsmod.game.interact.InteractionObj
+import org.rsmod.game.interact.InteractionObjOp
+import org.rsmod.game.interact.InteractionObjT
 import org.rsmod.game.interact.InteractionPlayer
 import org.rsmod.game.interact.InteractionPlayerOp
 import org.rsmod.game.interact.InteractionPlayerT
@@ -134,14 +136,12 @@ constructor(
                     interacted = true
                 }
                 InteractionStep.TriggerEngineAp -> {
-                    /* no-op */
                 }
                 InteractionStep.TriggerEngineOp -> {
                     defaultMode()
                     interacted = true
                 }
                 InteractionStep.Continue -> {
-                    /* no-op */
                 }
             }
         }
@@ -168,7 +168,9 @@ constructor(
             is InteractionLocT -> triggerOp(this, interaction)
             is InteractionNpcOp -> triggerOp(this, interaction)
             is InteractionNpcT -> triggerOp(this, interaction)
-            is InteractionObj -> triggerOp(this, interaction)
+            is InteractionObjOp -> triggerOp(this, interaction)
+            is InteractionObjT -> {
+            }
             is InteractionPlayerOp -> triggerOp(this, interaction)
             is InteractionPlayerT -> triggerOp(this, interaction)
         }
@@ -179,7 +181,9 @@ constructor(
             is InteractionLocT -> triggerAp(this, interaction)
             is InteractionNpcOp -> triggerAp(this, interaction)
             is InteractionNpcT -> triggerAp(this, interaction)
-            is InteractionObj -> triggerAp(this, interaction)
+            is InteractionObjOp -> triggerAp(this, interaction)
+            is InteractionObjT -> {
+            }
             is InteractionPlayerOp -> triggerAp(this, interaction)
             is InteractionPlayerT -> triggerAp(this, interaction)
         }
@@ -203,7 +207,6 @@ constructor(
         walk(dest)
     }
 
-    /* Loc interactions */
     private fun Npc.preMovementStep(interaction: InteractionLoc): InteractionStep =
         Interactions.earlyStep(
             target = InteractionTarget.Static,
@@ -235,7 +238,6 @@ constructor(
             distance = interaction.apRange,
         )
 
-    /* Npc interactions */
     private fun Npc.preMovementStep(interaction: InteractionNpc): InteractionStep =
         Interactions.earlyStep(
             target = InteractionTarget.Pathing,
@@ -274,13 +276,12 @@ constructor(
     }
 
     private fun Npc.isUnderTarget(interaction: InteractionNpc): Boolean {
-        if (level != interaction.target.coords.level) {
+        if (level != interaction.target.level) {
             return false
         }
         return boundValidator.collides(avatar, interaction.target.avatar)
     }
 
-    /* Obj interactions */
     private fun Npc.preMovementStep(interaction: InteractionObj): InteractionStep =
         Interactions.earlyStep(
             target = InteractionTarget.Static,
@@ -311,7 +312,6 @@ constructor(
             distance = interaction.apRange,
         )
 
-    /* Player interactions */
     private fun Npc.preMovementStep(interaction: InteractionPlayer): InteractionStep =
         Interactions.earlyStep(
             target = InteractionTarget.Pathing,
@@ -349,20 +349,27 @@ constructor(
         return isWithinApRange
     }
 
+    /**
+     * Guard levels here: callers and planar distance helpers cannot safely represent a
+     * cross-plane target.
+     */
     private fun Npc.isUnderTarget(interaction: InteractionPlayer): Boolean {
-        if (level != interaction.target.coords.level) {
+        if (level != interaction.target.level) {
             return false
         }
         return boundValidator.collides(avatar, interaction.target.avatar)
     }
 
-    /* Utility functions */
+    // RayCastValidator requires matching planes; reject cross-plane targets before raycasting.
     private fun Npc.isValidApRange(
         target: CoordGrid,
         width: Int,
         length: Int,
         distance: Int,
     ): Boolean {
+        if (level != target.level) {
+            return false
+        }
         val withinDistance = isWithinDistance(target, distance, width, length)
         if (!withinDistance) {
             return false
@@ -438,7 +445,6 @@ constructor(
         return hasMovedThisCycle && !visType.giveChase
     }
 
-    /* Interaction event launch functions */
     public fun triggerOp(npc: Npc, interaction: InteractionLocOp) {
         val op = locInteractions.opTrigger(interaction.target, interaction.op)
         if (op != null) {
@@ -511,14 +517,14 @@ constructor(
         }
     }
 
-    private fun triggerOp(npc: Npc, interaction: InteractionObj) {
+    private fun triggerOp(npc: Npc, interaction: InteractionObjOp) {
         val op = objInteractions.opTrigger(interaction.target, interaction.op)
         if (op != null) {
             accessLauncher.launch(npc) { eventBus.publish(this, op) }
         }
     }
 
-    public fun triggerAp(npc: Npc, interaction: InteractionObj) {
+    public fun triggerAp(npc: Npc, interaction: InteractionObjOp) {
         val ap = objInteractions.apTrigger(interaction.target, interaction.op)
         if (ap != null) {
             accessLauncher.launch(npc) { eventBus.publish(this, ap) }

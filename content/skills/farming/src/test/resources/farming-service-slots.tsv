@@ -1,0 +1,10 @@
+0	rake	obj.rake	varbit.farming_tools_rake,varbit.farming_tools_extrarakes	100
+1	dibber	obj.dibber	varbit.farming_tools_dibber,varbit.farming_tools_extradibbers	100
+2	spade	obj.spade	varbit.farming_tools_spade,varbit.farming_tools_extraspades	100
+3	secateurs	obj.secateurs	varbit.farming_tools_secateurs,varbit.farming_tools_extrasecateurs	100
+4	trowel	obj.gardening_trowel	varbit.farming_tools_trowel,varbit.farming_tools_extratrowels	100
+5	bucket	obj.bucket_empty	varbit.farming_tools_buckets,varbit.farming_tools_extrabuckets,varbit.farming_tools_extra2buckets	1000
+6	compost	obj.bucket_compost	varbit.farming_tools_compost,varbit.farming_tools_extracompost	1000
+7	supercompost	obj.bucket_supercompost	varbit.farming_tools_supercompost,varbit.farming_tools_extrasupercompost	1000
+8	ultracompost	obj.bucket_ultracompost	varbit.farming_tools_ultracompost	1000
+9	plantcure	obj.plant_cure	varbit.farming_tools_plantcure	1000

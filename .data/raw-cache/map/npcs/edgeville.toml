@@ -114,7 +114,6 @@ coords = "0_48_54_50_27"
 npc = "npc.wilderness_capeseller_6"
 coords = "0_48_54_27_63"
 
-## Edgeville Bank
 
 [[spawn]]
 npc = "npc.banker1"
@@ -128,7 +127,6 @@ coords = "0_48_54_24_35"
 npc = "npc.banker2"
 coords = "0_48_54_24_36"
 
-## Edgeville Bank Tiling
 
 [[spawn]]
 npc = "npc.banker1"
@@ -138,13 +136,11 @@ coords = "0_48_54_26_36"
 npc = "npc.lost_property_merchant_combatty"
 coords = "0_48_54_18_38"
 
-## Edgeville Doris House
 
 [[spawn]]
 npc = "npc.hundred_dave_mum"
 coords = "0_48_54_7_36"
 
-## Edgeville General Store Floor
 
 [[spawn]]
 npc = "npc.generalassistant5"
@@ -158,7 +154,6 @@ coords = "0_48_54_8_55"
 npc = "npc.lost_property_merchant_standard"
 coords = "1_48_54_8_57"
 
-## Edgeville Guard Tower Floor
 
 [[spawn]]
 npc = "npc.guard1"
@@ -172,7 +167,6 @@ coords = "0_48_54_37_57"
 npc = "npc.slayer_master_7"
 coords = "0_48_54_37_60"
 
-## Edgeville Mans House Floor
 
 [[spawn]]
 npc = "npc.man"
@@ -198,7 +192,6 @@ coords = "0_48_54_20_54"
 npc = "npc.man3"
 coords = "0_48_54_25_52"
 
-## Edgeville Monastery
 
 [[spawn]]
 npc = "npc.abbot_langley"
@@ -248,7 +241,6 @@ coords = "1_47_54_44_40"
 npc = "npc.secret_ghost_mage"
 coords = "1_47_54_44_42"
 
-## Edgeville Path Overlay
 
 [[spawn]]
 npc = "npc.guard1_f"
@@ -261,6 +253,3 @@ coords = "0_48_54_49_61"
 [[spawn]]
 npc = "npc.man3"
 coords = "0_48_54_29_53"
-
-## Edgeville Path Overlay End
-

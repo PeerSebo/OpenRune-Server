@@ -1,0 +1,5 @@
+[[varp]]
+isServerOnly = true
+id = "varp.lootingbag_bank_panel"
+scope = "Temp"
+transmit = "Never"

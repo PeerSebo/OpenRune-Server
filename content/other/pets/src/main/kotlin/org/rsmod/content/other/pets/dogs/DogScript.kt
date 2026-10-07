@@ -63,8 +63,13 @@ constructor(private val followers: PetFollowers, private val care: DogCare) : Pl
         if (!followers.requireOwned(this, npc)) {
             return
         }
-        npc.say(if (dog.puppy) "Yip!" else "Woof!")
-        mes("You pet your ${dog.breed.name.lowercase()}${if (dog.puppy) " puppy" else ""}.")
+        anim("seq.human_pickupfloor")
+        say(if (dog.puppy) "Who's a good little puppy?" else "Who's a good dog?")
+        npc.say("Arf arf!")
+        soundSynth("synth.BARKLIKE")
+        if (dog.puppy) {
+            soundSynth("synth.dogq_puppy_pet")
+        }
     }
 
     private suspend fun ProtectedAccess.interact(npc: Npc, dog: DogForm) {
@@ -72,9 +77,31 @@ constructor(private val followers: PetFollowers, private val care: DogCare) : Pl
             return
         }
         var option = 0
-        startDialogue(npc) { option = choice2("Guess age", 1, "Cancel", 2, title = "Interact with puppy") }
-        if (option == 1) {
-            guessAge(npc)
+        startDialogue(npc) {
+            option = choice3("Pet.", 1, "Guess age.", 2, "Release.", 3, title = "Interact with puppy")
+        }
+        when (option) {
+            1 -> pet(npc, dog)
+            2 -> guessAge(npc)
+            3 -> release(npc)
+        }
+    }
+
+    private suspend fun ProtectedAccess.release(npc: Npc) {
+        var confirmed = false
+        startDialogue(npc) {
+            mesbox("Are you sure you want to release your puppy?")
+            confirmed = choice2("No.", false, "Yes.", true)
+            if (!confirmed) {
+                return@startDialogue
+            }
+            chatPlayer(sad, "I'm sorry buddy, but we need to part ways.")
+            chatNpc(sad, "Arf?")
+            chatPlayer(sad, "You can make your way back to the shelter, right?")
+        }
+        if (confirmed && followers.requireOwned(this, npc)) {
+            followers.dismiss(player)
+            mes("Your puppy has run away.")
         }
     }
 
@@ -83,9 +110,11 @@ constructor(private val followers: PetFollowers, private val care: DogCare) : Pl
         val left = care.ticksUntilAdult(player).ticksToMinutes()
         val paused = if (care.isGrowthPaused(player)) " It isn't growing at the moment because it's hungry." else ""
         startDialogue(npc) {
+            chatPlayer(quiz, "I wonder how old you are...")
             mesbox(
-                "Your puppy has been growing for ${age.minutesAsText()}. Approximate time until fully grown: " +
-                    "${left.minutesAsText()}, assuming you keep it fed.$paused",
+                "After taking a good look at your puppy, you estimate their age is " +
+                    "<col=ef1020>${age.minutesAsText()}</col>. They will grow into a dog in " +
+                    "<col=ef1020>${left.minutesAsText()}</col>, assuming you keep feeding them.$paused",
             )
         }
     }

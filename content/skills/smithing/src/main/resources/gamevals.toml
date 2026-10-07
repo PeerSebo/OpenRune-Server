@@ -1,3 +1,6 @@
+[gamevals.varp]
+smithing_ring_of_forging_used=65486
+
 [gamevals.queue]
 smithing_cannonball_smelt=65524
 smithing_crystal_singing=65529
@@ -13,6 +16,8 @@ smithing_cannon_balls=65526
 smithing_bars=65525
 
 [gamevals.dbrow]
+
+dragon_sq_shield=70000
 
 bow_of_faerdhinen_charged=65346
 blade_of_saeldor_charged=65345

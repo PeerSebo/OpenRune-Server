@@ -1,4 +1,3 @@
-## Woodcutting Guild ents
 
 [[spawn]]
 npc = "npc.wcguild_ent"
@@ -95,4 +94,3 @@ coords = "0_24_154_56_12"
 [[spawn]]
 npc = "npc.wcguild_kai"
 coords = "0_24_154_57_44"
-

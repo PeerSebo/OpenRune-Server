@@ -190,7 +190,6 @@ coords = "0_24_51_43_41"
 obj = "obj.woodplank"
 coords = "0_24_51_47_51"
 
-## Aldarin
 
 [[spawn]]
 obj = "obj.bones"
@@ -312,13 +311,11 @@ coords = "0_21_46_32_16"
 obj = "obj.vial_empty"
 coords = "0_21_45_49_37"
 
-## Aldarin Wood Floor Interior
 
 [[spawn]]
 obj = "obj.leather_gloves"
 coords = "1_21_46_10_21"
 
-## Auburnvale
 
 [[spawn]]
 obj = "obj.beer"
@@ -388,13 +385,11 @@ coords = "0_20_51_46_54"
 obj = "obj.tinderbox"
 coords = "0_20_51_47_55"
 
-## Chouani
 
 [[spawn]]
 obj = "obj.needle"
 coords = "0_21_52_24_30"
 
-## Colossal Wyrm Agility Course
 
 [[spawn]]
 obj = "obj.big_bones"
@@ -476,13 +471,11 @@ coords = "0_25_45_36_42"
 obj = "obj.woodplank"
 coords = "0_25_45_40_47"
 
-## Fortis Blacksmith
 
 [[spawn]]
 obj = "obj.chisel"
 coords = "0_25_49_57_6"
 
-## Fortis General Store
 
 [[spawn]]
 obj = "obj.bowl_water"
@@ -496,13 +489,11 @@ coords = "0_26_48_3_52"
 obj = "obj.pot_empty"
 coords = "0_26_48_2_52"
 
-## Gloomthorn Trail
 
 [[spawn]]
 obj = "obj.iron_dagger"
 coords = "0_21_50_41_17"
 
-## Hunter Guild Surface
 
 [[spawn]]
 obj = "obj.bucket_water"
@@ -529,19 +520,16 @@ count = 2
 obj = "obj.needle"
 coords = "0_24_47_30_27"
 
-## Lunami's Axe Shop
 
 [[spawn]]
 obj = "obj.hammer"
 coords = "0_21_52_55_13"
 
-## Mistrock Mining Supplies
 
 [[spawn]]
 obj = "obj.hammer"
 coords = "0_21_44_57_50"
 
-## Overseer Khougo
 
 [[spawn]]
 obj = "obj.beer"
@@ -555,13 +543,11 @@ coords = "0_21_44_48_44"
 obj = "obj.pot_empty"
 coords = "1_21_44_47_43"
 
-## Proudspire
 
 [[spawn]]
 obj = "obj.bronze_axe"
 coords = "0_24_51_46_9"
 
-## Quetzacalli Gorge
 
 [[spawn]]
 obj = "obj.bucket_water"
@@ -587,13 +573,11 @@ coords = "0_23_50_25_54"
 obj = "obj.thread"
 coords = "0_23_50_27_51"
 
-## Quetzacalli Gorge General Store
 
 [[spawn]]
 obj = "obj.iron_dagger"
 coords = "1_23_50_47_25"
 
-## Salius' Armour Shop
 
 [[spawn]]
 obj = "obj.bronze_bar"
@@ -603,7 +587,6 @@ coords = "0_25_51_20_28"
 obj = "obj.logs"
 coords = "0_25_51_19_28"
 
-## Salvager Overlook General Store
 
 [[spawn]]
 obj = "obj.sack_cabbage_2"
@@ -613,7 +596,6 @@ coords = "0_25_51_25_24"
 obj = "obj.tinderbox"
 coords = "0_25_51_25_23"
 
-## Shields of Mistrock
 
 [[spawn]]
 obj = "obj.bucket_water"
@@ -623,7 +605,6 @@ coords = "1_21_44_44_50"
 obj = "obj.logs"
 coords = "1_21_44_44_53"
 
-## Southern Varlamore
 
 [[spawn]]
 obj = "obj.ashes"
@@ -1213,7 +1194,6 @@ coords = "0_25_46_19_13"
 obj = "obj.woodplank"
 coords = "0_27_49_17_45"
 
-## Spike's Spikes
 
 [[spawn]]
 obj = "obj.hammer"
@@ -1223,13 +1203,11 @@ coords = "0_27_47_45_52"
 obj = "obj.iron_mace"
 coords = "0_27_47_48_52"
 
-## Sunlight's Sanctum
 
 [[spawn]]
 obj = "obj.jug_wine"
 coords = "1_21_45_32_45"
 
-## Tal Teklan - Indoors above ground floor
 
 [[spawn]]
 obj = "obj.chichilihui_rose"
@@ -1239,7 +1217,6 @@ coords = "2_18_48_46_39"
 obj = "obj.pot_empty"
 coords = "1_19_48_27_39"
 
-## Tal Teklan - Indoors ground level
 
 [[spawn]]
 obj = "obj.bowl_empty"
@@ -1265,13 +1242,11 @@ coords = "0_18_48_55_36"
 obj = "obj.poh_saw"
 coords = "0_18_48_60_21"
 
-## The Stranglewood
 
 [[spawn]]
 obj = "obj.iron_scimitar"
 coords = "0_17_52_10_11"
 
-## Twilight Temple Main Floor
 
 [[spawn]]
 obj = "obj.bread"
@@ -1289,7 +1264,6 @@ coords = "0_26_51_36_8"
 obj = "obj.jug_water"
 coords = "0_26_50_3_49"
 
-## Varlamore - Tlati Rainforest
 
 [[spawn]]
 obj = "obj.airrune"
@@ -1406,7 +1380,6 @@ coords = "0_19_48_19_2"
 obj = "obj.woodplank"
 coords = "0_19_48_22_4"
 
-## Varlamore Snowy Mountains Lower
 
 [[spawn]]
 obj = "obj.bronze_dagger"
@@ -1420,7 +1393,6 @@ coords = "0_22_49_12_50"
 obj = "obj.knife"
 coords = "0_24_51_51_13"
 
-## Varlamore Snowy Mountains Upper
 
 [[spawn]]
 obj = "obj.bronze_pickaxe"
@@ -1446,7 +1418,6 @@ coords = "1_22_49_40_59"
 obj = "obj.papyrus"
 coords = "0_22_49_44_57"
 
-## Varlamore Temple Crypt
 
 [[spawn]]
 obj = "obj.bucket_empty"
@@ -1455,6 +1426,3 @@ coords = "0_25_149_21_30"
 [[spawn]]
 obj = "obj.bucket_empty"
 coords = "0_25_149_48_41"
-
-## Varlamore Temple Crypt End
-

@@ -49,7 +49,7 @@ public val spiritualMageDropTable: RSDropTable<Player, DropRollItem> = RSDropTab
     },
     tertiaries = rsPlayerTertiaryTable {
         1 outOf 1 weight "obj.trail_clue_master" count 1 condition { player ->
-            // Drops Need Manual: Master clue scrolls and reward caskets are only dropped when completing a master clue scroll asking you to kill a spiritual mage.
+            // TODO: Master clue scrolls and reward caskets are only dropped when completing a master clue scroll asking you to kill a spiritual mage.
              true
         }
         1 outOf 1 weight "obj.trail_reward_casket_master" count 1

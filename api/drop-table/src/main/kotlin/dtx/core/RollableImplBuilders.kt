@@ -1,6 +1,6 @@
 package dtx.core
 
-public open class SingleRollableBuilder<T, R>: AbstractRollableBuilder<
+public open class SingleRollableBuilder<T, R> : AbstractRollableBuilder<
     T,
     R,
     Rollable<T, R>,
@@ -31,7 +31,7 @@ public fun <T, R> singleRollable(block: SingleRollableBuilder<T, R>.() -> Unit):
     return builder.build()
 }
 
-public open class CollectionRollableBuilder<T, R>: SingleRollableBuilder<T, R>() {
+public open class CollectionRollableBuilder<T, R> : SingleRollableBuilder<T, R>() {
 
     init {
         construct { hooks: RollableHooks<T, R> ->
@@ -46,7 +46,7 @@ public open class CollectionRollableBuilder<T, R>: SingleRollableBuilder<T, R>()
     protected val collection: MutableList<Rollable<T, R>> = mutableListOf()
 
     public enum class RollableType {
-        Any, All;
+        Any, All
     }
 
     public lateinit var rollableType: RollableType

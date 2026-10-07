@@ -5,6 +5,8 @@ import dev.openrune.types.aconverted.interf.IfButtonOp
 import dev.openrune.types.aconverted.interf.IfSubType
 import jakarta.inject.Inject
 import org.rsmod.api.config.constants
+import org.rsmod.api.player.hook.PlayerRestrictions
+import org.rsmod.api.player.hook.RestrictedAction
 import org.rsmod.api.player.output.mes
 import org.rsmod.api.player.overheadProtectionPrayerVarbits
 import org.rsmod.api.player.overheadsLocked
@@ -40,6 +42,7 @@ constructor(
     private val repo: PrayerRepository,
     private val eventBus: EventBus,
     private val protectedAccess: ProtectedAccessLauncher,
+    private val restrictions: PlayerRestrictions,
 ) : PluginScript() {
     override fun ScriptContext.startup() {
         onPlayerLogin { player.disableQuickPrayers() }
@@ -85,6 +88,13 @@ constructor(
     }
 
     private fun ProtectedAccess.enableQuickPrayers() {
+        val restriction = restrictions.check(player, RestrictedAction.Prayer)
+        if (restriction != null) {
+            mes(restriction)
+            player.resyncVar("varbit.quickprayer_active")
+            return
+        }
+
         val quickPrayerVars = vars["varbit.quickprayer_selected"]
 
         if (quickPrayerVars == 0) {
@@ -100,23 +110,17 @@ constructor(
         }
 
         val quickPrayers = repo.toPrayerList(quickPrayerVars)
-        val lockedProtection =
-            player.overheadsLocked &&
-                quickPrayers.any { it.enabled in overheadProtectionPrayerVarbits }
-        val grantedPrayers =
-            if (lockedProtection) {
-                quickPrayers.filter { it.enabled !in overheadProtectionPrayerVarbits }
-            } else {
-                quickPrayers
-            }
-
+        val grantedPrayers = if (player.overheadsLocked) {
+            quickPrayers.filter { it.enabled !in overheadProtectionPrayerVarbits }
+        } else {
+            quickPrayers
+        }
         if (grantedPrayers.isEmpty()) {
             mes("You've been injured and can't use protection prayers!")
-            soundSynth("synth.prayer_disable")
+            soundSynth("synth.CANCEL_PRAYER")
             player.resyncVar("varbit.quickprayer_active")
             return
         }
-
         val enabledPrayers = repo.toPrayerList(vars["varbit.prayer_allactive"])
         for (prayer in enabledPrayers) {
             disablePrayerStatRegen(prayer)
@@ -133,9 +137,9 @@ constructor(
                 player.overheadIcon = prayer.overhead
             }
         }
-        if (lockedProtection) {
+        if (grantedPrayers.size < quickPrayers.size) {
             mes("You've been injured and can't use protection prayers!")
-            soundSynth("synth.prayer_disable")
+            soundSynth("synth.CANCEL_PRAYER")
         }
         enablePrayerDrain()
     }
@@ -149,7 +153,7 @@ constructor(
         disableOverhead()
         vars["varbit.prayer_allactive"] = 0
         vars["varbit.quickprayer_active"] = 0
-        soundSynth("synth.prayer_disable")
+        soundSynth("synth.CANCEL_PRAYER")
     }
 
     private fun ProtectedAccess.disableOverhead() {

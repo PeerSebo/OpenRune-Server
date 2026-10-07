@@ -12,12 +12,11 @@ import org.rsmod.api.script.onPlayerQueueWithArgs
 import org.rsmod.api.script.onPlayerSoftTimer
 import org.rsmod.content.skills.openSkillMulti
 import org.rsmod.content.skills.skillMulti
+import org.rsmod.content.skills.skillSuccess
 import org.rsmod.game.entity.Player
 import org.rsmod.game.inv.Inventory
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
-import skillSuccess
-
 
 private enum class WineKind {
     Normal,
@@ -171,16 +170,15 @@ class WineEvents @Inject constructor() : PluginScript() {
         }
     }
 
-    /**
-     * Soft timers are not cleared by [org.rsmod.api.player.ui.ifClose], unlike weak queues, so
-     * fermentation still completes while interfaces open or other actions run.
-     */
+    // Use a soft timer so fermentation survives interface closure.
     private fun Player.onWineFermentTimer() {
         clearSoftTimer("timer.cooking_wine_ferment")
         fermentAllUnfermented(
             unfermented = "obj.jug_unfermented_wine",
             product = "obj.jug_wine",
             noFailLevel = 68,
+            low = 48,
+            high = 352,
         )
     }
 
@@ -189,15 +187,19 @@ class WineEvents @Inject constructor() : PluginScript() {
         fermentAllUnfermented(
             unfermented = "obj.jug_unfermented_zamorak_wine",
             product = "obj.wine_of_zamorak",
-            noFailLevel = 75,
+            noFailLevel = 98,
+            low = -125,
+            high = 260,
         )
     }
 
-    /**
-     * When fermentation completes, every matching unfermented jug in the inventory and bank is
-     * resolved. Success rolls use the player's Cooking level at completion time.
-     */
-    private fun Player.fermentAllUnfermented(unfermented: String, product: String, noFailLevel: Int) {
+    private fun Player.fermentAllUnfermented(
+        unfermented: String,
+        product: String,
+        noFailLevel: Int,
+        low: Int,
+        high: Int,
+    ) {
         val packInv = inv
         val bankInv = invMap.getOrPut("inv.bank")
 
@@ -209,7 +211,7 @@ class WineEvents @Inject constructor() : PluginScript() {
         var successes = 0
         var failures = 0
 
-        fun rollSuccess(): Boolean = level >= noFailLevel || skillSuccess(50, 256, level)
+        fun rollSuccess(): Boolean = level >= noFailLevel || skillSuccess(low, high, level)
 
         fun processContainer(container: Inventory) {
             val eligible = container.count(unfermented)

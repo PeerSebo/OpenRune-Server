@@ -1,5 +1,5 @@
 [gamevals.varp]
-windmill_state = 63600
+windmill_state = 65001
 
 [gamevals.varbit]
-windmill_hopper_grain = 63600
+windmill_hopper_grain = 65001

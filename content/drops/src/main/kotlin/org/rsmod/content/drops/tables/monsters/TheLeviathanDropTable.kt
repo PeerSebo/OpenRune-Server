@@ -54,7 +54,7 @@ public val theLeviathanDropTable: RSDropTable<Player, DropRollItem> = RSDropTabl
             1 weight "obj.virtus_legs" count 1
         }
         1 outOf 26 separate "obj.leviathan_tablet" count 1 condition { player ->
-            // Drops Need Manual: The scarred tablet will become more common at an unknown rate as kill count increases until the first drop is received. Afterwards, the item will no longer be dropped.
+            // TODO: The scarred tablet will become more common at an unknown rate as kill count increases until the first drop is received. Afterwards, the item will no longer be dropped.
              true
         }
         1 outOf 54 separate "obj.dt2_awakeners_orb" count 1

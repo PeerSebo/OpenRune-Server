@@ -1,3 +1,16 @@
+# Legacy open containers use Search/Shut at op2/op3, unlike modern op1/op2 leaves.
+
+[gamevals.content]
+water_source = 65516
+searchable_scenery = 83
+opened_chest = 84
+locked_chest = 85
+
+[gamevals.queue]
+water_fill = 120
+# Follows the two travel landing queues; absent from native and authored queue tables.
+wilderness_lever_land = 2002
+
 [gamevals.dbtable]
 pickable_objects=65529
 
@@ -17,9 +30,3 @@ pickable_redberry=65350
 pickable_sweetcorn_1=65349
 pickable_sweetcorn_2=65348
 wheat=65347
-
-[gamevals.content]
-water_source = 65516
-
-[gamevals.synth]
-drawer_open = 64

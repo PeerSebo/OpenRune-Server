@@ -3,7 +3,6 @@ package org.rsmod.content.other.special.attacks.ranged
 import dev.openrune.rscm.RSCM
 import dev.openrune.rscm.RSCMType
 import dev.openrune.types.ItemServerType
-import dev.openrune.types.aconverted.SpotanimType
 import jakarta.inject.Inject
 import org.rsmod.api.combat.commons.CombatAttack
 import org.rsmod.api.combat.manager.RangedAmmoManager
@@ -59,7 +58,6 @@ class DarkBowSpecialAttack @Inject constructor(private val ammunition: RangedAmm
                 return false
             }
 
-            // All valid ammunition requires a `proj_travel` param to build the projectiles.
             val travelSpotanim = quiverType?.paramOrNull(params.proj_travel)
             if (travelSpotanim == null) {
                 manager.stopCombat(this)
@@ -92,15 +90,22 @@ class DarkBowSpecialAttack @Inject constructor(private val ammunition: RangedAmm
             quiverType: ItemServerType,
             travelSpot: String,
         ) {
-            val launchSpot = quiverType.paramOrNull(params.proj_launch_double)
+            // Broad and ogre arrows carry no double-launch graphic; fall back to the single one.
+            val launchSpot =
+                quiverType.paramOrNull(params.proj_launch_double)
+                    ?: quiverType.paramOrNull(params.proj_launch)
             anim("seq.human_bow")
-            soundSynth("synth.darkbow_doublefire")
-            soundSynth("synth.darkbow_shadow_attack")
-            spotanim(RSCM.getReverseMapping(RSCMType.SPOTANIM,launchSpot!!.id), height = 96, slot = constants.spotanim_slot_combat)
+            soundSynth("synth.DARKBOW_DOUBLEFIRE")
+            soundSynth("synth.DARKBOW_SHADOW_ATTACK")
+            spotanim(
+                launchSpot?.let { RSCM.getReverseMapping(RSCMType.SPOTANIM, it.id) },
+                height = 96,
+                slot = constants.spotanim_slot_combat,
+            )
 
             val descentTravel = "spotanim.darkbow_generic_smoke_arrow_flight"
             val descentImpact = "spotanim.darkbow_smoke_arrow_impact"
-            val impactSynth = "synth.darkbow_shadow_impact"
+            val impactSynth = "synth.DARKBOW_SHADOW_IMPACT"
 
             manager.spawnProjectile(this, target, descentTravel, "projanim.doublearrow_one")
             val proj1 = manager.spawnProjectile(this, target, travelSpot, "projanim.doublearrow_one")
@@ -115,7 +120,7 @@ class DarkBowSpecialAttack @Inject constructor(private val ammunition: RangedAmm
             target.spotanim(descentImpact, height = 96, delay = clientDelay2)
 
             val damage =
-                calculateDamage(target, attack, damageRange = 5..Int.MAX_VALUE, multiplier = 1.3)
+                calculateDamage(target, attack, damageRange = 5..48, multiplier = 1.3)
             val hitDelay1 = proj1.serverCycles
             val hitDelay2 = proj2.serverCycles
 
@@ -150,15 +155,22 @@ class DarkBowSpecialAttack @Inject constructor(private val ammunition: RangedAmm
             quiverType: ItemServerType,
             travelSpot: String,
         ) {
-            val launchSpot = quiverType.paramOrNull(params.proj_launch_double)
+            // Broad and ogre arrows carry no double-launch graphic; fall back to the single one.
+            val launchSpot =
+                quiverType.paramOrNull(params.proj_launch_double)
+                    ?: quiverType.paramOrNull(params.proj_launch)
             anim("seq.human_bow")
-            soundSynth("synth.darkbow_doublefire")
-            soundSynth("synth.darkbow_dragon_attack")
-            spotanim(RSCM.getReverseMapping(RSCMType.SPOTANIM,launchSpot!!.id), height = 96, slot = constants.spotanim_slot_combat)
+            soundSynth("synth.DARKBOW_DOUBLEFIRE")
+            soundSynth("synth.DARKBOW_DRAGON_ATTACK")
+            spotanim(
+                launchSpot?.let { RSCM.getReverseMapping(RSCMType.SPOTANIM, it.id) },
+                height = 96,
+                slot = constants.spotanim_slot_combat,
+            )
 
             val descentTravel = "spotanim.darkbow_dragon_head_flying_projanim"
             val descentImpact = "spotanim.darkbow_dragon_head_flying_impact_anim"
-            val impactSynth = "synth.darkbow_shadow_impact"
+            val impactSynth = "synth.DARKBOW_SHADOW_IMPACT"
 
             manager.spawnProjectile(this, target, descentTravel, "projanim.doublearrow_one")
             val proj1 = manager.spawnProjectile(this, target, travelSpot, "projanim.doublearrow_one")
@@ -226,8 +238,8 @@ class DarkBowSpecialAttack @Inject constructor(private val ammunition: RangedAmm
                     multiplier = multiplier,
                     boltSpecDamage = 0,
                 )
-            val first = if (!accuracySuccess()) 0 else random.of(0..damage).coerceIn(damageRange)
-            val second = if (!accuracySuccess()) 0 else random.of(0..damage).coerceIn(damageRange)
+            val first = (if (accuracySuccess()) random.of(0..damage) else 0).coerceIn(damageRange)
+            val second = (if (accuracySuccess()) random.of(0..damage) else 0).coerceIn(damageRange)
             return DescentHit(first, second)
         }
 

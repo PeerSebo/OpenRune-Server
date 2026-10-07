@@ -24,18 +24,6 @@ inherit = "npc.hw18_boy"
 moveRestrict = "Indoors"
 
 [[npc]]
-id = "npc.makeover_mage"
-inherit = "npc.makeover_mage"
-moveRestrict = "Indoors"
-timer = 17
-
-[[npc]]
-id = "npc.makeover_mage_female"
-inherit = "npc.makeover_mage_female"
-moveRestrict = "Indoors"
-timer = 17
-
-[[npc]]
 id = "npc.generalshopkeeper6"
 inherit = "npc.generalshopkeeper6"
 moveRestrict = "Indoors"

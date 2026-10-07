@@ -8,23 +8,19 @@ import org.rsmod.api.npc.events.AiTimerEvents
 import org.rsmod.api.npc.events.interact.AiPlayerEvents
 import org.rsmod.plugin.scripts.ScriptContext
 
-/* Timer functions */
 public fun ScriptContext.onAiTimer(
     type: NpcServerType,
     action: AiTimerEvents.Type.() -> Unit,
 ): Unit = onEvent(type.id, action)
 
-public fun ScriptContext.onAiTimer(
-    internal: String,
-    action: AiTimerEvents.Type.() -> Unit,
-): Unit = onEvent(internal.asRSCM(RSCMType.NPC), action)
+public fun ScriptContext.onAiTimer(internal: String, action: AiTimerEvents.Type.() -> Unit): Unit =
+    onEvent(internal.asRSCM(RSCMType.NPC), action)
 
 public fun ScriptContext.onAiContentTimer(
     content: String,
     action: AiTimerEvents.Content.() -> Unit,
 ): Unit = onEvent(content.asRSCM(RSCMType.CONTENT), action)
 
-/* Player op functions */
 public fun ScriptContext.onAiOpPlayer1(
     npc: NpcServerType,
     action: suspend StandardNpcAccess.(AiPlayerEvents.Op1) -> Unit,
@@ -50,7 +46,6 @@ public fun ScriptContext.onAiOpPlayer5(
     action: suspend StandardNpcAccess.(AiPlayerEvents.Op5) -> Unit,
 ): Unit = onNpcAccessEvent(npc.id, action)
 
-/* Player ap functions */
 public fun ScriptContext.onAiApPlayer1(
     npc: NpcServerType,
     action: suspend StandardNpcAccess.(AiPlayerEvents.Ap1) -> Unit,

@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class BoundsDocTest {
-    /** @see [Bounds] */
     @Test
     fun `validate Example Usage code`() {
         val bounds1 = Bounds(x = 3200, z = 3200, level = 0, width = 2, length = 3)

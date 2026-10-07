@@ -2,15 +2,13 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
 import org.rsmod.api.droptable.rsPlayerGuaranteedTable
+import org.rsmod.api.droptable.rsPlayerPrerollTable
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.api.droptable.rsPlayerPrerollTable
-import org.rsmod.api.droptable.dropRollable
-import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.api.droptable.RegisterDropTable
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -24,7 +22,7 @@ public val brandaTheFireQueenDropTable: RSDropTable<Player, DropRollItem> = RSDr
     preRoll = rsPlayerPrerollTable {
         1 outOf 75 weight "obj.twinflame_piece_2" count 1
         1 outOf 75 weight "obj.mystic_vigour_prayer_scroll" count 1 condition { player ->
-            // Drops Need Manual: No longer dropped after reading the scroll.
+            // TODO: No longer dropped after reading the scroll.
              true
         }
         1 outOf 16 weight "obj.giantsoul_amulet_charged" count 1
@@ -62,7 +60,7 @@ public val brandaTheFireQueenDropTable: RSDropTable<Player, DropRollItem> = RSDr
         2 weight "obj.desiccated_page" count 6..24
     },
     tertiaries = rsPlayerTertiaryTable {
-        // Drops Need Manual (rate): Sacrificing loot doubles the pet drop rate.
+        // TODO: Sacrificing loot doubles the pet drop rate.
         1 outOf 3000 weight "obj.rtbrandapet" count 1
         1 outOf 23 weight "obj.trail_clue_hard_map001" count 1 transformObj { player ->
              player.clueScrollTransformObj("obj.trail_clue_hard_map001")

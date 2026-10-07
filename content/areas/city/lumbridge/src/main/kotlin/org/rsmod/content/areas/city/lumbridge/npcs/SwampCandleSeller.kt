@@ -1,5 +1,8 @@
 package org.rsmod.content.areas.city.lumbridge.npcs
 
+import dev.openrune.rscm.RSCM.asRSCM
+import org.rsmod.api.invtx.invTransaction
+import org.rsmod.api.invtx.select
 import org.rsmod.api.player.dialogue.Dialogue
 import org.rsmod.api.player.vars.intVarBit
 import org.rsmod.api.script.onOpNpc1
@@ -124,8 +127,15 @@ class SwampCandleSeller : PluginScript() {
             chatNpc(neutral, "Well then, no candle for you!")
             return
         }
-        access.invDel(access.inv, COINS, PRICE)
-        access.invAdd(access.inv, CANDLE)
+        val sale = player.invTransaction(access.inv) {
+            val inventory = select(access.inv)
+            delete { from = inventory; obj = COINS.asRSCM(); strictCount = PRICE }
+            insert { into = inventory; obj = CANDLE.asRSCM(); strictCount = 1 }
+        }
+        if (!sale.success) {
+            chatNpc(neutral, "You'll need some room to carry the candle.")
+            return
+        }
         chatNpc(neutral, "Here you go then.")
         chatNpc(
             neutral,

@@ -1,8 +1,4 @@
 [[spawn]]
-obj = "obj.bronze_axe"
-coords = "0_48_50_25_39"
-
-[[spawn]]
 obj = "obj.logs"
 coords = "0_48_51_17_1"
 
@@ -10,7 +6,6 @@ coords = "0_48_51_17_1"
 obj = "obj.logs"
 coords = "0_48_51_17_2"
 
-## Draynor Aggies House
 
 [[spawn]]
 obj = "obj.cheese"
@@ -20,17 +15,12 @@ coords = "0_48_50_11_60"
 obj = "obj.tomato"
 coords = "0_48_50_13_61"
 
-## Draynor Manor Basement
 
 [[spawn]]
 obj = "obj.oil_can"
 coords = "0_48_152_20_27"
 
-## Draynor Manor Crypt
 
 [[spawn]]
 obj = "obj.bronze_med_helm"
 coords = "0_48_152_5_50"
-
-## Draynor Manor Crypt End
-

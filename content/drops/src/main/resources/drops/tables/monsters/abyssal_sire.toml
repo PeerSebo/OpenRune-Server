@@ -1,3 +1,5 @@
+# TODO: Brimstone keys are dropped if killed on a Slayer task given by Konar quo Maten.
+
 id = "Abyssal Sire Drops"
 npcs = ["npc.abyssalsire_sire_stasis_sleeping", "npc.abyssalsire_sire_stasis_awake", "npc.abyssalsire_sire_stasis_stunned", "npc.abyssalsire_sire_puppet", "npc.abyssalsire_sire_wandering", "npc.abyssalsire_sire_panicking", "npc.abyssalsire_sire_apocalypse"]
 brimstone_key_roll = true
@@ -204,7 +206,3 @@ denominator = 171
 obj = "obj.trail_elite_emote_exp1"
 count = 1
 clue_scroll_box = true
-
-
-# Main table pool padding uses a nothing roll (F2P drops removed and/or subtable access missing from wiki parse) (13 weight)
-# Drops need manual (konar_key): Brimstone keys are dropped if killed on a Slayer task given by Konar quo Maten.

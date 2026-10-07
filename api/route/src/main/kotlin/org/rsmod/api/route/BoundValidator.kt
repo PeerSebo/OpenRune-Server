@@ -12,9 +12,15 @@ import org.rsmod.routefinder.loc.LocShapeConstants
 import org.rsmod.routefinder.reach.ReachStrategy
 import org.rsmod.routefinder.reach.RectangularBounds
 
+/**
+ * Reject cross-plane reach checks before planar distance/raycast helpers. Bounds calculations
+ * must include the full entity footprint.
+ */
 public class BoundValidator @Inject constructor(private val flags: CollisionFlagMap) {
     public fun touches(source: PathingEntityAvatar, target: PathingEntityAvatar): Boolean {
-        assertLevels(source.coords, target.coords)
+        if (!sameLevel(source.coords, target.coords)) {
+            return false
+        }
         return ReachStrategy.reachExclusiveRectangle(
             flags = flags,
             level = source.coords.level,
@@ -29,7 +35,9 @@ public class BoundValidator @Inject constructor(private val flags: CollisionFlag
     }
 
     public fun touches(source: PathingEntityAvatar, target: BoundLocInfo): Boolean {
-        assertLevels(source.coords, target.coords)
+        if (!sameLevel(source.coords, target.coords)) {
+            return false
+        }
         return ReachStrategy.reached(
             flags = flags,
             level = source.coords.level,
@@ -47,7 +55,9 @@ public class BoundValidator @Inject constructor(private val flags: CollisionFlag
     }
 
     public fun collides(source: PathingEntityAvatar, target: PathingEntityAvatar): Boolean {
-        assertLevels(source.coords, target.coords)
+        if (!sameLevel(source.coords, target.coords)) {
+            return false
+        }
         return RectangularBounds.collides(
             srcX = source.coords.x,
             srcZ = source.coords.z,
@@ -61,7 +71,9 @@ public class BoundValidator @Inject constructor(private val flags: CollisionFlag
     }
 
     public fun collides(source: PathingEntityAvatar, target: BoundLocInfo): Boolean {
-        assertLevels(source.coords, target.coords)
+        if (!sameLevel(source.coords, target.coords)) {
+            return false
+        }
         return RectangularBounds.collides(
             srcX = source.coords.x,
             srcZ = source.coords.z,
@@ -87,7 +99,9 @@ public class BoundValidator @Inject constructor(private val flags: CollisionFlag
     ): Boolean = touches(source, BoundLocInfo(target, type))
 
     public fun touches(source: PathingEntityAvatar, target: Obj): Boolean {
-        assertLevels(source.coords, target.coords)
+        if (!sameLevel(source.coords, target.coords)) {
+            return false
+        }
         return ReachStrategy.reached(
             flags = flags,
             level = source.coords.level,
@@ -104,10 +118,7 @@ public class BoundValidator @Inject constructor(private val flags: CollisionFlag
 
     private companion object {
         @Suppress("NOTHING_TO_INLINE")
-        private inline fun assertLevels(source: CoordGrid, target: CoordGrid) {
-            require(source.level == target.level) {
-                "`source` and `target` must be on same level. (source=$source, target=$target)"
-            }
-        }
+        private inline fun sameLevel(source: CoordGrid, target: CoordGrid): Boolean =
+            source.level == target.level
     }
 }

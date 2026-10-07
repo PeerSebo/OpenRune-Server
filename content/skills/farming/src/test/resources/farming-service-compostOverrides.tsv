@@ -1,0 +1,6 @@
+0	obj.tomato	TOMATOES	true
+1	obj.weeds	COMPOSTABLE	true
+2	obj.cotton_boll	COMPOSTABLE	false
+3	obj.cactus_potato	COMPOSTABLE	false
+4	obj.unidentified_toadflax	SUPERCOMPOSTABLE	false
+5	obj.garden_white_tree_fruit	SUPERCOMPOSTABLE	false

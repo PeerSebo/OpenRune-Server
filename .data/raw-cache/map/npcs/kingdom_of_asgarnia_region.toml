@@ -603,7 +603,7 @@ npc = "npc.lamb1"
 coords = "0_45_51_47_56"
 
 [[spawn]]
-npc = "npc.makeover_mage_female"
+npc = "npc.makeover_mage"
 coords = "0_45_51_36_59"
 
 [[spawn]]
@@ -705,4 +705,3 @@ coords = "0_45_53_57_30"
 [[spawn]]
 npc = "npc.zep_multi_piccard"
 coords = "0_45_53_58_30"
-

@@ -71,8 +71,8 @@ internal class HitRules(private val spec: BossSpec, private val deps: BossDeps) 
 
     private fun playerMaxHit(attacker: Player, npc: Npc, style: BossHitType): Int =
         when (style) {
-            BossHitType.Ranged -> deps.maxHit.getRangedMaxHit(attacker, npc, null, null, 1.0, 0)
-            BossHitType.Melee -> deps.maxHit.getMeleeMaxHit(attacker, npc, null, null, 1.0)
+            BossHitType.Ranged -> checkNotNull(deps.maxHit).getRangedMaxHit(attacker, npc, null, null, 1.0, 0)
+            BossHitType.Melee -> checkNotNull(deps.maxHit).getMeleeMaxHit(attacker, npc, null, null, 1.0)
             else -> error("No player max hit for $style")
         }
 }

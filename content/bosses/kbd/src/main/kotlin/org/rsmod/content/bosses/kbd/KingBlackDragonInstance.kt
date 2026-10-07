@@ -8,11 +8,7 @@ import org.rsmod.api.instances.InstanceScript
 import org.rsmod.api.instances.RegionLocal
 import org.rsmod.api.instances.enterLocObjects
 import org.rsmod.api.player.protect.ProtectedAccess
-import org.rsmod.api.repo.region.RegionTemplate
-import org.rsmod.api.script.onOpLoc1
-import org.rsmod.map.CoordGrid
 import org.rsmod.api.script.onOpLoc2
-import org.rsmod.api.script.onOpLoc3
 import org.rsmod.api.script.onOpLoc5
 import org.rsmod.plugin.scripts.ScriptContext
 
@@ -27,7 +23,7 @@ class KingBlackDragonInstance @Inject constructor(
     override fun ScriptContext.configure() {
         val row = settingsRowData()
 
-        //TODO MAKE THE LEAVER LIKE YOU PULLED IT AND CORRECT ANIM
+        // TODO: Animate the lever pull and player interaction.
 
         onEnterObject { enterPublicRoom(INSTANCE) }
 

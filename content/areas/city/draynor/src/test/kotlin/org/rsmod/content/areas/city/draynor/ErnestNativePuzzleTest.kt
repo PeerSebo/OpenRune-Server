@@ -198,7 +198,7 @@ class ErnestNativePuzzleTest {
         @JvmStatic
         @BeforeAll
         fun cache() {
-            val cache = ServerCacheManager.init(240)
+            val cache = ServerCacheManager.init(241)
             try {
                 mapTiles = MapTileDecoder.decode(InlineByteBuf(checkNotNull(cache.data(MAPS, Square.id, 0))))
                 mapLocs = MapLocListDecoder.decode(InlineByteBuf(checkNotNull(cache.data(MAPS, Square.id, 1))))

@@ -27,7 +27,6 @@ class ControllerTimerProcessorTest {
             assertTrue(it.launchedTimer1)
             assertFalse(it.launchedTimer2)
 
-            // Remove timer, otherwise it will re-run the following cycle.
             con.clearTimer(TIMER_1)
             advance(ticks = 1)
             check(con.isNotDelayed) { "Con should no longer be delayed from `TIMER_1`: $con" }

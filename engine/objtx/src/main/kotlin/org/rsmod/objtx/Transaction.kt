@@ -167,10 +167,10 @@ public class Transaction<T>(
             capacity: Int,
         ): TransactionResult {
             val template = this@Transaction.certTemplate(obj)
-            if (template != null && vars > 0) {
+            if (template != null && vars != 0 && (template.isCert || cert)) {
                 return TransactionResult.VarObjIncorrectlyHasCert
             }
-            if (vars > 0) {
+            if (vars != 0) {
                 return insertIndividual(obj, count, capacity)
             }
             if (template != null && template.isCert) {
@@ -429,8 +429,6 @@ public class Transaction<T>(
             } else if (obj.count < 1) {
                 return TransactionResult.NotEnoughObjCount
             }
-            // If only one count is requested, we have no need to calculate
-            // total obj count in inventory.
             val count =
                 if (count == 1) {
                     1
@@ -508,50 +506,32 @@ public class Transaction<T>(
             slots: Iterable<Int>,
             totalCount: Int,
         ): TransactionResult {
-            var sumCount = 0
+            var completed = 0
             for (slot in slots) {
                 val obj =
                     this[slot]
                         ?: return TransactionResult.Exception(
                             "`slot` from given search gave null object slot."
                         )
-                sumCount += obj.count
-                if (sumCount > totalCount) {
+                if (obj.count > totalCount - completed) {
                     return TransactionResult.Exception(
                         "MultiVar search attempted to delete too many objects."
                     )
                 }
-                val delete =
-                    this@Transaction.DeleteQuery(
-                            from = this,
-                            obj = obj.id,
-                            strictCount = obj.count,
-                            placehold = placehold,
-                            preferredSlot = slot,
-                        )
-                        .result()
-                if (delete is TransactionResult.Err) {
-                    return delete
-                }
-                val insert =
-                    this@Transaction.InsertQuery(
-                            into = into,
-                            obj = obj.id,
-                            strictCount = obj.count,
-                            capacity = intoCapacity,
-                            vars = obj.vars,
-                            cert = cert,
-                            uncert = uncert,
-                            preferredSlot = intoSlot,
-                            transform = transform,
-                            untransform = untransform,
-                        )
-                        .result()
-                if (insert is TransactionResult.Err) {
-                    return insert
+                // Insert before deleting, just as for a single obj. A preferred transfer may
+                // run out of space after moving some objs; the first obj that does not fit
+                // must stay in the source without discarding the earlier successful moves.
+                when (val transfer = simpleTransfer(into, obj, obj.count, slot)) {
+                    is TransactionResult.Ok -> completed += transfer.completed
+                    is TransactionResult.Err -> {
+                        if (!strict && transfer == TransactionResult.NotEnoughSpace && completed > 0) {
+                            return TransactionResult.Ok(requested = totalCount, completed = completed)
+                        }
+                        return transfer
+                    }
                 }
             }
-            return TransactionResult.Ok(requested = count, completed = count)
+            return TransactionResult.Ok(requested = totalCount, completed = completed)
         }
 
         private fun TransactionInventory<T>.totalCount(obj: Int): Int {
@@ -602,8 +582,6 @@ public class Transaction<T>(
             }
             val intoSlot = intoSlot
             if (intoSlot == null) {
-                // This type of transaction, where we do not care what slot the
-                // obj gets placed into, is better suited as a transfer query.
                 val transfer =
                     this@Transaction.TransferQuery(
                         from = from,
@@ -676,8 +654,6 @@ public class Transaction<T>(
                             vars = otherObj.vars,
                             cert = cert,
                             uncert = uncert,
-                            // Assume that any obj that is swapped from the target inventory should
-                            // have the opposite transformation flags.
                             transform = untransform,
                             untransform = transform,
                         )
@@ -811,10 +787,6 @@ public class Transaction<T>(
                 } else if (insert !is TransactionResult.Ok) {
                     continue
                 }
-                // If not a single obj was inserted without an error, we can safely
-                // assume the query could not be completed due to space limitations.
-                // Make sure we remain aware of this last error, and continue the
-                // iteration for further queries.
                 if (insert.completed == 0) {
                     error = TransactionResult.NotEnoughSpace
                     continue
@@ -829,8 +801,6 @@ public class Transaction<T>(
                         )
                         .result()
                 if (delete is TransactionResult.Err) {
-                    // Since the obj was added to `into` inventory, we ensure that the
-                    // delete query goes through as well, otherwise, return the error.
                     return delete
                 }
                 requested += insert.requested
@@ -974,8 +944,6 @@ public class Transaction<T>(
                         "maxSlot=$maxSlot, capacity=${image.size}"
                 )
             }
-            // When `strict` flag is set, we ensure that no non-null objs will be overwritten by
-            // the shift.
             if (strict) {
                 val nonNullObjSlot = (toSlot until startSlot).firstOrNull { from[it] != null }
                 if (nonNullObjSlot != null) {
@@ -1035,7 +1003,6 @@ public class Transaction<T>(
             startSlot: Int,
             shiftCount: Int,
         ): TransactionResult {
-            // Ensure that any non-null objs at the tail of the inventory do not overflow.
             for (i in image.size - 1 downTo image.size - shiftCount) {
                 if (this[i] != null && i + shiftCount >= image.size) {
                     return TransactionResult.NotEnoughSpace

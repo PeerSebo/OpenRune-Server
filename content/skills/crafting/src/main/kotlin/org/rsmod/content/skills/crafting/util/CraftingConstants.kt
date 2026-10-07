@@ -53,41 +53,41 @@ object CraftingConstants {
     const val ANIM_SPINNING = "seq.human_spinningwheel_90"
 
     const val LOC_ANIM_SPINNING = "seq.spinningwheel"
-    const val SOUND_SPINNING = "synth.spinning"
+    const val SOUND_SPINNING = "synth.SPINNING"
 
     const val ANIM_WEAVING = "seq.farming_useloom"
-    const val SOUND_WEAVING = "synth.loom_weave"
+    const val SOUND_WEAVING = "synth.LOOM_WEAVE"
 
     const val ANIM_POTTERY_WHEEL = "seq.human_potterywheel"
-    const val SOUND_POTTERY_WHEEL = "synth.crafting_pottery_wheel_craft"
+    const val SOUND_POTTERY_WHEEL = "synth.POTTERY"
     const val ANIM_POTTERY_OVEN = "seq.potteryoven_quick"
 
     const val ANIM_LEATHER_CRAFT = "seq.human_leather_crafting"
-    const val SOUND_LEATHER_CRAFT = "synth.stiching"
+    const val SOUND_LEATHER_CRAFT = "synth.STICHING"
 
     const val ANIM_PHEASANT_COSTUME = "seq.human_pheasant_feathers_crafting"
 
     const val ANIM_GEM_CUTTING = "seq.human_cutting"
-    const val SOUND_GEM_CUTTING = "synth.chisel"
-    const val SOUND_GEM_CRUSH = "synth.smash_gem"
+    const val SOUND_GEM_CUTTING = "synth.CHISEL"
+    const val SOUND_GEM_CRUSH = "synth.SMASH_GEM"
     const val ANIM_AMETHYST_CUT = "seq.human_amethystcutting"
     const val ANIM_SNAIL_SHELL_CUT = "seq.human_snailshellcutting"
     const val ANIM_KNIFE_CUTTING = "seq.human_cutting_knife"
     const val ANIM_LIMESTONE_CUT = "seq.human_limestonecutting"
 
     const val ANIM_GLASSBLOWING = "seq.human_glassblowing"
-    const val SOUND_GLASSBLOWING = "synth.glassblowing"
+    const val SOUND_GLASSBLOWING = "synth.GLASSBLOWING"
 
     const val ANIM_FURNACE = "seq.human_furnace"
-    const val SOUND_FURNACE = "synth.furnace"
+    const val SOUND_FURNACE = "synth.FURNACE"
 
     const val ANIM_BATTLESTAFF = "seq.human_battlestaff_crafting"
-    const val SOUND_BATTLESTAFF_ATTACH = "synth.attach_orb"
+    const val SOUND_BATTLESTAFF_ATTACH = "synth.ATTACH_ORB"
 
-    const val SOUND_AMULET_STRINGING = "synth.stringing"
+    const val SOUND_AMULET_STRINGING = "synth.STRINGING"
 
     const val ANIM_SAND_PIT = "seq.human_fillbucket_sandpit"
-    const val SOUND_SAND_BUCKET = "synth.sand_bucket"
+    const val SOUND_SAND_BUCKET = "synth.SAND_BUCKET"
     const val CONTENT_SAND_PIT = "content.sandpit"
 
     val CRAFTING_SKILLCAPES: Set<String> =

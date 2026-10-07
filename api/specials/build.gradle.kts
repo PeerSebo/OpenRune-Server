@@ -7,6 +7,8 @@ kotlin {
 }
 
 dependencies {
+    testImplementation(libs.fastutil)
+    testImplementation(libs.rsprot.api)
     implementation(libs.guice)
     implementation(projects.api.attr)
     implementation(projects.api.config)
@@ -23,4 +25,10 @@ dependencies {
     implementation(projects.engine.game)
     implementation(projects.engine.map)
     implementation(projects.engine.plugin)
+}
+
+tasks.test {
+    workingDir(rootProject.projectDir)
+    inputs.dir(rootProject.file(".data/cache/SERVER"))
+    inputs.file(rootProject.file(".data/gamevals-binary/gamevals.dat"))
 }

@@ -2,13 +2,11 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.api.droptable.RegisterDropTable
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -49,9 +47,9 @@ public val theHueycoatlDropTable: RSDropTable<Player, DropRollItem> = RSDropTabl
         1 outOf 90 separate "obj.tome_of_earth_uncharged" count 1
     },
     tertiaries = rsPlayerTertiaryTable {
-        // Drops Need Manual (rate): Each player has around a 1/75 chance of getting the half of a key, regardless of participation.
+        // TODO: Each player has around a 1/75 chance of getting the half of a key, regardless of participation.
         1 outOf 75 weight "obj.varlamore_key_half_1" count 1
-        // Drops Need Manual (rate): The base rate of 1/400 is scaled by personal contribution to the kill.
+        // TODO: The base rate of 1/400 is scaled by personal contribution to the kill.
         1 outOf 400 weight "obj.hueypet" count 1
         1 outOf 47 weight "obj.trail_clue_hard_map001" count 1 transformObj { player ->
              player.clueScrollTransformObj("obj.trail_clue_hard_map001")

@@ -6,15 +6,19 @@ import org.rsmod.api.invtx.invTakeFee
 import org.rsmod.api.player.dialogue.Dialogue
 import org.rsmod.api.player.output.spam
 import org.rsmod.api.player.protect.ProtectedAccess
+import org.rsmod.api.player.vars.intVarBit
 import org.rsmod.api.repo.obj.ObjRepository
 import org.rsmod.api.script.onApNpc1
 import org.rsmod.api.script.onOpNpc1
 import org.rsmod.game.entity.Npc
+import org.rsmod.game.entity.Player
 import org.rsmod.map.CoordGrid
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
 class Bartender @Inject constructor(private val objRepo: ObjRepository) : PluginScript() {
+    private var Player.xMarksTheSpotStage by intVarBit("varbit.cluequest")
+
     override fun ScriptContext.startup() {
         onApNpc1("npc.ram_bartender") { apDialogue(it.npc) }
         onOpNpc1("npc.ram_bartender") { startDialogue(it.npc) }
@@ -67,11 +71,15 @@ class Bartender @Inject constructor(private val objRepo: ObjRepository) : Plugin
 
     private suspend fun Dialogue.requestRumour() {
         chatPlayer(quiz, "Heard any rumours recently?")
-        chatNpcNoTurn(
-            neutral,
-            "One of the patrons here is looking for treasure " +
-                "apparently. A chap by the name of Veos.",
-        )
+        if (player.xMarksTheSpotStage >= CasketFound) {
+            chatNpcNoTurn(neutral, "No, it hasn't been very busy lately.")
+        } else {
+            chatNpcNoTurn(
+                neutral,
+                "One of the patrons here is looking for treasure " +
+                    "apparently. A chap by the name of Veos.",
+            )
+        }
     }
 
     private suspend fun Dialogue.nothing() {
@@ -81,4 +89,9 @@ class Bartender @Inject constructor(private val objRepo: ObjRepository) : Plugin
     private fun ProtectedAccess.shouldPathToCounter(): Boolean =
         isWithinArea(CoordGrid(0, 50, 50, 28, 36), CoordGrid(0, 50, 50, 30, 42)) ||
             isWithinArea(CoordGrid(0, 50, 50, 26, 39), CoordGrid(0, 50, 50, 27, 42))
+
+    private companion object {
+        // Keep the stage-6 cutoff aligned with XMarksTheSpotState.CasketFound.
+        const val CasketFound: Int = 6
+    }
 }

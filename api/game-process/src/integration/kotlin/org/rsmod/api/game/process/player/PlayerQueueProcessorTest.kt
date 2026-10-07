@@ -1,6 +1,10 @@
 package org.rsmod.api.game.process.player
 
+import com.google.inject.AbstractModule
+import com.google.inject.Scopes
 import dev.openrune.types.NpcMode
+import jakarta.inject.Inject
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.rsmod.api.combat.commons.npc.queueCombatRetaliate
 import org.rsmod.api.combat.commons.player.queueCombatRetaliate
@@ -9,10 +13,13 @@ import org.rsmod.api.death.plugin.PlayerDeathScript
 import org.rsmod.api.hit.plugin.PlayerHitScript
 import org.rsmod.api.player.hit.queueHit
 import org.rsmod.api.player.stat.hitpoints
+import org.rsmod.api.script.onPlayerQueue
 import org.rsmod.api.testing.GameTestState
 import org.rsmod.api.testing.factory.npcTypeFactory
 import org.rsmod.game.hit.HitType
 import org.rsmod.map.CoordGrid
+import org.rsmod.plugin.scripts.PluginScript
+import org.rsmod.plugin.scripts.ScriptContext
 
 class PlayerQueueProcessorTest {
     @Test
@@ -47,22 +54,69 @@ class PlayerQueueProcessorTest {
 
             check(player.isNotDelayed)
 
-            // On the next cycle (advance by 1), both hits (7 and 5 damage) are processed.
-            // The 7 damage hit reduces the player's hitpoints to 0 and queues the death sequence.
-            // Because the death queue is added at the end of the list, and the queue that submitted
-            // it was not the last in the list, the death queue ends up being processed in the same
-            // cycle - after the remaining queues - instead of waiting for the next cycle.
-            // This is the "speed-up" bug/quirk, where (death) queues are triggered sooner than they
-            // normally would.
+            // A death queue appended during traversal can fire this cycle after the remaining
+            // queues.
             advance(ticks = 1)
             check(player.hitpoints == 0)
             check(!player.hasMovedPreviousCycle)
 
-            // If death queue script was triggered, the player should now be delayed.
             assertTrue(player.isDelayed)
         }
 
+    @Test
+    fun GameTestState.`weak queue add-tick decrement survives unrelated pending normal queue`() =
+        runInjectedGameTest(WeakLoopState::class, WeakLoopModule, WeakLoopScript::class) {
+            // One long-dated NORMAL queue sits in the list the whole test. The old weak-sweep
+            // break clause inspected `queueList.size == 1` (the normal list), so this pending
+            // queue used to skip the re-sweep that gives a just-requeued weak queue its
+            // add-tick decrement - running the loop one tick slow.
+            player.queue(PENDING_QUEUE, cycles = 20)
+
+            // Added outside queue processing: cycles=2 fires after 2 full ticks.
+            player.weakQueue(LOOP_QUEUE, cycles = 2)
+            advance(ticks = 2)
+            assertEquals(1, it.fired)
+
+            // Requeues from inside the handler (cycles=2) receive the add-tick decrement and
+            // must keep firing every tick - the documented n-1 weak-queue semantics production
+            // loops compensate for.
+            advance(ticks = 3)
+            assertEquals(4, it.fired)
+        }
+
+    @Test
+    fun GameTestState.`weak queue add-tick decrement holds for a lone self-requeueing loop`() =
+        runInjectedGameTest(WeakLoopState::class, WeakLoopModule, WeakLoopScript::class) {
+            player.weakQueue(LOOP_QUEUE, cycles = 2)
+            advance(ticks = 2)
+            assertEquals(1, it.fired)
+
+            advance(ticks = 3)
+            assertEquals(4, it.fired)
+        }
+
+    private class WeakLoopScript @Inject constructor(private val state: WeakLoopState) :
+        PluginScript() {
+        override fun ScriptContext.startup() {
+            onPlayerQueue(LOOP_QUEUE) {
+                state.fired++
+                weakQueue(LOOP_QUEUE, cycles = 2)
+            }
+        }
+    }
+
+    private object WeakLoopModule : AbstractModule() {
+        override fun configure() {
+            bind(WeakLoopState::class.java).`in`(Scopes.SINGLETON)
+        }
+    }
+
+    private data class WeakLoopState(var fired: Int = 0)
+
     private companion object {
+        private const val LOOP_QUEUE = "queue.generic_queue1"
+        private const val PENDING_QUEUE = "queue.generic_queue2"
+
         private val man =
             npcTypeFactory.create {
                 name = "Man"

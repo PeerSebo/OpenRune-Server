@@ -142,6 +142,4 @@ obj = "obj.looting_bag"
 count = 1
 should_drop_looting_bag = true
 
-
 # Unknown wiki drop rate: Nothing [main/Other/255/{{#expr:126*256}}]
-# Main table pool padding uses a nothing roll (F2P drops removed and/or subtable access missing from wiki parse) (1 weight)

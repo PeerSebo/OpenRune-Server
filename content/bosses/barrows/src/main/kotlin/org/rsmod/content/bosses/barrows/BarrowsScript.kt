@@ -17,10 +17,10 @@ import org.rsmod.api.droptable.rollCount
 import org.rsmod.api.invtx.invAdd
 import org.rsmod.api.invtx.invAddOrDrop
 import org.rsmod.api.invtx.invClear
+import org.rsmod.api.mechanics.dig.DigSites
 import org.rsmod.api.obj.charges.ObjChargeManager
 import org.rsmod.api.player.lefthand
 import org.rsmod.api.player.midiJingle
-import org.rsmod.api.player.output.CamShakeAxis
 import org.rsmod.api.player.output.ChatType
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.player.stopInvTransmit
@@ -31,7 +31,6 @@ import org.rsmod.api.script.onArea
 import org.rsmod.api.script.onAreaExit
 import org.rsmod.api.script.onIfClose
 import org.rsmod.api.script.onIfModalButton
-import org.rsmod.api.script.onOpHeld1
 import org.rsmod.api.script.onOpHeld4
 import org.rsmod.api.script.onOpLoc1
 import org.rsmod.api.script.onOpLoc2
@@ -39,7 +38,7 @@ import org.rsmod.api.script.onPlayerLogout
 import org.rsmod.api.script.onPlayerQueueWithArgs
 import org.rsmod.api.script.onPlayerTimer
 import org.rsmod.content.interfaces.collectionlog.CollectionLog
-import org.rsmod.content.quest.manager.QuestRequirements
+import org.rsmod.content.quest.manager.Quest
 import org.rsmod.events.EventBus
 import org.rsmod.game.entity.Player
 import org.rsmod.game.hit.HitType
@@ -73,7 +72,10 @@ constructor(
         }
         onIfClose(REWARD_INTERFACE) { deliverRewards(player) }
 
-        onOpHeld1("obj.spade") { dig() }
+        DigSites.register("barrows.mounds", MOUND_TILES) {
+            dig()
+            true
+        }
         onOpHeld4(LOCKPICK) { inspectLockpick(it.slot) }
         onOpHeld4(LOCKPICK_FULL) { inspectLockpick(it.slot) }
         onPlayerQueueWithArgs<BarrowsBrother?>(DIG_QUEUE) { finishDig(it.args) }
@@ -117,7 +119,7 @@ constructor(
         if (!player.barrowsLooted) {
             player.ifOpenOverlay(OVERLAY, OVERLAY_TARGET, eventBus)
         } else if (cameraEffectsEnabled()) {
-            camShake(CamShakeAxis.LEFT_RIGHT, 5, 0, 0)
+            camShake(0, 5, 0, 0)
         }
         player.refreshDoors(hasLockpick())
         if (!player.cryptMapStudied) minimapHideMap()
@@ -149,14 +151,12 @@ constructor(
             }
             return
         }
-        anim("seq.human_dig")
-        soundSynth("synth.digspade")
         strongQueue(DIG_QUEUE, DIG_TICKS, args = mound)
     }
 
     private fun ProtectedAccess.hfsInterruptsDig(): Boolean =
         player.hfsStage == HFS_NOT_STARTED &&
-            QuestRequirements.hasCompleted(player, PRIEST_IN_PERIL)
+            Quest.get(PRIEST_IN_PERIL)?.questState(player)?.isCompleted == true
 
     private fun ProtectedAccess.finishDig(mound: BarrowsBrother?) {
         resetAnim()
@@ -310,7 +310,7 @@ constructor(
         ifOpenMain(REWARD_INTERFACE)
         ifSetEvents("component.barrows_reward:items", 0 until rewardInv.size, IfEvent.Op10)
         if (cameraEffectsEnabled()) {
-            camShake(CamShakeAxis.LEFT_RIGHT, 5, 0, 0)
+            camShake(0, 5, 0, 0)
         }
         player.ifCloseOverlay(OVERLAY, eventBus)
     }
@@ -390,10 +390,18 @@ constructor(
         const val REWARD_INV = "inv.trail_rewardinv"
         const val CRYPT_TIMER = "timer.barrows_crypt"
         const val CRYPT_TICK = 30
-        const val NOD_SCRIPT = 894
+        const val NOD_SCRIPT = "clientscript.[clientscript,barrows_nodnod]"
         const val PRAYER_DRAIN = 8
         const val ROCKFALL_MAX_HIT = 6
         const val MOUND_RADIUS = 3
+        val MOUND_TILES = BarrowsBrother.entries.flatMap { brother ->
+            val centre = brother.moundCenter
+            (-MOUND_RADIUS..MOUND_RADIUS).flatMap { dx ->
+                (-MOUND_RADIUS..MOUND_RADIUS).map { dz ->
+                    CoordGrid(centre.x + dx, centre.z + dz, centre.level)
+                }
+            }
+        }
         const val DIG_QUEUE = "queue.barrows_dig"
         const val DIG_TICKS = 2
         const val LANDING_RADIUS = 3

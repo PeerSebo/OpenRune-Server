@@ -2,7 +2,6 @@ package org.rsmod.api.repo.controller
 
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
-import dev.openrune.types.ControllerType
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import jakarta.inject.Inject
 import org.rsmod.api.registry.controller.ControllerRegistry
@@ -40,7 +39,9 @@ constructor(private val registry: ControllerRegistry, private val controllerList
         findAll(ZoneKey.from(coords)).firstOrNull { it.coords == coords }
 
     public fun findExact(coords: CoordGrid, type: String): Controller? =
-        findAll(ZoneKey.from(coords)).firstOrNull { it.coords == coords && it.id == type.asRSCM(RSCMType.CONTROLLER) }
+        findAll(ZoneKey.from(coords)).firstOrNull {
+            it.coords == coords && it.id == type.asRSCM(RSCMType.CONTROLLER)
+        }
 
     internal fun processDurations() {
         computeDurations()

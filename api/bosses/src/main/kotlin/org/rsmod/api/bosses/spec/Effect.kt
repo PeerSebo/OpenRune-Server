@@ -16,6 +16,9 @@ public data class StatDrainEntry(
 
 sealed interface Effect {
 
+    data class TeleportToSpawn(val dx: Int = 0, val dz: Int = 0) : Effect
+    data object FaceTarget : Effect
+
     data class Anim(val seq: String, val delay: Int = 0) : Effect
 
     /** Sets (or with a null [seq], clears) the anim the caster holds while idle. */
@@ -130,11 +133,21 @@ sealed interface Effect {
     ) : Effect
 
     data class TileAoE(
-        val tiles: (Npc, Player) -> Collection<CoordGrid>,
+        val tiles: ((Npc, Player) -> Collection<CoordGrid>)?,
         val telegraph: TelegraphSpec? = null,
         val damage: DamageExpr,
         val type: HitType,
-    ) : Effect
+        val center: TargetExpr.Single? = null,
+        val radius: Int = 0,
+    ) : Effect {
+        constructor(
+            center: TargetExpr.Single,
+            radius: Int,
+            telegraph: TelegraphSpec? = null,
+            damage: DamageExpr,
+            type: HitType,
+        ) : this(null, telegraph, damage, type, center, radius)
+    }
 
     /**
      * A telegraphed, dodgeable area attack (e.g. Scurrius' falling rocks): a [telegraph] spotanim is
@@ -204,7 +217,6 @@ sealed interface Effect {
     data class HealSelf(val amount: Int) : Effect
 
     data class Teleport(val to: TargetExpr.Single) : Effect
-    data object FaceTarget : Effect
     data class FaceTile(val at: TargetExpr.Single) : Effect
 
     data class Poison(val damage: Int, val chance: Int = 1, val outOf: Int = 1) : Effect

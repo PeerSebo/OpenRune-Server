@@ -7,6 +7,7 @@ runecrafting_altars=65516
 runecrafting_tiara=65515
 
 [gamevals.dbrow]
+runecrafting_tiara_blood=17000
 runecrafting_rune_sunfire=65173
 runecrafting_rune_blood_dark=65172
 runecrafting_rune_aether=65171
@@ -70,3 +71,4 @@ rcu_pouch_essence_type_colossal=65485
 
 [gamevals.queue]
 runecraft_magic_imbue_expire=65526
+rcu_dark_essence_chisel=119

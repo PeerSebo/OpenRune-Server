@@ -1,0 +1,124 @@
+[[object]]
+id = "loc.varrock_garden_corner_delphiniums"
+inherit = "loc.garden_delphinium_patch"
+transforms = ["loc.varrock_garden_corner_delphiniums_weeds_3", "loc.varrock_garden_corner_delphiniums_weeds_2", "loc.varrock_garden_corner_delphiniums_weeds_1", "loc.varrock_garden_corner_delphiniums_weeded", "loc.garden_delphiniums_seed", "loc.garden_delphiniums_1", "loc.garden_delphiniums_2", "loc.garden_delphiniums_fullygrown", -1]
+
+[[object]]
+id = "loc.varrock_garden_corner_delphiniums_weeds_3"
+inherit = "loc.garden_delphiniums_weeds_3"
+objectModels = ["models.varrock_garden_corner_weeds_3"]
+
+[[object]]
+id = "loc.varrock_garden_corner_delphiniums_weeds_2"
+inherit = "loc.garden_delphiniums_weeds_2"
+objectModels = ["models.varrock_garden_corner_weeds_2"]
+
+[[object]]
+id = "loc.varrock_garden_corner_delphiniums_weeds_1"
+inherit = "loc.garden_delphiniums_weeds_1"
+objectModels = ["models.varrock_garden_corner_weeds_1"]
+
+[[object]]
+id = "loc.varrock_garden_corner_delphiniums_weeded"
+inherit = "loc.garden_delphiniums_weeded"
+objectModels = ["models.varrock_garden_corner_cleared"]
+
+[[object]]
+id = "loc.varrock_garden_corner_white_roses"
+inherit = "loc.garden_rosebush_patch_white"
+transforms = ["loc.varrock_garden_corner_white_roses_weeds_3", "loc.varrock_garden_corner_white_roses_weeds_2", "loc.varrock_garden_corner_white_roses_weeds_1", "loc.varrock_garden_corner_white_roses_weeded", "loc.garden_rosebush_seedling", "loc.garden_rosebush_1", "loc.garden_rosebush_white_2", "loc.garden_rosebush_white_fullygrown", -1]
+
+[[object]]
+id = "loc.varrock_garden_corner_white_roses_weeds_3"
+inherit = "loc.garden_rosebush_white_weeds_3"
+objectModels = ["models.varrock_garden_corner_weeds_3"]
+
+[[object]]
+id = "loc.varrock_garden_corner_white_roses_weeds_2"
+inherit = "loc.garden_rosebush_white_weeds_2"
+objectModels = ["models.varrock_garden_corner_weeds_2"]
+
+[[object]]
+id = "loc.varrock_garden_corner_white_roses_weeds_1"
+inherit = "loc.garden_rosebush_white_weeds_1"
+objectModels = ["models.varrock_garden_corner_weeds_1"]
+
+[[object]]
+id = "loc.varrock_garden_corner_white_roses_weeded"
+inherit = "loc.garden_rosebush_white_weeded"
+objectModels = ["models.varrock_garden_corner_cleared"]
+
+[[object]]
+id = "loc.varrock_garden_corner_red_roses"
+inherit = "loc.garden_rosebush_patch_red"
+transforms = ["loc.varrock_garden_corner_red_roses_weeds_3", "loc.varrock_garden_corner_red_roses_weeds_2", "loc.varrock_garden_corner_red_roses_weeds_1", "loc.varrock_garden_corner_red_roses_weeded", "loc.garden_rosebush_seedling", "loc.garden_rosebush_1", "loc.garden_rosebush_red_2", "loc.garden_rosebush_red_fullygrown", -1]
+
+[[object]]
+id = "loc.varrock_garden_corner_red_roses_weeds_3"
+inherit = "loc.garden_rosebush_red_weeds_3"
+objectModels = ["models.varrock_garden_corner_weeds_3"]
+
+[[object]]
+id = "loc.varrock_garden_corner_red_roses_weeds_2"
+inherit = "loc.garden_rosebush_red_weeds_2"
+objectModels = ["models.varrock_garden_corner_weeds_2"]
+
+[[object]]
+id = "loc.varrock_garden_corner_red_roses_weeds_1"
+inherit = "loc.garden_rosebush_red_weeds_1"
+objectModels = ["models.varrock_garden_corner_weeds_1"]
+
+[[object]]
+id = "loc.varrock_garden_corner_red_roses_weeded"
+inherit = "loc.garden_rosebush_red_weeded"
+objectModels = ["models.varrock_garden_corner_cleared"]
+
+[[object]]
+id = "loc.varrock_garden_corner_pink_roses"
+inherit = "loc.garden_rosebush_patch_pink"
+transforms = ["loc.varrock_garden_corner_pink_roses_weeds_3", "loc.varrock_garden_corner_pink_roses_weeds_2", "loc.varrock_garden_corner_pink_roses_weeds_1", "loc.varrock_garden_corner_pink_roses_weeded", "loc.garden_rosebush_seedling", "loc.garden_rosebush_1", "loc.garden_rosebush_pink_2", "loc.garden_rosebush_pink_fullygrown", -1]
+
+[[object]]
+id = "loc.varrock_garden_corner_pink_roses_weeds_3"
+inherit = "loc.garden_rosebush_pink_weeds_3"
+objectModels = ["models.varrock_garden_corner_weeds_3"]
+
+[[object]]
+id = "loc.varrock_garden_corner_pink_roses_weeds_2"
+inherit = "loc.garden_rosebush_pink_weeds_2"
+objectModels = ["models.varrock_garden_corner_weeds_2"]
+
+[[object]]
+id = "loc.varrock_garden_corner_pink_roses_weeds_1"
+inherit = "loc.garden_rosebush_pink_weeds_1"
+objectModels = ["models.varrock_garden_corner_weeds_1"]
+
+[[object]]
+id = "loc.varrock_garden_corner_pink_roses_weeded"
+inherit = "loc.garden_rosebush_pink_weeded"
+objectModels = ["models.varrock_garden_corner_cleared"]
+
+[[object]]
+id = "loc.varrock_garden_corner_snowdrops"
+inherit = "loc.garden_snowdrop_patch"
+transforms = ["loc.varrock_garden_corner_snowdrops_weeds_3", "loc.varrock_garden_corner_snowdrops_weeds_2", "loc.varrock_garden_corner_snowdrops_weeds_1", "loc.varrock_garden_corner_snowdrops_weeded", "loc.garden_snowdrops_seed", "loc.garden_snowdrops_1", "loc.garden_snowdrops_2", "loc.garden_snowdrops_fullygrown", -1]
+
+[[object]]
+id = "loc.varrock_garden_corner_snowdrops_weeds_3"
+inherit = "loc.garden_snowdrops_weeds_3"
+objectModels = ["models.varrock_garden_corner_weeds_3"]
+
+[[object]]
+id = "loc.varrock_garden_corner_snowdrops_weeds_2"
+inherit = "loc.garden_snowdrops_weeds_2"
+objectModels = ["models.varrock_garden_corner_weeds_2"]
+
+[[object]]
+id = "loc.varrock_garden_corner_snowdrops_weeds_1"
+inherit = "loc.garden_snowdrops_weeds_1"
+objectModels = ["models.varrock_garden_corner_weeds_1"]
+
+[[object]]
+id = "loc.varrock_garden_corner_snowdrops_weeded"
+inherit = "loc.garden_snowdrops_weeded"
+objectModels = ["models.varrock_garden_corner_cleared"]

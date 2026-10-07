@@ -46,11 +46,7 @@ coords = "0_47_70_29_23"
 npc = "npc.fairy2_stag"
 coords = "0_47_70_42_14"
 
-## Enchanted Valley Ledges
 
 [[spawn]]
 npc = "npc.sote_lord_amlodd_valley"
 coords = "0_47_70_43_6"
-
-## Enchanted Valley Ledges End
-

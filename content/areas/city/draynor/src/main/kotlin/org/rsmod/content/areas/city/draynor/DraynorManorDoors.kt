@@ -88,9 +88,9 @@ class DraynorManorDoors @Inject constructor(private val locRepo: LocRepository) 
         private const val BackDoor = "loc.hauntedbackdoor"
         private const val BackDoorInactive = "loc.hauntedbackdoor_inactive"
 
-        private const val FrontOpenSound = "synth.bigdoor_open"
-        private const val FrontCloseSound = "synth.bigdoor_close"
-        private const val BackOpenSound = "synth.creakydoor_open"
+        private const val FrontOpenSound = "synth.BIGDOOR_OPEN"
+        private const val FrontCloseSound = "synth.BIGDOOR_CLOSE"
+        private const val BackOpenSound = "synth.CREAKYDOOR_OPEN"
 
         private const val FrontDoorZ = 3353
 

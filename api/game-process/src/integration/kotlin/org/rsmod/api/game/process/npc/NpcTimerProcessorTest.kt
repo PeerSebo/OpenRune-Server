@@ -27,7 +27,6 @@ class NpcTimerProcessorTest {
             assertTrue(it.launchedTimer1)
             assertFalse(it.launchedTimer2)
 
-            // Remove timer, otherwise it will re-run the following cycle.
             npc.clearTimer(TIMER_1)
             advance(ticks = 1)
             check(npc.isNotDelayed) { "Npc should no longer be delayed from `TIMER_1`: $npc" }

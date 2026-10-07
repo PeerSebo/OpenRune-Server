@@ -5,6 +5,8 @@ import dev.openrune.definition.type.widget.IfEvent
 import dev.openrune.rscm.RSCM
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
+import dev.openrune.types.InvStackType
+import dev.openrune.types.InventoryServerType
 import dev.openrune.types.ItemServerType
 import dev.or2.central.account.Rights
 import jakarta.inject.Inject
@@ -25,6 +27,9 @@ import org.rsmod.api.script.onGameStartup
 import org.rsmod.api.script.onIfClose
 import org.rsmod.api.script.onIfModalButton
 import org.rsmod.api.script.onIfScriptTrigger
+import org.rsmod.content.interfaces.bank.BankTab
+import org.rsmod.content.interfaces.bank.scripts.BankInvScript
+import org.rsmod.content.interfaces.bank.selectedTab
 import org.rsmod.game.cheat.Cheat
 import org.rsmod.game.entity.Player
 import org.rsmod.game.inv.InvObj
@@ -135,7 +140,10 @@ private object SpawnSearchIndex {
             !item.isDummyItem
 }
 
-class SpawnMenuScript @Inject constructor(private val protectedAccess: ProtectedAccessLauncher) :
+class SpawnMenuScript @Inject constructor(
+    private val protectedAccess: ProtectedAccessLauncher,
+    private val bankInvScript: BankInvScript,
+) :
     PluginScript() {
     private val states = WeakHashMap<Player, SpawnState>()
 
@@ -301,15 +309,32 @@ class SpawnMenuScript @Inject constructor(private val protectedAccess: Protected
             noted(toSpawn)?.let { toSpawn = it }
         }
 
-        val target = if (state.bank) player.invMap.getOrPut("inv.bank") else player.inv
         val destination = if (state.bank) "bank" else "inventory"
-        val spawned = player.invAdd(target, toSpawn.id, state.quantity, strict = false)
-        val completed = spawned.completed()
+        val completed = if (state.bank) {
+            spawnIntoBank(toSpawn, state.quantity)
+        } else {
+            player.invAdd(player.inv, toSpawn.id, state.quantity, strict = false).completed()
+        }
         if (completed <= 0) {
             player.mes("You don't have enough $destination space for ${toSpawn.name}.")
             return
         }
         player.mes("Spawned ${toSpawn.name} x $completed to your $destination.")
+    }
+
+    private fun ProtectedAccess.spawnIntoBank(item: ItemServerType, count: Int): Int {
+        val source = Inventory(
+            InventoryServerType(stack = InvStackType.Always, size = 1, flags = 0),
+            arrayOf(InvObj(item, count)),
+        )
+        val previousTab = selectedTab
+        try {
+            selectedTab = BankTab.Main
+            with(bankInvScript) { invDeposit(0, count, source) }
+        } finally {
+            selectedTab = previousTab
+        }
+        return count - (source[0]?.count ?: 0)
     }
 
     private fun noted(item: ItemServerType): ItemServerType? =

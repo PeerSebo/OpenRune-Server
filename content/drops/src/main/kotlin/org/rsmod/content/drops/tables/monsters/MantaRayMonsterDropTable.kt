@@ -59,7 +59,7 @@ public val mantaRayMonsterDropTable: RSDropTable<Player, DropRollItem> = RSDropT
     },
     tertiaries = rsPlayerTertiaryTable {
         1 outOf 10 weight "obj.sailing_manta_ray_skin" count 1 condition { player ->
-            // Drops Need Manual: Only dropped while on an applicable bounty task.
+            // TODO: Only dropped while on an applicable bounty task.
              true
         }
         1 outOf 114 weight "obj.trail_clue_hard_map001" count 1 transformObj { player ->
@@ -68,7 +68,7 @@ public val mantaRayMonsterDropTable: RSDropTable<Player, DropRollItem> = RSDropT
     },
 )
 
-// Unknown wiki drop rates (text rarity — need data collection):
+// TODO: Resolve the unquantified drop rates below.
 //   - Toadflax seed [main/1/{{#expr:1/({{#var:rareseed}}*216) round 1}}]
 //   - Irit seed [main/1/{{#expr:1/({{#var:rareseed}}*148) round 1}}]
 //   - Belladonna seed [main/1/{{#expr:1/({{#var:rareseed}}*143) round 1}}]

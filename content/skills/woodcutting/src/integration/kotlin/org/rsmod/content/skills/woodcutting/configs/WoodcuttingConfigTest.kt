@@ -38,7 +38,6 @@ class WoodcuttingConfigTest {
             assertTrue(WoodcuttingParams.success_rates in treeParams)
         }
 
-        // Trees which turn into stumps after a set period of time.
         val timed = trees.filter { it.paramMap?.contains(params.despawn_time) == true }
         for (tree in timed) {
             val treeParams = tree.paramMap
@@ -46,7 +45,6 @@ class WoodcuttingConfigTest {
             assertFalse(params.deplete_chance in treeParams)
         }
 
-        // Trees which turn into stumps based on random rates.
         val standard = trees - timed.toSet()
         for (tree in standard) {
             val treeParams = tree.paramMap
@@ -55,7 +53,6 @@ class WoodcuttingConfigTest {
             assertTrue(treeParams[params.deplete_chance] in 0..255)
         }
 
-        // Trees which have a variable respawn time.
         val respawnVariable =
             trees.filter {
                 it.hasParam(params.respawn_time_low) || it.hasParam(params.respawn_time_high)
@@ -68,7 +65,6 @@ class WoodcuttingConfigTest {
             assertEquals(0, tree.param(params.respawn_time))
         }
 
-        // All trees must have all axe success rates defined.
         val axes = cacheTypes.objs.values.filter { it.isContentType(content.woodcutting_axe) }
         for (tree in trees) {
             val treeParams = checkNotNull(tree.paramMap)

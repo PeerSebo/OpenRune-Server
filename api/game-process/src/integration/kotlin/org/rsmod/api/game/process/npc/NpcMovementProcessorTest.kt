@@ -15,15 +15,8 @@ import org.rsmod.routefinder.flag.CollisionFlag
 
 class NpcMovementProcessorTest {
     /**
-     * Tests that an NPC re-applies its collision flag underneath its current position when it is
-     * unable to reach its next route tile due to a blockage (e.g., blocked by a loc).
-     *
-     * This ensures that if the NPC's path is blocked, and it cannot proceed, it continuously
-     * re-applies the collision flag under its current position every cycle, even if no movement is
-     * possible.
-     *
-     * For example, if a player temporarily occupies the NPC's tile and then moves away, the NPC
-     * should restore its collision flag as long as it has an active route destination.
+     * Reapply stationary NPC collision every cycle: another entity may have cleared the shared
+     * tile flag.
      */
     @Test
     fun GameTestState.`reapply collision flag without steps but valid route destination`() =
@@ -50,7 +43,6 @@ class NpcMovementProcessorTest {
 
                     move(target)
 
-                    // Walk until npc reaches loc.
                     repeat(2) { index ->
                         val steps = 1 + index
                         process()
@@ -58,22 +50,15 @@ class NpcMovementProcessorTest {
                         assertEquals(targetCoords.translateZ(-1), routeDestination.peekLast())
                     }
 
-                    // Cache current coords to verify npc does not move.
                     val stopCoords = coords
 
-                    // The npc should be blocked by the loc collision and unable to move.
                     process()
                     assertEquals(stopCoords, coords)
-                    // The collision flag underneath the npc should've been set by said npc.
                     assertEquals(CollisionFlag.BLOCK_NPCS, it.collision[coords])
 
-                    // Manually remove the collision flag under the npc.
                     it.collision[coords] = 0
                     check(it.collision[coords] == 0)
 
-                    // After one call to process, the npc should have re-applied its collision flag
-                    // and at this point should have also stayed on the same coords right behind
-                    // the loc blocking its path.
                     process()
                     assertEquals(CollisionFlag.BLOCK_NPCS, it.collision[coords])
                     assertEquals(stopCoords, coords)

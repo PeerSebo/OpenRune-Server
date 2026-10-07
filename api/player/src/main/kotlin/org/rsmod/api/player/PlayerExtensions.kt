@@ -27,7 +27,7 @@ public fun Player.clearInteractionRoute() {
 }
 
 public fun Player.queueDeath() {
-    queue("queue.death", 1)
+    strongQueue("queue.death", 1)
 }
 
 public fun Player.combatClearQueue() {
@@ -40,35 +40,30 @@ public fun Player.combatClearQueue() {
 public fun Player.hasProtectItemPrayer(): Boolean = vars["varbit.prayer_protectitem"] == 1
 
 private var Player.overheadLockExpiration by intVarp("varp.overhead_lock_expiration")
-
 private var Player.protectFromMelee by intVarBit("varbit.prayer_protectfrommelee")
 private var Player.protectFromMissiles by intVarBit("varbit.prayer_protectfrommissiles")
 private var Player.protectFromMagic by intVarBit("varbit.prayer_protectfrommagic")
 private var Player.quickPrayerActive by intVarBit("varbit.quickprayer_active")
 
-public val overheadProtectionPrayerVarbits: List<String> =
-    listOf(
-        "varbit.prayer_protectfrommelee",
-        "varbit.prayer_protectfrommissiles",
-        "varbit.prayer_protectfrommagic",
-    )
+public val overheadProtectionPrayerVarbits: List<String> = listOf(
+    "varbit.prayer_protectfrommelee",
+    "varbit.prayer_protectfrommissiles",
+    "varbit.prayer_protectfrommagic",
+)
 
 public fun Player.lockOverheads(cycles: Int) {
     require(cycles > 0) { "`cycles` must be greater than 0. (cycles=$cycles)" }
     disableOverheadPrayers()
-    overheadLockExpiration = currentMapClock + cycles
+    overheadLockExpiration = maxOf(overheadLockExpiration, currentMapClock + cycles)
 }
 
-/** Turns off the protection overheads, leaving every other prayer on. */
 public fun Player.disableOverheadPrayers() {
     val hadProtection = protectFromMelee != 0 || protectFromMissiles != 0 || protectFromMagic != 0
     protectFromMelee = 0
     protectFromMissiles = 0
     protectFromMagic = 0
     if (hadProtection) {
-        if (constants.isOverhead(appearance.overheadIcon)) {
-            appearance.overheadIcon = null
-        }
+        if (constants.isOverhead(appearance.overheadIcon)) appearance.overheadIcon = null
         if (enabledPrayers == 0) {
             quickPrayerActive = 0
             prayerDrainCounter = 0
@@ -95,6 +90,10 @@ public fun Player.disablePrayers() {
     clearQueue("queue.preserve_activation")
     clearSoftTimer("timer.prayer_drain")
     clearSoftTimer("timer.rapidrestore_regen")
+    // Rapid Heal and Preserve speed up these timers while they are on; put them back to their
+    // normal rates so running out of prayer points does not leave the boosts running.
+    softTimer("timer.health_regen", constants.health_regen_interval)
+    softTimer("timer.stat_boost_restore", constants.stat_boost_restore_interval)
 }
 
 public fun Player.deathResetTimers() {
@@ -132,24 +131,10 @@ public fun Player.subjectPronoun(): String {
     return appearance.subjectPronoun()
 }
 
-/** @return `true` if the player is **currently** in a multi-combat area. */
 public fun Player.mapMultiway(checker: AreaChecker): Boolean {
     return checker.inArea("area.multiway", coords)
 }
 
-/**
- * Selects the proper hexadecimal color based on the player's client mode and chatbox transparency.
- *
- * _Note: The returned value is automatically wrapped with the `<col=>` tag._
- *
- * @param opaque The hexadecimal color (6 characters, no # symbol) to use when chatbox transparency
- *   is disabled.
- * @param transparent The hexadecimal color (6 characters, no # symbol) to use when chatbox
- *   transparency is enabled.
- * @return The transparent color if the client is in resizable mode and chatbox transparency is
- *   enabled; the opaque color otherwise.
- * @throws IllegalArgumentException if either [opaque] or [transparent] is not exactly 6 characters.
- */
 public fun Player.chatMesColorTag(opaque: String, transparent: String): String {
     return "<col=${chatMesColor(opaque, transparent)}>"
 }
@@ -170,17 +155,8 @@ public fun Player.startInvTransmit(inv: Inventory) {
     check(inv.type.scope != InvScope.Shared || !invMap.contains(inv.internalName)) {
         "`inv` should have previously been removed from cached inv map: $inv"
     }
-    /*
-     * Reorders the given `inv` in the list of transmitted inventories. This ensures that updates
-     * for inventories are sent in the order they were added when this function was called, even if
-     * they were first added during login (e.g., `worn` and `inv`).
-     *
-     * This is done to emulate the behavior observed in os, where the transmitted inventory order
-     * can change dynamically. For example, equipping an item will have the update order of `inv`
-     * and `worn`. If you open a shop and then equip an item, the new order will be `worn` -> `inv`.
-     *
-     * This logic guarantees that updates sent from this point onward respect the new order.
-     */
+    // Reordering changes later inventory transmission order, including inventories first
+    // registered at login.
     transmittedInvs.remove(inv.type.id)
     transmittedInvAddQueue.add(inv.type.id)
     invMap[inv.internalName] = inv

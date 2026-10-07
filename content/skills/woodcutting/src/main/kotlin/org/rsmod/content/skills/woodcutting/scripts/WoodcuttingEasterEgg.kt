@@ -11,6 +11,8 @@ class WoodcuttingEasterEgg : PluginScript() {
         onOpContentMixedLocU("content.tree", "obj.herring") { treeHerring() }
         onOpContentMixedLocU("content.tree", "obj.raw_herring") { treeHerring() }
         onOpLocU("loc.redwoodtree_l", "obj.herring") { redwoodTreeHerring() }
+        onOpLocU("loc.redwoodtree_l", "obj.raw_herring") { redwoodTreeHerring() }
+        onOpLocU("loc.redwoodtree_r", "obj.herring") { redwoodTreeHerring() }
         onOpLocU("loc.redwoodtree_r", "obj.raw_herring") { redwoodTreeHerring() }
     }
 

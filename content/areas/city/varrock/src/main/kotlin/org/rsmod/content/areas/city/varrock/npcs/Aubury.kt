@@ -5,21 +5,26 @@ import org.rsmod.api.config.Constants
 import org.rsmod.api.player.dialogue.Dialogue
 import org.rsmod.api.player.output.UpdateRun
 import org.rsmod.api.player.protect.ProtectedAccess
+import org.rsmod.api.repo.world.WorldRepository
 import org.rsmod.api.script.onOpNpc1
 import org.rsmod.api.script.onOpNpc3
 import org.rsmod.api.script.onOpNpc4
 import org.rsmod.api.shops.Shops
 import org.rsmod.content.quest.area.lumbridge.RuneMysteriesQuest
 import org.rsmod.content.quest.area.lumbridge.rmNotes
+import org.rsmod.content.skills.runecrafting.essence.EssenceMineTeleporter
 import org.rsmod.content.skills.runecrafting.essence.teleportToRuneEssenceMine
 import org.rsmod.game.entity.Npc
 import org.rsmod.game.entity.Player
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
-class Aubury @Inject constructor(
+class Aubury
+@Inject
+constructor(
     private val shops: Shops,
     private val runeMysteries: RuneMysteriesQuest,
+    private val worldRepo: WorldRepository,
 ) : PluginScript() {
 
     private val quest
@@ -28,7 +33,9 @@ class Aubury @Inject constructor(
     override fun ScriptContext.startup() {
         onOpNpc1("npc.aubury") { startAuburyDialogue(it.npc) }
         onOpNpc3("npc.aubury") { player.openAuburyShop(it.npc) }
-        onOpNpc4("npc.aubury") { teleportToRuneEssenceMine(it.npc) }
+        onOpNpc4("npc.aubury") {
+            teleportToRuneEssenceMine(worldRepo, it.npc, EssenceMineTeleporter.Aubury)
+        }
     }
 
     private suspend fun ProtectedAccess.startAuburyDialogue(npc: Npc) {
@@ -72,7 +79,10 @@ class Aubury @Inject constructor(
                         "extremely important for him to have sent a stranger.",
                 )
                 if (!player.inv.contains(RuneMysteriesQuest.RESEARCH_PACKAGE)) {
-                    chatPlayer(sad, "Uh... yeah... about that... I kind of don't have it with me...")
+                    chatPlayer(
+                        sad,
+                        "Uh... yeah... about that... I kind of don't have it with me...",
+                    )
                     chatNpc(
                         angry,
                         "What kind of person says they have a delivery for me, but not with them? Honestly.",
@@ -94,7 +104,10 @@ class Aubury @Inject constructor(
                         "you, I think we finally have it.",
                 )
                 chatPlayer(quiz, "You mean the incantation?")
-                chatNpc(quiz, "Well when we combine my own research with this latest discovery, I think we might just...")
+                chatNpc(
+                    quiz,
+                    "Well when we combine my own research with this latest discovery, I think we might just...",
+                )
                 chatNpc(
                     happy,
                     "No, no, I'm getting ahead of myself. The signs are promising, but let's not jump " +
@@ -113,7 +126,6 @@ class Aubury @Inject constructor(
                     return
                 }
                 player.rmNotes = true
-                // STAGE_PACKAGE -> STAGE_NOTES (skip awaiting if notes given immediately)
                 val stage = quest.getQuestStage(player)
                 when (stage) {
                     RuneMysteriesQuest.STAGE_PACKAGE ->
@@ -130,14 +142,19 @@ class Aubury @Inject constructor(
                         chatPlayer(happy, "I'd love a cup of tea.")
                         player.runEnergy = Constants.run_max_energy
                         UpdateRun.energy(player, player.runEnergy)
-                        chatPlayer(happy, "Aaah, nothing like a nice cuppa tea!")
+                        access.anim(TEA_ANIMATION)
+                        access.soundSynth(TEA_SOUND)
+                        access.say("Aaah, nothing like a nice cuppa tea!")
                     }
                     2 -> chatPlayer(quiz, "No, thank you.")
                 }
             }
             3 -> {
                 chatPlayer(bored, "Oh, it's a rune shop. No thank you, then.")
-                chatNpc(sad, "Well, if you find someone who does want runes, please send them my way.")
+                chatNpc(
+                    sad,
+                    "Well, if you find someone who does want runes, please send them my way.",
+                )
             }
         }
     }
@@ -166,21 +183,17 @@ class Aubury @Inject constructor(
                     "were hoping for.",
             )
             chatNpc(quiz, "Now, did you want to buy some runes?")
-            when (
-                choice2(
-                    "Yes please!",
-                    1,
-                    "No thank you.",
-                    2,
-                )
-            ) {
+            when (choice2("Yes please!", 1, "No thank you.", 2)) {
                 1 -> {
                     chatPlayer(happy, "Yes please!")
                     player.openAuburyShop(npc)
                 }
                 2 -> {
                     chatPlayer(quiz, "No thank you.")
-                    chatNpc(sad, "Well, if you find someone who does want runes, please send them my way.")
+                    chatNpc(
+                        sad,
+                        "Well, if you find someone who does want runes, please send them my way.",
+                    )
                 }
             }
         }
@@ -205,7 +218,10 @@ class Aubury @Inject constructor(
                 }
                 2 -> {
                     chatPlayer(quiz, "No thank you.")
-                    chatNpc(sad, "Well, if you find someone who does want runes, please send them my way.")
+                    chatNpc(
+                        sad,
+                        "Well, if you find someone who does want runes, please send them my way.",
+                    )
                 }
                 3 -> {
                     chatPlayer(quiz, "Can you teleport me to the Rune Essence?")
@@ -214,25 +230,21 @@ class Aubury @Inject constructor(
                         "Of course. By the way, if you end up making any runes from the essence you " +
                             "mine, I'll happily buy them from you.",
                     )
-                    teleportToRuneEssenceMine()
+                    teleportToRuneEssenceMine(worldRepo, EssenceMineTeleporter.Aubury)
                 }
             }
         } else {
-            when (
-                choice2(
-                    "Yes please!",
-                    1,
-                    "Oh, it's a rune shop. No thank you, then.",
-                    2,
-                )
-            ) {
+            when (choice2("Yes please!", 1, "Oh, it's a rune shop. No thank you, then.", 2)) {
                 1 -> {
                     chatPlayer(happy, "Yes please!")
                     player.openAuburyShop(npc)
                 }
                 2 -> {
                     chatPlayer(bored, "Oh, it's a rune shop. No thank you, then.")
-                    chatNpc(sad, "Well, if you find someone who does want runes, please send them my way.")
+                    chatNpc(
+                        sad,
+                        "Well, if you find someone who does want runes, please send them my way.",
+                    )
                 }
             }
         }
@@ -240,5 +252,11 @@ class Aubury @Inject constructor(
 
     private fun Player.openAuburyShop(npc: Npc) {
         shops.open(this, npc, "Aubury's Rune Shop.", "inv.runeshop")
+    }
+
+    private companion object {
+        const val TEA_ANIMATION = "seq.human_eat"
+
+        const val TEA_SOUND = "synth.LIQUID"
     }
 }

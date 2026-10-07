@@ -11,6 +11,10 @@ internal object InterfaceEvents {
         comsub: Int,
         event: IfEvent,
     ): Boolean {
+        val override = ui.events.getOrNull(component, comsub)
+        if (override != null) {
+            return (override and event.bitmask) != 0L
+        }
         val verifyStaticEvents = comsub == -1
         return if (verifyStaticEvents) {
             component.hasEvent(event)

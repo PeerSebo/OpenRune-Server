@@ -1,6 +1,5 @@
 package org.rsmod.content.interfaces.bank
 
-import dev.openrune.definition.type.VarBitType
 import kotlin.math.max
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.utils.vars.VarEnumDelegate

@@ -6,7 +6,7 @@ import org.rsmod.game.entity.Player
 
 sealed interface DamageExpr {
     data class Custom(val roll: (npc: Npc, target: Player) -> Int) : DamageExpr
-
+    data class NpcMeleeMaxHit(val attackType: MeleeAttackType? = null) : DamageExpr
     data class Fixed(val value: Int) : DamageExpr
     data class Roll(val range: IntRange) : DamageExpr
 

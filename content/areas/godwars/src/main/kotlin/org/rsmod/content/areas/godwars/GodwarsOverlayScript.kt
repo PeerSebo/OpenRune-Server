@@ -20,10 +20,7 @@ class GodwarsOverlayScript
 @Inject
 constructor(private val eventBus: EventBus, private val instances: InstanceManager) :
     PluginScript() {
-    /**
-     * The overlay's client script hides the killcount layer unless the player stands in the
-     * dungeon's map squares. Boss rooms are on dynamic map, so this flag stands in for that check.
-     */
+    // Dynamic boss rooms do not pass the overlay map-square check; the instance flag substitutes for it.
     private var Player.inBossInstance by boolVarBit("varbit.godwars_instance")
 
     override fun ScriptContext.startup() {

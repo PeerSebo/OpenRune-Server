@@ -21,6 +21,7 @@ class VarpServerTypeCodec(
             add(DefinitionOpcode(2, OpcodeType.SHORT, VarpServerType::configType))
             add(DefinitionOpcode(3, enumType<VarpLifetime>(), VarpServerType::scope))
             add(DefinitionOpcode(4, enumType<VarpTransmitLevel>(), VarpServerType::transmit))
+            add(DefinitionOpcode(5, OpcodeType.BOOLEAN, VarpServerType::longValue))
         }
 
     override fun VarpServerType.createData() {
@@ -35,6 +36,7 @@ class VarpServerTypeCodec(
             configType = customData.configType
             scope = customData.scope
             transmit = customData.transmit
+            longValue = customData.longValue
         }
     }
 

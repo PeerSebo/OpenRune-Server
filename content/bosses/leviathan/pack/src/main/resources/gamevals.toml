@@ -1,0 +1,18 @@
+[gamevals.dbrow]
+instance_leviathan = 63058
+
+[gamevals.varn]
+leviathan_volley_stage = 63200
+leviathan_volleys = 63201
+leviathan_stuns = 63202
+leviathan_stunned = 63203
+leviathan_in_special = 63204
+leviathan_next_special = 63205
+leviathan_stun_bearing = 63206
+leviathan_special_angle = 63207
+leviathan_absent_ticks = 63208
+leviathan_ended = 63209
+leviathan_pathfinder_corner = 63210
+
+[gamevals.varp]
+leviathan_pending_spawn = 64500

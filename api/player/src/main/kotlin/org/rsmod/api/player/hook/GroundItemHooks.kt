@@ -27,9 +27,6 @@ public data class GroundItemDropParams(
 )
 
 public fun interface PlayerGroundItemDropHook {
-    /**
-     * @return Adjusted drop parameters when this hook applies, or `null` to use defaults.
-     */
     public fun adjustDrop(
         context: GroundItemDropContext,
         duration: Int,
@@ -38,9 +35,6 @@ public fun interface PlayerGroundItemDropHook {
 }
 
 public fun interface PlayerObjTakeValidateHook {
-    /**
-     * @return A denial message if the pickup should be blocked, or `null` if allowed.
-     */
     public fun validateTake(player: Player, obj: Obj, objType: ItemServerType): String?
 }
 
@@ -74,4 +68,25 @@ constructor(private val hooks: Set<@JvmSuppressWildcards PlayerObjTakeValidateHo
         }
         return null
     }
+}
+
+/**
+ * Lets content receive a picked-up ground obj into a container other than the player inventory,
+ * such as an open looting bag in the Wilderness.
+ *
+ * [redirects] is asked before the pickup starts (so the inventory-space check is skipped) and
+ * again once the obj has been removed from the ground. [take] should only fail if the container
+ * changed in between, in which case the obj falls back to the regular inventory.
+ */
+public interface PlayerObjTakeRedirectHook {
+    public fun redirects(player: Player, obj: Obj, objType: ItemServerType): Boolean
+
+    public fun take(player: Player, obj: Obj, objType: ItemServerType): Boolean
+}
+
+public class PlayerObjTakeRedirector
+@Inject
+constructor(private val hooks: Set<@JvmSuppressWildcards PlayerObjTakeRedirectHook>) {
+    public fun find(player: Player, obj: Obj, objType: ItemServerType): PlayerObjTakeRedirectHook? =
+        hooks.firstOrNull { it.redirects(player, obj, objType) }
 }

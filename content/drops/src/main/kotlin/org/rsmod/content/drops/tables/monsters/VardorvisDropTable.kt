@@ -54,7 +54,7 @@ public val vardorvisDropTable: RSDropTable<Player, DropRollItem> = RSDropTable(
             1 weight "obj.virtus_legs" count 1
         }
         1 outOf 26 separate "obj.vardorvis_tablet" count 1 condition { player ->
-            // Drops Need Manual: The strangled tablet will become more common at an unknown rate as kill count increases until the first drop is received. Afterwards, the item will no longer be dropped.
+            // TODO: The strangled tablet will become more common at an unknown rate as kill count increases until the first drop is received. Afterwards, the item will no longer be dropped.
              true
         }
         1 outOf 81 separate "obj.dt2_awakeners_orb" count 1
@@ -67,6 +67,9 @@ public val vardorvisDropTable: RSDropTable<Player, DropRollItem> = RSDropTable(
         22 weight nothing()
     },
     tertiaries = rsPlayerTertiaryTable {
+        1 outOf 1 weight "obj.dt2_stranglewood_key" count 1 killCondition { _, npc, _ ->
+            npc.isType("npc.vardorvis_base_quest") || npc.isType("npc.vardorvis_quest")
+        }
         onBuilder { brimstoneKeyRoll() }
         1 outOf 1 weight "obj.dt2_sanguine_torva_kit" count 1 killCondition { player, npc, _ ->
             player.shouldDropSanguineTorvaKit(npc, "obj.dt2_sanguine_torva_kit")

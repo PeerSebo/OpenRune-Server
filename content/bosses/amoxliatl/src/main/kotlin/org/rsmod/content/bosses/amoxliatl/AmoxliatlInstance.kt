@@ -16,6 +16,7 @@ import org.rsmod.api.instances.InstanceSession
 import org.rsmod.api.instances.withInstanceEnterTransition
 import org.rsmod.api.npc.apPlayer2
 import org.rsmod.api.npc.interact.AiPlayerInteractions
+import org.rsmod.api.player.stat.hitpoints
 import org.rsmod.api.repo.loc.LocRepository
 import org.rsmod.game.entity.Npc
 import org.rsmod.game.entity.Player
@@ -50,8 +51,13 @@ class AmoxliatlInstance @Inject constructor(
             withInstanceEnterTransition(InstanceEnterTransition(), enter)
             if (result is InstanceManager.Result.Created) placeExitBarriers(session)
             if (spawnBoss) {
-                deps.worldQueues.add(SPAWN_REVEAL_DELAY_TICKS) {
-                    if (manager.sessionForPlayer(player) == session) spawnAmoxliatl(player, session)
+                val entry = when (result) {
+                    is InstanceManager.Result.Created -> result.enter
+                    is InstanceManager.Result.Joined -> result.enter
+                    else -> return@onEnterPrelude
+                }
+                deps.worldQueues.addDeferred(SPAWN_REVEAL_DELAY_TICKS) {
+                    spawnAmoxliatl(player, session, entry)
                 }
             }
         }
@@ -66,12 +72,19 @@ class AmoxliatlInstance @Inject constructor(
         }
     }
 
-    private fun spawnAmoxliatl(player: Player, session: InstanceSession) {
-        val coords = manager.resolveCoord(session, SPAWN_TEMPLATE_COORD) ?: return
+    private fun spawnAmoxliatl(player: Player, session: InstanceSession, entry: CoordGrid) {
+        if (manager.sessionForPlayer(player) !== session || player.hitpoints <= 0) return
+        val coords = entry.translate(
+            SPAWN_TEMPLATE_COORD.x - ENTRY_TEMPLATE_COORD.x,
+            SPAWN_TEMPLATE_COORD.z - ENTRY_TEMPLATE_COORD.z,
+        )
         val type = ServerCacheManager.getNpc(AMOXLIATL_NPC_ID) ?: return
         val npc = Npc(type, coords)
         deps.npcRepo.add(npc, Int.MAX_VALUE)
-        manager.registerSessionNpc(player, npc)
+        if (!manager.registerSessionNpc(player, npc)) {
+            deps.npcRepo.del(npc, Int.MAX_VALUE)
+            return
+        }
         npc.anim(SPAWN_SEQ)
         npc.say(SPAWN_SAY)
         deps.suppressAttacks(npc, SPAWN_ATTACK_SUPPRESS_TICKS)
@@ -88,6 +101,7 @@ class AmoxliatlInstance @Inject constructor(
         private const val SPAWN_REVEAL_DELAY_TICKS = 5
 
         private val SPAWN_TEMPLATE_COORD = CoordGrid(1362, 4510)
+        private val ENTRY_TEMPLATE_COORD = CoordGrid(1371, 4511)
 
         private const val EXIT_LOC = "loc.amoxliatl_exit"
 

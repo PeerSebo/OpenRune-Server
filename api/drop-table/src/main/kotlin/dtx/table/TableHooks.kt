@@ -7,7 +7,7 @@ import dtx.core.ModifyRoll
 import dtx.core.RollableHooks
 import dtx.core.RollableHooksImpl
 
-public interface TableHooks<T, R>: RollableHooks<T, R> {
+public interface TableHooks<T, R> : RollableHooks<T, R> {
 
     /**
      * This is a getBaseDropRate replacement
@@ -27,7 +27,7 @@ public interface TableHooks<T, R>: RollableHooks<T, R> {
     }
 }
 
-public data object DefaultTableHooks: TableHooks<Any?, Any?>, RollableHooks<Any?, Any?> by DefaultRollableHooks {
+public data object DefaultTableHooks : TableHooks<Any?, Any?>, RollableHooks<Any?, Any?> by DefaultRollableHooks {
 
     override fun baseRollFor(target: Any?): Double {
         return 0.0
@@ -42,7 +42,7 @@ internal data class TableHooksImpl<T, R>(
     val baseRollableHooks: RollableHooks<T, R> = RollableHooksImpl(),
     val baseRollFunc: BaseRoll<T> = TableHooks.Default<T, R>()::baseRollFor,
     val modifyRollFunc: ModifyRoll<T> = TableHooks.Default<T, R>()::modifyRoll,
-): TableHooks<T, R>, RollableHooks<T, R> by baseRollableHooks {
+) : TableHooks<T, R>, RollableHooks<T, R> by baseRollableHooks {
 
     override fun baseRollFor(target: T): Double {
         return baseRollFunc(target)
@@ -53,7 +53,7 @@ internal data class TableHooksImpl<T, R>(
     }
 }
 
-public abstract class AbstractTableHooksBuilder<T, R, Hooks: TableHooks<T, R>, Builder: AbstractTableHooksBuilder<T, R, Hooks, Builder>> : AbstractRollableHooksBuilder<T, R, Hooks, Builder>() {
+public abstract class AbstractTableHooksBuilder<T, R, Hooks : TableHooks<T, R>, Builder : AbstractTableHooksBuilder<T, R, Hooks, Builder>> : AbstractRollableHooksBuilder<T, R, Hooks, Builder>() {
 
     public var baseRollFunc: BaseRoll<T> = TableHooks.Default<T, R>()::baseRollFor
     public var modifyRollFunc: ModifyRoll<T> = TableHooks.Default<T, R>()::modifyRoll
@@ -81,7 +81,7 @@ public abstract class AbstractTableHooksBuilder<T, R, Hooks: TableHooks<T, R>, B
     }
 }
 
-public open class DefaultTableHooksBuilder<T, R>: AbstractTableHooksBuilder<T, R, TableHooks<T, R>, DefaultTableHooksBuilder<T, R>>() {
+public open class DefaultTableHooksBuilder<T, R> : AbstractTableHooksBuilder<T, R, TableHooks<T, R>, DefaultTableHooksBuilder<T, R>>() {
 
     init {
         construct {

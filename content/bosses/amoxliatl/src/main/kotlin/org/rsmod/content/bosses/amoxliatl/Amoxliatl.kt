@@ -14,6 +14,7 @@ import org.rsmod.api.bosses.runtime.repeatTick
 import org.rsmod.api.bosses.spec.Effect
 import org.rsmod.api.bosses.spec.ProjectileConfig
 import org.rsmod.api.combat.commons.player.finishNpcHit
+import org.rsmod.api.npc.events.NpcHitEvents
 import org.rsmod.api.npc.heal
 import org.rsmod.api.player.stat.hitpoints
 import org.rsmod.api.repo.loc.LocRepository
@@ -25,6 +26,7 @@ import org.rsmod.game.entity.npc.NpcStateEvents
 import org.rsmod.game.entity.player.PlayerUid
 import org.rsmod.game.hit.HitType
 import org.rsmod.game.loc.LocAngle
+import org.rsmod.game.loc.LocInfo
 import org.rsmod.game.loc.LocShape
 import org.rsmod.game.map.collision.isWalkBlocked
 import org.rsmod.map.CoordGrid
@@ -35,16 +37,27 @@ class Amoxliatl @Inject constructor(deps: BossDeps, private val locRepo: LocRepo
 
     private lateinit var iceBlockType: NpcServerType
 
-    private val iceBlockOwner = IdentityHashMap<Npc, Npc>()
+    private val hazards = IdentityHashMap<Npc, Hazards>()
+    private val iceBlockOwner = IdentityHashMap<Npc, Hazards>()
 
     override fun ScriptContext.startup() {
-        BossCombat.register(this, spec, deps)
+        BossCombat.register(this, spec, deps, onModifyHit = {
+            // The shared armour modifier consumes this value after publishing Modify.
+            npc.vars["varn.flat_armour"] = FLAT_ARMOUR
+        })
 
         iceBlockType = ServerCacheManager.getNpc(ICE_BLOCK.asRSCM(RSCMType.NPC))!!
 
         val amoxliatlId = AMOXLIATL_NPC.asRSCM(RSCMType.NPC)
         onEvent<NpcStateEvents.Create> { if (npc.type.id == amoxliatlId) initAmoxliatl(npc) }
         onEvent<NpcStateEvents.Respawn> { if (npc.type.id == amoxliatlId) initAmoxliatl(npc) }
+        onEvent<NpcStateEvents.Delete> {
+            if (npc.type.id == amoxliatlId) clearHazards(npc)
+            iceBlockOwner.remove(npc)?.blocks?.remove(npc)
+        }
+        onEvent<NpcHitEvents.AnyImpact> {
+            if (npc.type.id == amoxliatlId && npc.hitpoints <= 0) clearHazards(npc)
+        }
 
         onModifyNpcHit(iceBlockType) {
             if (!hit.isFromPlayer) return@onModifyNpcHit
@@ -63,63 +76,114 @@ class Amoxliatl @Inject constructor(deps: BossDeps, private val locRepo: LocRepo
         }
 
         deps.extensionRegistry.register("amoxliatl.standard_attack_pool") { _, npc, target, _ ->
+            val state = hazards[npc] ?: return@register
+            if (!isActive(state)) return@register
             val poolCoord = target.coords
-            deps.worldQueues.add(POOL_SPAWN_DELAY) { spawnIcyPool(npc, poolCoord) }
+            schedule(state, POOL_SPAWN_DELAY) { spawnIcyPool(state, poolCoord) }
         }
 
         deps.extensionRegistry.register("amoxliatl.track_ice_block") { access, block, _, _ ->
-            val owner = access?.npc ?: return@register
+            val state = hazards[checkNotNull(access).npc]
+            if (state == null || !isActive(state)) {
+                if (block.isSlotAssigned) deps.npcRepo.del(block, Int.MAX_VALUE)
+                return@register
+            }
             block.movementLocked = true
             block.lockFacing(block.coords)
             block.anim(UNSTABLE_ICE_SPAWN_SEQ)
-            iceBlockOwner[block] = owner
-            deps.worldQueues.add(UNSTABLE_ICE_TIMEOUT_TICKS) {
-                if (block.hitpoints > 0) explodeIceBlock(block, block.coords, heal = true)
+            iceBlockOwner[block] = state
+            state.blocks += block
+            schedule(state, UNSTABLE_ICE_TIMEOUT_TICKS) {
+                if (block.isSlotAssigned && block.hitpoints > 0) explodeIceBlock(block, block.coords, heal = true)
             }
         }
     }
 
     private fun initAmoxliatl(npc: Npc) {
-        npc.vars["varn.flat_armour"] = FLAT_ARMOUR
+        clearHazards(npc)
+        hazards[npc] = Hazards(npc)
     }
 
-    private fun spawnIcyPool(npc: Npc, coord: CoordGrid) {
+    private fun isActive(state: Hazards): Boolean {
+        if (hazards[state.npc] !== state) return false
+        if (state.npc.isSlotAssigned && state.npc.isVisible && state.npc.hitpoints > 0) return true
+        clearHazards(state.npc)
+        return false
+    }
+
+    private fun schedule(state: Hazards, ticks: Int, action: () -> Unit) {
+        deps.worldQueues.addDeferred(ticks) { if (isActive(state)) action() }
+    }
+
+    private fun clearHazards(npc: Npc) {
+        val state = hazards.remove(npc) ?: return
+        for (block in state.blocks.toList()) {
+            iceBlockOwner.remove(block)
+            if (block.isSlotAssigned) deps.npcRepo.del(block, Int.MAX_VALUE)
+        }
+        state.blocks.clear()
+        for (pool in state.pools.values) removePool(pool)
+        state.pools.clear()
+    }
+
+    private fun removePool(pool: LocInfo) {
+        if (locRepo.findExact(pool.coords, pool.shape)?.entity == pool.entity) {
+            locRepo.del(pool, Int.MAX_VALUE)
+        }
+    }
+
+    private fun spawnIcyPool(state: Hazards, coord: CoordGrid) {
+        if (!isActive(state)) return
         if (locRepo.findLoc(coord, ICE_POOL)) return
         val loc = locRepo.add(coord, ICE_POOL, Int.MAX_VALUE, LocAngle.West, LocShape.CentrepieceStraight)
+        state.pools[coord] = loc
         deps.repeatTick(
             ticks = POOL_DURATION_TICKS,
             onTick = { remaining ->
-                if (!locRepo.findLoc(coord, ICE_POOL)) return@repeatTick false
+                if (!isActive(state) || state.pools[coord] !== loc || !locRepo.findLoc(coord, ICE_POOL)) return@repeatTick false
                 val occupant = deps.playerList.firstOrNull { it.coords == coord && it.hitpoints > 0 }
                 if (occupant != null) {
                     val damage = POOL_DAMAGE_MIN + deps.random.of(POOL_DAMAGE_MAX - POOL_DAMAGE_MIN + 1)
-                    occupant.finishNpcHit(npc, 1, HitType.Typeless, damage, deps.playerHitModifier)
+                    occupant.finishNpcHit(state.npc, 1, HitType.Typeless, damage, deps.playerHitModifier)
                 }
                 remaining > 1
             },
         )
-        deps.worldQueues.add(POOL_DURATION_TICKS) { locRepo.del(loc, Int.MAX_VALUE) }
+        schedule(state, POOL_DURATION_TICKS) {
+            if (state.pools[coord] === loc) {
+                state.pools.remove(coord)
+                removePool(loc)
+            }
+        }
     }
 
     private fun explodeIceBlock(block: Npc, coord: CoordGrid, heal: Boolean) {
-        val npc = iceBlockOwner.remove(block) ?: return
+        val state = iceBlockOwner.remove(block) ?: return
+        if (!isActive(state) || !block.isSlotAssigned) return
         block.anim(ICE_DESTROY_SEQ)
         if (heal) {
-            npc.heal(SHATTER_HEAL_MIN + deps.random.of(SHATTER_HEAL_MAX - SHATTER_HEAL_MIN + 1), showHitsplat = true)
+            state.npc.heal(SHATTER_HEAL_MIN + deps.random.of(SHATTER_HEAL_MAX - SHATTER_HEAL_MIN + 1), showHitsplat = true)
         }
-        deps.worldQueues.add(ICE_DESTROY_ANIM_TICKS) {
+        schedule(state, ICE_DESTROY_ANIM_TICKS) {
+            state.blocks.remove(block)
+            if (!block.isSlotAssigned) return@schedule
             deps.npcRepo.del(block, Int.MAX_VALUE)
             if (heal) {
                 for (dx in -1..1) {
                     for (dz in -1..1) {
                         val pool = coord.translate(dx, dz)
-                        if (!deps.collision.isWalkBlocked(pool)) spawnIcyPool(npc, pool)
+                        if (!deps.collision.isWalkBlocked(pool)) spawnIcyPool(state, pool)
                     }
                 }
             } else {
-                spawnIcyPool(npc, coord)
+                spawnIcyPool(state, coord)
             }
         }
+    }
+
+    private class Hazards(val npc: Npc) {
+        val blocks = java.util.Collections.newSetFromMap(IdentityHashMap<Npc, Boolean>())
+        val pools = mutableMapOf<CoordGrid, LocInfo>()
     }
 
     private val icicleCrashEffect: Effect =

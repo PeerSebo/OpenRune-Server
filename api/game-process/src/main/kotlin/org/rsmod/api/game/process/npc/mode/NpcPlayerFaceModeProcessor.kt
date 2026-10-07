@@ -18,5 +18,10 @@ public class NpcPlayerFaceModeProcessor @Inject constructor(private val playerLi
         }
     }
 
-    private fun Npc.inDistance(target: Player): Boolean = isWithinDistance(target, maxRange)
+    /**
+     * faceEntity survives target plane changes, so reject cross-plane targets before planar
+     * distance checks.
+     */
+    private fun Npc.inDistance(target: Player): Boolean =
+        level == target.level && isWithinDistance(target, maxRange)
 }

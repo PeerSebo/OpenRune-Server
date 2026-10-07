@@ -8,9 +8,9 @@ public class ExhaustiveRollableHooksImpl<T, R>(
     private val isExhaustedFunc: ExhaustiveRollable<T, R>.() -> Boolean = ExhaustiveRollableHooks.Default<T, R>()::isExhausted,
     private val resetExhaustibleFunc: ExhaustiveRollable<T, R>.() -> Unit = ExhaustiveRollableHooks.Default<T, R>()::resetExhaustible,
     private val incrementExhaustibleFunc: ExhaustiveRollable<T, R>.() -> Unit = ExhaustiveRollableHooks.Default<T, R>()::incrementExhaustible,
-): ExhaustiveRollableHooks<T, R>, RollableHooks<T, R> by baseRollableHooks {
+) : ExhaustiveRollableHooks<T, R>, RollableHooks<T, R> by baseRollableHooks {
 
-    public override fun onExhaust(target: T): Unit {
+    public override fun onExhaust(target: T) {
         return onExhaustFunc(target)
     }
 
@@ -18,11 +18,11 @@ public class ExhaustiveRollableHooksImpl<T, R>(
         return isExhaustedFunc(rollable)
     }
 
-    public override fun resetExhaustible(rollable: ExhaustiveRollable<T, R>): Unit {
+    public override fun resetExhaustible(rollable: ExhaustiveRollable<T, R>) {
         return resetExhaustibleFunc(rollable)
     }
 
-    public override fun incrementExhaustible(rollable: ExhaustiveRollable<T, R>): Unit {
+    public override fun incrementExhaustible(rollable: ExhaustiveRollable<T, R>) {
         return incrementExhaustibleFunc(rollable)
     }
 }

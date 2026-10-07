@@ -1,0 +1,451 @@
+[[npc]]
+isServerOnly = true
+id = "npc.tob_maiden_100"
+inherit = "npc.tob_maiden_100"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.boss_hp_bar_mode" = 0
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_maiden_70"
+inherit = "npc.tob_maiden_70"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.boss_hp_bar_mode" = 0
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_maiden_50"
+inherit = "npc.tob_maiden_50"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.boss_hp_bar_mode" = 0
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_maiden_30"
+inherit = "npc.tob_maiden_30"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.boss_hp_bar_mode" = 0
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_maiden_dying_a"
+inherit = "npc.tob_maiden_dying_a"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.boss_hp_bar_mode" = 0
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_maiden_dying_b"
+inherit = "npc.tob_maiden_dying_b"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.boss_hp_bar_mode" = 0
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_bloat"
+inherit = "npc.tob_bloat"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.boss_hp_bar_mode" = 0
+
+[[npc]]
+isServerOnly = true
+id = "npc.nylocas_boss_melee"
+inherit = "npc.nylocas_boss_melee"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.boss_hp_bar_mode" = 0
+"param.elemental_weakness_percent"=15
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.nylocas_boss_magic"
+inherit = "npc.nylocas_boss_magic"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.boss_hp_bar_mode" = 0
+"param.elemental_weakness_percent"=15
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.nylocas_boss_ranged"
+inherit = "npc.nylocas_boss_ranged"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.boss_hp_bar_mode" = 0
+"param.elemental_weakness_percent"=15
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_sotetseg_combat"
+inherit = "npc.tob_sotetseg_combat"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.boss_hp_bar_mode" = 0
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_xarpus_static"
+inherit = "npc.tob_xarpus_static"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=50
+"param.elemental_weakness_type"=0
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_xarpus_feeding"
+inherit = "npc.tob_xarpus_feeding"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=50
+"param.elemental_weakness_type"=0
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_xarpus_combat"
+inherit = "npc.tob_xarpus_combat"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.boss_hp_bar_mode" = 0
+"param.elemental_weakness_percent"=50
+"param.elemental_weakness_type"=0
+
+[[npc]]
+isServerOnly = true
+id = "npc.verzik_initial"
+inherit = "npc.verzik_initial"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+
+[[npc]]
+isServerOnly = true
+id = "npc.verzik_phase1"
+inherit = "npc.verzik_phase1"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.boss_hp_bar_mode" = 0
+"param.elemental_weakness_percent"=50
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.verzik_phase1_to2_transition"
+inherit = "npc.verzik_phase1_to2_transition"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=50
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.verzik_phase2"
+inherit = "npc.verzik_phase2"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.boss_hp_bar_mode" = 0
+"param.elemental_weakness_percent"=50
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.verzik_phase2_to3_transition"
+inherit = "npc.verzik_phase2_to3_transition"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=50
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.verzik_phase3"
+inherit = "npc.verzik_phase3"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.boss_hp_bar_mode" = 0
+"param.elemental_weakness_percent"=50
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.maiden_elemental"
+inherit = "npc.maiden_elemental"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=15
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.maiden_blood_slug"
+inherit = "npc.maiden_blood_slug"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=50
+"param.elemental_weakness_type"=2
+
+[[npc]]
+isServerOnly = true
+id = "npc.verzik_nylocas_melee"
+inherit = "npc.verzik_nylocas_melee"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=15
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.verzik_nylocas_ranged"
+inherit = "npc.verzik_nylocas_ranged"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=15
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.verzik_nylocas_magic"
+inherit = "npc.verzik_nylocas_magic"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=15
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_verzik_phase2_armourednylocas"
+inherit = "npc.tob_verzik_phase2_armourednylocas"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=15
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_verzik_phase2_bloodnylocas"
+inherit = "npc.tob_verzik_phase2_bloodnylocas"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=15
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_verzik_creeper"
+inherit = "npc.tob_verzik_creeper"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_nylocas_incoming_melee"
+inherit = "npc.tob_nylocas_incoming_melee"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=15
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_nylocas_big_incoming_melee"
+inherit = "npc.tob_nylocas_big_incoming_melee"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=15
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_nylocas_incoming_ranged"
+inherit = "npc.tob_nylocas_incoming_ranged"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=15
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_nylocas_big_incoming_ranged"
+inherit = "npc.tob_nylocas_big_incoming_ranged"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=15
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_nylocas_incoming_magic"
+inherit = "npc.tob_nylocas_incoming_magic"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=15
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_nylocas_big_incoming_magic"
+inherit = "npc.tob_nylocas_big_incoming_magic"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=15
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_nylocas_fighting_melee"
+inherit = "npc.tob_nylocas_fighting_melee"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=15
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_nylocas_big_fighting_melee"
+inherit = "npc.tob_nylocas_big_fighting_melee"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=15
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_nylocas_fighting_ranged"
+inherit = "npc.tob_nylocas_fighting_ranged"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=15
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_nylocas_big_fighting_ranged"
+inherit = "npc.tob_nylocas_big_fighting_ranged"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=15
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_nylocas_fighting_magic"
+inherit = "npc.tob_nylocas_fighting_magic"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=15
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_nylocas_big_fighting_magic"
+inherit = "npc.tob_nylocas_big_fighting_magic"
+defaultMode = "None"
+wanderRange = 0
+maxRange = 64
+[npc.params]
+"param.elemental_weakness_percent"=15
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.tob_nylocas_support"
+inherit = "npc.tob_nylocas_support"
+defaultMode = "None"
+moveRestrict = "NoMove"
+wanderRange = 0
+maxRange = 64
+
+[[npc]]
+isServerOnly = true
+id = "npc.verzik_pillar_npc"
+inherit = "npc.verzik_pillar_npc"
+defaultMode = "None"
+moveRestrict = "NoMove"
+wanderRange = 0
+maxRange = 64
+

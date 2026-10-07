@@ -18,7 +18,9 @@ object SlayerTargetMonsterLoader {
         val blocks = mapper.decodeRuneScapeBlocks(file.toPath())
         for (block in blocks) {
             if (block.name != "slayer_target_monster") continue
-            val entry = mapper.decodeRuneScape(typeOf<SlayerTargetMonster>(), block.map.properties) as SlayerTargetMonster
+            val entry =
+                mapper.decodeRuneScape(typeOf<SlayerTargetMonster>(), block.map.properties)
+                    as SlayerTargetMonster
             for (npcRef in entry.targets) {
                 npcToTask[npcRef] = entry.targetId
             }

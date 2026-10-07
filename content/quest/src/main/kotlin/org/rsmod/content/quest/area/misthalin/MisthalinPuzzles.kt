@@ -1,6 +1,5 @@
 package org.rsmod.content.quest.area.misthalin
 
-import dev.openrune.rscm.RSCM.asRSCM
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.script.onIfModalButton
 import org.rsmod.api.script.onOpLoc1
@@ -8,6 +7,9 @@ import org.rsmod.content.quest.manager.Quest
 import org.rsmod.plugin.scripts.ScriptContext
 
 internal class MisthalinPuzzles(private val quest: Quest) {
+
+    // The selected row is temporary interface state; only the attempt counter persists.
+    private val gemRowSlot = quest.temporaryInt("GEM_ROW_SLOT", "varp.misthalin_gem_row_slot")
 
     fun register(ctx: ScriptContext): Unit =
         with(ctx) {
@@ -79,7 +81,7 @@ internal class MisthalinPuzzles(private val quest: Quest) {
 
     private suspend fun ProtectedAccess.flipSwitch(gem: GemSwitch) {
         mes("You flip the ${gem.label} switch.")
-        soundSynth("synth.interface_select")
+        soundSynth("synth.INTERFACE_SELECT")
 
         showFlippedGem(gem)
 
@@ -121,16 +123,16 @@ internal class MisthalinPuzzles(private val quest: Quest) {
     }
 
     private fun ProtectedAccess.showFlippedGem(gem: GemSwitch) {
-        val slot = player.misthalinGemRowSlot
+        val slot = gemRowSlot.get(player)
         if (slot < GemRowSlots) {
             ifSetModel("component.mistmyst_gem_puzzle:selected_${slot + 1}", gem.model)
-            player.misthalinGemRowSlot = slot + 1
+            gemRowSlot.set(player, slot + 1)
         }
     }
 
     fun openGemPanel(access: ProtectedAccess) {
         access.ifOpenMainModal("interface.mistmyst_gem_puzzle")
-        access.player.misthalinGemRowSlot = 0
+        gemRowSlot.set(access.player, 0)
     }
 
     private fun ProtectedAccess.clearGemBits() {
@@ -146,9 +148,7 @@ internal class MisthalinPuzzles(private val quest: Quest) {
             get() = if (letter in VowelSoundedNotes) "an" else "a"
     }
 
-    private class GemSwitch(val component: String, val label: String) {
-        val model: Int get() = "models.misthalin_gem_$label".asRSCM()
-    }
+    private class GemSwitch(val component: String, val label: String, val model: Int)
 
     private companion object {
         private val PianoAnswer =
@@ -171,30 +171,30 @@ internal class MisthalinPuzzles(private val quest: Quest) {
 
         private val PianoNotes =
             listOf(
-                PianoNote("component.mistmyst_piano:label_c1", 'C', "synth.grim_piano_c4"),
-                PianoNote("component.mistmyst_piano:label_d1", 'D', "synth.grim_piano_d4"),
-                PianoNote("component.mistmyst_piano:label_e1", 'E', "synth.grim_piano_e4"),
-                PianoNote("component.mistmyst_piano:label_f1", 'F', "synth.grim_piano_f4"),
-                PianoNote("component.mistmyst_piano:label_g1", 'G', "synth.grim_piano_g4"),
-                PianoNote("component.mistmyst_piano:label_a2", 'A', "synth.grim_piano_a4"),
-                PianoNote("component.mistmyst_piano:label_b2", 'B', "synth.grim_piano_b4"),
-                PianoNote("component.mistmyst_piano:label_c2", 'C', "synth.grim_piano_c5"),
-                PianoNote("component.mistmyst_piano:label_d2", 'D', "synth.grim_piano_d5"),
-                PianoNote("component.mistmyst_piano:label_e2", 'E', "synth.grim_piano_e5"),
-                PianoNote("component.mistmyst_piano:label_f2", 'F', "synth.grim_piano_f5"),
-                PianoNote("component.mistmyst_piano:label_g2", 'G', "synth.grim_piano_g5"),
-                PianoNote("component.mistmyst_piano:label_a3", 'A', "synth.grim_piano_a5"),
-                PianoNote("component.mistmyst_piano:label_b3", 'B', "synth.grim_piano_b5"),
+                PianoNote("component.mistmyst_piano:label_c1", 'C', "synth.GRIM_PIANO_C4"),
+                PianoNote("component.mistmyst_piano:label_d1", 'D', "synth.GRIM_PIANO_D4"),
+                PianoNote("component.mistmyst_piano:label_e1", 'E', "synth.GRIM_PIANO_E4"),
+                PianoNote("component.mistmyst_piano:label_f1", 'F', "synth.GRIM_PIANO_F4"),
+                PianoNote("component.mistmyst_piano:label_g1", 'G', "synth.GRIM_PIANO_G4"),
+                PianoNote("component.mistmyst_piano:label_a2", 'A', "synth.GRIM_PIANO_A4"),
+                PianoNote("component.mistmyst_piano:label_b2", 'B', "synth.GRIM_PIANO_B4"),
+                PianoNote("component.mistmyst_piano:label_c2", 'C', "synth.GRIM_PIANO_C5"),
+                PianoNote("component.mistmyst_piano:label_d2", 'D', "synth.GRIM_PIANO_D5"),
+                PianoNote("component.mistmyst_piano:label_e2", 'E', "synth.GRIM_PIANO_E5"),
+                PianoNote("component.mistmyst_piano:label_f2", 'F', "synth.GRIM_PIANO_F5"),
+                PianoNote("component.mistmyst_piano:label_g2", 'G', "synth.GRIM_PIANO_G5"),
+                PianoNote("component.mistmyst_piano:label_a3", 'A', "synth.GRIM_PIANO_A5"),
+                PianoNote("component.mistmyst_piano:label_b3", 'B', "synth.GRIM_PIANO_B5"),
             )
 
         private val GemSwitches =
             listOf(
-                GemSwitch("component.mistmyst_gem_puzzle:diamond", "diamond"),
-                GemSwitch("component.mistmyst_gem_puzzle:onyx", "onyx"),
-                GemSwitch("component.mistmyst_gem_puzzle:zenyte", "zenyte"),
-                GemSwitch("component.mistmyst_gem_puzzle:ruby", "ruby"),
-                GemSwitch("component.mistmyst_gem_puzzle:sapphire", "sapphire"),
-                GemSwitch("component.mistmyst_gem_puzzle:emerald", "emerald"),
+                GemSwitch("component.mistmyst_gem_puzzle:diamond", "diamond", 32333),
+                GemSwitch("component.mistmyst_gem_puzzle:onyx", "onyx", 32342),
+                GemSwitch("component.mistmyst_gem_puzzle:zenyte", "zenyte", 32349),
+                GemSwitch("component.mistmyst_gem_puzzle:ruby", "ruby", 2586),
+                GemSwitch("component.mistmyst_gem_puzzle:sapphire", "sapphire", 32345),
+                GemSwitch("component.mistmyst_gem_puzzle:emerald", "emerald", 32334),
             )
     }
 }

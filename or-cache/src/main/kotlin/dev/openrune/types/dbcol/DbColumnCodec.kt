@@ -295,9 +295,6 @@ public interface DbColumnCodec<T, R> {
         }
     }
 
-    /**
-     * Interface column storing a raw interface id (e.g. packed id), not a resolved [InterfaceType].
-     */
     public object InterfaceIdCodec : BaseIntCodec<Int> {
         override val types: List<CacheVarLiteral> = listOf(CacheVarLiteral.INTERFACE)
 
@@ -306,7 +303,6 @@ public interface DbColumnCodec<T, R> {
         override fun encode(value: Int): List<Int> = listOf(value)
     }
 
-    /** Enum column storing the enum definition id as a plain integer. */
     public object EnumTypeIdCodec : BaseIntCodec<Int> {
         override val types: List<CacheVarLiteral> = listOf(CacheVarLiteral.ENUM)
 
@@ -315,7 +311,6 @@ public interface DbColumnCodec<T, R> {
         override fun encode(value: Int): List<Int> = listOf(value)
     }
 
-    /** DB row column storing a row id as a plain integer. */
     public object DbRowIdCodec : BaseIntCodec<Int> {
         override val types: List<CacheVarLiteral> = listOf(CacheVarLiteral.DBROW)
 
@@ -324,7 +319,6 @@ public interface DbColumnCodec<T, R> {
         override fun encode(value: Int): List<Int> = listOf(value)
     }
 
-    /** MIDI column storing a midi id as a plain integer. */
     public object MidiIdCodec : BaseIntCodec<Int> {
         override val types: List<CacheVarLiteral> = listOf(CacheVarLiteral.MIDI)
 
@@ -334,10 +328,6 @@ public interface DbColumnCodec<T, R> {
     }
 }
 
-/**
- * Decode one enum key/value slot using the same [Iterator]/[decode] path as db columns. [raw]
- * matches stringified entries in [EnumType.values].
- */
 public fun <R> DbColumnCodec<Int, R>.decodeEnumSlot(raw: String): R {
     val v = raw.toIntOrNull() ?: error("Expected int-compatible enum slot, got '$raw'")
     return DbColumnCodec.Iterator(this, listOf(v)).single()
@@ -346,7 +336,6 @@ public fun <R> DbColumnCodec<Int, R>.decodeEnumSlot(raw: String): R {
 public fun DbColumnCodec<String, String>.decodeEnumSlot(raw: String): String =
     DbColumnCodec.Iterator(this, listOf(raw)).single()
 
-/** [VarType] for this codec's single slot, for matching [EnumType] key/value types. */
 public fun DbColumnCodec<*, *>.openRuneEnumSlotVarType(): VarType {
     require(types.size == 1) {
         "Enum decode requires a single-slot codec, got ${types.size} slots (${types.joinToString()})"
@@ -368,7 +357,6 @@ public fun <V> decodeEnumSlotForEnum(codec: DbColumnCodec<*, V>, raw: String): V
     }
 }
 
-/** Maps a column [VarType] to the cache literal used for validation. */
 public fun cacheLiteralForOpenRuneVarType(varType: VarType): CacheVarLiteral =
     CacheVarLiteral[varType.id]
         ?: error("No CacheVarLiteral for OpenRune VarType id=${varType.id} ('${varType.ch}')")

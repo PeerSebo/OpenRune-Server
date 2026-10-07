@@ -666,7 +666,6 @@ coords = "0_40_51_52_12"
 npc = "npc.zoo_keeper"
 coords = "0_40_51_59_15"
 
-## Carnillean Mansion
 
 [[spawn]]
 npc = "npc.butler_jones_hazeel_cultist"
@@ -684,7 +683,6 @@ coords = "0_40_51_5_9"
 npc = "npc.sir_ceril_carnillean"
 coords = "0_40_51_5_7"
 
-## East Ardougne Bank
 
 [[spawn]]
 npc = "npc.banker1"
@@ -702,7 +700,6 @@ coords = "0_41_51_33_19"
 npc = "npc.deadman_guard_ardougne"
 coords = "0_41_51_29_20"
 
-## East Ardougne Bank North
 
 [[spawn]]
 npc = "npc.banker2"
@@ -716,13 +713,11 @@ coords = "0_40_52_59_2"
 npc = "npc.deadman_banker_grey_north"
 coords = "0_40_52_55_2"
 
-## East Ardougne Cobble Dock House
 
 [[spawn]]
 npc = "npc.rpdt_employee"
 coords = "0_41_51_23_7"
 
-## East Ardougne Handelmort Stone Floor
 
 [[spawn]]
 npc = "npc.guarddog"
@@ -732,7 +727,6 @@ coords = "0_41_51_17_51"
 npc = "npc.horacio"
 coords = "0_41_51_11_47"
 
-## East Ardougne Hazel House
 
 [[spawn]]
 npc = "npc.carnillean_dog"
@@ -742,7 +736,6 @@ coords = "0_40_51_2_14"
 npc = "npc.guard_carnillean"
 coords = "0_40_51_10_11"
 
-## Handelmort Mansion
 
 [[spawn]]
 npc = "npc.guarddog"
@@ -756,13 +749,11 @@ coords = "0_41_51_0_63"
 npc = "npc.guarddog"
 coords = "0_41_51_22_61"
 
-## Mahogany Homes
 
 [[spawn]]
 npc = "npc.con_contract_client_6"
 coords = "0_41_51_31_57"
 
-## Mourner Tunnels
 
 [[spawn]]
 npc = "npc.mourner_hideout_slave_guard"
@@ -864,7 +855,6 @@ coords = "0_31_72_8_48"
 npc = "npc.mourning_dark_beast"
 coords = "0_31_72_9_24"
 
-## Servants' Guild
 
 [[spawn]]
 npc = "npc.poh_chief_servant"
@@ -890,7 +880,6 @@ coords = "0_41_52_47_2"
 npc = "npc.poh_servant_multi_waiter_woman"
 coords = "0_41_52_42_2"
 
-## Temple Of Light
 
 [[spawn]]
 npc = "npc.mourning_deathalter_dwarf"
@@ -1272,7 +1261,6 @@ coords = "2_29_72_6_32"
 npc = "npc.mourning_shadow_beast"
 coords = "2_29_72_7_49"
 
-## Temple Of Light Excavation
 
 [[spawn]]
 npc = "npc.knight_of_ardougne_f"
@@ -1322,11 +1310,7 @@ coords = "0_31_72_59_24"
 npc = "npc.regicide_evil_elf1"
 coords = "0_31_72_60_20"
 
-## Zenesha's Plate Mail Body Shop
 
 [[spawn]]
 npc = "npc.zenesha"
 coords = "0_41_51_29_31"
-
-## Zenesha's Plate Mail Body Shop End
-

@@ -35,7 +35,7 @@ OpenRune Server adheres to OSRS protocols, giving you the freedom to connect any
 
 ## 📊 Content progress
 
-Skills **20/23** · Bosses **20/169** · Raids **0/4** · Minigames **0/51**
+Skills **23/23** · Bosses **39/169** · Raids **1/4** · Minigames **8/51**
 
 Full breakdown in **[PROGRESS.md](PROGRESS.md)**, including every content module and
 the bosses that already have drop tables and only need the encounter writing.
@@ -47,11 +47,11 @@ the bosses that already have drop tables and only need the encounter writing.
 
 1. **Clone the repository**
    - `File → New → Project from Version Control` in IntelliJ, then paste `https://github.com/OpenRune/OpenRune-Server.git`.
-   - OpenRune Servernatively, clone via Git CLI and open the project manually.
+   - Alternatively, clone via Git CLI and open the project manually.
 
 2. **Install dependencies**
    - Ensure you have [IntelliJ IDEA](https://www.jetbrains.com/idea/download/#section=windows).
-   - Set the project SDK to Java 21: `File → Project Structure → SDK`. (The `:tools:osrs-mcp` module is built with Java 17 via Gradle’s JVM toolchain; other modules target Java 21.)
+   - Set the project SDK to Java 21: `File → Project Structure → SDK`.
    - Recommended: install the Rsc plugin in root of the project [OpenRune IntelliJ Tools-1.0.zip](https://github.com/OpenRune/OpenRune-Server/blob/main/OpenRune%20IntelliJ%20Tools-1.0.zip) for better entity reference tooling.
 
    - #### You may need to point the settings file [openRune-intelliJ-tools.toml](https://github.com/OpenRune/OpenRune-Server/blob/main/openRune-intelliJ-tools.toml) like so
@@ -66,10 +66,18 @@ the bosses that already have drop tables and only need the encounter writing.
    - When the task completes, run `OpenRune Server → Tasks → application → run`.
 
 5. **Verify startup**
-   - A successful boot prints `OpenRune Server Successfully initialized` in the terminal.
-   - If you only see `OpenRune Server Loaded up in x ms.` you likely skipped a step.
+   - Wait for the final `Server ready in ...` message before connecting a client.
 
-Screenshots showcasing each step are available in the repo under `Resources/main/docs/resources/ReadMe_OpenRune Server/`.
+On Windows, use the socket-compatible Java temporary-directory wrapper:
+
+```powershell
+& tools/scripts/gw.ps1 install
+& tools/scripts/gw.ps1 run
+```
+
+The installation creates fresh local configuration, keys and caches. Accounts, databases,
+recordings and machine-specific settings are not included. Review `game.example.yml` before
+running; quest access requirements can be optional without granting quest progress or rewards.
 
 ## 🎮 Client Setup
 > [!TIP]
@@ -95,10 +103,6 @@ Note: RSprox for Private Servers only works currently on Windows and Linux, NOT 
 
 > [!WARNING]
 > And stay away from client's like Devious, as they have been caught adding Account Stealer into their client.
-## 🤖 AI testing (MCP)
-
-The [OpenRune-Developer-Tools](https://github.com/OpenRune/OpenRune-Developer-Tools) client plugin runs a local MCP server (`http://127.0.0.1:7780/mcp`) so AI agents like Claude can test server content in a live client: walk NPC dialogue trees, screenshot and diff interfaces, read varbits/clientscript history, interact with NPCs/objects/items and wait on game conditions. A live dashboard at `http://127.0.0.1:7780/` shows every call the AI makes, with results and screenshots. Setup, example prompts and verification flows are documented in [AGENTS.md](AGENTS.md).
-
 ## 📦 Release builds
 
 CI can produce a self-contained `openrune-server-release.zip` with `server.jar`, `game.yml`, and compiled `.data/`. Pushes to `production` publish automatically; other branches can be built manually from **Actions → Release Server**.

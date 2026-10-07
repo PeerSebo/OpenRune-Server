@@ -16,7 +16,10 @@ object DarkMageDialogue {
     suspend fun ProtectedAccess.repairPouchesDirectly(npc: Npc) {
         if (!EssencePouch.hasPouchesNeedingRepair(this, includeColossal = false)) {
             startDialogue(npc) {
-                chatNpc(angry, "You don't seem to have any pouches in need of repair. Leave me alone!")
+                chatNpc(
+                    angry,
+                    "You don't seem to have any pouches in need of repair. Leave me alone!",
+                )
             }
             return
         }
@@ -24,7 +27,10 @@ object DarkMageDialogue {
         mes("The Dark mage repairs your essence pouches.")
         EssencePouch.repairPouches(this, includeColossal = false)
         startDialogue(npc) {
-            chatNpc(angry, "There, I have repaired your pouches. Now leave me alone. I'm concentrating!")
+            chatNpc(
+                angry,
+                "There, I have repaired your pouches. Now leave me alone. I'm concentrating!",
+            )
         }
     }
 

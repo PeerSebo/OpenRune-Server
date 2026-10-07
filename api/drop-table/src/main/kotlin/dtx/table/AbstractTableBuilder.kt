@@ -5,7 +5,7 @@ import dtx.core.Rollable
 
 /**
  * Abstract builder for Table objects.
- * 
+ *
  * @param T the type of the target
  * @param R the type of the result
  * @param TableType the type of the Table being built
@@ -17,14 +17,14 @@ import dtx.core.Rollable
 public abstract class AbstractTableBuilder<
     T,
     R,
-    RollableType: Rollable<T, R>,
-    TableType: Table<T, R>,
-    HookType: TableHooks<T, R>,
-    HookBuilder: AbstractTableHooksBuilder<T, R, HookType, HookBuilder>,
-    BuilderType: AbstractTableBuilder<T, R, RollableType, TableType, HookType, HookBuilder, BuilderType>
+    RollableType : Rollable<T, R>,
+    TableType : Table<T, R>,
+    HookType : TableHooks<T, R>,
+    HookBuilder : AbstractTableHooksBuilder<T, R, HookType, HookBuilder>,
+    BuilderType : AbstractTableBuilder<T, R, RollableType, TableType, HookType, HookBuilder, BuilderType>
 >(
     createHookBuilder: () -> HookBuilder
-): AbstractRollableBuilder<
+) : AbstractRollableBuilder<
         T,
         R,
         TableType,
@@ -68,8 +68,8 @@ public abstract class AbstractTableBuilder<
 public abstract class DefaultTableBuilder<
     T,
     R,
-    RT: Rollable<T, R>,
-    TableType: Table<T, R>
+    RT : Rollable<T, R>,
+    TableType : Table<T, R>
 > : AbstractTableBuilder<
         T,
         R,

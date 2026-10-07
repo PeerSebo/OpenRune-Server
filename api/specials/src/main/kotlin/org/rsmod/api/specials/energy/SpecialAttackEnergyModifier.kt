@@ -1,63 +1,27 @@
 package org.rsmod.api.specials.energy
 
-import org.rsmod.api.attr.AttributeKey
+import org.rsmod.api.player.vars.intVarp
 import org.rsmod.game.entity.Player
 
 public object SpecialAttackEnergyModifier {
-    public fun setCostDivisor(
-        player: Player,
-        divisor: Int,
-    ) {
-        require(divisor >= 1) {
-            "Special attack cost divisor must be at least 1."
-        }
+    private var Player.storedCostDivisor by intVarp("varp.player_special_attack_cost_divisor")
 
-        player.attr[COST_DIVISOR] = divisor
+    public fun setCostDivisor(player: Player, divisor: Int) {
+        require(divisor >= 1) { "Special attack cost divisor must be at least 1." }
+        player.storedCostDivisor = divisor
     }
 
-    public fun adjustedCost(
-        player: Player,
-        baseCost: Int,
-    ): Int {
-        if (baseCost < SPECIALIZED_REQUIREMENT_THRESHOLD) {
-            return baseCost
-        }
-
-        val divisor =
-            player.attr.getOrDefault(
-                key = COST_DIVISOR,
-                default = 1,
-            )
-
-        return ceilDiv(
-            value = baseCost,
-            divisor = divisor,
-        )
+    public fun adjustedCost(player: Player, baseCost: Int): Int {
+        if (baseCost < SPECIALIZED_REQUIREMENT_THRESHOLD) return baseCost
+        val divisor = player.storedCostDivisor.coerceAtLeast(1)
+        return ((baseCost.toLong() + divisor - 1) / divisor).toInt()
     }
 
-    public fun isActive(player: Player): Boolean =
-        player.attr.getOrDefault(
-            key = COST_DIVISOR,
-            default = 1,
-        ) > 1
+    public fun isActive(player: Player): Boolean = player.storedCostDivisor > 1
 
     public fun clear(player: Player) {
-        player.attr.remove(COST_DIVISOR)
+        player.storedCostDivisor = 0
     }
 
-    private fun ceilDiv(
-        value: Int,
-        divisor: Int,
-    ): Int =
-        (value + divisor - 1) /
-            divisor
-
-    private val COST_DIVISOR: AttributeKey<Int> =
-        AttributeKey(
-            resetOnDeath = true,
-            temp = true,
-        )
-
-    private const val SPECIALIZED_REQUIREMENT_THRESHOLD: Int =
-        10
+    private const val SPECIALIZED_REQUIREMENT_THRESHOLD = 10
 }

@@ -786,7 +786,6 @@ coords = "0_39_51_4_19"
 npc = "npc.zombie_unarmed_city6"
 coords = "0_39_51_10_20"
 
-## West Ardougne Concrete Houses
 
 [[spawn]]
 npc = "npc.clerk"
@@ -808,7 +807,6 @@ coords = "0_39_51_48_60"
 npc = "npc.mournerstew1"
 coords = "0_39_51_49_62"
 
-## West Ardougne Plank Houses
 
 [[spawn]]
 npc = "npc.bravek"
@@ -846,7 +844,6 @@ coords = "0_39_51_57_61"
 npc = "npc.paladin_west"
 coords = "0_39_51_53_59"
 
-## West Ardougne church
 
 [[spawn]]
 npc = "npc.mourner2"
@@ -855,6 +852,3 @@ coords = "0_39_51_28_28"
 [[spawn]]
 npc = "npc.w_ardoungepriest"
 coords = "0_39_51_33_21"
-
-## West Ardougne church End
-

@@ -128,7 +128,6 @@ public class SparseMatrix<T : Any>(
         return elements.iterator()
     }
 
-
     public fun nonDefaultString(): String = buildString {
 
         append("nondefaults (row, col, value):\n")
@@ -137,7 +136,6 @@ public class SparseMatrix<T : Any>(
             append("  (${triple.first}, ${triple.second}) -> ${triple.third}\n")
         }
     }
-
 
     override fun toString(): String = buildString {
 

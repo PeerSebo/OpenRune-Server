@@ -1,0 +1,7 @@
+[gamevals.varp]
+giant_boss_unlocks = 63600
+
+[gamevals.varbit]
+giant_boss_obor_unlocked = 63600
+giant_boss_bryophyta_unlocked = 63601
+giant_boss_unlocks_migrated = 63602

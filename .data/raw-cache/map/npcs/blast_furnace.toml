@@ -18,6 +18,11 @@ coords = "0_30_77_28_32"
 npc = "npc.blast_furnace_automaton_pumper"
 coords = "0_30_77_31_34"
 
+# TODO: Verify Dumpy's placement; it is inferred from the other automatons.
+[[spawn]]
+npc = "npc.blast_furnace_automaton_stoker_empty"
+coords = "0_30_77_26_36"
+
 [[spawn]]
 npc = "npc.blast_furnace_coal"
 coords = "0_30_77_24_38"
@@ -77,4 +82,3 @@ coords = "0_30_77_19_40"
 [[spawn]]
 npc = "npc.smithing_guild_ore_seller"
 coords = "0_30_77_16_38"
-

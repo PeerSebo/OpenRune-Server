@@ -1,0 +1,80 @@
+# Kill count belongs to the post-kill chests, not NPC death.
+[[npc]]
+isServerOnly = true
+id = "npc.hillgiant_boss"
+inherit = "npc.hillgiant_boss"
+defaultMode = "None"
+huntMode = 8
+huntRange = 10
+attackRange = 10
+maxRange = 30
+hitpoints = 120
+attack = 90
+strength = 100
+defence = 60
+ranged = 120
+[npc.params]
+"param.boss_hp_bar_mode" = 1
+"param.attackrate" = 6
+"param.attack_anim" = "seq.giant_update_basic_attack"
+"param.defend_anim" = "seq.giant_update_basic_defend"
+"param.death_anim" = "seq.giant_update_basic_death"
+"param.npc_attack_type" = "category.attacktype_crush"
+"param.attack_ranged" = 100
+"param.ranged_strength" = 65
+"param.melee_strength" = 68
+"param.slayer_experience" = 120
+"param.dropped_remains" = "obj.giant_bones"
+"param.elemental_weakness_percent"=20
+"param.elemental_weakness_type"=2
+
+[[npc]]
+isServerOnly = true
+id = "npc.gb_mossgiant"
+inherit = "npc.gb_mossgiant"
+defaultMode = "None"
+moveRestrict = "NoMove"
+huntMode = 8
+huntRange = 10
+attackRange = 10
+maxRange = 30
+hitpoints = 115
+attack = 130
+strength = 100
+defence = 100
+magic = 90
+[npc.params]
+"param.boss_hp_bar_mode" = 1
+"param.attackrate" = 6
+"param.attack_anim" = "seq.giant_update_moss_attack"
+"param.defend_anim" = "seq.giant_update_moss_defend"
+"param.death_anim" = "seq.giant_update_moss_death"
+"param.npc_attack_type" = "category.attacktype_crush"
+"param.attack_melee" = 33
+"param.melee_strength" = 31
+"param.npc_com_xp_multiplier" = 1025
+"param.slayer_experience" = 115
+"param.dropped_remains" = "obj.giant_bones"
+"param.elemental_weakness_percent"=50
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.gb_growthling"
+inherit = "npc.gb_growthling"
+defaultMode = "None"
+huntMode = 8
+huntRange = 10
+maxRange = 30
+hitpoints = 10
+attack = 40
+strength = 38
+defence = 40
+[npc.params]
+"param.attackrate" = 4
+"param.attack_anim" = "seq.tanglefoot_attack"
+"param.defend_anim" = "seq.tanglefoot_block"
+"param.death_anim" = "seq.tanglefoot_death"
+"param.npc_attack_type" = "category.attacktype_slash"
+"param.poison_immunity" = 1
+

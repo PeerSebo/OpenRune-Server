@@ -4215,10 +4215,6 @@ npc = "npc.frisd_village_miner2"
 coords = "0_37_159_8_22"
 
 [[spawn]]
-npc = "npc.gb_mossgiant"
-coords = "0_50_155_20_13"
-
-[[spawn]]
 npc = "npc.gh_giant3"
 coords = "0_57_136_5_2"
 

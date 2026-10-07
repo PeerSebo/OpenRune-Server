@@ -1,19 +1,11 @@
 package org.rsmod.content.skills.smithing.util
 
 import dev.openrune.types.ItemServerType
-import kotlin.random.Random
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.player.stat.craftingLvl
 import org.rsmod.api.player.stat.smithingLvl
-import org.rsmod.game.entity.Player
 
 object SmithingUtils {
-    private val smithsUniformPieces = listOf(
-        "obj.smithing_uniform_torso",
-        "obj.smithing_uniform_legs",
-        "obj.smithing_uniform_gloves",
-        "obj.smithing_uniform_boots"
-    )
 
     suspend fun requireSmithingLevel(
         access: ProtectedAccess,
@@ -21,9 +13,7 @@ object SmithingUtils {
         actionDescription: String,
     ): Boolean {
         if (access.player.smithingLvl < level) {
-            access.mesbox(
-                "You need a Smithing level of at least $level to $actionDescription.",
-            )
+            access.mesbox("You need a Smithing level of at least $level to $actionDescription.")
             return false
         }
         return true
@@ -37,14 +27,15 @@ object SmithingUtils {
         val player = access.player
         if (player.smithingLvl < level || player.craftingLvl < level) {
             access.mesbox(
-                "You need both Smithing and Crafting level of at least $level to $actionDescription.",
+                "You need both Smithing and Crafting level of at least $level to $actionDescription."
             )
             return false
         }
         return true
     }
 
-    fun itemName(type: ItemServerType, fallback: String = "item"): String = type.name.ifBlank { fallback }
+    fun itemName(type: ItemServerType, fallback: String = "item"): String =
+        type.name.ifBlank { fallback }
 
     fun prefixAn(name: String): String {
         val trimmed = name.trim()
@@ -52,7 +43,11 @@ object SmithingUtils {
             return "a"
         }
         return when (trimmed.first().lowercaseChar()) {
-            'a', 'e', 'i', 'o', 'u' -> "an $trimmed"
+            'a',
+            'e',
+            'i',
+            'o',
+            'u' -> "an $trimmed"
             else -> "a $trimmed"
         }
     }
@@ -64,18 +59,12 @@ object SmithingUtils {
             else -> count.toString()
         }
 
-    fun ProtectedAccess.hasHammer(): Boolean = inv.contains("obj.hammer") ||
-        inv.contains("obj.imcando_hammer") ||
-        inv.contains("obj.imcando_hammer_offhand")
-
-    fun anvilActionDelay(player: Player): Int {
-        val piecesWorn = smithsUniformPieces.count { it in player.worn }
-        return when {
-            piecesWorn >= 4 -> 4
-            piecesWorn > 0 && Random.nextDouble() < piecesWorn * 0.2 -> 4
-            else -> 5
-        }
-    }
+    fun ProtectedAccess.hasHammer(): Boolean =
+        inv.contains("obj.hammer") ||
+            inv.contains("obj.imcando_hammer") ||
+            inv.contains("obj.imcando_hammer_offhand") ||
+            worn.contains("obj.imcando_hammer") ||
+            worn.contains("obj.imcando_hammer_offhand")
 
     fun pluralize(name: String, count: Int): String {
         val lower = name.lowercase()

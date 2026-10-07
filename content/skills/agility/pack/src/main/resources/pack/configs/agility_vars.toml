@@ -1,0 +1,47 @@
+[[varp]]
+id = "varp.agility_table_course"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.agility_table_progress"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.agility_pyramid_repeat"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.agility_laps_shayzien_basic"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.agility_laps_wyrm_basic"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.agility_laps_wyrm_advanced"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.agility_laps_pyramid"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.agility_laps_wilderness"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"

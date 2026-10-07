@@ -9,7 +9,6 @@ class EmotesScriptTest {
     @Test
     fun GameTestState.`validate all emotes`() =
         runGameTest(EmotesScript::class) {
-            // Open the Emotes tab, otherwise button clicks would be discarded.
             player.ifOpenOverlay(interfaces.emote, components.toplevel_target_side12)
 
             val emoteSlots = cacheTypes.enums[emote_enums.emote_names].keys

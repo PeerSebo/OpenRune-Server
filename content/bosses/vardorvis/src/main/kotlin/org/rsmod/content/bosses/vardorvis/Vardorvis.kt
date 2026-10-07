@@ -12,7 +12,7 @@ import org.rsmod.api.bosses.runtime.BossCombat
 import org.rsmod.api.bosses.runtime.BossDeps
 import org.rsmod.api.bosses.runtime.BossPluginScript
 import org.rsmod.api.bosses.runtime.bossProjectile
-import org.rsmod.api.bosses.runtime.suppressAttacks
+import org.rsmod.api.bosses.runtime.suppressAttacksUntil
 import org.rsmod.api.bosses.spec.Effect
 import org.rsmod.api.combat.commons.CombatEffects
 import org.rsmod.api.config.refs.done.hitmark_groups
@@ -23,11 +23,13 @@ import org.rsmod.api.player.events.PlayerHitEvents
 import org.rsmod.api.player.hit.queueHit
 import org.rsmod.api.player.isValidTarget
 import org.rsmod.api.player.lockOverheads
+import org.rsmod.api.player.music.MusicPlayer
 import org.rsmod.api.player.output.mes
 import org.rsmod.api.player.stat.hitpoints
 import org.rsmod.api.repo.loc.LocRepository
 import org.rsmod.api.script.onEvent
 import org.rsmod.api.script.onNpcHit
+import org.rsmod.api.table.MusicRow
 import org.rsmod.game.entity.Npc
 import org.rsmod.game.entity.NpcList
 import org.rsmod.game.entity.Player
@@ -54,6 +56,7 @@ constructor(
     private val locRepo: LocRepository,
     private val aiPlayerInteractions: AiPlayerInteractions,
     private val strangle: VardorvisStrangle,
+    private val musicPlayer: MusicPlayer,
 ) : BossPluginScript(deps) {
 
     private val arenaBarrier = IdentityHashMap<Npc, List<LocInfo>>()
@@ -92,9 +95,15 @@ constructor(
                 if (npc.hitpoints > 0) {
                     if (npc !in arenaBarrier) {
                         raiseArenaBarrier(npc)
+                        hit.resolvePlayerSource(deps.playerList)?.let { player ->
+                            musicPlayer.startEncounter(player, MusicRow.getRow("dbrow.music_dt2_vardorvis"))
+                        }
                         scheduleFirstAxes(npc)
                     }
                 } else {
+                    hit.resolvePlayerSource(deps.playerList)?.let { player ->
+                        musicPlayer.finishEncounter(player, MusicRow.getRow("dbrow.music_dt2_vardorvis"))
+                    }
                     if (isAwakened(npc)) npc.respawns = false
                     deps.worldQueues.add(BARRIER_DEATH_DELAY) { dropArenaBarrier(npc, animated = true) }
                 }
@@ -194,13 +203,13 @@ constructor(
     private fun registerHeadGaze() {
         deps.extensionRegistry.register(MAYBE_HEAD_GAZE) { _, npc, target, _ ->
             val now = deps.mapClock.cycle
-            val ready = now >= npc.vars["varn.vardorvis_next_head_gaze"]
+            val ready = now >= npc.vars["varn.vardorvis_next_head_gaze_tick"]
             val inRange =
                 target.isValidTarget() &&
                     target.coords.chebyshevDistance(npc.coords) <= HEAD_GAZE_RANGE
             val belowHp = npc.hitpoints in 1 until HEAD_GAZE_HP_THRESHOLD
             if (ready && inRange && belowHp) {
-                npc.vars["varn.vardorvis_next_head_gaze"] =
+                npc.vars["varn.vardorvis_next_head_gaze_tick"] =
                     now + HEAD_GAZE_MIN_INTERVAL + deps.random.of(HEAD_GAZE_INTERVAL_SPREAD)
                 deps.worldQueues.add(HEAD_GAZE_LAUNCH_DELAY) {
                     if (npc.isSlotAssigned && npc.hitpoints > 0 && target.isValidTarget()) {
@@ -264,7 +273,8 @@ constructor(
     }
 
     private fun spawnAxeSet(npc: Npc) {
-        if (npc !in arenaBarrier || npc.hitpoints <= 0 || !npc.isSlotAssigned) return
+        val arena = arenaBarrier[npc] ?: return
+        if (npc.hitpoints <= 0 || !npc.isSlotAssigned) return
 
         val awakened = isAwakened(npc)
         val count =
@@ -280,16 +290,23 @@ constructor(
             tendrils.forEach { (_, tendril) ->
                 if (tendril.isSlotAssigned) deps.npcRepo.del(tendril, Int.MAX_VALUE)
             }
-            if (npc in arenaBarrier && npc.hitpoints > 0) {
+            if (arenaBarrier[npc] === arena && npc.isSlotAssigned && npc.hitpoints > 0) {
                 anchors.forEach { handoffAxe(npc, centre, it, awakened) }
             }
         }
     }
 
+    private fun scheduleEncounter(npc: Npc, delay: Int, action: () -> Unit) {
+        val arena = arenaBarrier[npc] ?: return
+        deps.worldQueues.addDeferred(delay) {
+            if (arenaBarrier[npc] === arena && npc.isSlotAssigned && npc.hitpoints > 0) action()
+        }
+    }
+
     private fun beginStrangle(npc: Npc, target: Player) {
-        deps.suppressAttacks(npc, STRANGLE_SUPPRESS_TICKS)
+        deps.suppressAttacksUntil(npc, STRANGLE_SUPPRESS_TICKS)
         npc.anim(ENTANGLE_START_SEQ)
-        deps.worldQueues.add(STRANGLE_TELEGRAPH) {
+        scheduleEncounter(npc, STRANGLE_TELEGRAPH) {
             if (npc.isSlotAssigned && npc.hitpoints > 0 && target.isValidTarget()) {
                 npc.anim(ENTANGLE_LOOP_SEQ)
                 strangle.beginStrangle(target) {
@@ -614,6 +631,10 @@ constructor(
     private fun resetStats(npc: Npc) {
         npc.strengthLvl = npc.type.strength
         npc.defenceLvl = npc.type.defence
+        npc.vars.remove("varn.vardorvis_next_head_gaze_tick")
+        npc.vars.remove("varn.vardorvis_last_strangle_tick")
+        npc.vars.remove("varn.vardorvis_next_axes")
+        npc.vars.remove("varn.vardorvis_strangle_ready_at")
     }
 
     private fun scaleStatsToHp(npc: Npc) {
@@ -643,7 +664,7 @@ constructor(
             varnIs("varn.vardorvis_strangle_ready_at", 0) or
                 varnExpired("varn.vardorvis_strangle_ready_at")
         return whenever(
-            varnExpired("varn.vardorvis_next_axes"),
+            varnAtLeast("varn.vardorvis_next_axes", 1) and varnExpired("varn.vardorvis_next_axes"),
             whenever(strangleReady, oneOf(strangleInstead, axes, axes), axes),
         )
     }

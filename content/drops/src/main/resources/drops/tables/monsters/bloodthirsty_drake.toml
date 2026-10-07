@@ -240,7 +240,6 @@ denominator = 1
 obj = "obj.trail_clue_hard_map001"
 count = 1
 
-
 # Unknown wiki drop rate: Grimy avantoe [main/Noted herbs/1/{{#expr:1/(5*{{#var:herbbase}}) round 1}}]
 # Unknown wiki drop rate: Grimy kwuarm [main/Noted herbs/1/{{#expr:1/(5*{{#var:herbbase}}) round 1}}]
 # Unknown wiki drop rate: Grimy ranarr weed [main/Noted herbs/1/{{#expr:1/(4*{{#var:herbbase}}) round 1}}]

@@ -1,7 +1,5 @@
 package org.rsmod.api.spells.runes
 
-import dev.openrune.ServerCacheManager
-import dev.openrune.definition.type.VarBitType
 import dev.openrune.rscm.RSCM
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
@@ -22,19 +20,8 @@ import org.rsmod.game.inv.Inventory
 import org.rsmod.game.inv.isType
 
 public object MagicRunes {
-    /*
-     * Warning: This function is complex, but necessarily so. It replicates subtle behavior from
-     * the official game regarding how requirements are validated and consumed - especially combo
-     * runes.
-     *
-     * When a combo rune can fulfill the requirements of **both** of its associated runes (and
-     * both are still needed), it is prioritized early and treated as a high-priority substitute.
-     * However, if it only satisfies one of the two requirements, the base rune is used instead.
-     * If that base rune cannot be validated (e.g., not enough in inventory), the system falls
-     * back to using the combo rune - even if it only fulfills a single requirement.
-     *
-     * This dual-pass structure ensures both priority and fallback behavior are reproduced.
-     */
+    // Rune-validation order affects both consumption and failure messages. Resolve combination
+    // runes that satisfy two requirements before single-rune substitutions.
     public fun validateRequirements(
         inv: Inventory,
         worn: Inventory,
@@ -54,7 +41,6 @@ public object MagicRunes {
         val righthand = worn[Wearpos.RightHand.slot]
         val lefthand = worn[Wearpos.LeftHand.slot]
 
-        // Attempt to validate combo runes that can substitute exactly two required runes.
         for ((combo, rune1, rune2) in combos.comboRunes) {
 
             val internalNameRune1 = RSCM.getReverseMapping(RSCMType.OBJ, rune1.id)
@@ -157,7 +143,7 @@ public object MagicRunes {
             val remaining1 = runeReq1?.remaining ?: 0
             val remaining2 = runeReq2?.remaining ?: 0
             val maxRemaining = max(remaining1, remaining2)
-            check(maxRemaining > 0) // `findWithRemaining` should always check that `remaining` > 0.
+            check(maxRemaining > 0)
 
             val validation =
                 validateRune(
@@ -175,7 +161,6 @@ public object MagicRunes {
                     fakes = fakes,
                 )
 
-            // Only include the combo rune if its validation is successful.
             if (validation.isValid) {
                 validationList += validation
 
@@ -189,8 +174,6 @@ public object MagicRunes {
             }
         }
 
-        // Final pass: validate remaining runes that were skipped earlier to give combo runes a
-        // chance to fulfill them.
         val missingRequirements = requirements.reqs.filter { it.remaining > 0 && !it.isWorn }
         if (missingRequirements.isNotEmpty()) {
             val missing = missingRequirements.map { Validation.Invalid.NotEnoughRunes(it.type) }
@@ -267,7 +250,6 @@ public object MagicRunes {
         val invRuneSlot = inv.indexOfFirst { it.isType(rune) }
         val invRuneObj = inv[invRuneSlot]
 
-        // Fast-path: return single-list `HasEnough` validation when inv has enough runes.
         if (invRuneObj != null && invRuneObj.count >= required) {
             val internalName = RSCM.getReverseMapping(RSCMType.OBJ, rune.id)
             val sources = listOf(Source.InvSource(internalName, invRuneSlot, required))
@@ -277,7 +259,6 @@ public object MagicRunes {
         val sources = mutableListOf<Source>()
         var remaining = required
 
-        // Reduce remaining count from existing inv rune (if available).
         if (invRuneObj != null) {
             remaining -= invRuneObj.count
             val internalName = RSCM.getReverseMapping(RSCMType.OBJ, rune.id)
@@ -345,13 +326,9 @@ public object MagicRunes {
                     )
                 val validResult = validate as? Validation.Valid ?: continue
                 return when (validResult) {
-                    // If the substitute rune has an unlimited source, return it as `Unlimited`
-                    // so that the base rune is not consumed.
                     is Validation.Valid.Unlimited -> {
                         Validation.Valid.Unlimited
                     }
-                    // If the substitute rune has enough to satisfy the remaining amount, merge
-                    // its sources into the current list and return a `HasEnough` result.
                     is Validation.Valid.HasEnough -> {
                         sources += validResult.sources
                         Validation.Valid.HasEnough(sources)
@@ -363,9 +340,6 @@ public object MagicRunes {
         return Validation.Invalid.NotEnoughRunes(rune)
     }
 
-    // Note: We _could_ use an enum config and repository to define these "rune packs," but since
-    // they do not change often, it would likely be overengineering at this point. If the need
-    // arises later, we can refactor without much effort.
     public fun validateRunePack(
         player: Player,
         spell: ItemServerType,

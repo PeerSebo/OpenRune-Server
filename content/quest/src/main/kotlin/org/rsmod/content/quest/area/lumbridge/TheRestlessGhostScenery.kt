@@ -1,6 +1,5 @@
 package org.rsmod.content.quest.area.lumbridge
 
-import dev.openrune.ServerCacheManager
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
 import org.rsmod.api.attr.AttributeKey
@@ -21,6 +20,7 @@ import org.rsmod.api.script.onOpNpcU
 import org.rsmod.api.script.onPlayerCoordsChanged
 import org.rsmod.api.script.onPlayerSoftTimer
 import org.rsmod.content.quest.manager.Quest
+import org.rsmod.content.quest.manager.QuestVar
 import org.rsmod.game.entity.Npc
 import org.rsmod.game.entity.Player
 import org.rsmod.game.loc.BoundLocInfo
@@ -28,6 +28,7 @@ import org.rsmod.game.proj.ProjAnim
 import org.rsmod.map.CoordGrid
 import org.rsmod.plugin.scripts.ScriptContext
 
+// Use individual varbits; ghost_control also contains a field unrelated to this quest.
 internal class TheRestlessGhostScenery(
     private val quest: Quest,
     private val locRepo: LocRepository,
@@ -58,10 +59,7 @@ internal class TheRestlessGhostScenery(
 
         onOpLoc1(Altar) { searchAltar(it.loc) }
 
-        onOpNpcU(
-            checkNotNull(ServerCacheManager.getNpc(GhostNpc.asRSCM())),
-            checkNotNull(ServerCacheManager.getItem(GhostSkull.asRSCM())),
-        ) { offerSkullToGhost(it.npc) }
+        onOpNpcU(GhostNpc, GhostSkull) { offerSkullToGhost(it.npc) }
 
         onOpHeld1(GhostSkull) { inspectSkull() }
         onOpHeld5(GhostSkull) { dropSkull(it.slot) }
@@ -92,23 +90,23 @@ internal class TheRestlessGhostScenery(
 
         soulApproach(coffin.spiritSource(), ghostTile)
         soundSynth(GhostApproachSound)
-        player.restlessGhostRisingTile = ghostTile.packed
+        GHOST_TILE.set(player, ghostTile.packed)
         player.softTimer(GhostSpawnTimer, GhostSpawnDelayTicks)
     }
 
     private fun Player.spawnGhost() {
         clearSoftTimer(GhostSpawnTimer)
 
-        val savedTile = restlessGhostRisingTile
-        restlessGhostRisingTile = 0
-        if (savedTile == 0) return
-        val tile = CoordGrid(savedTile)
+        val packedTile = GHOST_TILE.getOrNull(this)?.takeIf { it != 0 } ?: return
+        GHOST_TILE.clear(this)
+        val tile = CoordGrid(packedTile)
         val player = this
 
         if (quest.isQuestCompleted(player)) {
             return
         }
 
+        // Do not spawn another ghost while the first is still alive.
         if (ghostAlreadyPresent(tile)) {
             return
         }
@@ -304,13 +302,13 @@ internal class TheRestlessGhostScenery(
         const val GhostAppearAnim = "seq.restless_ghost_appear"
         const val SkeletonRiseAnim = "seq.restless_skeleton_get_up"
 
-        const val CoffinOpenSound = "synth.coffin_open"
-        const val CoffinCloseSound = "synth.coffin_close"
-        const val GhostApproachSound = "synth.rg_ghost_approach"
-        const val GhostAppearSound = "synth.bigghost_appear"
-        const val PlaceSkullSound = "synth.rg_place_skull"
-        const val SkeletonWakeSound = "synth.rg_skeleton_awake"
-        const val DestroySound = "synth.destroy_object"
+        const val CoffinOpenSound = "synth.COFFIN_OPEN"
+        const val CoffinCloseSound = "synth.COFFIN_CLOSE"
+        const val GhostApproachSound = "synth.RG_GHOST_APPROACH"
+        const val GhostAppearSound = "synth.BIGGHOST_APPEAR"
+        const val PlaceSkullSound = "synth.RG_PLACE_SKULL"
+        const val SkeletonWakeSound = "synth.RG_SKELETON_AWAKE"
+        const val DestroySound = "synth.DESTROY_OBJECT"
 
         const val SoulSpotanim = "spotanim.restless_ghost_travel_spotanim"
         const val ApproachStartHeight = 163
@@ -325,6 +323,8 @@ internal class TheRestlessGhostScenery(
 
         const val GhostSpawnTimer = "timer.restless_ghost_coffin_ghost"
         const val SkeletonAttackTimer = "timer.restless_skeleton_attack"
+
+        val GHOST_TILE = QuestVar.integer("GHOST_TILE", "varp.restless_ghost_rising_tile", temp = true)
 
         val RISEN_SKELETON = AttributeKey<Npc>(temp = true)
 

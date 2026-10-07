@@ -6,7 +6,6 @@ coords = "0_48_48_28_22"
 obj = "obj.logs"
 coords = "0_48_48_29_24"
 
-## Tutorial Island Underground
 
 [[spawn]]
 obj = "obj.bones"
@@ -23,6 +22,3 @@ coords = "0_48_148_36_47"
 [[spawn]]
 obj = "obj.bones"
 coords = "0_48_148_36_48"
-
-## Tutorial Island Underground End
-

@@ -11,7 +11,7 @@ import dtx.core.SingleRollableBuilder
 import dtx.core.TransformResult
 import dtx.core.VetoRoll
 
-public open class ExhaustiveRollableBuilder<T, R>: AbstractRollableBuilder<
+public open class ExhaustiveRollableBuilder<T, R> : AbstractRollableBuilder<
         T,
         R,
         ExhaustiveRollable<T, R>,

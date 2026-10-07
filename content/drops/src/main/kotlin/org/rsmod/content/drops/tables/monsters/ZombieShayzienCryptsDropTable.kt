@@ -2,15 +2,13 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.api.droptable.nothing
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.content.drops.tables.shared.SharedDropTables
-import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.api.droptable.nothing
-import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.content.drops.tables.shared.SharedDropTables
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -62,7 +60,7 @@ public val zombieShayzienCryptsDropTable: RSDropTable<Player, DropRollItem> = RS
     },
     tertiaries = rsPlayerTertiaryTable {
         1 outOf 5000 weight "obj.champions_challenge_zombie" count 1 condition { player ->
-            // Drops Need Manual: Zombie champion scrolls are only dropped if access to Champions' Guild is available, and the Zombie Champion hasn't been previously killed in the Champions' Challenge.
+            // TODO: Zombie champion scrolls are only dropped if access to Champions' Guild is available, and the Zombie Champion hasn't been previously killed in the Champions' Challenge.
              true
         }
         1 outOf 95 weight "obj.trail_clue_hard_map001" count 1 transformObj { player ->

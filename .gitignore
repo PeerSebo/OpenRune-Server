@@ -1,4 +1,3 @@
-# Temporary removal of playground directory
 /content/playground
 
 /server/tools
@@ -11,7 +10,6 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
 .idea/compiler.xml
@@ -23,7 +21,6 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
-### Eclipse ###
 .apt_generated
 .classpath
 .factorypath
@@ -35,27 +32,50 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
-### NetBeans ###
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
 
-### VS Code ###
 .vscode/
 
-### Mac OS ###
 .DS_Store
 /api/tables/src/main/kotlin/org/rsmod/api/table
 game.yml
+xp-rates.yml
 /.idea
 /api/generated
+CLAUDE.md
 
 logs/
 *.log
 /.cursor
 /.data/raw-cache/cs2
+
+/dump
+/.rsprox
+/rsprox-launcher.jar
+/rsprox-database
+/vendor/OpenRune-FileStore-main.zip
 .claude/settings.local.json
 .mcp.json
-/bench
+
+node_modules/
+*.tsbuildinfo
+
+/.backups/
+/.tmp*/
+/rsprox-database/
+/BINz/
+*.bin
+*.pcap
+*.pcapng
+*.heapdump
+*.hprof
+/logs/
+/.claude/
+/.mcp.json
+/.cursor/
+/AGENTS.md
+/CLAUDE.md

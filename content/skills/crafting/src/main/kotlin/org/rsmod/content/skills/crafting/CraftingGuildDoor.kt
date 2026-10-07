@@ -74,6 +74,7 @@ class CraftingGuildDoor @Inject constructor(private val locRepo: LocRepository) 
 
         locRepo.del(door, 3)
         locRepo.add(openCoords, GUILD_DOOR_OPEN, 3, openAngle, door.shape)
+        soundSynth("synth.DOOR_OPEN")
 
         teleport(walkTo)
         faceDirection(if (leaving) Direction.North else Direction.South)

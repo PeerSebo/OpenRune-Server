@@ -14,7 +14,7 @@ prayer_altar_sacrifice = 43
 prayer_bury = 42
 
 [gamevals.synth]
-prayer_altar_recharge = 2674
+PRAYER_RECHARGE = 2674
 
 [gamevals.varbit]
 ash_sanctifier_activity_enabled=65474
@@ -29,6 +29,8 @@ ecto_tokens=65499
 ecto_grinder_recipe=65498
 
 [gamevals.dbrow]
+frostdragonbones=65536
+strykewyrmbones=65537
 infernalashes=65535
 abyssalashes=65529
 maliciousashes=65528

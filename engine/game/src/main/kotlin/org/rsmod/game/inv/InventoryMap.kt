@@ -1,9 +1,7 @@
 package org.rsmod.game.inv
 
-import dev.openrune.ServerCacheManager
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
-import dev.openrune.types.InventoryServerType
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 
 public class InventoryMap(

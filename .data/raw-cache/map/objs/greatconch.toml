@@ -1,4 +1,3 @@
-## The Great Conch
 
 [[spawn]]
 obj = "obj.blunn_hasta"
@@ -332,7 +331,6 @@ coords = "0_49_37_50_33"
 obj = "obj.viking_tankard_empty"
 coords = "1_48_37_61_45"
 
-## The Great Conch bank
 
 [[spawn]]
 obj = "obj.feather"
@@ -341,6 +339,3 @@ coords = "0_49_37_46_53"
 [[spawn]]
 obj = "obj.uncut_ruby"
 coords = "0_49_37_49_52"
-
-## The Great Conch bank End
-

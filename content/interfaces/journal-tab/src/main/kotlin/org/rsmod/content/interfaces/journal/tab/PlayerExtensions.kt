@@ -1,11 +1,13 @@
 package org.rsmod.content.interfaces.journal.tab
 
+import dev.openrune.definition.type.widget.IfEvent
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
 import org.rsmod.api.player.output.ClientScripts
 import org.rsmod.api.player.output.runClientScript
 import org.rsmod.api.player.ui.ifCloseSub
 import org.rsmod.api.player.ui.ifOpenOverlay
+import org.rsmod.api.player.ui.ifSetEvents
 import org.rsmod.api.player.vars.enumVarBit
 import org.rsmod.api.player.vars.resyncVar
 import org.rsmod.events.EventBus
@@ -13,24 +15,30 @@ import org.rsmod.game.entity.Player
 
 internal var Player.sideJournalTab by enumVarBit<SideJournalTab>("varbit.side_journal_tab")
 
+fun Player.openAchievementDiaryTab(eventBus: EventBus) = switchJournalTab(SideJournalTab.Tasks, eventBus)
+
 internal fun Player.openJournalTab(tab: SideJournalTab, eventBus: EventBus) =
     when (tab) {
         SideJournalTab.Summary -> openSummaryTab(eventBus)
         SideJournalTab.Quests -> openQuestTab(eventBus)
         SideJournalTab.Tasks -> openTaskTab(eventBus)
+        SideJournalTab.AdventurePaths -> openAdventurePathTab(eventBus)
     }
 
 internal fun Player.openSummaryTab(eventBus: EventBus) {
     updateSummaryTimePlayed()
     updateSummaryCombatLevel()
-    ifOpenOverlay("interface.account_summary_sidepanel",
-        "component.side_journal:tab_container", eventBus)
+    ifOpenOverlay(
+        "interface.account_summary_sidepanel",
+        "component.side_journal:tab_container",
+        eventBus,
+    )
 }
 
 internal fun Player.updateSummaryTimePlayed() {
     val minutesPlayed = vars["varp.playtime"] / 100
     runClientScript(
-        3970,
+        "clientscript.[clientscript,script3970]",
         "component.account_summary_sidepanel:summary_contents".asRSCM(RSCMType.COMPONENT),
         "component.account_summary_sidepanel:summary_click_layer".asRSCM(RSCMType.COMPONENT),
         minutesPlayed,
@@ -39,7 +47,7 @@ internal fun Player.updateSummaryTimePlayed() {
 
 internal fun Player.updateSummaryCombatLevel() {
     runClientScript(
-        3954,
+        "clientscript.[clientscript,summary_sidepanel_combat_level_transmit]",
         "component.account_summary_sidepanel:summary_contents".asRSCM(RSCMType.COMPONENT),
         "component.account_summary_sidepanel:summary_click_layer".asRSCM(RSCMType.COMPONENT),
         combatLevel,
@@ -48,17 +56,32 @@ internal fun Player.updateSummaryCombatLevel() {
 
 internal fun Player.openQuestTab(eventBus: EventBus) {
     ifOpenOverlay("interface.questlist", "component.side_journal:tab_container", eventBus)
+
+    // QuestEvents owns quest-list event ranges; resetting them here overwrites valid quest operations.
 }
 
 internal fun Player.openTaskTab(eventBus: EventBus) {
     ifOpenOverlay("interface.area_task", "component.side_journal:tab_container", eventBus)
 }
 
+internal fun Player.openAdventurePathTab(eventBus: EventBus) {
+    ifOpenOverlay("interface.adventurepath_side", "component.side_journal:tab_container", eventBus)
+    for (n in 0 until SIDE_TOGGLE_ROWS) {
+        val sub = SIDE_TOGGLE_FIRST + (n * SIDE_TOGGLE_STRIDE)
+        ifSetEvents("component.adventurepath_side:toggles", sub..sub, IfEvent.Op1)
+    }
+}
+
+private const val SIDE_TOGGLE_FIRST = 11
+private const val SIDE_TOGGLE_STRIDE = 12
+private const val SIDE_TOGGLE_ROWS = 5
+
 internal fun Player.prepareJournalTab(tab: SideJournalTab) =
     when (tab) {
         SideJournalTab.Summary -> prepareSummaryTab()
         SideJournalTab.Quests -> prepareQuestTab()
         SideJournalTab.Tasks -> {}
+        SideJournalTab.AdventurePaths -> {}
     }
 
 internal fun Player.prepareSummaryTab() {
@@ -86,6 +109,7 @@ internal fun Player.closeJournalTab(tab: SideJournalTab, eventBus: EventBus) =
         SideJournalTab.Summary -> ifCloseSub("interface.account_summary_sidepanel", eventBus)
         SideJournalTab.Quests -> ifCloseSub("interface.questlist", eventBus)
         SideJournalTab.Tasks -> ifCloseSub("interface.area_task", eventBus)
+        SideJournalTab.AdventurePaths -> ifCloseSub("interface.adventurepath_side", eventBus)
     }
 
 internal fun Player.switchJournalTab(open: SideJournalTab, eventBus: EventBus) {

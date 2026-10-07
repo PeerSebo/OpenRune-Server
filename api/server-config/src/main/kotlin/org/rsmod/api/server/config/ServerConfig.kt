@@ -22,9 +22,7 @@ public data class CentralPostgresYaml(
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public data class GameDatabaseYaml(
-    val postgres: PostgresDbYaml? = null,
-)
+public data class GameDatabaseYaml(val postgres: PostgresDbYaml? = null)
 
 public data class PostgresDbYaml(
     @JsonProperty("jdbc-url") val jdbcUrl: String = "",
@@ -36,22 +34,22 @@ public data class PostgresDbYaml(
 public data class GameplayConfig(
     @JsonProperty("quest-requirements")
     val questRequirements: QuestRequirementsYaml = QuestRequirementsYaml(),
-    @JsonProperty("drop-rates")
-    val dropRates: DropRatesYaml = DropRatesYaml(),
+    @JsonProperty("drop-rates") val dropRates: DropRatesYaml = DropRatesYaml(),
+    /**
+     * Override the stored per-character XP rate on login so a server-rate change also affects
+     * existing accounts.
+     */
+    @JsonProperty("xp-rate") val xpRate: Double = 1.0,
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public data class DropRatesYaml(
-    val multiplier: Double = 1.0,
-)
+public data class DropRatesYaml(val multiplier: Double = 1.0)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public data class QuestRequirementsYaml(
-    val mode: String = "assume-completed",
-    @JsonProperty("virtual-completions")
-    val virtualCompletions: Set<String> = emptySet(),
-    @JsonProperty("virtual-lines")
-    val virtualLines: Set<String> = emptySet(),
+    val mode: String = "optional",
+    @JsonProperty("virtual-completions") val virtualCompletions: Set<String> = emptySet(),
+    @JsonProperty("virtual-lines") val virtualLines: Set<String> = emptySet(),
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)

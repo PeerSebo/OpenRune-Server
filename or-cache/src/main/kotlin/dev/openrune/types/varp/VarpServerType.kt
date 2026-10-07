@@ -8,6 +8,7 @@ public data class VarpServerType(
     override var id: Int = -1,
     var bitProtect: Boolean = false,
     var configType: Int = -1,
+    var longValue: Boolean = false,
     var scope: VarpLifetime = VarpLifetime.Perm,
     var transmit: VarpTransmitLevel = VarpTransmitLevel.OnSetAlways,
 ) : Definition

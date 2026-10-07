@@ -1,3 +1,11 @@
+# Migration marker only; preserve the player-owned option_skill_guide setting afterward.
+
+[gamevals.clientscript]
+skill_guide_legacy_init = 9340
+
+[gamevals.varp]
+skill_guide_v2_default_applied = 65461
+
 [gamevals.dbtable]
 stat_components=65532
 

@@ -6,6 +6,7 @@ import dev.openrune.rscm.RSCMType
 import dev.openrune.types.NpcServerType
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
+import java.util.IdentityHashMap
 import java.util.concurrent.atomic.AtomicLong
 import org.rsmod.api.instances.events.InstanceEndedEvent
 import org.rsmod.api.instances.events.InstancePlayerJoinEvent
@@ -23,6 +24,7 @@ import org.rsmod.api.invtx.invAdd
 import org.rsmod.api.invtx.invTakeFee
 import org.rsmod.api.player.output.ChatType
 import org.rsmod.api.player.output.mes
+import org.rsmod.api.player.recovery.loginExitCoord
 import org.rsmod.api.repo.npc.NpcRepository
 import org.rsmod.api.repo.region.RegionRepository
 import org.rsmod.events.EventBus
@@ -32,6 +34,7 @@ import org.rsmod.game.damage.DamageContributions
 import org.rsmod.game.entity.Npc
 import org.rsmod.game.entity.Player
 import org.rsmod.game.entity.PlayerList
+import org.rsmod.game.entity.npc.NpcUid
 import org.rsmod.game.region.Region
 import org.rsmod.map.CoordGrid
 import org.rsmod.routefinder.collision.CollisionFlagMap
@@ -56,10 +59,7 @@ constructor(
     private val ownerIndex = HashMap<Long, InstanceId>()
     private val playerIndex = HashMap<Long, InstanceId>()
     private val spawnedNpcs = HashMap<InstanceId, MutableList<Npc>>()
-
-    // Keyed by slot, not uid: `changeType`/transmog reassigns an npc's uid, which would
-    // otherwise orphan this entry under the pre-transmog uid for the rest of the npc's life.
-    private val npcInstanceIndex = HashMap<Int, InstanceId>()
+    private val npcInstanceIndex = IdentityHashMap<Npc, InstanceId>()
 
     public sealed interface Result {
         public data class Created(val session: InstanceSession, val enter: CoordGrid) : Result
@@ -97,6 +97,7 @@ constructor(
             if (spec.fee > 0) owner.invAdd(owner.inv, "obj.coins", spec.fee)
             return Result.Failed("No instance space available, try again shortly.")
         }
+        regionRepo.protect(region)
 
         val instanceId = allocateId()
         val session =
@@ -115,6 +116,7 @@ constructor(
         ownerIndex[ownerId] = instanceId
 
         startSession(session, currentTick)
+        session.awaitFirstEntry(currentTick)
 
         val spawned = mutableListOf<Npc>()
         if (!spec.spawnOnFirstJoin) {
@@ -128,7 +130,7 @@ constructor(
     public fun createServerOwned(
         key: String,
         spec: InstanceSpec,
-        access: InstanceAccess,
+        access: InstanceAccess = InstanceAccess.Public,
         currentTick: Int,
     ): InstanceSession? {
         val placement =
@@ -218,20 +220,19 @@ constructor(
     public fun contributionsFor(id: InstanceId): DamageContributions? =
         sessionForId(id)?.damageContributions
 
-    public fun instanceForNpc(npc: Npc): InstanceId? = npcInstanceIndex[npc.slotId]
+    public fun instanceForNpc(npc: Npc): InstanceId? =
+        if (npc.isSlotAssigned) npcInstanceIndex[npc] else null
 
     public fun npcsForInstance(id: InstanceId): List<Npc> = spawnedNpcs[id] ?: emptyList()
 
-    public fun resolveCoord(session: InstanceSession, coord: CoordGrid): CoordGrid? {
+    public fun resolveCoord(session: InstanceSession, source: CoordGrid): CoordGrid? {
+        if (sessions[session.id] !== session) return null
         val region = regions[session.id] ?: return null
-        val local = RegionLocal(
-            level = coord.level,
-            regionZoneX = coord.mx,
-            regionZoneZ = coord.mz,
-            localX = coord.lx,
-            localZ = coord.lz,
-        )
-        return session.localCoord(region, local)
+        return try {
+            region.normal[source]
+        } catch (_: IllegalStateException) {
+            null
+        }
     }
 
     public fun attachNpc(instanceId: InstanceId, npc: Npc) {
@@ -263,6 +264,15 @@ constructor(
         if (!forceAccess && !canJoin(playerId, session, code)) {
             return Result.Failed("You do not have access to that instance.")
         }
+        return enterSession(player, session, currentTick)
+    }
+
+    private fun enterSession(
+        player: Player,
+        session: InstanceSession,
+        currentTick: Int,
+    ): Result {
+        val playerId = player.playerId()
         if (session.state is SessionState.Grace) {
             return Result.Failed("That instance is ending and no longer accepts players.")
         }
@@ -282,8 +292,86 @@ constructor(
         return Result.Joined(session, session.enterCoord(region))
     }
 
-    /** Call after the player has telejumped into the instance (e.g. after an enter transition). */
+    /**
+     * Closed lobbies reject new occupants but allow existing occupants to re-enter. Telejump
+     * before finalizeEntry.
+     */
+    public fun joinServerOwned(
+        player: Player,
+        session: InstanceSession,
+        currentTick: Int,
+    ): Result {
+        if (!session.isServerOwned) {
+            return Result.Failed("That instance is not server-hosted.")
+        }
+        val playerId = player.playerId()
+        if (playerId !in session.occupants && !session.acceptingPlayers) {
+            return Result.Failed("That instance is no longer accepting players.")
+        }
+        return enterSession(player, session, currentTick)
+    }
+
+    public fun joinOrCreateServerOwned(
+        player: Player,
+        key: String,
+        spec: InstanceSpec,
+        currentTick: Int,
+        access: InstanceAccess = InstanceAccess.Public,
+        allowCreate: Boolean = true,
+        filter: (InstanceSession) -> Boolean = { true },
+    ): Result {
+        val current = sessionForPlayer(player)
+        if (current != null) {
+            return if (current.isServerOwned && current.key == key) {
+                joinServerOwned(player, current, currentTick)
+            } else {
+                Result.Failed("You are already inside an instance.")
+            }
+        }
+        val session =
+            findJoinableServerOwned(key, filter)
+                ?: run {
+                    if (!allowCreate) {
+                        return Result.Failed("There is nothing to join right now.")
+                    }
+                    createServerOwned(key, spec, access, currentTick)
+                        ?: return Result.Failed("No instance space available, try again shortly.")
+                }
+        return joinServerOwned(player, session, currentTick)
+    }
+
+    public fun serverOwnedSessions(key: String): List<InstanceSession> =
+        sessions.values.filter { it.isServerOwned && it.key == key }.sortedBy { it.id.value }
+
+    public fun findJoinableServerOwned(
+        key: String,
+        filter: (InstanceSession) -> Boolean = { true },
+    ): InstanceSession? = serverOwnedSessions(key).firstOrNull { it.acceptsNewPlayers() && filter(it) }
+
+    /**
+     * Server-hosted sessions bypass expiry: their activity must call this to release the region slot.
+     * Evicts occupants to the exit and publishes [InstanceEndedEvent].
+     * @return false if [session] is not a live server-hosted session.
+     */
+    public fun endServerOwned(session: InstanceSession, currentTick: Int): Boolean {
+        if (!session.isServerOwned || sessions[session.id] !== session) {
+            return false
+        }
+        session.acceptingPlayers = false
+        val exit = session.placement.exitCoord
+        for (occupant in session.occupants.toList()) {
+            val player = playerList.firstOrNull { it.uuid == occupant } ?: continue
+            removeOccupant(player, session, currentTick)
+            if (exit != CoordGrid.ZERO) {
+                player.coords = exit
+            }
+        }
+        destroy(session)
+        return true
+    }
+
     public fun finalizeEntry(player: Player, session: InstanceSession, currentTick: Int) {
+        if (sessions[session.id] !== session) return
         val playerId = player.playerId()
         if (playerId in session.occupants) {
             return
@@ -292,7 +380,6 @@ constructor(
         publishPlayerJoin(player, session)
     }
 
-    /** Destroys an owned instance that was created but never entered (e.g. logout during fade). */
     public fun cancelPendingEntry(player: Player, currentTick: Int) {
         val playerId = player.playerId()
         val ownedId = ownerIndex[playerId] ?: return
@@ -356,9 +443,17 @@ constructor(
         when (val access = session.access) {
             is InstanceAccess.Private -> playerId == session.owner
             is InstanceAccess.Friends -> true
+            is InstanceAccess.Public -> true
             is InstanceAccess.Code -> code != null && code == access.value
         }
 
+    /**
+     * Removes [player] from [session] and returns the coord they should be sent to.
+     *
+     * Safe to call mid-round on a server-hosted session: the session keeps running for every other
+     * occupant (see [InstanceSession.removeOccupant]). The same is true of the logout
+     * ([handleLogout]) and death ([handleDeath]) paths.
+     */
     public fun leave(player: Player, session: InstanceSession, currentTick: Int): CoordGrid {
         removeOccupant(player, session, currentTick)
         return session.placement.exitCoord
@@ -369,7 +464,7 @@ constructor(
         if (session != null) {
             val exit = session.placement.exitCoord
             removeOccupant(player, session, currentTick)
-            player.attr[InstanceAttributes.LOGIN_EXIT_COORD] = exit.packed
+            player.loginExitCoord = exit
             return
         }
         cancelPendingEntry(player, currentTick)
@@ -405,17 +500,27 @@ constructor(
         expired.forEach(::destroy)
     }
 
+    /**
+     * Remove occupants who physically left their region; a nonempty stale occupant list would
+     * keep abandoned instances alive.
+     */
     private fun reconcileOccupants(currentTick: Int) {
         for (session in sessions.values.toList()) {
             val region = regions[session.id] ?: continue
             val leavers =
                 session.occupants.filter { occupant ->
                     val player = playerList.firstOrNull { it.uuid == occupant }
-                    player == null || !player.coords.isWithin(region.southWest, region.northEast)
+                    player == null || !region.containsHorizontally(player.coords)
                 }
             for (occupant in leavers) {
-                val player = playerList.firstOrNull { it.uuid == occupant } ?: continue
-                removeOccupant(player, session, currentTick)
+                val player = playerList.firstOrNull { it.uuid == occupant }
+                if (player != null) {
+                    removeOccupant(player, session, currentTick)
+                } else {
+                    session.removeOccupant(occupant, currentTick)
+                    playerIndex.remove(occupant, session.id)
+                    reclaimEmptySession(session, currentTick)
+                }
             }
         }
     }
@@ -631,16 +736,20 @@ constructor(
             regionToInstance.remove(regionId, session.id)
         }
         val region = regions.remove(session.id)
-        if (session.isServerOwned && region != null) {
+        if (region != null) {
             regionRepo.unprotect(region)
         }
-        ownerIndex.remove(session.owner)
+        // A server-hosted session's `owner` is the sentinel SERVER_OWNER_ID, not a player id;
+        // clearing `ownerIndex` for it would evict whatever real player happens to sit on that key.
+        if (!session.isServerOwned) {
+            ownerIndex.remove(session.owner)
+        }
         playerIndex.entries.removeIf { it.value == session.id }
         val exitCoord = session.placement.exitCoord
         for (occupant in session.occupants) {
             val player = playerList.firstOrNull { it.uuid == occupant } ?: continue
             if (exitCoord != CoordGrid.ZERO) {
-                player.attr[InstanceAttributes.LOGIN_EXIT_COORD] = exitCoord.packed
+                player.loginExitCoord = exitCoord
             }
             player.clearInstance()
         }
@@ -651,6 +760,10 @@ constructor(
         session.removeOccupant(playerId, currentTick)
         clearOccupant(player)
         publishPlayerLeave(player, session)
+        reclaimEmptySession(session, currentTick)
+    }
+
+    private fun reclaimEmptySession(session: InstanceSession, currentTick: Int) {
         if (
             session.spec.destroyWhenEmpty &&
                 !session.isServerOwned &&
@@ -741,14 +854,12 @@ constructor(
     }
 
     private fun indexNpc(instanceId: InstanceId, npc: Npc) {
-        if (!npc.isSlotAssigned) return
-        npcInstanceIndex[npc.slotId] = instanceId
+        if (npc.uid == NpcUid.NULL) return
+        npcInstanceIndex[npc] = instanceId
     }
 
     private fun untagAndDelete(npc: Npc) {
-        if (npc.isSlotAssigned) {
-            npcInstanceIndex.remove(npc.slotId)
-        }
+        npcInstanceIndex.remove(npc)
         if (!npc.isSlotAssigned) {
             return
         }
@@ -756,6 +867,12 @@ constructor(
     }
 
     private fun Player.playerId(): Long = requireNotNull(uuid) { "Player has no uuid: $this" }
+
+    private fun Region.containsHorizontally(coords: CoordGrid): Boolean =
+        coords.x >= southWest.x &&
+            coords.x < northEast.x &&
+            coords.z >= southWest.z &&
+            coords.z < northEast.z
 
     private fun sessionMatchesMember(session: InstanceSession, name: String): Boolean {
         if (playerNameMatches(session.owner, name)) {

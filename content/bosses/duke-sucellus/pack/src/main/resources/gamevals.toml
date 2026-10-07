@@ -1,0 +1,18 @@
+[gamevals.dbrow]
+instance_duke_sucellus = 63048
+mining_dukesalt = 63049
+
+[gamevals.varn]
+duke_flare_attacks = 63100
+duke_flare_threshold = 63101
+duke_after_gaze = 63102
+duke_feed_progress = 63103
+duke_vat_left_arder = 63104
+duke_vat_left_musca = 63105
+duke_vat_left_salt = 63106
+duke_vat_left_stage = 63107
+duke_vat_right_arder = 63108
+duke_vat_right_musca = 63109
+duke_vat_right_salt = 63110
+duke_vat_right_stage = 63111
+duke_prep_generation = 63112

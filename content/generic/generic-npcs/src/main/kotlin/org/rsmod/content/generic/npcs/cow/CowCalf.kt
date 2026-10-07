@@ -4,9 +4,7 @@ import jakarta.inject.Inject
 import org.rsmod.api.random.GameRandom
 import org.rsmod.api.repo.world.WorldRepository
 import org.rsmod.api.script.onAiContentTimer
-import org.rsmod.api.script.onAiTimer
 import org.rsmod.api.script.onOpContentNpcU
-import org.rsmod.api.script.onOpNpcU
 import org.rsmod.game.entity.Npc
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
@@ -31,7 +29,7 @@ constructor(private val worldRepo: WorldRepository, private val random: GameRand
     }
 
     private fun Npc.sayFlavourText() {
-        worldRepo.soundArea(coords, "synth.cow_atmospheric", radius = 10)
+        worldRepo.soundArea(coords, "synth.COW_ATMOSPHERIC", radius = 10)
         say("Moo")
         anim("seq.cow_update_graze")
     }

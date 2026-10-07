@@ -1,4 +1,3 @@
-## Contraband yak produce
 
 [[spawn]]
 npc = "npc.fris_red_axe_secretary"
@@ -12,7 +11,6 @@ coords = "0_37_59_38_40"
 npc = "npc.frisd_izso_landlady"
 coords = "0_37_59_36_37"
 
-## Etceteria
 
 [[spawn]]
 npc = "npc.0_40_60_rarefish"
@@ -250,13 +248,11 @@ coords = "0_40_60_25_56"
 npc = "npc.shipyard_dog_noball"
 coords = "0_40_60_42_61"
 
-## Etceteria Castle Floor
 
 [[spawn]]
 npc = "npc.misc_queen_sigrid"
 coords = "1_40_60_52_37"
 
-## Fremennik Isles Far North
 
 [[spawn]]
 npc = "npc.fris_baby_troll_pc"
@@ -362,7 +358,6 @@ coords = "0_36_60_55_52"
 npc = "npc.fris_trollm_pc"
 coords = "0_37_60_8_52"
 
-## Fremennik Isles Middle
 
 [[spawn]]
 npc = "npc.fris_baby_troll"
@@ -416,7 +411,6 @@ coords = "0_36_59_14_57"
 npc = "npc.frisb_n_brg_grd_troll"
 coords = "0_36_59_16_58"
 
-## Fremennik Isles North
 
 [[spawn]]
 npc = "npc.fris_baby_troll"
@@ -554,7 +548,6 @@ coords = "0_37_60_30_13"
 npc = "npc.fris_trollm_pc"
 coords = "0_37_60_40_23"
 
-## Fremennik Province
 
 [[spawn]]
 npc = "npc.black_unicorn"
@@ -784,7 +777,6 @@ coords = "0_41_56_6_53"
 npc = "npc.vikingexile_brundt_multi"
 coords = "0_42_56_17_50"
 
-## Golden sheep
 
 [[spawn]]
 npc = "npc.viking_golden_sheepsheered"
@@ -814,7 +806,6 @@ coords = "0_43_56_11_28"
 npc = "npc.viking_golden_sheepunsheered2"
 coords = "0_43_56_17_23"
 
-## Jatizso
 
 [[spawn]]
 npc = "npc.0_37_59_lobster"
@@ -964,13 +955,11 @@ coords = "0_37_59_44_25"
 npc = "npc.frisd_weaponmerchant"
 coords = "0_37_59_26_29"
 
-## Jatizso bank
 
 [[spawn]]
 npc = "npc.frisd_banker"
 coords = "0_37_59_48_23"
 
-## Lady Zay
 
 [[spawn]]
 npc = "npc.lunar_pirate_cabin_boy"
@@ -1068,7 +1057,6 @@ coords = "0_34_59_47_17"
 npc = "npc.rat"
 coords = "0_34_59_50_24"
 
-## Lighthouse
 
 [[spawn]]
 npc = "npc.horror_girlfriend_prequest"
@@ -1078,7 +1066,6 @@ coords = "0_39_56_12_51"
 npc = "npc.horror_lighthousekeeeper_well"
 coords = "1_39_56_13_55"
 
-## Lunar Isle
 
 [[spawn]]
 npc = "npc.lunar_suqka"
@@ -1168,13 +1155,11 @@ coords = "0_32_60_37_50"
 npc = "npc.quest_lunar_magic_bucket2"
 coords = "0_32_60_42_49"
 
-## Lunar Village House Interiors Ground
 
 [[spawn]]
 npc = "npc.lunar_moonclan_monk2"
 coords = "0_32_60_34_54"
 
-## Miscellania
 
 [[spawn]]
 npc = "npc.0_40_60_rarefish"
@@ -1388,7 +1373,6 @@ coords = "0_39_60_9_59"
 npc = "npc.royal_misc_guard"
 coords = "0_39_60_13_8"
 
-## Mountain Camp
 
 [[spawn]]
 npc = "npc.mdaughter_ancientrock_guard"
@@ -1442,7 +1426,6 @@ coords = "0_43_57_59_25"
 npc = "npc.mdaughter_jokul"
 coords = "0_43_57_59_33"
 
-## Mountain Camp Lake
 
 [[spawn]]
 npc = "npc.mdaughter_eagle"
@@ -1452,7 +1435,6 @@ coords = "0_43_57_5_26"
 npc = "npc.mdaughter_ragnar"
 coords = "0_43_57_13_28"
 
-## Neitiznot
 
 [[spawn]]
 npc = "npc.deadman_banker_neitiznot"
@@ -1578,7 +1560,6 @@ coords = "0_36_59_21_15"
 npc = "npc.yak"
 coords = "0_36_59_21_20"
 
-## Ore store
 
 [[spawn]]
 npc = "npc.frisd_armourmerchant"
@@ -1588,7 +1569,6 @@ coords = "0_37_59_28_22"
 npc = "npc.frisd_oremerchant"
 coords = "0_37_59_30_22"
 
-## Pirates Cove
 
 [[spawn]]
 npc = "npc.lunar_fremennik_pirate_piratecove"
@@ -1654,7 +1634,6 @@ coords = "0_34_59_18_30"
 npc = "npc.pirate1"
 coords = "0_34_59_29_38"
 
-## Rellekka
 
 [[spawn]]
 npc = "npc.0_41_57_memberfish"
@@ -2128,7 +2107,6 @@ coords = "0_41_57_3_6"
 npc = "npc.viking_woman_indoors"
 coords = "0_41_57_50_29"
 
-## Thorvald the Warrior
 
 [[spawn]]
 npc = "npc.viking_thorvald"
@@ -2137,6 +2115,3 @@ coords = "0_41_57_42_45"
 [[spawn]]
 npc = "npc.viking_weapons_salesman"
 coords = "0_41_57_39_46"
-
-## Thorvald the Warrior End
-

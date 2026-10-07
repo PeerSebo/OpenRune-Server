@@ -6,6 +6,7 @@ import jakarta.inject.Inject
 import org.rsmod.api.player.hook.TeleportType
 import org.rsmod.api.player.output.runClientScript
 import org.rsmod.api.player.output.soundSynth
+import org.rsmod.api.player.protect.NonInterruptingComponents
 import org.rsmod.api.player.ui.ifCloseOverlay
 import org.rsmod.api.player.ui.ifOpenOverlay
 import org.rsmod.api.player.vars.boolVarBit
@@ -29,7 +30,7 @@ class WorldMapScript @Inject constructor(
     private var Player.orbsMinimized by boolVarBit("varbit.minimap_toggle")
 
     private val mapInterface = "interface.worldmap"
-    private val synthSound = "synth.interface_select"
+    private val synthSound = "synth.INTERFACE_SELECT"
 
     private val worldMapOrb = "component.orbs:worldmap"
     private val worldMapClose = "component.worldmap:close"
@@ -37,6 +38,11 @@ class WorldMapScript @Inject constructor(
     private val fullscreenTopLevel = "interface.toplevel_display"
 
     override fun ScriptContext.startup() {
+        // These handlers must not suspend or cancel the current player action.
+        NonInterruptingComponents.register(worldMapOrb)
+        NonInterruptingComponents.register("component.orbs_nomap:worldmap")
+        NonInterruptingComponents.register(worldMapClose)
+
         onPlayerLogin {
             player.orbsMinimized = false
         }
@@ -44,7 +50,7 @@ class WorldMapScript @Inject constructor(
         onIfOverlayButton("component.orbs_nomap:worldmap") { player.openMap(it.op) }
 
         onIfOverlayButton(worldMapClose) { player.closeMap() }
-        onPlayerCoordsChanged { player.runClientScript(1749, player.coords.packed) }
+        onPlayerCoordsChanged { player.runClientScript("clientscript.[clientscript,worldmap_transmitdata]", player.coords.packed) }
         onWorldMapClick(Rights.ADMINISTRATOR) { telejump(it.coord, TeleportType.Exempt) }
     }
 
@@ -74,7 +80,7 @@ class WorldMapScript @Inject constructor(
     }
 
     private fun Player.openMapOverlay() {
-        runClientScript(1749, coords.packed)
+        runClientScript("clientscript.[clientscript,worldmap_transmitdata]", coords.packed)
         ifOpenOverlay(mapInterface, eventBus)
     }
 
@@ -98,6 +104,6 @@ class WorldMapScript @Inject constructor(
         val move = resolveGameframeMove(from = from, dest = to)
         softQueue("queue.fullscreen_map", 1, move)
 
-        delay(2)
+        // Delaying the gameframe swap invalidates protected dialogue resumption.
     }
 }

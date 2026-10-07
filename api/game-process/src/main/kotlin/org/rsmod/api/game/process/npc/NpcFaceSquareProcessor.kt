@@ -12,10 +12,16 @@ public class NpcFaceSquareProcessor {
     private fun Npc.processFaceSquare() {
         if (isFacingLocked) {
             val angle = calculateAngle(faceLockSquare, faceLockWidth, faceLockLength)
-            pendingFaceAngle = EntityFaceAngle.fromOrNull(angle)
+            // Recompute moving-target bearings each cycle, but transmit only changed angles.
+            val resolved = EntityFaceAngle.fromOrNull(angle)
+            if (resolved != EntityFaceAngle.NULL && resolved.intValue != lastTransmittedFaceAngle) {
+                pendingFaceAngle = resolved
+                lastTransmittedFaceAngle = resolved.intValue
+            }
             resetPendingFaceSquare()
             return
         }
+        lastTransmittedFaceAngle = Int.MIN_VALUE
         if (!hasMovedThisCycle && pendingFaceSquare != CoordGrid.NULL) {
             val angle = calculateAngle(pendingFaceSquare, pendingFaceWidth, pendingFaceLength)
             pendingFaceAngle = EntityFaceAngle.fromOrNull(angle)

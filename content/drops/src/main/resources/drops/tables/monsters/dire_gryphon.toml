@@ -112,6 +112,4 @@ denominator = 1000
 obj = "obj.horn_of_plenty_uncharged"
 count = 1
 
-
 # Unknown wiki drop rate: Clue scroll (hard) [tertiary/Tertiary/Unknown]
-# Main table pool padding uses a nothing roll (F2P drops removed and/or subtable access missing from wiki parse) (12 weight)

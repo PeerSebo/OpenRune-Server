@@ -1,4 +1,3 @@
-## Zanaris Fairy Queens Hideout
 
 [[spawn]]
 npc = "npc.fairy_nuff_multi2"
@@ -64,7 +63,6 @@ coords = "0_36_69_30_36"
 npc = "npc.fairyresistance_multi5"
 coords = "0_36_69_39_26"
 
-## Zanaris Main
 
 [[spawn]]
 npc = "npc.butterfly"
@@ -609,6 +607,3 @@ coords = "0_37_68_52_25"
 [[spawn]]
 npc = "npc.slayer_mutated_zygomite_adult_cap"
 coords = "0_37_68_53_18"
-
-## Zanaris Main End
-

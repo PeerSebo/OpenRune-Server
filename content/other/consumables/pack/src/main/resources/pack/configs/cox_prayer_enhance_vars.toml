@@ -1,0 +1,18 @@
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_cox_prayer_enhance_flags"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_cox_prayer_enhance_expires_at"
+scope = "Temp"
+transmit = "Never"
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.consumables_cox_prayer_enhance_warned"
+varp = "varp.consumables_cox_prayer_enhance_flags"
+startBit = 0
+endBit = 0

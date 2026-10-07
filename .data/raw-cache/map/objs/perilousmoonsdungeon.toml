@@ -1,4 +1,3 @@
-## Cam Torum
 
 [[spawn]]
 obj = "obj.beer_glass"
@@ -60,11 +59,7 @@ coords = "1_23_149_4_16"
 obj = "obj.tinderbox"
 coords = "2_22_149_17_21"
 
-## Cam Torum Building Tiles
 
 [[spawn]]
 obj = "obj.hammer"
 coords = "1_22_149_44_51"
-
-## Cam Torum Building Tiles End
-

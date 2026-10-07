@@ -270,7 +270,6 @@ coords = "0_42_58_20_48"
 npc = "npc.sailing_shipyard_worker_11"
 coords = "0_42_58_26_48"
 
-## Fremennik Province
 
 [[spawn]]
 npc = "npc.horror_rockcrab_inactive"
@@ -300,7 +299,6 @@ coords = "0_42_58_6_40"
 npc = "npc.sailing_shipyard_worker_11"
 coords = "0_42_58_9_43"
 
-## Gielinor Snowy Northern Region
 
 [[spawn]]
 npc = "npc.fris_ice_chunk_one"
@@ -314,7 +312,6 @@ coords = "0_44_62_47_3"
 npc = "npc.myarm_multi_cliffbottom"
 coords = "0_44_62_35_0"
 
-## Iceberg
 
 [[spawn]]
 npc = "npc.peng_agility_crushcourse_crushblock01_npc"
@@ -524,13 +521,11 @@ coords = "1_41_63_9_8"
 npc = "npc.peng_starjump"
 coords = "1_41_63_9_9"
 
-## Interior Weiss Throne Tent
 
 [[spawn]]
 npc = "npc.my2arm_dontknowwhat_throneroom"
 coords = "0_44_61_52_30"
 
-## Rellekka
 
 [[spawn]]
 npc = "npc.hobgoblin_armed"
@@ -556,7 +551,6 @@ coords = "0_41_58_53_21"
 npc = "npc.horror_rockcrab_small_inactive"
 coords = "0_41_58_54_17"
 
-## Rellekka Hunter Iceberg
 
 [[spawn]]
 npc = "npc.butterfly_glacialis"
@@ -662,7 +656,6 @@ coords = "1_42_59_35_60"
 npc = "npc.hunting_polar_information"
 coords = "1_42_59_22_54"
 
-## Rellekka Hunter Region
 
 [[spawn]]
 npc = "npc.butterfly_glacialis"
@@ -724,7 +717,6 @@ coords = "0_42_59_23_2"
 npc = "npc.huntingbeast_sabreteeth"
 coords = "0_42_59_27_3"
 
-## Rellekka Snowy Region
 
 [[spawn]]
 npc = "npc.butterfly_glacialis"
@@ -822,7 +814,6 @@ coords = "0_42_59_29_0"
 npc = "npc.olaf"
 coords = "0_42_58_36_17"
 
-## Trollweiss Mountain
 
 [[spawn]]
 npc = "npc.aluft_gnome_explorer_mountain"
@@ -872,7 +863,6 @@ coords = "0_43_60_48_19"
 npc = "npc.trollromance_ice_wolf_1b"
 coords = "0_43_60_51_24"
 
-## Weiss Region
 
 [[spawn]]
 npc = "npc.arctic_squirrel"
@@ -1233,6 +1223,3 @@ coords = "0_45_61_5_40"
 [[spawn]]
 npc = "npc.troll_mountain_goat"
 coords = "0_45_61_6_41"
-
-## Weiss Region End
-

@@ -4,16 +4,14 @@ import dev.openrune.definition.opcode.*
 import dev.openrune.definition.opcode.OpcodeType.BOOLEAN.enumType
 import dev.openrune.definition.opcode.impl.DefinitionOpcodeEntityOps
 import dev.openrune.definition.opcode.impl.DefinitionOpcodeListActions
-import dev.openrune.definition.opcode.impl.DefinitionOpcodeParams
 import dev.openrune.definition.type.ItemType
 import dev.openrune.definition.type.ObjStackability
 import dev.openrune.types.ItemServerType
-import dev.openrune.types.ObjectServerType
 import dev.openrune.util.DefinitionOpcodeParamMap
 import dev.openrune.util.WeaponCategory
 
 class ItemServerCodec(
-    val rev : Int,
+    val rev: Int,
     val items: Map<Int, ItemType>? = null,
     val custom: Map<Int, ItemServerType>? = emptyMap(),
 ) : OpcodeDefinitionCodec<ItemServerType>() {
@@ -91,7 +89,7 @@ class ItemServerCodec(
 
     private fun intListOpcode(
         opcode: Int,
-        property: kotlin.reflect.KMutableProperty1<ItemServerType, List<Int>?>,
+        property: kotlin.reflect.KMutableProperty1<ItemServerType, MutableList<Int>?>,
     ) =
         DefinitionOpcode<ItemServerType>(
             opcode,
@@ -130,21 +128,40 @@ class ItemServerCodec(
         wearpos2 = item.appearanceOverride1
         wearpos1 = item.equipSlot
         wearpos3 = item.appearanceOverride2
-        examine = item.examine
-        paramsRaw = item.params
-        countCo = item.countCo
-        countObj = item.countObj
+        // Unlike npcs and locs, item examine text *is* in the cache (item config opcode 3), so
+        // there is no `.data/raw-cache/examines/items.csv` and none is needed: 16,768 of the
+        // 16,770 named item ids already decode with text. `ItemType.examine` defaults to the
+        // literal string "null" when opcode 3 is absent, which would otherwise be printed
+        // verbatim in the examine box, so normalise it to empty.
+        examine = item.examine.takeUnless { it.equals("null", ignoreCase = true) } ?: ""
+        // Copy rather than alias: `customData` below merges into this map, and `item.params` is the
+        // LIVE `ItemType`'s own map, shared with every other reader of the base definition.
+        paramsRaw = item.params?.toMutableMap()
+        countCo = item.countCo?.toMutableList()
+        countObj = item.countObj?.toMutableList()
 
         val customData = custom?.get(id)
 
         if (customData != null) {
+            // `[item.params]` blocks in `.data/raw-cache/server/items.toml` were being parsed and
+            // then thrown away: nothing merged them into `paramsRaw`, so every packed item's param
+            // map was byte-identical to LIVE (measured: 34,301 of 34,301). `NpcServerCodec` has
+            // always done this merge; items never did. Measured against the current toml, all
+            // 17,382 entries duplicate the LIVE value, so this changes no packed byte today - it
+            // restores the override channel, which is the only way to author a param (a stat
+            // requirement, an attack sound) that LIVE does not already carry.
+            val customParams = customData.paramsRaw
+            if (!customParams.isNullOrEmpty()) {
+                val target = paramsRaw ?: mutableMapOf<Int, Any>().also { paramsRaw = it }
+                target.putAll(customParams)
+            }
             objvar = customData.objvar
             playerCost = customData.playerCost
             playerCostDerived = customData.playerCostDerived
             playerCostDerivedConst = customData.playerCostDerivedConst
             stockMarketBuyLimit = customData.stockMarketBuyLimit
             stockMarketRecalcUsers = customData.stockMarketRecalcUsers
-            stockmarket = customData.tradeable
+            tradeable = customData.tradeable
             respawnRate = customData.respawnRate
             dummyitem = customData.dummyitem
             contentGroup = customData.contentGroup
@@ -159,11 +176,9 @@ class ItemServerCodec(
         placeholderTemplate = normalize(placeholderTemplate)
         transformlink = normalize(transformlink)
         transformtemplate = normalize(transformtemplate)
-
-
     }
 
-    //Not sure why rsmod uses 0 and not -1 like osrs client but this is what it does
+    // Not sure why rsmod uses 0 and not -1 like osrs client but this is what it does
     fun normalize(value: Int): Int = if (value == -1) 0 else value
 
     override fun createDefinition(): ItemServerType = ItemServerType()

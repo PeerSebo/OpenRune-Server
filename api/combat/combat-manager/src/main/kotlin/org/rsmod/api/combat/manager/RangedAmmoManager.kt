@@ -21,46 +21,13 @@ constructor(
     private val worldQueues: WorldQueueList,
     private val objRepo: ObjRepository,
 ) {
-    /**
-     * Validates whether the given [weapon] and [ammo] combination are usable by [player].
-     *
-     * This function verifies that the provided ammunition is appropriate for the weapon type (e.g.,
-     * bolts for crossbows, arrows for bows) and that [player] has the required level to use them.
-     * If validation fails, an appropriate error message is sent to the player.
-     *
-     * **Note:** This function only performs validation and messaging. It does **not** remove
-     * ammunition or handle ammo dropping - use [useQuiverAmmo] or [useThrownWeapon] for that
-     * behavior.
-     *
-     * @return `true` if the weapon and ammo combination is valid or the weapon doesn't require
-     *   specific ammo.
-     * @see [RangedAmmunition.attemptAmmoUsage]
-     */
     public fun attemptAmmoUsage(
         player: Player,
         weapon: ItemServerType,
         ammo: ItemServerType?,
     ): Boolean = RangedAmmunition.attemptAmmoUsage(player, weapon, ammo)
 
-    /**
-     * Consumes ammunition from the player's `quiver` slot, deducting it and handling possible ammo
-     * drops.
-     *
-     * This function will first attempt to conserve ammunition based on the player's equipment
-     * (e.g., Ava's devices). If not conserved, it will deduct ammunition from the `quiver` slot and
-     * attempt to drop it on the ground with a chance defined by [dropChance].
-     *
-     * @param quiverType The type of ammunition used from the `quiver` slot. If the `quiver` slot
-     *   obj does **not** match this type, an [IllegalStateException] will be thrown.
-     * @param dropCoord The coordinate where the ammo drop should land when applicable.
-     * @param dropDelay The delay in cycles before the ammo appears on the ground.
-     * @param dropChance The chance that the ammo will be dropped instead of disappearing, where `1
-     *   / dropChance` is the probability of it occurring.
-     * @param dropDuration The duration in cycles that the dropped ammo will remain on the ground.
-     * @param useCount The number of ammo units to consume from the `quiver` slot. If the `quiver`
-     *   slot obj does not have at least this value as its `count`, an [IllegalStateException] will
-     *   be thrown.
-     */
+    /** dropChance is a denominator: ammunition drops with probability 1 / dropChance. */
     public fun useQuiverAmmo(
         player: Player,
         quiverType: ItemServerType,
@@ -81,26 +48,7 @@ constructor(
             dropDuration = dropDuration,
         )
 
-    /**
-     * Consumes ammunition from the player's `righthand` slot (for thrown weapons), deducting it and
-     * handling possible ammo drops.
-     *
-     * This function will first attempt to conserve ammunition based on the player's equipment
-     * (e.g., Ava's devices). If not conserved, it will deduct ammunition from the `righthand` slot
-     * and attempt to drop it on the ground with a chance defined by [dropChance].
-     *
-     * @param weaponType The type of thrown weapon used from the `righthand` slot. If the
-     *   `righthand` slot obj does **not** match this type, an [IllegalStateException] will be
-     *   thrown.
-     * @param dropCoord The coordinate where the ammo drop should land when applicable.
-     * @param dropDelay The delay in cycles before the ammo appears on the ground.
-     * @param dropChance The chance that the ammo will be dropped instead of disappearing, where `1
-     *   / dropChance` is the probability of it occurring.
-     * @param dropDuration The duration in cycles that the dropped ammo will remain on the ground.
-     * @param useCount The number of thrown weapon units to consume from the `righthand` slot. If
-     *   the slot obj does not have at least this value as its `count`, an [IllegalStateException]
-     *   will be thrown.
-     */
+    /** dropChance is a denominator: ammunition drops with probability 1 / dropChance. */
     public fun useThrownWeapon(
         player: Player,
         weaponType: ItemServerType,

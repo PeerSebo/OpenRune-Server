@@ -9,7 +9,8 @@ import org.rsmod.plugin.scripts.ScriptContext
 public class ShopRestockScript @Inject constructor(private val restockProcess: ShopRestockProcess) :
     PluginScript() {
     override fun ScriptContext.startup() {
-        onEvent<GameLifecycle.LateCycle> { restock() }
+        // LateCycle runs before inventory updates and hides purchases from one-tick stock.
+        onEvent<GameLifecycle.StartCycle> { restock() }
     }
 
     private fun restock() {

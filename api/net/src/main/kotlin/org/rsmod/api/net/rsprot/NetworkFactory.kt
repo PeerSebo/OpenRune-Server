@@ -15,6 +15,7 @@ import net.rsprot.protocol.api.bootstrap.BootstrapBuilder
 import net.rsprot.protocol.api.handlers.ExceptionHandlers
 import net.rsprot.protocol.api.js5.Js5GroupProvider
 import net.rsprot.protocol.api.suppliers.NpcInfoSupplier
+import net.rsprot.protocol.api.suppliers.PlayerInfoSupplier
 import net.rsprot.protocol.api.suppliers.WorldEntityInfoSupplier
 import net.rsprot.protocol.common.client.OldSchoolClientType
 import net.rsprot.protocol.message.codec.incoming.provider.GameMessageConsumerRepositoryProvider
@@ -35,6 +36,7 @@ constructor(
     private val messageConsumerProvider: MessageConsumerProvider,
     private val connectionHandler: ConnectionHandler,
     private val config: ServerConfig,
+    private val staffVisibility: StaffVisibilityProtocol,
 ) : AbstractNetworkServiceFactory<Player>() {
     private val js5Groups = Js5GroupResponseProvider()
     private val npcSupplier = NpcSupplier.provide()
@@ -52,8 +54,7 @@ constructor(
         return connectionHandler
     }
 
-    override fun getGameMessageConsumerRepositoryProvider():
-        GameMessageConsumerRepositoryProvider<Player> {
+    override fun getGameMessageConsumerRepositoryProvider(): GameMessageConsumerRepositoryProvider<Player> {
         return messageConsumerProvider.get()
     }
 
@@ -71,6 +72,9 @@ constructor(
         return npcSupplier
     }
 
+    override fun getPlayerInfoSupplier(): PlayerInfoSupplier =
+        PlayerInfoSupplier(playerInfoProtocolWorker = staffVisibility)
+
     override fun getRsaKeyPair(): RsaKeyPair {
         return RsaProvider.from(Paths.get(".data", "game.key"))
     }
@@ -79,7 +83,6 @@ constructor(
         return WorldEntityProvider.provide()
     }
 
-    // start adv: disable netty backends to use rsprot off central
-    override fun getBootstrapBuilder() = BootstrapBuilder().eventLoopGroupTypes(BootstrapBuilder.EventLoopGroupType.NIO)
-    // end adv
+    override fun getBootstrapBuilder() =
+        BootstrapBuilder().eventLoopGroupTypes(BootstrapBuilder.EventLoopGroupType.NIO)
 }

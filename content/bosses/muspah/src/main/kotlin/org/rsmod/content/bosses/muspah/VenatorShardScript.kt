@@ -1,7 +1,11 @@
 package org.rsmod.content.bosses.muspah
 
+import dev.openrune.rscm.RSCM.asRSCM
+import org.rsmod.api.invtx.invTransaction
+import org.rsmod.api.invtx.select
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.script.onOpHeld1
+import org.rsmod.game.entity.Player
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
@@ -16,13 +20,27 @@ class VenatorShardScript : PluginScript() {
             return
         }
 
-        if (invDel(inv, "obj.venator_shard", REQUIRED_SHARDS).failure) {
+        if (!assembleShards(player)) {
+            mes("You need a free inventory space to assemble the bow.")
             return
         }
-
-        invAdd(inv, "obj.venator_bow_uncharged", 1)
         objbox("obj.venator_bow_uncharged", 400, "The shards assemble into a venator bow.")
     }
+
+    internal fun assembleShards(player: Player): Boolean =
+        player.invTransaction(player.inv) {
+            val inventory = select(player.inv)
+            delete {
+                from = inventory
+                obj = "obj.venator_shard".asRSCM()
+                strictCount = REQUIRED_SHARDS
+            }
+            insert {
+                into = inventory
+                obj = "obj.venator_bow_uncharged".asRSCM()
+                strictCount = 1
+            }
+        }.success
 
     private companion object {
         const val REQUIRED_SHARDS = 5

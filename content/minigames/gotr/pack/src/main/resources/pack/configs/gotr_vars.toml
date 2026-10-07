@@ -1,0 +1,29 @@
+[[varp]]
+isServerOnly = true
+id = "varp.gotr_elemental_points"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.gotr_catalytic_points"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.gotr_total_searches"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.gotr_rifts_closed"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.gotr_rewards_migrated"
+scope = "Perm"
+transmit = "Never"

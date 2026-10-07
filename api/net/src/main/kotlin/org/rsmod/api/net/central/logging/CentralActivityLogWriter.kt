@@ -3,8 +3,8 @@ package org.rsmod.api.net.central.logging
 import com.github.michaelbull.logging.InlineLogger
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import dev.or2.central.logs.CentralActivityLog
 import dev.openrune.types.ItemServerType
+import dev.or2.central.logs.CentralActivityLog
 import dev.or2.central.logs.CentralActivityLogRepository
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
@@ -17,19 +17,14 @@ import org.rsmod.game.entity.Player
 import org.rsmod.game.inv.InvObj
 
 @Singleton
-public class CentralActivityLogWriter
-@Inject
-constructor(
-    private val config: ServerConfig,
-) {
+public class CentralActivityLogWriter @Inject constructor(private val config: ServerConfig) {
     private val logger = InlineLogger()
     private val executor =
         Executors.newSingleThreadExecutor { r ->
             Thread(r, "central-activity-log-writer").apply { isDaemon = true }
         }
 
-    @Volatile
-    private var repository: CentralActivityLogRepository? = null
+    @Volatile private var repository: CentralActivityLogRepository? = null
 
     private var dataSource: HikariDataSource? = null
 
@@ -47,11 +42,11 @@ constructor(
                         this.password = password
                         maximumPoolSize = min(4, poolSize)
                         poolName = "openrune-central-activity-log"
-                    },
+                    }
                 )
             dataSource = ds
             repository = CentralActivityLogRepository(ds)
-            logger.info { "Central activity log JDBC enabled ($jdbc)" }
+            logger.debug { "Central activity log JDBC enabled ($jdbc)" }
         }
     }
 
@@ -72,66 +67,49 @@ constructor(
         }
     }
 
-    public fun logItemDrop(
-        player: Player,
-        type: ItemServerType,
-        obj: InvObj,
-    ) {
+    public fun logItemDrop(player: Player, type: ItemServerType, obj: InvObj) {
         logItem(
             player = player,
             itemId = type.internalName,
             quantity = obj.count,
-            log =
-                { worldId, now, charId, accountId, itemId, qty, x, z ->
-                    CentralActivityLog.DroppedItem(
-                        worldId = worldId,
-                        occurredAtEpochMillis = now,
-                        characterId = charId,
-                        accountId = accountId,
-                        itemId = itemId,
-                        quantity = qty,
-                        tileX = x,
-                        tileZ = z,
-                    )
-                },
+            log = { worldId, now, charId, accountId, itemId, qty, x, z ->
+                CentralActivityLog.DroppedItem(
+                    worldId = worldId,
+                    occurredAtEpochMillis = now,
+                    characterId = charId,
+                    accountId = accountId,
+                    itemId = itemId,
+                    quantity = qty,
+                    tileX = x,
+                    tileZ = z,
+                )
+            },
             failureLabel = "drop",
         )
     }
 
-    /**
-     * @param itemIdRscm RSCM object key from the destroy flow (same as [ItemServerType.internalName]).
-     */
-    public fun logItemDestroy(
-        player: Player,
-        itemIdRscm: String,
-        obj: InvObj,
-    ) {
+    public fun logItemDestroy(player: Player, itemIdRscm: String, obj: InvObj) {
         logItem(
             player = player,
             itemId = itemIdRscm,
             quantity = obj.count,
-            log =
-                { worldId, now, charId, accountId, itemId, qty, x, z ->
-                    CentralActivityLog.DestroyItem(
-                        worldId = worldId,
-                        occurredAtEpochMillis = now,
-                        characterId = charId,
-                        accountId = accountId,
-                        itemId = itemId,
-                        quantity = qty,
-                        tileX = x,
-                        tileZ = z,
-                    )
-                },
+            log = { worldId, now, charId, accountId, itemId, qty, x, z ->
+                CentralActivityLog.DestroyItem(
+                    worldId = worldId,
+                    occurredAtEpochMillis = now,
+                    characterId = charId,
+                    accountId = accountId,
+                    itemId = itemId,
+                    quantity = qty,
+                    tileX = x,
+                    tileZ = z,
+                )
+            },
             failureLabel = "destroy",
         )
     }
 
-    public fun logCommand(
-        player: Player,
-        command: String,
-        args: List<String>,
-    ) {
+    public fun logCommand(player: Player, command: String, args: List<String>) {
         val repo = repository ?: return
         val worldId = config.world
         val charId = player.characterId
@@ -148,7 +126,7 @@ constructor(
                         accountId = accountId,
                         command = command,
                         args = argsCopy,
-                    ),
+                    )
                 )
             } catch (e: Exception) {
                 logger.warn(e) {
@@ -158,10 +136,6 @@ constructor(
         }
     }
 
-    /**
-     * Persists a `login` row once the player is in-world with [Player.characterId] / [Player.accountId] set.
-     * (Central worlds-link no longer writes login logs.)
-     */
     public fun logPlayerLogin(player: Player) {
         val repo = repository ?: return
         val worldId = config.world
@@ -176,7 +150,7 @@ constructor(
                         occurredAtEpochMillis = now,
                         characterId = charId,
                         accountId = accountId,
-                    ),
+                    )
                 )
             } catch (e: Exception) {
                 logger.warn(e) {
@@ -186,13 +160,7 @@ constructor(
         }
     }
 
-    /**
-     * Persists a `logout` row. [centralSessionId] is optional (Central DB session row id when known).
-     */
-    public fun logPlayerLogout(
-        player: Player,
-        centralSessionId: Long? = null,
-    ) {
+    public fun logPlayerLogout(player: Player, centralSessionId: Long? = null) {
         val repo = repository ?: return
         val worldId = config.world
         val now = System.currentTimeMillis()
@@ -207,7 +175,7 @@ constructor(
                         characterId = charId,
                         accountId = accountId,
                         sessionId = centralSessionId,
-                    ),
+                    )
                 )
             } catch (e: Exception) {
                 logger.warn(e) {
@@ -221,8 +189,7 @@ constructor(
         player: Player,
         itemId: String,
         quantity: Int,
-        log:
-            (
+        log: (
                 worldId: Int,
                 now: Long,
                 charId: Int,
@@ -259,11 +226,7 @@ constructor(
             val jdbcFromYaml = pg.jdbcUrl.trim()
             val triple =
                 if (jdbcFromYaml.isNotEmpty()) {
-                    Triple(
-                        jdbcFromYaml,
-                        pg.user.trim().ifBlank { "openrune" },
-                        pg.password,
-                    )
+                    Triple(jdbcFromYaml, pg.user.trim().ifBlank { "openrune" }, pg.password)
                 } else if (central.sameInstance) {
                     EmbeddedSameInstancePostgres.jdbcTripleIfEmbedded() ?: return null
                 } else {

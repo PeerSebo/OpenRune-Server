@@ -12,6 +12,7 @@ import org.rsmod.annotations.InternalApi
 import org.rsmod.api.net.rsprot.player.InterfaceEvents
 import org.rsmod.api.player.debug.componentClickDebug
 import org.rsmod.api.player.output.mes
+import org.rsmod.api.player.protect.NonInterruptingComponents
 import org.rsmod.api.player.protect.ProtectedAccessLauncher
 import org.rsmod.api.player.ui.IfModalButton
 import org.rsmod.api.player.ui.IfOverlayButton
@@ -72,6 +73,11 @@ constructor(private val eventBus: EventBus, private val protectedAccess: Protect
                     ServerCacheManager.getItem(message.obj),
                     buttonOp,
                 )
+            if (NonInterruptingComponents.contains(componentType.packed)) {
+                logger.debug { "[Overlay][NonInterrupting] If3Button: $message (event=$event)" }
+                protectedAccess.launchNonInterrupting(player) { eventBus.publish(this, event) }
+                return
+            }
             logger.debug { "[Overlay] If3Button: $message (event=$event)" }
             protectedAccess.launchBeside(player) { eventBus.publish(this, event) }
             return

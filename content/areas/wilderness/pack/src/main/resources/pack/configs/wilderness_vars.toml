@@ -1,0 +1,83 @@
+[[varp]]
+isServerOnly = true
+id = "varp.wilderness_player_flags"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.wilderness_skull_icon"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.wilderness_session_flags"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.wilderness_skull_source"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.wilderness_loot_key_count"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.wilderness_last_pvp_spec_tick"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.wilderness_boss_fee_nowarn"
+scope = "Perm"
+transmit = "Never"
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.wilderness_is_skulled"
+varp = "varp.wilderness_player_flags"
+startBit = 0
+endBit = 0
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.wilderness_skull_equip_locked"
+varp = "varp.wilderness_player_flags"
+startBit = 1
+endBit = 1
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.wilderness_opt_out"
+varp = "varp.wilderness_player_flags"
+startBit = 2
+endBit = 2
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.wilderness_vars_migrated"
+varp = "varp.wilderness_player_flags"
+startBit = 3
+endBit = 3
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.wilderness_can_pvp"
+varp = "varp.wilderness_session_flags"
+startBit = 0
+endBit = 0
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.wilderness_dueling"
+varp = "varp.wilderness_session_flags"
+startBit = 1
+endBit = 1

@@ -1,0 +1,7 @@
+[gamevals.varn]
+td_shield_up = 13
+td_overhead_style = 14
+td_damage_since_swap = 64085
+td_first_hit_taken = 64086
+td_defenceless = 64087
+td_defenceless_at = 64088

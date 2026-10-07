@@ -1,0 +1,7 @@
+[[timer]]
+isServerOnly = true
+id = "timer.swamp_cave_insects"
+
+[[timer]]
+isServerOnly = true
+id = "timer.swamp_cave_light_check"

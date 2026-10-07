@@ -1,0 +1,11 @@
+[[varp]]
+id = "varp.sos_greeted_by_gate_of_war"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.sos_greeted_by_gate_of_war_migrated"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"

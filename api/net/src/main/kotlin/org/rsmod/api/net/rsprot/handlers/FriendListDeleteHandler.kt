@@ -6,6 +6,9 @@ import org.rsmod.api.db.gateway.GameDbManager
 import org.rsmod.api.db.gateway.model.fold
 import org.rsmod.api.net.central.CentralSocialResult
 import org.rsmod.api.net.central.CentralSocialService
+import org.rsmod.api.net.central.OpenRuneCentralWorldLink
+import org.rsmod.api.net.central.StaffSocialVisibility
+import org.rsmod.api.net.central.writeCentralSocialSnapshot
 import org.rsmod.api.social.writeSocialMessage
 import org.rsmod.game.entity.Player
 import org.rsmod.game.entity.PlayerList
@@ -16,6 +19,7 @@ constructor(
     private val playerList: PlayerList,
     private val db: GameDbManager,
     private val social: CentralSocialService,
+    private val socialVisibility: StaffSocialVisibility,
 ) : MessageHandler<FriendListDel> {
     override fun handle(player: Player, message: FriendListDel) {
         val uid = player.uid
@@ -28,19 +32,34 @@ constructor(
         }
 
         db.request(
-            request = {
-                social.deleteFriend(
-                    characterId = characterId,
-                    name = requestedName,
-                )
-            },
+            request = { social.deleteFriend(characterId = characterId, name = requestedName) },
             response = { result ->
                 val current = uid.resolve(playerList) ?: return@request
 
                 result.fold(
                     onOk = { socialResult ->
                         when (socialResult) {
-                            CentralSocialResult.Ok -> Unit
+                            CentralSocialResult.Ok -> {
+                                socialVisibility.forget(current, requestedName)
+                                current.tradeSocial = null
+                                db.request(
+                                    request = { social.socialSnapshot(characterId) },
+                                    response = { refresh ->
+                                        val refreshed = uid.resolve(playerList) ?: return@request
+                                        refresh.fold(
+                                            onOk = { sync ->
+                                                when (sync) {
+                                                    is OpenRuneCentralWorldLink.CentralSocialSnapshotResult.Ok ->
+                                                        refreshed.writeCentralSocialSnapshot(sync.snapshot, socialVisibility)
+                                                    is OpenRuneCentralWorldLink.CentralSocialSnapshotResult.Failed ->
+                                                        refreshed.writeSocialMessage(sync.message)
+                                                }
+                                            },
+                                            onErr = { refreshed.writeSocialMessage("Unable to refresh social list right now.") },
+                                        )
+                                    },
+                                )
+                            }
 
                             CentralSocialResult.Ignored -> Unit
 
@@ -49,9 +68,7 @@ constructor(
                             }
                         }
                     },
-                    onErr = {
-                        current.writeSocialMessage("Unable to delete friend right now.")
-                    },
+                    onErr = { current.writeSocialMessage("Unable to delete friend right now.") },
                 )
             },
         )

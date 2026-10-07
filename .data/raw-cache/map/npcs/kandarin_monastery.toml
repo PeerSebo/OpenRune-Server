@@ -2,7 +2,6 @@
 npc = "npc.farming_tools_leprechaun"
 coords = "0_40_50_59_21"
 
-## Ardougne Monastery
 
 [[spawn]]
 npc = "npc.brother_omad"
@@ -16,7 +15,6 @@ coords = "0_40_50_46_17"
 npc = "npc.monk_ardougne"
 coords = "0_40_50_48_9"
 
-## Kandarin Monastery Wings
 
 [[spawn]]
 npc = "npc.monk_ardougne"
@@ -25,6 +23,3 @@ coords = "0_40_50_58_9"
 [[spawn]]
 npc = "npc.monk_ardougne"
 coords = "1_40_50_35_10"
-
-## Kandarin Monastery Wings End
-

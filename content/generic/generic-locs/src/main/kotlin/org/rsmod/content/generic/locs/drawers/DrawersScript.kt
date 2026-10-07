@@ -41,7 +41,7 @@ class DrawersScript @Inject constructor(private val locRepo: LocRepository) : Pl
         const val CLOSED = "loc.drawers2"
         const val OPENED = "loc.drawers2open"
         const val OPEN_SEQ = "seq.human_openchest"
-        const val OPEN_SYNTH = "synth.drawer_open"
+        const val OPEN_SYNTH = "synth.DRAWER_OPEN"
         const val DURATION = 500
     }
 }

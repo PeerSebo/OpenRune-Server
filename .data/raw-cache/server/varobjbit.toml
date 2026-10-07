@@ -4,6 +4,11 @@ startBit = 0
 endBit = 13
 
 [[varobj]]
+id = "varobj.cowbell_charges"
+startBit = 0
+endBit = 9
+
+[[varobj]]
 id = "varobj.tumeken_charges"
 startBit = 0
 endBit = 14

@@ -26,15 +26,8 @@ public class WornBonuses {
     }
 
     /**
-     * Returns the player's base magic damage bonus.
-     *
-     * **Note:** This does **not** include [Bonuses.magicDmgMultiplier] or
-     * [Bonuses.magicDmgAdditive]. Those values are used for display purposes in the bonus
-     * interface, but often have conditional restrictions that must be enforced in the combat
-     * formulas themselves.
-     *
-     * For example, Virtus equipment displays a `+3%` magic damage bonus even when the player is not
-     * on the Ancient spellbook - a restriction that should be applied in the actual combat formula.
+     * Excludes [Bonuses.magicDmgMultiplier] and [Bonuses.magicDmgAdditive]: displayed bonuses may
+     * have combat-only conditions, such as Virtus requiring the Ancient spellbook.
      */
     public fun magicDamageBonusBase(player: Player): Int {
         val bonuses = calculate(player)

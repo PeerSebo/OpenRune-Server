@@ -112,7 +112,7 @@ class DraynorSceneryTest {
         val start = tree.coords
         assertEquals(MoveRestrict.NoMove, tree.type.moveRestrict)
         assertEquals("seq.deadtree_attack".asRSCM(), tree.type.param(params.attack_anim).id)
-        assertEquals("synth.deadtree_attack".asRSCM(), tree.type.param(params.attack_sound).id)
+        assertEquals("synth.NASTY_TREE_ATTACK".asRSCM(), tree.type.param(params.attack_sound).id)
         tree.walk(start.translate(3, 0))
         val movement = NpcMovementProcessor(fixture.collision, StepFactory(fixture.collision), fixture.events)
         repeat(8) { movement.process(tree) }
@@ -167,8 +167,8 @@ class DraynorSceneryTest {
         private val players = PlayerRegistry(PlayerList(), collision, activity, events)
         private val normal = LocRegistryNormal(updates, collision, zones)
         private val regions = RegionRegistry(
-            RegionListSmall(), RegionListLarge(), RegionListWorldEntity(), normal, collision, zones, npcs,
-            ControllerRegistry(clock, ControllerList()), activity,
+            RegionListSmall(), RegionListLarge(), normal, collision, zones, npcs,
+            ControllerRegistry(clock, ControllerList()), activity, RegionListWorldEntity(),
         )
         private val locRegistry = LocRegistry(zones, normal, LocRegistryRegion(updates, collision, zones, regions))
         val locs = LocRepository(clock, locRegistry, regions)
@@ -176,7 +176,7 @@ class DraynorSceneryTest {
             override fun of(minInclusive: Int, maxInclusive: Int) = minInclusive
         }
         val hunting = NpcPlayerHuntProcessor(
-            random, clock, Hunt(RayCastValidator(collision), players, npcs, ObjRegistry(updates), locRegistry),
+            random, clock, Hunt(RayCastValidator(collision), players, npcs, ObjRegistry(updates), locRegistry), tolerance = org.rsmod.api.game.process.npc.hunt.AggressionTolerance(),
         )
 
         init {
@@ -185,7 +185,7 @@ class DraynorSceneryTest {
             }
             val context = ScriptContext(events, CheatCommandMap(), EngineQueueCache())
             with(DoorScript(locs)) { context.startup() }
-            with(DraynorTrees()) { context.startup() }
+            with(org.rsmod.content.generic.npcs.tree.UndeadTree()) { context.startup() }
         }
 
         fun tree() = Npc("npc.nasty_tree", CoordGrid(3110, 3347)).also {
@@ -223,6 +223,7 @@ class DraynorSceneryTest {
                 getInstantHitProcessor = { error("Unexpected hit processing") },
                 getTeleportValidator = { error("Unexpected teleport") },
                 getHitModifier = { error("Unexpected hit modification") },
+                getWorldRepo = { org.rsmod.api.repo.world.WorldRepository(updates) },
             )
             val access = ProtectedAccess(player, GameCoroutine(), context)
             var outcome: Result<Unit>? = null
@@ -244,7 +245,7 @@ class DraynorSceneryTest {
         @JvmStatic
         @BeforeAll
         fun loadCache() {
-            val cache = ServerCacheManager.init(240)
+            val cache = ServerCacheManager.init(241)
             try {
                 val square = MapSquareKey.from(CoordGrid(3108, 3353))
                 val map = MapLocListDecoder.decode(InlineByteBuf(checkNotNull(cache.data(MAPS, square.id, 1))))

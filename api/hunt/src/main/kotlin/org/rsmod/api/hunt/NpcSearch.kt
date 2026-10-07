@@ -13,11 +13,6 @@ import org.rsmod.map.CoordGrid
 import org.rsmod.map.zone.ZoneKey
 
 public class NpcSearch @Inject constructor(private val hunt: Hunt) {
-    /**
-     * Searches for npcs around the [center] coordinate and returns the closest one that is within
-     * [distance] tiles and has an `Op2`. If multiple npcs are equidistant, the last one found is
-     * returned.
-     */
     public fun hunt(center: CoordGrid, distance: Int, vis: HuntVis): Npc? {
         var minDistanceNpc: Npc? = null
         var minDistance = Int.MAX_VALUE
@@ -37,10 +32,6 @@ public class NpcSearch @Inject constructor(private val hunt: Hunt) {
         return minDistanceNpc
     }
 
-    /**
-     * Searches for and returns all npcs around the [center] coordinate that are within [distance]
-     * tiles, have an `Op2`, and their [Npc.type] matches the given [type].
-     */
     public fun huntAll(
         center: CoordGrid,
         type: NpcServerType,
@@ -61,13 +52,6 @@ public class NpcSearch @Inject constructor(private val hunt: Hunt) {
         }
     }
 
-    /**
-     * Searches for npcs around the [center] coordinate and returns the closest one that is within
-     * [distance] tiles and their [Npc.type] matches the given [type]. If multiple npcs are
-     * equidistant, the last one found is returned.
-     *
-     * _Unlike [hunt], this function can return npcs that do not have an `Op2`._
-     */
     public fun find(center: CoordGrid, type: String, distance: Int, vis: HuntVis): Npc? {
         var minDistanceNpc: Npc? = null
         var minDistance = Int.MAX_VALUE
@@ -87,11 +71,6 @@ public class NpcSearch @Inject constructor(private val hunt: Hunt) {
         return minDistanceNpc
     }
 
-    /**
-     * Searches for npcs around the [center] coordinate and returns the closest one that is within
-     * [distance] tiles and their [NpcServerType.category] matches [category]. If multiple npcs are
-     * equidistant, the last one found is returned.
-     */
     public fun findCat(center: CoordGrid, type: CategoryType, distance: Int, vis: HuntVis): Npc? {
         var minDistanceNpc: Npc? = null
         var minDistance = Int.MAX_VALUE
@@ -111,12 +90,6 @@ public class NpcSearch @Inject constructor(private val hunt: Hunt) {
         return minDistanceNpc
     }
 
-    /**
-     * Searches for and returns all npcs around the [center] coordinate that are within [distance]
-     * tiles and their [Npc.type] matches the given [type].
-     *
-     * _Unlike [huntAll], this function can return npcs that do not have an `Op2`._
-     */
     public fun findAll(
         center: CoordGrid,
         type: String,
@@ -126,23 +99,11 @@ public class NpcSearch @Inject constructor(private val hunt: Hunt) {
         return hunt.findNpcs(center, distance, vis).filter { it.id == type.asRSCM(RSCMType.NPC) }
     }
 
-    /**
-     * Searches for and returns all npcs around the [center] coordinate that are within [distance]
-     * tiles and the same `center` [ZoneKey].
-     *
-     * _Unlike [huntAll], this function can return npcs that do not have an `Op2`._
-     */
     public fun findAllZone(center: CoordGrid, distance: Int, vis: HuntVis): Sequence<Npc> {
         val zone = ZoneKey.from(center)
         return hunt.findNpcs(center, distance, vis).filter { ZoneKey.from(it.coords) == zone }
     }
 
-    /**
-     * Searches for and returns all npcs around the [center] coordinate that are within [distance]
-     * tiles.
-     *
-     * _Unlike [huntAll], this function can return npcs that do not have an `Op2`._
-     */
     public fun findAllAny(center: CoordGrid, distance: Int, vis: HuntVis): Sequence<Npc> {
         return hunt.findNpcs(center, distance, vis)
     }

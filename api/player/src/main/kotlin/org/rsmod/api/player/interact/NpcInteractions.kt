@@ -43,27 +43,16 @@ public class NpcInteractions @Inject constructor(private val eventBus: EventBus)
         op: InteractionOp,
         type: NpcServerType = npc.visType,
     ): OpEvent? {
-        val multiNpcType = multiNpc(type, player.vars)
-        if (multiNpcType != null) {
-            val multiNpcTrigger = opTrigger(player, npc, op, multiNpcType)
-            if (multiNpcTrigger != null) {
-                return multiNpcTrigger
+        val types = resolvedTypes(type, player.vars)
+        explicitOp(npc, op, types)?.let { return it }
+        val approach = apTrigger(player, npc, op, type)
+        if (approach is NpcEvents.Ap || approach is NpcContentEvents.Ap) return null
+
+        for (resolved in types) {
+            val unimplEvent = npc.toUnimplementedOp(op, resolved.id)
+            if (eventBus.contains(unimplEvent::class.java, resolved.id)) {
+                return unimplEvent
             }
-        }
-
-        val typeEvent = npc.toOp(op)
-        if (eventBus.contains(typeEvent::class.java, type.id)) {
-            return typeEvent
-        }
-
-        val contentEvent = npc.toContentOp(type.contentGroup, op)
-        if (eventBus.contains(contentEvent::class.java, type.contentGroup)) {
-            return contentEvent
-        }
-
-        val unimplEvent = npc.toUnimplementedOp(op)
-        if (eventBus.contains(unimplEvent::class.java, type.id)) {
-            return unimplEvent
         }
 
         val defaultEvent = npc.toDefaultOp(op)
@@ -83,22 +72,24 @@ public class NpcInteractions @Inject constructor(private val eventBus: EventBus)
         op: InteractionOp,
         type: NpcServerType = npc.visType,
     ): ApEvent? {
-        val multiNpcType = multiNpc(type, player.vars)
-        if (multiNpcType != null) {
-            val multiNpcTrigger = apTrigger(player, npc, op, multiNpcType)
-            if (multiNpcTrigger != null) {
-                return multiNpcTrigger
+        val types = resolvedTypes(type, player.vars)
+        for (resolved in types) {
+            val typeEvent = npc.toAp(op, resolved.id)
+            if (eventBus.contains(typeEvent::class.java, resolved.id)) {
+                return typeEvent
+            }
+            val contentEvent = npc.toContentAp(resolved.contentGroup, op)
+            if (eventBus.contains(contentEvent::class.java, resolved.contentGroup)) {
+                return contentEvent
             }
         }
 
-        val typeEvent = npc.toAp(op)
-        if (eventBus.contains(typeEvent::class.java, type.id)) {
-            return typeEvent
-        }
-
-        val contentEvent = npc.toContentAp(type.contentGroup, op)
-        if (eventBus.contains(contentEvent::class.java, type.contentGroup)) {
-            return contentEvent
+        for (resolved in types) {
+            val unimplEvent = npc.toUnimplementedAp(op, resolved.id)
+            if (eventBus.contains(unimplEvent::class.java, resolved.id)) {
+                if (explicitOp(npc, op, types) != null) break
+                return unimplEvent
+            }
         }
 
         val defaultEvent = npc.toDefaultAp(op)
@@ -111,6 +102,26 @@ public class NpcInteractions @Inject constructor(private val eventBus: EventBus)
 
     public fun hasApTrigger(player: Player, npc: Npc, op: InteractionOp): Boolean =
         apTrigger(player, npc, op) != null
+
+    private fun explicitOp(npc: Npc, op: InteractionOp, types: List<NpcServerType>): OpEvent? {
+        for (resolved in types) {
+            val typeEvent = npc.toOp(op, resolved.id)
+            if (eventBus.contains(typeEvent::class.java, resolved.id)) return typeEvent
+            val contentEvent = npc.toContentOp(resolved.contentGroup, op)
+            if (eventBus.contains(contentEvent::class.java, resolved.contentGroup)) return contentEvent
+        }
+        return null
+    }
+
+    private fun resolvedTypes(type: NpcServerType, vars: VarPlayerIntMap): List<NpcServerType> {
+        val types = mutableListOf<NpcServerType>()
+        var current = type
+        while (types.none { it.id == current.id }) {
+            types += current
+            current = multiNpc(current, vars) ?: break
+        }
+        return types.asReversed()
+    }
 
     public fun multiNpc(type: NpcServerType, vars: VarPlayerIntMap): NpcServerType? {
         if (type.multiNpc.isEmpty() && type.multiDefault <= 0) {
@@ -130,13 +141,13 @@ public class NpcInteractions @Inject constructor(private val eventBus: EventBus)
         }
     }
 
-    private fun Npc.toOp(op: InteractionOp): NpcEvents.Op =
+    private fun Npc.toOp(op: InteractionOp, typeId: Int): NpcEvents.Op =
         when (op) {
-            InteractionOp.Op1 -> NpcEvents.Op1(this)
-            InteractionOp.Op2 -> NpcEvents.Op2(this)
-            InteractionOp.Op3 -> NpcEvents.Op3(this)
-            InteractionOp.Op4 -> NpcEvents.Op4(this)
-            InteractionOp.Op5 -> NpcEvents.Op5(this)
+            InteractionOp.Op1 -> NpcEvents.Op1(this, typeId)
+            InteractionOp.Op2 -> NpcEvents.Op2(this, typeId)
+            InteractionOp.Op3 -> NpcEvents.Op3(this, typeId)
+            InteractionOp.Op4 -> NpcEvents.Op4(this, typeId)
+            InteractionOp.Op5 -> NpcEvents.Op5(this, typeId)
         }
 
     private fun Npc.toContentOp(contentGroup: Int, op: InteractionOp): NpcContentEvents.Op =
@@ -148,13 +159,13 @@ public class NpcInteractions @Inject constructor(private val eventBus: EventBus)
             InteractionOp.Op5 -> NpcContentEvents.Op5(this, contentGroup)
         }
 
-    private fun Npc.toUnimplementedOp(op: InteractionOp): NpcUnimplementedEvents.Op =
+    private fun Npc.toUnimplementedOp(op: InteractionOp, typeId: Int): NpcUnimplementedEvents.Op =
         when (op) {
-            InteractionOp.Op1 -> NpcUnimplementedEvents.Op1(this)
-            InteractionOp.Op2 -> NpcUnimplementedEvents.Op2(this)
-            InteractionOp.Op3 -> NpcUnimplementedEvents.Op3(this)
-            InteractionOp.Op4 -> NpcUnimplementedEvents.Op4(this)
-            InteractionOp.Op5 -> NpcUnimplementedEvents.Op5(this)
+            InteractionOp.Op1 -> NpcUnimplementedEvents.Op1(this, typeId)
+            InteractionOp.Op2 -> NpcUnimplementedEvents.Op2(this, typeId)
+            InteractionOp.Op3 -> NpcUnimplementedEvents.Op3(this, typeId)
+            InteractionOp.Op4 -> NpcUnimplementedEvents.Op4(this, typeId)
+            InteractionOp.Op5 -> NpcUnimplementedEvents.Op5(this, typeId)
         }
 
     private fun Npc.toDefaultOp(op: InteractionOp): NpcDefaultEvents.Op =
@@ -166,13 +177,13 @@ public class NpcInteractions @Inject constructor(private val eventBus: EventBus)
             InteractionOp.Op5 -> NpcDefaultEvents.Op5(this)
         }
 
-    private fun Npc.toAp(op: InteractionOp): NpcEvents.Ap =
+    private fun Npc.toAp(op: InteractionOp, typeId: Int): NpcEvents.Ap =
         when (op) {
-            InteractionOp.Op1 -> NpcEvents.Ap1(this)
-            InteractionOp.Op2 -> NpcEvents.Ap2(this)
-            InteractionOp.Op3 -> NpcEvents.Ap3(this)
-            InteractionOp.Op4 -> NpcEvents.Ap4(this)
-            InteractionOp.Op5 -> NpcEvents.Ap5(this)
+            InteractionOp.Op1 -> NpcEvents.Ap1(this, typeId)
+            InteractionOp.Op2 -> NpcEvents.Ap2(this, typeId)
+            InteractionOp.Op3 -> NpcEvents.Ap3(this, typeId)
+            InteractionOp.Op4 -> NpcEvents.Ap4(this, typeId)
+            InteractionOp.Op5 -> NpcEvents.Ap5(this, typeId)
         }
 
     private fun Npc.toContentAp(contentGroup: Int, op: InteractionOp): NpcContentEvents.Ap =
@@ -191,6 +202,15 @@ public class NpcInteractions @Inject constructor(private val eventBus: EventBus)
             InteractionOp.Op3 -> NpcDefaultEvents.Ap3(this)
             InteractionOp.Op4 -> NpcDefaultEvents.Ap4(this)
             InteractionOp.Op5 -> NpcDefaultEvents.Ap5(this)
+        }
+
+    private fun Npc.toUnimplementedAp(op: InteractionOp, typeId: Int): NpcUnimplementedEvents.Ap =
+        when (op) {
+            InteractionOp.Op1 -> NpcUnimplementedEvents.Ap1(this, typeId)
+            InteractionOp.Op2 -> NpcUnimplementedEvents.Ap2(this, typeId)
+            InteractionOp.Op3 -> NpcUnimplementedEvents.Ap3(this, typeId)
+            InteractionOp.Op4 -> NpcUnimplementedEvents.Ap4(this, typeId)
+            InteractionOp.Op5 -> NpcUnimplementedEvents.Ap5(this, typeId)
         }
 
     private fun NpcServerType.multiVarValue(vars: VarPlayerIntMap): Int? {

@@ -19,6 +19,8 @@ dependencies {
     api(projects.api.hunt)
     api(projects.api.invtx)
     api(projects.api.market)
+    api(projects.api.mechanics.dig)
+    api(projects.api.mechanics.stun)
     api(projects.api.mechanics.toxins)
     api(projects.api.npc)
     api(projects.api.objCharges)

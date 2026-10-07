@@ -2,17 +2,14 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.api.droptable.nothing
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.content.drops.tables.shared.SharedDropTables
-import org.rsmod.api.droptable.DropRollItem
-import org.rsmod.content.drops.hasCompletedQuest
-import org.rsmod.content.drops.isOnQuest
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.api.droptable.nothing
-import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.content.drops.isOnQuest
+import org.rsmod.content.drops.tables.shared.SharedDropTables
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -56,7 +53,7 @@ public val mossGiantIorwerthDungeonDropTable: RSDropTable<Player, DropRollItem> 
         }
         1 outOf 24 weight "obj.arceuus_corpse_giant" count 1
         1 outOf 24 weight "obj.prif_crystal_shard" count 3..5
-        // Drops Need Manual (rate): The mossy key drop rate is increased to 1/40 if the player is assigned moss giants as a Slayer task.
+        // TODO: The mossy key drop rate is increased to 1/40 if the player is assigned moss giants as a Slayer task.
         1 outOf 120 weight "obj.mossy_key" count 1
         1 outOf 400 weight "obj.dorgesh_construction_bone" count 1
         1 outOf 5000 weight "obj.champions_challenge_giant" count 1

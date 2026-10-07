@@ -1,26 +1,36 @@
 package org.rsmod.game.entity.npc
 
+import dev.openrune.types.NpcServerType
 import org.rsmod.game.headbar.Headbar
 import org.rsmod.game.hit.Hitmark
 
 public interface NpcInfoProtocol {
     public fun setSequence(seq: Int, delay: Int)
 
+    /** Null clears the per-observer NPC name override. */
+    public fun setName(name: String?)
+
     public fun setSpotanim(spotanim: Int, delay: Int, height: Int, slot: Int)
 
     public fun setSay(text: String)
 
-    public fun setFacePathingEntity(slot: Int)
+    public fun setFacePathingEntity(slot: Int, fallbackAngle: Int)
 
     public fun setFaceAngle(angle: Int, instant: Boolean)
+
+    /**
+     * Spawn bearing must be stored on the NPC avatar; low-resolution additions do not carry an
+     * extended facing update.
+     */
+    public fun setDirection(direction: Int)
 
     public fun setTransmog(type: Int)
 
     public fun resetTransmog(originalType: Int)
 
-    public fun setBodyModel(model: Int)
+    public fun setBaseAnimations(type: NpcServerType)
 
-    public fun setBodyModels(models: List<Int>) {}
+    public fun setBodyModel(model: Int)
 
     public fun setBodyRecolours(recolours: List<Int>)
 
@@ -66,17 +76,23 @@ public interface NpcInfoProtocol {
 public data object NoopNpcInfo : NpcInfoProtocol {
     override fun setSequence(seq: Int, delay: Int) {}
 
+    override fun setName(name: String?) {}
+
     override fun setSpotanim(spotanim: Int, delay: Int, height: Int, slot: Int) {}
 
     override fun setSay(text: String) {}
 
-    override fun setFacePathingEntity(slot: Int) {}
+    override fun setFacePathingEntity(slot: Int, fallbackAngle: Int) {}
 
     override fun setFaceAngle(angle: Int, instant: Boolean) {}
+
+    override fun setDirection(direction: Int) {}
 
     override fun setTransmog(type: Int) {}
 
     override fun resetTransmog(originalType: Int) {}
+
+    override fun setBaseAnimations(type: NpcServerType) {}
 
     override fun setBodyModel(model: Int) {}
 

@@ -9,6 +9,7 @@ import org.rsmod.api.combat.commons.magic.SpellQuestRequirement
 import org.rsmod.api.combat.commons.magic.Spellbook
 import org.rsmod.api.config.refs.BaseParams
 import org.rsmod.api.invtx.invDelAll
+import org.rsmod.api.player.cheat.adminInfiniteRunes
 import org.rsmod.api.player.output.mes
 import org.rsmod.api.player.stat.magicLvl
 import org.rsmod.api.player.vars.VarPlayerIntMapSetter
@@ -39,20 +40,7 @@ constructor(
 ) {
     private val Player.spellbook by enumVarBit<Spellbook>("varbit.spellbook")
 
-    /**
-     * Attempts to cast [spell] by first verifying the player meets all requirements, and then
-     * consuming the necessary objs and/or varp values.
-     *
-     * This combines the checks from [validateAccess] and the obj requirement check and consumption
-     * logic from [delReqs]. If any requirement is not met or cannot be consumed, the appropriate
-     * failure message is sent to the player, and a failure result is returned.
-     *
-     * _This function does **not** perform the actual effects of the spell._
-     *
-     * @return A [CastResult] indicating whether the requirements were successfully removed. Returns
-     *   [CastResult.Success] if all objs and/or vars were removed, or [CastResult.Failure] if
-     *   something went wrong.
-     */
+    /** Consumes requirements but does not perform the spell's effects. */
     public fun attemptCast(
         player: Player,
         spell: MagicSpell,
@@ -65,14 +53,6 @@ constructor(
         return delReqs(player, spell)
     }
 
-    /**
-     * Returns `true` if the player meets all requirements needed to cast [spell], and if [book]
-     * matches the spell's required [MagicSpell.spellbook].
-     *
-     * **Note:** This does **not** consume any objs or modify varp values (e.g., rune pouch
-     * quantities). To validate and consume the requirements, use [attemptCast] instead; or call
-     * [delReqs] to explicitly consume the requirements.
-     */
     public fun canCastSpell(
         player: Player,
         spell: MagicSpell,
@@ -85,10 +65,6 @@ constructor(
         return hasRunes(player, spell)
     }
 
-    /**
-     * Returns `true` if the player has all the consumable requirements needed to cast [spell].
-     * Otherwise, sends the appropriate missing-requirement message to [player] and returns `false`.
-     */
     public fun hasRunes(player: Player, spell: MagicSpell): Boolean {
         val invalid = validateSpell(player, spell).firstOrNull(MagicRunes.Validation::isInvalid)
         if (invalid != null) {
@@ -99,19 +75,7 @@ constructor(
         return true
     }
 
-    /**
-     * Attempts to delete all objs required to cast [spell], as defined by [MagicSpell.objReqs].
-     *
-     * If one or more requirements cannot be removed, the appropriate message is sent to [player],
-     * and this function returns [CastResult.Failure].
-     *
-     * This function delegates to [delAll], which includes safeguards to ensure that the player has
-     * enough of each requirement before any removals occur.
-     *
-     * @return A [CastResult] indicating whether the requirements were successfully removed. Returns
-     *   [CastResult.Success] if all objs and/or vars were removed, or [CastResult.Failure] if
-     *   something went wrong.
-     */
+    /** Validate all requirements before removing any inventory items or rune-pouch values. */
     public fun delReqs(player: Player, spell: MagicSpell): CastResult {
         val validations = validateSpell(player, spell).toList()
         val valid = validations.filterIsInstance<MagicRunes.Validation.Valid>()
@@ -134,9 +98,6 @@ constructor(
 
         val sourced = validations.filterIsInstance<MagicRunes.Validation.Valid.HasEnough>()
 
-        // Since `HasEnough` and `Unlimited` are the only possible `Valid` types, if `sourced` is
-        // empty, then all validations must be `Unlimited`. In that case, we don't need to delete
-        // anything, so we can return `true` early.
         val allUnlimitedSources = sourced.isEmpty()
         if (allUnlimitedSources) {
             return CastResult.Success.AllUnlimited
@@ -144,7 +105,6 @@ constructor(
 
         val sources = sourced.flatMap { it.sources }
 
-        // Ensure player has enough varbits to be removed.
         val varbitSources = sources.filterIsInstance<MagicRunes.Source.VarBitSource>()
         val enoughVarBits = varbitSources.all { player.vars[it.varbit] >= it.count }
         if (!enoughVarBits) {
@@ -163,9 +123,13 @@ constructor(
             consume += invObj.copy(count = required)
         }
 
-        val transaction = player.invDelAll(player.inv, consume, strict = true)
-        if (!transaction.success) {
-            return CastResult.Failure.NotEnoughInvObj
+        // A cast paid for entirely from a rune pouch has nothing to delete from the inventory.
+        // An empty transaction reports failure, so only run one when there are objs to consume.
+        if (consume.isNotEmpty()) {
+            val transaction = player.invDelAll(player.inv, consume, strict = true)
+            if (!transaction.success) {
+                return CastResult.Failure.NotEnoughInvObj
+            }
         }
 
         for (source in varbitSources) {
@@ -182,6 +146,12 @@ constructor(
     }
 
     public fun validateSpell(player: Player, spell: MagicSpell): List<MagicRunes.Validation> {
+        // Admin "infinite runes" cheat: treat every obj requirement as an unlimited source so
+        // nothing is consumed. Level and spellbook requirements are handled by `validateAccess`
+        // and remain in effect.
+        if (player.adminInfiniteRunes) {
+            return listOf(MagicRunes.Validation.Valid.Unlimited)
+        }
         val runePack = validateRunePack(player, spell.obj)
         return if (runePack != null) {
             listOf(runePack)
@@ -220,10 +190,6 @@ constructor(
             staffSubs = staffSubs,
         )
 
-    /**
-     * Verifies that the player meets the magic level requirement to cast [spell], and that the
-     * provided [book] matches the spell's [MagicSpell.spellbook].
-     */
     private fun validateAccess(
         player: Player,
         spell: MagicSpell,

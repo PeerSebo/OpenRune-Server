@@ -11,7 +11,12 @@ import org.rsmod.plugin.scripts.ScriptContext
 
 public class IronmanScript @Inject constructor() : PluginScript() {
     override fun ScriptContext.startup() {
+        val events = eventBus
         onEvent<SessionStateEvent.Login> { player.syncGamemodeFromVarbit() }
-        onOpPlayer4 { IronmanRestrictions.blockTrade(player, it.target) }
+        onOpPlayer4 {
+            if (!IronmanRestrictions.blockTrade(player, it.target)) {
+                events.publish(org.rsmod.api.player.events.PlayerTradeRequest(player, it.target))
+            }
+        }
     }
 }

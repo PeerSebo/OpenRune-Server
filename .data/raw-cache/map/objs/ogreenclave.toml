@@ -1,4 +1,3 @@
-## Gutanoth Cave
 
 [[spawn]]
 obj = "obj.bones"
@@ -35,4 +34,3 @@ coords = "0_40_147_57_38"
 [[spawn]]
 obj = "obj.shaman_robe"
 coords = "0_40_147_57_29"
-

@@ -1,0 +1,41 @@
+[[varp]]
+isServerOnly = true
+id = "varp.pets_cat_following_obj"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.pets_cat_growth"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.pets_cat_hunger"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.pets_cat_attention"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.pets_cat_chasing"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.pets_cat_resync_follower"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.pets_cat_migrated"
+scope = "Perm"
+transmit = "Never"

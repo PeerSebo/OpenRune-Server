@@ -78,3 +78,22 @@ checkVis = "LineOfSight"
 checkNotCombat = 65522
 checkNotCombatSelf = 1
 findNewMode = "ApPlayer2"
+
+# Gate Elvarg's aggression on quest progress; the server NPC persists when her client transform is invisible.
+[[hunt]]
+id = 23
+type = "Player"
+checkVis = "LineOfSight"
+checkNotCombat = 65522
+checkNotCombatSelf = 1
+findNewMode = "OpPlayer2"
+checkVar1 = { varp = 176, operator = "LessThan", required = 9 }
+
+[[hunt]]
+id = 24
+type = "Player"
+checkVis = "LineOfSight"
+checkNotCombat = 65522
+checkNotCombatSelf = 1
+findKeepHunting = true
+findNewMode = "OpPlayer2"

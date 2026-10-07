@@ -36,7 +36,7 @@ constructor(
         }
 
         val target = playerList[message.index]
-        if (target == null) {
+        if (target == null || target.staffInvisible || player.staffInvisible) {
             player.clearMapFlag()
             player.clearPendingAction(eventBus)
             return

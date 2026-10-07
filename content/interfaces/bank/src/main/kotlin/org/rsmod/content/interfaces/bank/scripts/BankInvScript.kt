@@ -7,47 +7,48 @@ import dev.openrune.types.ItemServerType
 import dev.openrune.types.aconverted.interf.IfButtonOp
 import dev.openrune.util.Wearpos
 import jakarta.inject.Inject
-import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import org.rsmod.api.combat.weapon.WeaponSpeeds
-import org.rsmod.api.config.constants
 import org.rsmod.api.config.refs.params
 import org.rsmod.api.enums.BankEnums.bank_equipment_tab_to_slots_map
-import org.rsmod.api.invtx.invCompress
 import org.rsmod.api.invtx.invTransaction
 import org.rsmod.api.invtx.select
 import org.rsmod.api.player.bonus.WornBonuses
 import org.rsmod.api.player.events.interact.HeldBanksideEvents
 import org.rsmod.api.player.events.interact.HeldDropEvents
-import org.rsmod.api.player.output.ClientScripts.mesLayerClose
 import org.rsmod.api.player.output.UpdateInventory.resendSlot
 import org.rsmod.api.player.protect.ProtectedAccess
-import org.rsmod.api.player.ui.IfModalDrag
 import org.rsmod.api.player.worn.WornUnequipOp
 import org.rsmod.api.player.worn.WornUnequipResult
 import org.rsmod.api.script.onIfModalButton
 import org.rsmod.api.script.onIfModalDrag
+import org.rsmod.api.script.onIfOpen
 import org.rsmod.api.script.onPlayerLogin
 import org.rsmod.api.script.onPlayerQueue
+import org.rsmod.content.interfaces.bank.BankLayout.compressBank
+import org.rsmod.content.interfaces.bank.BankLayout.compressTabObjs
+import org.rsmod.content.interfaces.bank.BankLayout.dragIntoTab
+import org.rsmod.content.interfaces.bank.BankLayout.dragMainInv
+import org.rsmod.content.interfaces.bank.BankLayout.dragSideInv
+import org.rsmod.content.interfaces.bank.BankLayout.dragTab
+import org.rsmod.content.interfaces.bank.BankLayout.notifySlotUpdate
+import org.rsmod.content.interfaces.bank.BankLayout.removeFillers
+import org.rsmod.content.interfaces.bank.BankLayout.removePlaceholders
+import org.rsmod.content.interfaces.bank.BankLayout.restoreMainTabSize
+import org.rsmod.content.interfaces.bank.BankLayout.selectTab
+import org.rsmod.content.interfaces.bank.BankLayout.trimGapsAndReturnTrailingGaps
 import org.rsmod.content.interfaces.bank.BankTab
 import org.rsmod.content.interfaces.bank.QuantityMode
 import org.rsmod.content.interfaces.bank.alwaysPlacehold
 import org.rsmod.content.interfaces.bank.bankCapacity
-import org.rsmod.content.interfaces.bank.configs.bank_comsubs
 import org.rsmod.content.interfaces.bank.configs.bank_constants
-import org.rsmod.content.interfaces.bank.insertMode
 import org.rsmod.content.interfaces.bank.lastQtyInput
 import org.rsmod.content.interfaces.bank.leftClickQtyMode
 import org.rsmod.content.interfaces.bank.selectedTab
 import org.rsmod.content.interfaces.bank.setBankWornBonuses
 import org.rsmod.content.interfaces.bank.setBanksideExtraOps
-import org.rsmod.content.interfaces.bank.util.BankSlots
-import org.rsmod.content.interfaces.bank.util.bulkShift
-import org.rsmod.content.interfaces.bank.util.leftShift
-import org.rsmod.content.interfaces.bank.util.offset
 import org.rsmod.content.interfaces.bank.util.rightShift
-import org.rsmod.content.interfaces.bank.util.shiftInsert
 import org.rsmod.content.interfaces.bank.withdrawCert
 import org.rsmod.events.EventBus
 import org.rsmod.game.entity.Player
@@ -64,18 +65,6 @@ import org.rsmod.objtx.isOk
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
-/*
- * Note: This implementation prioritizes correctness in emulating the expected bank quirks over raw
- * performance and "elegant" solutions. Most inventory transactions here could be optimized for
- * speed, but they remain structured this way to closely match the intended banking mechanics.
- *
- * While the performance trade-off is expected to be negligible under normal conditions, any future
- * changes or optimizations should be informed by benchmarking.
- *
- * If performance becomes a priority, a complete rewrite of this class with efficiency in mind would
- * likely be the best approach. This should be straightforward as long as strict accuracy to the
- * original system is not a requirement.
- */
 class BankInvScript
 @Inject
 constructor(
@@ -85,6 +74,7 @@ constructor(
 ) : PluginScript() {
     override fun ScriptContext.startup() {
         onPlayerLogin { player.setDefaultCapacity() }
+        onIfOpen("interface.bankmain") { player.restoreMainTabSize() }
 
         onIfModalButton("component.bankside:items") { sideInvOp(it.comsub, it.op) }
         onIfModalButton("component.bankmain:items") { mainInvOp(it.comsub, it.op) }
@@ -99,7 +89,7 @@ constructor(
         onIfModalDrag("component.bankside:wornops") { dragSideInv(it) }
         onIfModalDrag("component.bankmain:items", "component.bankmain:tabs") { dragIntoTab(it) }
 
-        val wornComponents = bank_equipment_tab_to_slots_map.filterValuesNotNull().map { it.key to RSCM.getReverseMapping(RSCMType.COMPONENT,it.value.packed) }
+        val wornComponents = bank_equipment_tab_to_slots_map.filterValuesNotNull().map { it.key to RSCM.getReverseMapping(RSCMType.COMPONENT, it.value.packed) }
         for ((slot, component) in wornComponents) {
             onIfModalButton(component) { wornOp(slot, it.op) }
         }
@@ -125,7 +115,7 @@ constructor(
         } else if (objType.isType("obj.bank_filler")) {
             if (op == IfButtonOp.Op7) {
                 bank[slot] = null
-                soundSynth("synth.paper_turn")
+                soundSynth("synth.PAPER_TURN")
                 notifySlotUpdate(slot)
             } else if (op == IfButtonOp.Op8) {
                 removeFillers()
@@ -203,8 +193,9 @@ constructor(
                     input
                 }
                 IfButtonOp.Op8 -> Int.MAX_VALUE
+                IfButtonOp.Op1,
                 IfButtonOp.Op9 -> {
-                    clickBanksideExtraOp(slot)
+                    clickBanksideExtraOp(slot, op)
                     return
                 }
                 else -> throw IllegalStateException("Invalid main inv op: $op")
@@ -237,8 +228,7 @@ constructor(
                 tab.slotRange(this).firstOrNull { bank[it] == null }
             }
 
-        // Mainly done for emulation purposes - compress all other bank tabs. This is not done
-        // for main bank tab.
+        // Depositing into a focused tab compresses other tabs; main-tab deposits do not.
         if (prioritySlot == null && !tab.isMainTab) {
             val others = BankTab.entries - tab
             for (other in others) {
@@ -273,7 +263,7 @@ constructor(
             }
         val result = insertQuery.results.last()
 
-        // TODO(content): This message may be incorrect.
+        // TODO: This message may be incorrect.
         if (result == TransactionResult.NotEnoughSpace && bank.occupiedSpace() >= bankCapacity) {
             mes("You don't have enough space in your bank account.")
             return false
@@ -288,7 +278,6 @@ constructor(
             return false
         }
 
-        // Cheap way of checking if obj has taken a new slot in bank.
         val expectedSlot = tabSlots.last + 1
         val expectedObj = uncert(obj)
         if (bank[expectedSlot]?.id == expectedObj.id) {
@@ -433,11 +422,8 @@ constructor(
                 "(required=$requiredSlots, contained=$containedObjMatches, empty=$emptySlotCount)"
         }
 
-        // Make space for new obj insertions by moving all objs that come _after_ the target bank
-        // tab by the corresponding slot amount.
         if (newInsertSlots > 0) {
 
-            // Compress all tabs aside from the target tab to make space.
             val others = BankTab.entries - tab
             for (other in others) {
                 val slots = other.slotRange(this)
@@ -506,560 +492,6 @@ constructor(
         }
     }
 
-    private fun ProtectedAccess.dragTab(drag: IfModalDrag) {
-        val fromTabIndex = drag.selectedSlot ?: return resendSlot(bank, 0)
-        val intoTabIndex = drag.targetSlot ?: return resendSlot(bank, 0)
-        val fromTab = BankTab.forIndex(fromTabIndex - bank_comsubs.other_tabs.first)
-        val intoTab = BankTab.forIndex(intoTabIndex - bank_comsubs.other_tabs.first)
-
-        if (fromTab == null || fromTab.isMainTab || fromTab.isEmpty(this)) {
-            resendSlot(bank, 0)
-            return
-        }
-
-        if (intoTab == null || intoTab.isMainTab || intoTab.isEmpty(this)) {
-            resendSlot(bank, 0)
-            return
-        }
-
-        val fromSlots = fromTab.slotRange(this)
-        val intoSlots = intoTab.slotRange(this)
-        val intoSlot = if (fromTab.index > intoTab.index) intoSlots.first else intoSlots.last
-
-        val transaction =
-            player.invTransaction(bank) {
-                val bankInv = select(bank)
-                bulkShift {
-                    this.from = bankInv
-                    this.fromSlots = fromSlots
-                    this.intoSlot = intoSlot
-                }
-            }
-
-        if (transaction.failure) {
-            return
-        }
-
-        val fromTabSize = fromTab.occupiedSpace(this)
-        if (fromTab.index > intoTab.index) {
-            val tabShiftRange = fromTab.index - 1 downTo intoTab.index
-            for (index in tabShiftRange) {
-                val curr = BankTab.forIndex(index)
-                checkNotNull(curr) { "`curr` tab should not be null: $index" }
-
-                val next = BankTab.forIndex(index + 1)
-                checkNotNull(next) { "`next` tab should not be null: ${index + 1}" }
-
-                vars[next.sizeVarBit] = vars[curr.sizeVarBit]
-            }
-        } else {
-            val tabShiftRange = fromTab.index until intoTab.index
-            for (index in tabShiftRange) {
-                val curr = BankTab.forIndex(index)
-                checkNotNull(curr) { "`curr` tab should not be null: $index" }
-
-                val next = BankTab.forIndex(index + 1)
-                checkNotNull(next) { "`next` tab should not be null: ${index + 1}" }
-
-                vars[curr.sizeVarBit] = vars[next.sizeVarBit]
-            }
-        }
-        vars[intoTab.sizeVarBit] = fromTabSize
-    }
-
-    private fun ProtectedAccess.dragSideInv(drag: IfModalDrag) {
-        val fromSlot = drag.selectedSlot ?: return resendSlot(inv, 0)
-        val intoSlot = drag.targetSlot ?: return resendSlot(inv, 0)
-        invMoveToSlot(inv, inv, fromSlot, intoSlot)
-        setBanksideExtraOps()
-    }
-
-    private fun ProtectedAccess.dragMainInv(drag: IfModalDrag) {
-        val fromSlot = drag.selectedSlot ?: return resendSlot(bank, 0)
-        val intoSlot = drag.targetSlot ?: return resendSlot(bank, 0)
-        val fromTab = BankTab.forSlot(this, fromSlot) ?: return resendSlot(bank, fromSlot)
-
-        // Intercept drag buttons that target tab "extended" slots. These are special subcomponents
-        // created by the client to represent tab slots beyond their current capacity. (e.g., the
-        // slot right next to the last obj in a tab)
-        val extendedTabSlots = bank_comsubs.tab_extended_slots_offset.offset(bank.size - 1)
-        if (intoSlot in extendedTabSlots) {
-            val tabIndex = intoSlot - extendedTabSlots.first
-            val intoTab = BankTab.forIndex(tabIndex - 1) ?: BankTab.Main
-
-            // Any attempt to insert an obj into the "extended" slot of the tab it already belongs
-            // to will be rejected and have its slot resynced.
-            if (fromTab == intoTab) {
-                resendSlot(bank, fromSlot)
-                return
-            }
-
-            dragMainInvExtendedSlot(fromTab, fromSlot, intoTab)
-            return
-        }
-
-        val intoTab = BankTab.forSlot(this, intoSlot) ?: BankTab.Main
-        dragMainInv(fromTab, fromSlot, intoTab, intoSlot)
-    }
-
-    private fun ProtectedAccess.dragMainInvExtendedSlot(
-        fromTab: BankTab,
-        fromSlot: Int,
-        intoTab: BankTab,
-    ) {
-        val intoSlots = intoTab.slotRange(this)
-        val emptySlot = intoSlots.firstOrNull { bank[it] == null }
-        val intoSlot = emptySlot ?: intoSlots.last
-        val intoSlotOffset = if (emptySlot == null && fromSlot > intoSlot) 1 else 0
-        val targetSlot = intoSlot + intoSlotOffset
-        val targetSlotEmpty = bank[targetSlot] == null
-
-        val transaction =
-            player.invTransaction(bank) {
-                val bankInv = select(bank)
-                if (!targetSlotEmpty) {
-                    shiftInsert {
-                        this.from = bankInv
-                        this.fromSlot = fromSlot
-                        this.intoSlot = targetSlot
-                    }
-                } else {
-                    swap {
-                        this.from = bankInv
-                        this.into = bankInv
-                        this.fromSlot = fromSlot
-                        this.intoSlot = targetSlot
-                    }
-                    leftShift {
-                        this.from = bankInv
-                        this.startSlot = fromSlot + 1
-                        this.toSlot = fromSlot
-                    }
-                }
-            }
-
-        if (transaction.failure) {
-            resendSlot(bank, fromSlot)
-            return
-        }
-
-        fromTab.decreaseSize(this)
-        if (emptySlot == null) {
-            intoTab.increaseSize(this)
-        }
-
-        notifySlotUpdate(fromTab)
-        if (fromTab.isEmpty(this)) {
-            compactEmptyTabs(fromTab.index)
-        }
-    }
-
-    private fun ProtectedAccess.dragMainInv(
-        fromTab: BankTab,
-        fromSlot: Int,
-        intoTab: BankTab,
-        intoSlot: Int,
-    ) {
-        if (!insertMode) {
-            dragMainInvSwap(fromTab, fromSlot, intoTab, intoSlot)
-            return
-        }
-
-        if (fromTab == intoTab && abs(fromSlot - intoSlot) == 1) {
-            dragMainInvSwap(fromTab, fromSlot, intoTab, intoSlot)
-            return
-        }
-
-        dragMainInvShift(fromTab, fromSlot, intoTab, intoSlot)
-    }
-
-    private fun ProtectedAccess.dragMainInvSwap(
-        fromTab: BankTab,
-        fromSlot: Int,
-        intoTab: BankTab,
-        intoSlot: Int,
-    ) {
-        val intoSlots = intoTab.slotRange(this)
-
-        val transaction =
-            player.invTransaction(bank) {
-                val bankInv = select(bank)
-                swap {
-                    this.from = bankInv
-                    this.into = bankInv
-                    this.fromSlot = fromSlot
-                    this.intoSlot = intoSlot
-                }
-            }
-
-        if (transaction.failure) {
-            resendSlot(bank, fromSlot)
-            return
-        }
-
-        // Allows for size expansion if an obj is dragged outside the tab's current capacity.
-        // This is technically only possible for the main bank tab.
-        val sizeExpansion = intoSlot - intoSlots.last
-        if (sizeExpansion > 0) {
-            intoTab.increaseSize(this, sizeExpansion)
-        }
-
-        notifySlotUpdate(fromSlot)
-        if (fromTab.isEmpty(this)) {
-            compactEmptyTabs(fromTab.index)
-        }
-    }
-
-    private fun ProtectedAccess.dragMainInvShift(
-        fromTab: BankTab,
-        fromSlot: Int,
-        intoTab: BankTab,
-        intoSlot: Int,
-    ) {
-        val intoSameTab = fromTab == intoTab
-        val intoEmptySlot = bank[intoSlot] == null
-        val intoSlotOffset = if (!intoEmptySlot && fromSlot < intoSlot && !intoSameTab) 1 else 0
-        val intoMainTabEmptySlot = fromTab.isMainTab && intoTab.isMainTab && intoEmptySlot
-        val targetSlot = intoSlot - intoSlotOffset
-
-        val transaction =
-            player.invTransaction(bank) {
-                val bankInv = select(bank)
-                if (!intoEmptySlot) {
-                    shiftInsert {
-                        this.from = bankInv
-                        this.fromSlot = fromSlot
-                        this.intoSlot = targetSlot
-                    }
-                } else {
-                    swap {
-                        this.from = bankInv
-                        this.into = bankInv
-                        this.fromSlot = fromSlot
-                        this.intoSlot = targetSlot
-                    }
-                    if (!intoMainTabEmptySlot) {
-                        leftShift {
-                            this.from = bankInv
-                            this.startSlot = fromSlot + 1
-                            this.toSlot = fromSlot
-                        }
-                    }
-                }
-            }
-
-        if (transaction.failure) {
-            resendSlot(bank, fromSlot)
-            return
-        }
-
-        if (!intoMainTabEmptySlot) {
-            fromTab.decreaseSize(this)
-        }
-
-        if (!intoEmptySlot) {
-            intoTab.increaseSize(this)
-        } else {
-            // Allows for size expansion if an obj is dragged outside the tab's current capacity.
-            // This is technically only possible for the main bank tab.
-            val sizeExpansion = intoSlot - intoTab.slotRange(this).last
-            if (sizeExpansion > 0) {
-                intoTab.increaseSize(this, sizeExpansion)
-            }
-        }
-
-        notifySlotUpdate(fromTab)
-        if (fromTab.isEmpty(this)) {
-            compactEmptyTabs(fromTab.index)
-        }
-    }
-
-    private fun ProtectedAccess.dragIntoTab(drag: IfModalDrag) {
-        val fromSlot = drag.selectedSlot ?: return resendSlot(bank, 0)
-        val comsub = drag.targetSlot ?: return resendSlot(bank, 0)
-
-        if (comsub != bank_comsubs.main_tab && comsub !in bank_comsubs.other_tabs) {
-            resendSlot(bank, fromSlot)
-            return
-        }
-
-        val obj = bank[fromSlot]
-        if (obj == null || obj.id != drag.selectedObj) {
-            resendSlot(bank, fromSlot)
-            return
-        }
-
-        val fromTab = BankTab.forSlot(this, fromSlot) ?: return resendSlot(bank, 0)
-        if (comsub == bank_comsubs.main_tab) {
-            dragIntoTab(fromTab, fromSlot, BankTab.Main)
-            return
-        }
-
-        val tabIndex = comsub - bank_comsubs.other_tabs.first
-        val intoTab = BankTab.forIndex(tabIndex) ?: return resendSlot(bank, fromSlot)
-        dragIntoTab(fromTab, fromSlot, intoTab)
-    }
-
-    private fun ProtectedAccess.dragIntoTab(fromTab: BankTab, fromSlot: Int, intoTab: BankTab) {
-        if (intoTab == fromTab) {
-            resendSlot(bank, fromSlot)
-            return
-        }
-        dragMainInvExtendedSlot(fromTab, fromSlot, intoTab)
-    }
-
-    private fun ProtectedAccess.selectTab(comsub: Int, op: IfButtonOp) {
-        val tabIndex = comsub - bank_comsubs.other_tabs.first
-        val tab = BankTab.forIndex(tabIndex) ?: BankTab.Main
-        if (tab == BankTab.Main) {
-            if (op == IfButtonOp.Op1) {
-                selectedTab = tab
-            } else if (op == IfButtonOp.Op7) {
-                removePlaceholders(tab)
-            }
-            return
-        }
-
-        if (tab.isEmpty(this)) {
-            mes("To create a new tab, drag items from your bank onto this tab.")
-            return
-        }
-
-        mesLayerClose(player, constants.meslayer_mode_objsearch)
-        when (op) {
-            IfButtonOp.Op1 -> selectedTab = tab
-            IfButtonOp.Op6 -> collapseTab(tab)
-            IfButtonOp.Op7 -> removePlaceholders(tab)
-            else -> throw NotImplementedError("Bank tab op not implemented: op=$op")
-        }
-    }
-
-    private fun ProtectedAccess.removePlaceholders(tab: BankTab) {
-        val slots = tab.slotRange(this)
-        if (slots.isEmpty()) {
-            mes("You don't have any placeholders to release.")
-            return
-        }
-        var removed = 0
-        for (slot in slots) {
-            val obj = bank[slot] ?: continue
-            if (getInvObj(obj).isPlaceholder) {
-                bank[slot] = null
-                removed++
-            }
-        }
-        if (removed == 0) {
-            mes("You don't have any placeholders to release.")
-            return
-        }
-        notifySlotUpdate(slots.first)
-    }
-
-    private fun ProtectedAccess.removePlaceholders() {
-        val tabUpdates = mutableSetOf<BankTab>()
-        for (slot in bank.indices) {
-            val obj = bank[slot] ?: continue
-            if (getInvObj(obj).isPlaceholder) {
-                bank[slot] = null
-
-                val tab = BankTab.forSlot(this, slot)
-                tab?.let(tabUpdates::add)
-            }
-        }
-        if (tabUpdates.isEmpty()) {
-            return
-        }
-        soundSynth("synth.paper_turn")
-        for (tab in tabUpdates) {
-            notifySlotUpdate(tab)
-        }
-    }
-
-    private suspend fun ProtectedAccess.removeFillers() {
-        val confirmation =
-            confirmOverlay(
-                target = "component.bankmain:popup",
-                title = "Clear all fillers?",
-                text =
-                    "This option will clear <col=ffb83f>all</col> the bank fillers throughout " +
-                        "your <col=ffb83f>whole bank</col>.<br><br>Are you sure?",
-                cancel = "<col=ff0000>Cancel</col>",
-                confirm = "<col=0dc10d>Clear them all</col>",
-            )
-        if (!confirmation) {
-            return
-        }
-        val tabUpdates = mutableSetOf<BankTab>()
-        for (slot in bank.indices) {
-            val obj = bank[slot] ?: continue
-            if (getInvObj(obj).isType("obj.bank_filler")) {
-                bank[slot] = null
-
-                val tab = BankTab.forSlot(this, slot)
-                tab?.let(tabUpdates::add)
-            }
-        }
-        soundSynth("synth.paper_turn")
-        for (tab in tabUpdates) {
-            notifySlotUpdate(tab)
-        }
-    }
-
-    private fun ProtectedAccess.collapseTab(tab: BankTab) {
-        require(!tab.isMainTab) { "Main bank tab cannot be collapsed." }
-
-        for (tab in BankTab.tabs) {
-            compressTabObjs(tab)
-        }
-
-        val collapseObjCount = tab.occupiedSpace(this)
-        val collapseTabSlots = tab.slotRange(this)
-
-        val targetTab = BankTab.Main
-        val targetTabSlots = targetTab.slotRange(this)
-        val targetEmptySlots =
-            targetTabSlots.asSequence().filter { bank[it] == null }.take(collapseObjCount).toList()
-
-        val newSlotsCount = collapseObjCount - targetEmptySlots.size
-        val swapQuery =
-            player.invTransaction(bank) {
-                val bankInv = select(bank)
-                for (i in targetEmptySlots.indices) {
-                    val fromSlot = collapseTabSlots.first + i
-                    if (fromSlot > collapseTabSlots.last) {
-                        break
-                    }
-                    swap {
-                        this.from = bankInv
-                        this.into = bankInv
-                        this.fromSlot = fromSlot
-                        this.intoSlot = targetEmptySlots[i]
-                        this.strict = true
-                    }
-                }
-                if (newSlotsCount > 0) {
-                    val shiftStartSlot = collapseTabSlots.first + targetEmptySlots.size
-                    val shiftSlots = shiftStartSlot..collapseTabSlots.last
-                    bulkShift {
-                        this.from = bankInv
-                        this.fromSlots = shiftSlots
-                        this.intoSlot = targetTabSlots.last
-                    }
-                }
-            }
-        check(swapQuery.success) { "Could not collapse tab: tab=$tab, err=${swapQuery.err}" }
-
-        targetTab.increaseSize(this, newSlotsCount)
-
-        val trailingNullCount = trimGapsAndReturnTrailingGaps(tab)
-        tab.decreaseSize(this, trailingNullCount)
-        if (collapseObjCount > trailingNullCount) {
-            tab.decreaseSize(this, collapseObjCount - trailingNullCount)
-        }
-
-        compactEmptyTabs(tab.index)
-        if (selectedTab == tab) {
-            selectedTab = BankTab.Main
-        }
-    }
-
-    private fun ProtectedAccess.notifySlotUpdate(slot: Int) {
-        val tab = BankTab.forSlot(this, slot)
-        checkNotNull(tab) { "`slot` was not associated with a valid bank tab: $slot" }
-        notifySlotUpdate(tab)
-    }
-
-    private fun ProtectedAccess.notifySlotUpdate(tab: BankTab) {
-        val trailingNullCount = trimGapsAndReturnTrailingGaps(tab)
-        if (trailingNullCount == 0) {
-            return
-        }
-
-        tab.decreaseSize(this, trailingNullCount)
-
-        if (tab.isEmpty(this) && !tab.isMainTab) {
-            compactEmptyTabs(tab.index)
-
-            if (selectedTab == tab) {
-                selectedTab = BankTab.Main
-            }
-        }
-    }
-
-    private fun ProtectedAccess.trimGapsAndReturnTrailingGaps(slotRange: IntRange): Int {
-        // Note: `shiftLeadingGapsToTail` directly modifies `bank` obj array.
-        val result = BankSlots.shiftLeadingGapsToTail(bank, slotRange)
-
-        val trailingNullCount = result.trailingGaps
-        if (trailingNullCount == 0) {
-            return 0
-        }
-
-        val shiftStartSlot = min(bank.size - 1, slotRange.last + 1)
-        val shiftToSlot = min(bank.size - 1, slotRange.last + 1 - trailingNullCount)
-
-        // Set a "max shift slot" to avoid unnecessary shifting of slots beyond the last occupied
-        // slot in bank inventory.
-        val maxShiftSlot = min(bank.size, bank.lastOccupiedSlot() + trailingNullCount)
-
-        val shiftQuery =
-            player.invTransaction(bank) {
-                val bankInv = select(bank)
-                leftShift {
-                    this.from = bankInv
-                    this.startSlot = shiftStartSlot
-                    this.toSlot = shiftToSlot
-                    this.maxSlot = maxShiftSlot
-                }
-            }
-
-        check(shiftQuery.success) {
-            "Could not shift bank inventory: " +
-                "startSlot=$shiftStartSlot, toSlot=$shiftToSlot, err=${shiftQuery.err}"
-        }
-
-        return trailingNullCount
-    }
-
-    private fun ProtectedAccess.trimGapsAndReturnTrailingGaps(tab: BankTab): Int {
-        val slots = tab.slotRange(this)
-        return trimGapsAndReturnTrailingGaps(slots)
-    }
-
-    private fun ProtectedAccess.compressTabObjs(tab: BankTab) {
-        if (tab.isEmpty(this)) {
-            return
-        }
-        val tabSlots = tab.slotRange(this)
-        if (tabSlots.first != tabSlots.last) {
-            val compactQuery = player.invCompress(bank, tabSlots)
-            check(compactQuery.success) {
-                "Could not compress tab: tab=$tab, err=${compactQuery.err}"
-            }
-        }
-        val trailingNullCount = tabSlots.count { bank[it] == null }
-        if (trailingNullCount > 0) {
-            tab.decreaseSize(this, trailingNullCount)
-        }
-    }
-
-    private fun ProtectedAccess.compactEmptyTabs(startTabIndex: Int) {
-        for (index in startTabIndex until BankTab.tabs.size) {
-            val curr = BankTab.tabs[index]
-            val next = BankTab.tabs.getOrNull(index + 1)
-            val nextSize = next?.occupiedSpace(this) ?: 0
-            vars[curr.sizeVarBit] = nextSize
-        }
-    }
-
-    private fun ProtectedAccess.compressBank() {
-        for (tab in BankTab.entries) {
-            val slots = tab.slotRange(this)
-            compressTabObjs(tab)
-            trimGapsAndReturnTrailingGaps(slots)
-        }
-    }
-
     private fun ProtectedAccess.resolveLeftClickQty(): Int =
         when (leftClickQtyMode) {
             QuantityMode.One -> 1
@@ -1084,7 +516,7 @@ constructor(
         }
 
         bank[slot] = null
-        soundSynth("synth.firebreath")
+        soundSynth("synth.FIREBREATH")
         notifySlotUpdate(slot)
 
         val dispose = HeldDropEvents.Dispose(player, "inv.bank", slot, obj)
@@ -1099,7 +531,7 @@ constructor(
         player.setBankWornBonuses(wornBonuses, weaponSpeeds)
     }
 
-    private suspend fun ProtectedAccess.clickBanksideExtraOp(slot: Int) {
+    private suspend fun ProtectedAccess.clickBanksideExtraOp(slot: Int, op: IfButtonOp) {
         val obj = inv[slot] ?: return resendSlot(inv, 0)
         val type = getInvObj(obj)
 
@@ -1128,7 +560,7 @@ constructor(
             return
         }
 
-        val event = HeldBanksideEvents.Type(player, slot, type)
+        val event = HeldBanksideEvents.Type(player, slot, type, op)
         publish(event)
     }
 

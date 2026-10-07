@@ -6,31 +6,30 @@ import dev.openrune.rscm.RSCMType
 import dev.openrune.types.NpcMode
 import dev.openrune.types.aconverted.SpotanimType
 import jakarta.inject.Inject
-import java.util.Collections
-import java.util.IdentityHashMap
 import kotlin.math.abs
-import org.rsmod.annotations.InternalApi
 import org.rsmod.api.bosses.runtime.BossDeps
-import org.rsmod.api.bosses.runtime.suppressAttacks
+import org.rsmod.api.bosses.runtime.suppressAttacksUntil
 import org.rsmod.api.combat.commons.player.finishNpcHit
 import org.rsmod.api.death.NpcDeath
 import org.rsmod.api.instances.BossInstanceRegistry
 import org.rsmod.api.instances.InstanceArea
 import org.rsmod.api.instances.InstanceEnterTransition
 import org.rsmod.api.instances.InstanceId
-import org.rsmod.api.instances.InstanceManager
 import org.rsmod.api.instances.InstanceNpc
 import org.rsmod.api.instances.InstanceScript
 import org.rsmod.api.instances.InstanceSession
 import org.rsmod.api.instances.withInstanceEnterTransition
 import org.rsmod.api.instances.withInstanceLeaveTransition
 import org.rsmod.api.invtx.invAdd
+import org.rsmod.api.invtx.invTransaction
+import org.rsmod.api.invtx.select
 import org.rsmod.api.npc.access.StandardNpcAccess
 import org.rsmod.api.npc.apPlayer2
 import org.rsmod.api.npc.interact.AiPlayerInteractions
 import org.rsmod.api.player.events.skilling.SkillingActionCompleteEvent
 import org.rsmod.api.player.events.skilling.SkillingActionContext
 import org.rsmod.api.player.isValidTarget
+import org.rsmod.api.player.music.MusicPlayer
 import org.rsmod.api.player.output.mes
 import org.rsmod.api.player.output.soundSynth
 import org.rsmod.api.player.protect.ProtectedAccess
@@ -39,34 +38,50 @@ import org.rsmod.api.player.stat.statSub
 import org.rsmod.api.repo.loc.LocRepository
 import org.rsmod.api.script.onEvent
 import org.rsmod.api.script.onNpcQueue
+import org.rsmod.api.script.onOpHeld5
 import org.rsmod.api.script.onOpHeldU
 import org.rsmod.api.script.onOpLoc1
+import org.rsmod.api.script.onOpLoc2
 import org.rsmod.api.script.onOpLoc3
-import org.rsmod.api.script.onOpLoc5
 import org.rsmod.api.script.onOpLocU
 import org.rsmod.api.script.onOpNpc1
+import org.rsmod.api.script.onOpNpcU
+import org.rsmod.api.table.MusicRow
 import org.rsmod.game.entity.Npc
 import org.rsmod.game.entity.Player
 import org.rsmod.game.headbar.Headbar
 import org.rsmod.game.hit.HitType as EngineHitType
+import org.rsmod.game.inv.isType
 import org.rsmod.game.loc.BoundLocInfo
 import org.rsmod.game.loc.LocAngle
 import org.rsmod.game.loc.LocShape
 import org.rsmod.game.map.Direction
 import org.rsmod.map.CoordGrid
+import org.rsmod.map.square.MapSquareKey
 import org.rsmod.plugin.scripts.ScriptContext
 
-private enum class VatStage { FILLING, FERMENTING, READY }
+internal enum class VatStage { FILLING, FERMENTING, READY }
 
 private data class VatKey(val instanceId: InstanceId, val coords: CoordGrid)
 
-private data class VatState(
+internal data class VatState(
     val loc: BoundLocInfo,
-    var arderPowder: Int = 0,
-    var muscaPowder: Int = 0,
-    var salaxSalt: Int = 0,
-    var stage: VatStage = VatStage.FILLING,
-)
+    val owner: Npc,
+    val side: String,
+) {
+    var arderPowder: Int
+        get() = owner.vars["varn.duke_vat_${side}_arder"]
+        set(value) { owner.vars["varn.duke_vat_${side}_arder"] = value }
+    var muscaPowder: Int
+        get() = owner.vars["varn.duke_vat_${side}_musca"]
+        set(value) { owner.vars["varn.duke_vat_${side}_musca"] = value }
+    var salaxSalt: Int
+        get() = owner.vars["varn.duke_vat_${side}_salt"]
+        set(value) { owner.vars["varn.duke_vat_${side}_salt"] = value }
+    var stage: VatStage
+        get() = VatStage.entries[owner.vars["varn.duke_vat_${side}_stage"]]
+        set(value) { owner.vars["varn.duke_vat_${side}_stage"] = value.ordinal }
+}
 
 class DukeSucellusInstance
 @Inject
@@ -76,11 +91,9 @@ constructor(
     private val locRepo: LocRepository,
     private val aiPlayerInteractions: AiPlayerInteractions,
     private val npcDeath: NpcDeath,
+    private val musicPlayer: MusicPlayer,
 ) : InstanceScript(registry) {
 
-    private val pendingAwakened = HashSet<Player>()
-    private val feedProgress: MutableMap<Npc, Int> = IdentityHashMap()
-    private val hazardsActive: MutableSet<Npc> = Collections.newSetFromMap(IdentityHashMap())
     private val vats: MutableMap<VatKey, VatState> = HashMap()
 
     override fun settingsRow(): String = "dbrow.instance_duke_sucellus"
@@ -88,17 +101,15 @@ constructor(
     override fun area(): InstanceArea = INSTANCE
 
     override fun ScriptContext.configure() {
-        onEnterPrelude { result, enter ->
+        onEnterPrelude { _, enter ->
             withInstanceEnterTransition(InstanceEnterTransition(message = ENTER_MESSAGE), enter)
-            if (result is InstanceManager.Result.Created && pendingAwakened.remove(player)) {
-                manager.npcsForInstance(result.session.id).firstOrNull()?.let(::markAwakened)
-            }
         }
 
-        onEnterObject { enterInstance() }
+        onEnterObject { defaultInstanceEntry() }
         onExitObject { defaultLeaveFlow() }
-        onOpLoc5(ESCAPE_LOC) { quickEscape() }
+        onOpLoc2(ESCAPE_LOC) { quickEscape() }
         onOpNpc1(SLEEP_NPC) { feed(it.npc) }
+        onOpNpcU(SLEEP_NPC, POISON_ITEM) { feed(it.npc) }
         val awakeType = ServerCacheManager.getNpc(BOSS_NPC.asRSCM(RSCMType.NPC))!!
         onNpcQueue(awakeType, "queue.death") { dukeDeath() }
 
@@ -109,6 +120,11 @@ constructor(
 
         onOpHeldU(ARDER_MUSHROOM_ITEM, PESTLE_MORTAR_ITEM) { grind(ARDER_MUSHROOM_ITEM, ARDER_POWDER_ITEM, ARDER_GROUND_MESSAGE) }
         onOpHeldU(MUSCA_MUSHROOM_ITEM, PESTLE_MORTAR_ITEM) { grind(MUSCA_MUSHROOM_ITEM, MUSCA_POWDER_ITEM, MUSCA_GROUND_MESSAGE) }
+
+        for (item in listOf(ARDER_MUSHROOM_ITEM, MUSCA_MUSHROOM_ITEM, ARDER_POWDER_ITEM,
+            MUSCA_POWDER_ITEM, SALT_ITEM, POISON_ITEM)) {
+            onOpHeld5(item) { destroyIngredient(item, it.slot) }
+        }
 
         onOpLoc1(VAT_CHECK_LOC) { fillVat(it.loc) }
         onOpLoc3(VAT_CHECK_LOC) { checkVat(it.loc) }
@@ -122,7 +138,7 @@ constructor(
             if (product.isBonus || product.skill != MINING_SKILL || product.item != SALT_ITEM) {
                 return@onEvent
             }
-            if (manager.sessionForPlayer(player) == null) return@onEvent
+            if (manager.sessionForPlayer(player)?.key != key) return@onEvent
             val extra = saltYield(player.miningLvl) - product.count
             if (extra > 0) player.invAdd(player.inv, SALT_ITEM, extra)
         }
@@ -137,10 +153,10 @@ constructor(
         onInstancePlayerJoin {
             val npc = manager.npcsForInstance(instanceId).firstOrNull() ?: return@onInstancePlayerJoin
             val session = manager.sessionForId(instanceId) ?: return@onInstancePlayerJoin
-            startHazards(npc, session)
+            if (npc.isVisType(SLEEP_NPC)) startHazards(npc, session)
         }
         onInstancePlayerLeave {
-            manager.npcsForInstance(instanceId).forEach(hazardsActive::remove)
+            manager.npcsForInstance(instanceId).forEach(::stopHazards)
         }
     }
 
@@ -148,98 +164,69 @@ constructor(
         withInstanceLeaveTransition { defaultLeaveFlow() }
     }
 
-    private suspend fun ProtectedAccess.enterInstance() {
-        val owned = player.uuid?.let { manager.sessionOwnedBy(key, it) }
-        if (owned == null && tryConsumeAwakenersOrb()) {
-            pendingAwakened += player
-        }
-        defaultInstanceEntry()
+    private suspend fun ProtectedAccess.destroyIngredient(item: String, slot: Int) {
+        val held = inv[slot]?.takeIf { it.isType(item) } ?: return
+        val name = ServerCacheManager.getItem(held.id)?.name ?: return
+        if (!confirmDestroy(item, held.count, "Destroy $name?",
+            "You can obtain more ingredients in Duke Sucellus' asylum.")) return
+        invDel(inv, item, held.count, slot = slot)
     }
-
-    private suspend fun ProtectedAccess.tryConsumeAwakenersOrb(): Boolean {
-        if (AWAKENERS_ORB !in inv) {
-            return false
-        }
-        val useOrb =
-            choice2(
-                "Yes - consume an Awakener's orb.",
-                true,
-                "No - fight the normal encounter.",
-                false,
-                title = "Use an Awakener's orb to fight an Awakened Duke Sucellus?",
-            )
-        if (!useOrb) {
-            return false
-        }
-        invDel(inv, AWAKENERS_ORB, 1)
-        return true
-    }
-
-    private fun markAwakened(npc: Npc) {
-        npc.vars["varn.awakened_state"] = 1
-        npc.vars["varn.skip_killcount"] = 1
-    }
-
-    private fun awakened(npc: Npc): Boolean = npc.vars["varn.awakened_state"] == 1
 
     private suspend fun ProtectedAccess.feed(npc: Npc) {
+        if (!npc.isVisType(SLEEP_NPC) || npc.vars[FEED_PROGRESS_VARN] < 0) return
         if (POISON_ITEM !in inv) {
             mes(NO_POISON_MESSAGE)
             return
         }
-        invDel(inv, POISON_ITEM, 1)
+        if (!invDel(inv, POISON_ITEM, 1).success) return
 
-        val required = if (awakened(npc)) AWAKENED_FEED_COUNT else NORMAL_FEED_COUNT
-        val progress = (feedProgress[npc] ?: 0) + 1
+        val required = NORMAL_FEED_COUNT
+        val progress = npc.vars[FEED_PROGRESS_VARN] + 1
         if (progress < required) {
-            feedProgress[npc] = progress
+            npc.vars[FEED_PROGRESS_VARN] = progress
             mes(FEED_PROGRESS_MESSAGE)
             return
         }
-        feedProgress.remove(npc)
-        hazardsActive.remove(npc)
+        npc.vars[FEED_PROGRESS_VARN] = -1
+        stopHazards(npc)
         mes(WAKE_MESSAGE)
         npc.anim(WAKE_SEQ)
         val target = player
         deps.worldQueues.add(WAKE_TRANSFORM_DELAY) { wake(npc, target) }
     }
 
-    @OptIn(InternalApi::class)
     private fun wake(npc: Npc, target: Player) {
         if (!npc.isSlotAssigned) return
         val awake = ServerCacheManager.getNpc(BOSS_NPC.asRSCM(RSCMType.NPC)) ?: return
-        val wasAwakened = awakened(npc)
         npc.resetAnim()
         npc.transmog(awake, Int.MAX_VALUE)
         npc.copyStats(awake)
-        npc.assignUid()
-        if (wasAwakened) {
-            npc.vars["varn.awakened_state"] = 1
-            npc.vars["varn.skip_killcount"] = 1
-            npc.baseHitpointsLvl = AWAKENED_HITPOINTS
-        } else {
-            npc.baseHitpointsLvl = NORMAL_HITPOINTS
-        }
+        npc.baseHitpointsLvl = NORMAL_HITPOINTS
         npc.hitpoints = npc.baseHitpointsLvl
         npc.apRequiresLineOfSight = false
         npc.apRangeOverride = ARENA_AP_RANGE
-        deps.suppressAttacks(npc, WAKE_ATTACK_DELAY)
-        if (target.isValidTarget()) npc.apPlayer2(target, aiPlayerInteractions)
+        deps.suppressAttacksUntil(npc, WAKE_ATTACK_DELAY)
         val session = sessionOf(npc) ?: return
+        if (target.isValidTarget() && manager.sessionForPlayer(target)?.id == session.id) {
+            musicPlayer.startEncounter(target, MusicRow.getRow("dbrow.music_dt2_sucellus"))
+            npc.apPlayer2(target, aiPlayerInteractions)
+        }
         animateAllEyes(session, EYE_WAKE_SEQ)
         loopAwakeEyes(npc, session)
     }
 
     private fun loopAwakeEyes(npc: Npc, session: InstanceSession) {
         deps.worldQueues.add(1) {
-            if (!npc.isSlotAssigned || !npc.isVisType(BOSS_NPC)) return@add
+            if (!npc.isSlotAssigned || !npc.isVisType(BOSS_NPC) || sessionOf(npc) !== session) {
+                return@add
+            }
             animateAllEyes(session, EYE_AWAKE_SEQ)
             loopAwakeEyes(npc, session)
         }
     }
 
     private fun sessionOf(npc: Npc): InstanceSession? =
-        manager.instanceForNpc(npc)?.let(manager::sessionForId)
+        manager.sessionForRegion(MapSquareKey.from(npc.coords).id)
 
     private fun animateAllEyes(session: InstanceSession, seq: String) {
         for (x in listOf(EYE_LEFT_X, EYE_RIGHT_X)) {
@@ -255,19 +242,21 @@ constructor(
         val dead = ServerCacheManager.getNpc(DEAD_NPC.asRSCM(RSCMType.NPC)) ?: return
         val asleep = ServerCacheManager.getNpc(SLEEP_NPC.asRSCM(RSCMType.NPC)) ?: return
         noneMode()
-        changeType(dead, Int.MAX_VALUE)
+        npc.transmog(dead, Int.MAX_VALUE)
         hideAllOps()
         anim(DEATH_SEQ)
         sessionOf(npc)?.let { animateAllEyes(it, EYE_DEATH_SEQ) }
         delay(DEATH_DROP_DELAY)
 
         npcDeath.spawnDrops(this, coords.translate(DEATH_DROP_OFFSET_X, DEATH_DROP_OFFSET_Z))
-        npc.vars["varn.awakened_state"] = 0
-        npc.vars["varn.skip_killcount"] = 0
         delay(DEATH_RESET_DELAY)
 
         npc.resetTransmog()
         npc.copyStats(asleep)
+        npc.vars[FEED_PROGRESS_VARN] = 0
+        npc.vars["varn.duke_flare_attacks"] = 0
+        npc.vars["varn.duke_flare_threshold"] = 0
+        npc.vars["varn.duke_after_gaze"] = 0
         npc.hitpoints = npc.baseHitpointsLvl
         npc.apRequiresLineOfSight = true
         npc.apRangeOverride = null
@@ -276,6 +265,11 @@ constructor(
         showAllOps()
         anim(DEATH_RESET_SEQ)
         val session = sessionOf(npc) ?: return
+        for (player in deps.playerList) {
+            if (manager.sessionForPlayer(player)?.id == session.id) {
+                musicPlayer.finishEncounter(player, MusicRow.getRow("dbrow.music_dt2_sucellus"))
+            }
+        }
         startHazards(
             npc,
             session,
@@ -286,7 +280,11 @@ constructor(
     }
 
     private fun ProtectedAccess.pickMushroom(item: String) {
-        if (!inv.isFull()) invAdd(inv, item)
+        if (inv.isFull()) {
+            mes(INVENTORY_FULL_MESSAGE)
+            return
+        }
+        invAdd(inv, item)
         mes(PICK_MUSHROOM_MESSAGE)
     }
 
@@ -300,9 +298,12 @@ constructor(
     private fun ProtectedAccess.grind(mushroom: String, powder: String, message: String) {
         val herblore = statBase("stat.herblore")
         val amount = ((herblore - POWDER_LEVEL_OFFSET) / POWDER_LEVEL_STEP).coerceIn(1, MAX_POWDER_YIELD)
-        invDel(inv, mushroom, 1)
-        if (!inv.isFull()) invAdd(inv, powder, amount)
-        mes(message)
+        val grind = player.invTransaction(inv) {
+            val inventory = select(inv)
+            delete { from = inventory; obj = mushroom.asRSCM(); strictCount = 1 }
+            insert { into = inventory; obj = powder.asRSCM(); strictCount = amount }
+        }
+        if (grind.success) mes(message)
     }
 
     private fun saltYield(miningLevel: Int): Int =
@@ -314,7 +315,11 @@ constructor(
         }
 
     private fun vatState(session: InstanceSession, loc: BoundLocInfo): VatState =
-        vats.getOrPut(VatKey(session.id, loc.coords)) { VatState(loc) }
+        vats.getOrPut(VatKey(session.id, loc.coords)) {
+            val owner = manager.npcsForInstance(session.id).first { it.isType(SLEEP_NPC) }
+            val side = if (loc.coords.x < owner.coords.x) "left" else "right"
+            VatState(loc, owner, side)
+        }
 
     private fun ProtectedAccess.fillVat(loc: BoundLocInfo) {
         val session = manager.sessionForPlayer(player) ?: return
@@ -361,8 +366,8 @@ constructor(
             deps.npcRepo.add(timer, FERMENT_TICKS)
             timer.showHeadbar(
                 Headbar.fromNoSource(
-                    self = VAT_HEADBAR,
-                    public = VAT_HEADBAR,
+                    self = VAT_HEADBAR.asRSCM(RSCMType.HEADBAR),
+                    public = VAT_HEADBAR.asRSCM(RSCMType.HEADBAR),
                     startFill = 0,
                     endFill = VAT_HEADBAR_FILL,
                     startTime = 0,
@@ -375,6 +380,7 @@ constructor(
     }
 
     private fun readyFerment(session: InstanceSession, state: VatState, target: Player) {
+        if (manager.sessionForId(session.id) !== session) return
         if (state.stage != VatStage.FERMENTING) return
         state.stage = VatStage.READY
         locRepo.change(state.loc, VAT_COLLECT_LOC, Int.MAX_VALUE)
@@ -431,11 +437,20 @@ constructor(
         iceDelay: Int = ICE_INTERVAL,
         sweepDelay: Int = EXTREMITY_INTERVAL,
     ) {
-        if (!hazardsActive.add(npc)) return
+        if (npc.vars[PREP_GENERATION_VARN] > 0) return
+        npc.vars[PREP_GENERATION_VARN] = abs(npc.vars[PREP_GENERATION_VARN]) + 1
         scheduleGasVents(npc, session, 0, ventDelay)
         scheduleFallingIce(npc, session, iceDelay)
         scheduleExtremityGaze(npc, session, sweepDelay)
     }
+
+    private fun stopHazards(npc: Npc) {
+        npc.vars[PREP_GENERATION_VARN] = -(abs(npc.vars[PREP_GENERATION_VARN]) + 1)
+    }
+
+    private fun preparing(npc: Npc, generation: Int): Boolean =
+        npc.isSlotAssigned && generation > 0 &&
+            npc.vars[PREP_GENERATION_VARN] == generation
 
     private fun resolve(session: InstanceSession, coords: CoordGrid): CoordGrid =
         manager.resolveCoord(session, coords) ?: coords
@@ -455,8 +470,9 @@ constructor(
         groupIndex: Int,
         delay: Int = GAS_VENT_INTERVAL,
     ) {
+        val generation = npc.vars[PREP_GENERATION_VARN]
         deps.worldQueues.add(delay) {
-            if (npc !in hazardsActive) return@add
+            if (!preparing(npc, generation)) return@add
             val group = VENT_GROUPS[groupIndex % VENT_GROUPS.size].map { VENT_TILES[it] }
             group.forEach { rampVent(npc, session, resolve(session, it)) }
             scheduleGasVents(npc, session, groupIndex + 1)
@@ -464,6 +480,7 @@ constructor(
     }
 
     private fun rampVent(npc: Npc, session: InstanceSession, tile: CoordGrid) {
+        val generation = npc.vars[PREP_GENERATION_VARN]
         val ventType = ServerCacheManager.getNpc(GAS_VENT_NPC.asRSCM(RSCMType.NPC)) ?: return
         val vent = Npc(ventType, tile.translate(GAS_VENT_NPC_OFFSET, GAS_VENT_NPC_OFFSET))
         vent.mode = NpcMode.None
@@ -481,7 +498,7 @@ constructor(
 
         for (tick in GAS_VENT_IDLE_DELAY..GAS_VENT_DESPAWN_DELAY) {
             deps.worldQueues.add(tick) {
-                if (npc !in hazardsActive) return@add
+                if (!preparing(npc, generation)) return@add
                 for (player in instancePlayersNear(session, tile, GAS_VENT_RADIUS)) {
                     player.statSub("stat.prayer", GAS_VENT_PRAYER_DRAIN, 0)
                     val damage = GAS_VENT_DAMAGE.first + deps.random.of(GAS_VENT_DAMAGE.last - GAS_VENT_DAMAGE.first + 1)
@@ -499,16 +516,19 @@ constructor(
         }
 
     private fun scheduleFallingIce(npc: Npc, session: InstanceSession, delay: Int = ICE_INTERVAL) {
+        val generation = npc.vars[PREP_GENERATION_VARN]
         deps.worldQueues.add(delay) {
-            if (npc !in hazardsActive) return@add
+            if (!preparing(npc, generation)) return@add
             telegraphIce(npc, session, resolve(session, ICE_TILES.random()))
             scheduleFallingIce(npc, session)
         }
     }
 
     private fun telegraphIce(npc: Npc, session: InstanceSession, tile: CoordGrid) {
+        val generation = npc.vars[PREP_GENERATION_VARN]
         mapSpot(ICE_TELEGRAPH_SPOTANIM, tile)
         deps.worldQueues.add(ICE_WINDUP) {
+            if (!preparing(npc, generation)) return@add
             mapSpot(ICE_LAND_SPOTANIM, tile)
             val player = instancePlayerAt(session, tile) ?: return@add
             player.mes(ICE_HIT_MESSAGE)
@@ -523,11 +543,12 @@ constructor(
     }
 
     private fun scheduleExtremityGaze(npc: Npc, session: InstanceSession, delay: Int = EXTREMITY_INTERVAL) {
+        val generation = npc.vars[PREP_GENERATION_VARN]
         deps.worldQueues.add(delay) {
-            if (npc !in hazardsActive) return@add
+            if (!preparing(npc, generation)) return@add
             EXTREMITY_SWEEP.forEach { step ->
                 deps.worldQueues.add(step.delay.coerceAtLeast(1)) {
-                    if (npc in hazardsActive) fireExtremityPair(npc, session, step)
+                    if (preparing(npc, generation)) fireExtremityPair(npc, session, step)
                 }
             }
             scheduleExtremityGaze(npc, session)
@@ -554,6 +575,7 @@ constructor(
         coneIndex: Int,
         direction: Int,
     ) {
+        val generation = npc.vars[PREP_GENERATION_VARN]
         val tile = resolve(session, base)
         animateEye(session, base, coneIndex, direction)
         val coneType =
@@ -566,6 +588,7 @@ constructor(
         val faceX = if (direction > 0) EXTREMITY_LEFT_FACE_DX else EXTREMITY_RIGHT_FACE_DX
         cone.faceSquare(tile.translate(faceX, EXTREMITY_FACE_DZ))
         deps.worldQueues.add(EXTREMITY_RESOLVE_DELAY) {
+            if (!preparing(npc, generation)) return@add
             val player =
                 deps.playerList.firstOrNull {
                     manager.sessionForPlayer(it)?.id == session.id &&
@@ -623,12 +646,12 @@ constructor(
         private const val DEATH_DROP_OFFSET_X = 3
         private const val DEATH_DROP_OFFSET_Z = -1
         private const val ESCAPE_LOC = "loc.duke_sucellus_escape"
-        private const val AWAKENERS_ORB = "obj.dt2_awakeners_orb"
         private const val ENTER_MESSAGE = "You enter the Duke's chamber."
         private const val ARENA_REGION = 12132
 
         private const val NORMAL_FEED_COUNT = 2
-        private const val AWAKENED_FEED_COUNT = 3
+        private const val PREP_GENERATION_VARN = "varn.duke_prep_generation"
+        private const val FEED_PROGRESS_VARN = "varn.duke_feed_progress"
         private const val FEED_PROGRESS_MESSAGE = "You feed the poison to Duke Sucellus."
         private const val WAKE_MESSAGE = "<col=ff289d>Duke Sucellus awakens..."
         private const val WAKE_SEQ = "seq.npc_duke_sucellus01_wake_up_01"
@@ -637,7 +660,6 @@ constructor(
         private const val ARENA_AP_RANGE = 20
 
         const val NORMAL_HITPOINTS = 485
-        const val AWAKENED_HITPOINTS = 1697
 
         private const val ARDER_MUSHROOM_LOC = "loc.duke_sucellus_mushrooms_3"
         private const val MUSCA_MUSHROOM_LOC = "loc.duke_sucellus_mushrooms_1"
@@ -647,7 +669,7 @@ constructor(
         private const val VAT_COLLECT_LOC = "loc.duke_sucellus_vat_collect_1_3"
         private const val VAT_NPC = "npc.duke_sucellus_vat_ferment"
         private const val VAT_FILL_SEQ = "seq.qip_cook_hopper_grain"
-        private const val VAT_HEADBAR = 33
+        private const val VAT_HEADBAR = "headbar.charge_50"
         private const val VAT_HEADBAR_FILL = 50
         private const val CYCLES_PER_TICK = 30
 
@@ -729,7 +751,6 @@ constructor(
                 listOf(CoordGrid(LEFT_CORRIDOR_X, y, 0), CoordGrid(RIGHT_CORRIDOR_X, y, 0))
             }
 
-        // Recorded sweep (rsprox 1751): a cone pair spawns on each wall every 2 ticks, 4 tick lifespan.
         private const val EXTREMITY_INTERVAL = 15
         private const val EXTREMITY_CONE_LIFESPAN = 4
         private const val EXTREMITY_RESOLVE_DELAY = 2
@@ -756,8 +777,8 @@ constructor(
         private const val STUN_SPOTANIM_SLOT = 4
         private const val EXTREMITY_FREEZE_SPOTANIM = "spotanim.ice_barrage_impact"
         private const val EXTREMITY_FREEZE_SPOTANIM_SLOT = 2
-        private const val EXTREMITY_FREEZE_SYNTH = "synth.ice_cast"
-        private const val ICE_HIT_SYNTH = "synth.thieving_stunned"
+        private const val EXTREMITY_FREEZE_SYNTH = "synth.ICE_CAST"
+        private const val ICE_HIT_SYNTH = "synth.STUNNED"
         private const val EXTREMITY_FREEZE_TICKS = 9
         private val EXTREMITY_DAMAGE = 30..70
         private const val EXTREMITY_HIT_DELAY = 1

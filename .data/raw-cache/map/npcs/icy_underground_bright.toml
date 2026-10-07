@@ -1,4 +1,3 @@
-## Goblin Village Ice Cave
 
 [[spawn]]
 npc = "npc.xmas20_firefly_green_no_catch"
@@ -64,7 +63,6 @@ coords = "3_30_97_50_9"
 npc = "npc.xmas20_scrubfoot_crashed"
 coords = "0_30_97_20_6"
 
-## Ice Queens Dungeon
 
 [[spawn]]
 npc = "npc.ice_queen"
@@ -190,7 +188,6 @@ coords = "0_44_155_51_31"
 npc = "npc.icewarrior_queen"
 coords = "0_44_155_52_30"
 
-## Trollweiss Caves
 
 [[spawn]]
 npc = "npc.trollromance_icetroll_melee1"
@@ -275,6 +272,3 @@ coords = "0_43_159_38_46"
 [[spawn]]
 npc = "npc.trollromance_icetroll_melee7"
 coords = "0_43_159_47_38"
-
-## Trollweiss Caves End
-

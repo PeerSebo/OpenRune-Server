@@ -22,7 +22,10 @@ public class LocUOpScript @Inject private constructor(private val interactions: 
                 ServerCacheManager.getItems().values.firstOrNull { it.id == id.id }
             } ?: return resendSlot(inv, 0)
 
-        val baseType = checkNotNull(ServerCacheManager.getObject(op.loc.id))
-        interactions.interactOp(this, op.loc, op.loc, baseType, objType, inv, op.comsub)
+        // `op.loc` is the base loc, `op.vis`/`op.type` are what `LocTInteractions.opTrigger`
+        // already resolved the multiloc to. Hand over the **base**: `LocUInteractions.opTrigger`
+        // does its own multiloc walk and needs to start above the leaf, or its fallback to the
+        // parent id never runs and every `onOpLocU` bound to a multiloc parent stops dispatching.
+        interactions.interactOp(this, op.loc, objType, inv, op.comsub)
     }
 }

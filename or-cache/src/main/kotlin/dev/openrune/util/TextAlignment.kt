@@ -37,10 +37,6 @@ object TextAlignment {
                     )
                 return listOf(Page(page1, LINES_PER_PAGE), Page(page2, page2LineCount))
             }
-            // Don't see a point in supporting more than two pages from one single text string.
-            // There will be extremely niche situations where one text will be split into two
-            // pages, such as when the player display name is long enough to cause the dialogue
-            // to need a second page.
             else -> throw NotImplementedError("Page list of size `$pageCount` is not implemented.")
         }
     }
@@ -98,9 +94,7 @@ object TextAlignment {
                     }
                     else ->
                         if (tag.startsWith("img=")) {
-                            // TODO: load width from mod_icons
-                            //  val imgId = tag.substring(4).toInt()
-                            //  glyphs[imgId].getWidth()
+                            // TODO: Load width from mod_icons.
                             lineWidth += 13
                             prevChar = 0.toChar()
                         }

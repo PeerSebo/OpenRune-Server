@@ -5,7 +5,7 @@ count = 2
 
 [[spawn]]
 obj = "obj.bowl_empty"
-coords = "1_49_53_5_58"
+coords = "1_49_53_4_60"
 
 [[spawn]]
 obj = "obj.cake_tin"
@@ -49,6 +49,7 @@ coords = "0_49_54_59_59"
 obj = "obj.grapes"
 coords = "2_49_53_8_58"
 
+# TODO: Verify this jug's ground-floor placement; its plane may be wrong.
 [[spawn]]
 obj = "obj.jug_empty"
 coords = "0_49_53_6_55"
@@ -63,7 +64,7 @@ coords = "1_50_52_44_58"
 
 [[spawn]]
 obj = "obj.piedish"
-coords = "0_49_53_6_55"
+coords = "1_49_53_6_55"
 
 [[spawn]]
 obj = "obj.poh_saw"
@@ -77,7 +78,6 @@ coords = "2_49_53_8_57"
 obj = "obj.wooden_shield"
 coords = "0_50_54_4_59"
 
-## Lumber Yard
 
 [[spawn]]
 obj = "obj.logs"
@@ -115,13 +115,11 @@ coords = "0_51_54_46_47"
 obj = "obj.logs"
 coords = "0_51_54_46_48"
 
-## Varrock Blue Moon Inn Kitchen
 
 [[spawn]]
 obj = "obj.pot_empty"
 coords = "0_50_53_32_7"
 
-## Varrock Castle
 
 [[spawn]]
 obj = "obj.bucket_empty"
@@ -135,7 +133,6 @@ coords = "1_50_54_22_35"
 obj = "obj.piedish"
 coords = "0_50_54_22_38"
 
-## Varrock General Store
 
 [[spawn]]
 obj = "obj.knife"
@@ -145,7 +142,6 @@ coords = "1_50_53_18_26"
 obj = "obj.spade"
 coords = "1_50_53_18_20"
 
-## Varrock House Poor Houses
 
 [[spawn]]
 obj = "obj.leather_armour"
@@ -159,7 +155,6 @@ coords = "0_50_53_44_6"
 obj = "obj.logs"
 coords = "0_50_53_45_6"
 
-## Varrock House Very Poor Houses
 
 [[spawn]]
 obj = "obj.iron_dagger"
@@ -177,19 +172,16 @@ coords = "1_50_52_43_55"
 obj = "obj.phoenix_crossbow"
 coords = "1_50_52_45_57"
 
-## Varrock Jolly Boar Inn
 
 [[spawn]]
 obj = "obj.thread"
 coords = "0_51_54_22_35"
 
-## Varrock Swordshop
 
 [[spawn]]
 obj = "obj.lit_candle"
 coords = "1_50_53_8_3"
 
-## Varrock West bank
 
 [[spawn]]
 obj = "obj.brass_necklace"
@@ -245,6 +237,3 @@ coords = "0_49_153_59_29"
 [[spawn]]
 obj = "obj.ruby_ring"
 coords = "0_49_153_60_30"
-
-## Varrock West bank End
-

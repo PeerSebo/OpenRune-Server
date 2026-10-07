@@ -1,0 +1,12 @@
+[[varp]]
+isServerOnly = true
+id = "varp.blast_furnace_access"
+scope = "Perm"
+transmit = "Never"
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.blast_furnace_foreman_permission"
+varp = "varp.blast_furnace_access"
+startBit = 0
+endBit = 0

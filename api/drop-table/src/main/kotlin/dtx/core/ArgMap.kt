@@ -11,7 +11,7 @@ public class ArgMap private constructor(private val locked: Boolean = false) {
     public constructor(
         vararg args: ArgPair<*>,
         otherMap: ArgMap = ArgMap.Empty
-    ): this(locked = false) {
+    ) : this(locked = false) {
 
         args.forEach { argPair ->
             setWildcard(argPair)

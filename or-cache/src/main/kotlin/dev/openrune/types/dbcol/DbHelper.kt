@@ -25,11 +25,6 @@ public fun <T, R> DbHelper.columnOptional(name: String, codec: DbColumnCodec<T, 
 
 public fun row(row: String): DbHelper = DbHelper.row(row)
 
-/**
- * Splits a single column into consecutive pairs.
- *
- * Example: column.values = [8, 35, 4, 30] returns [[8, 35], [4, 30]]
- */
 @Suppress("UNCHECKED_CAST")
 public fun <T, R> DbHelper.multiColumn(
     columnName: String,
@@ -122,6 +117,24 @@ public fun DbHelper.multiColumnMixedOptional(
     }
 }
 
+/**
+ * Accepts an exact literal match or the single equivalence `OBJ` ('o') / `NAMEDOBJ` ('O').
+ * Both are one integer item-id slot resolved through `ServerCacheManager.getItem`.
+ * Codegen maps both to `ItemServerType`, whose codec declares `OBJ`.
+ *
+ * Verified with `:or-cache:dumpSailingDb`: all 23 SERVER rows of
+ * `dbcol.sailing_boat_hull:material` (table 178, column 12) declare
+ * `[id=13 ch='O', id=0 ch='i']`. Without this equivalence their generated wrappers fail
+ * with `DbException.TypeLiteralMismatch`. Other literal pairs remain incompatible.
+ */
+private fun literalsCompatible(expected: CacheVarLiteral, actual: CacheVarLiteral): Boolean {
+    if (expected == actual) {
+        return true
+    }
+    val objLike = setOf(CacheVarLiteral.OBJ, CacheVarLiteral.NAMEDOBJ)
+    return expected in objLike && actual in objLike
+}
+
 @Suppress("UNCHECKED_CAST")
 public class DbHelper(private val row: DBRowType) {
 
@@ -176,7 +189,7 @@ public class DbHelper(private val row: DBRowType) {
                         )
                 val expected = codec.types[i]
                 val actualLit = cacheLiteralForOpenRuneVarType(colType)
-                if (actualLit != expected) {
+                if (!literalsCompatible(expected, actualLit)) {
                     throw DbException.TypeLiteralMismatch(
                         tableId,
                         rowId,

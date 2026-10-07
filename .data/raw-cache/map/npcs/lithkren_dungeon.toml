@@ -1,4 +1,3 @@
-## Lithkren Dungeon Intact
 
 [[spawn]]
 npc = "npc.dallas_jones_dungeon"
@@ -8,7 +7,6 @@ coords = "0_55_162_31_53"
 npc = "npc.death_growncat_black_lithkren"
 coords = "0_55_162_29_52"
 
-## Lithkren Dungeon Lab
 
 [[spawn]]
 npc = "npc.adamant_dragon"
@@ -50,7 +48,6 @@ coords = "0_24_79_52_24"
 npc = "npc.rune_dragon"
 coords = "0_24_79_54_11"
 
-## Lithkren Dungeon Ruins
 
 [[spawn]]
 npc = "npc.death_growncat_black_lithkren"
@@ -59,6 +56,3 @@ coords = "0_55_163_29_47"
 [[spawn]]
 npc = "npc.jardric_dungeon"
 coords = "0_55_163_31_48"
-
-## Lithkren Dungeon Ruins End
-

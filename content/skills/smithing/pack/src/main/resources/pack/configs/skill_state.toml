@@ -1,0 +1,17 @@
+[[varp]]
+id = "varp.smithing_quantity"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.crystal_singing_skip_confirmation"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.crystal_singing_confirmation_migrated"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"

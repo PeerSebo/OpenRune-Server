@@ -1,6 +1,5 @@
 package org.rsmod.api.stats.xpmod
 
-import dev.openrune.types.StatType
 import org.rsmod.game.entity.Player
 
 abstract class StatXpMod(private val stat: String) : XpMod {

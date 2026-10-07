@@ -1,6 +1,5 @@
 package org.rsmod.content.travel.canoe.scripts
 
-import dev.openrune.definition.type.VarBitType
 import dev.openrune.types.ItemServerType
 import dev.openrune.types.SequenceServerType
 import dev.openrune.types.enums.EnumTypeMap
@@ -17,7 +16,6 @@ import org.rsmod.game.entity.Player
 import org.rsmod.game.inv.InvObj
 import org.rsmod.game.type.getInvObj
 
-/* Canoe station helpers */
 var ProtectedAccess.stationCoords by typeCoordVarp("varp.canoe_station_coords")
 var ProtectedAccess.canoeStation by enumVarBitOrNull<Station>("varbit.canoe_startfrom")
 
@@ -70,7 +68,6 @@ enum class StationState(val varValue: Int) {
     FloatingWaka(14),
 }
 
-/* Canoe helpers */
 var ProtectedAccess.confirmedCanoeType by boolVarBit("varbit.canoe_avoid_if")
 var ProtectedAccess.canoeType by enumVarBitOrNull<Canoe>("varbit.canoe_type")
 
@@ -129,7 +126,6 @@ enum class CanoeState {
     Floating,
 }
 
-/* General-purpose helpers */
 internal data class AxeSuccessRate(val low: Int, val high: Int)
 
 internal fun axeSuccessRates(

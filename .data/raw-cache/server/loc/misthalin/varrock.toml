@@ -1,5 +1,4 @@
-## TODO: Straight staircases need a contentGroup then can be implemented
-## Stairs / Ladders
+# TODO: Bind straight staircases to their content handlers.
 
 [[object]]
 id = "loc.varrock_spiralstairs"
@@ -62,10 +61,8 @@ contentGroup = "content.ladder_down"
 [object.params]
 "param.translate_level" = -2
 
-## Stairs / Ladders end
 
 
-## Doors
 
 [[object]]
 id = "loc.fai_varrock_castle_door"
@@ -99,10 +96,8 @@ contentGroup = "content.opened_single_door"
 [object.params]
 "param.next_loc_stage" = "loc.fai_varrock_door"
 
-## Doors end
 
 
-# Bookcases & Shelves
 
 [[object]]
 id = "loc.fai_varrock_bookcase"
@@ -154,10 +149,8 @@ id = "loc.fai_varrock_chemisty_shelves2"
 inherit = "loc.fai_varrock_chemisty_shelves2"
 contentGroup = "content.empty_chest"
 
-# Bookcases & Shelves end
 
 
-# Chests & Drawers
 
 [[object]]
 id = "loc.fai_varrock_chest_closed"
@@ -207,10 +200,8 @@ contentGroup = "content.empty_chest"
 [object.params]
 "param.next_loc_stage" = "loc.fai_varrock_posh_drawers"
 
-# Chests & Drawers end
 
 
-# Cooking stuff
 
 [[object]]
 id = "loc.fai_varrock_posh_stove"
@@ -227,10 +218,8 @@ id = "loc.fai_varrock_range_with_pipe"
 inherit = "loc.fai_varrock_range_with_pipe"
 contentGroup = "content.cooking_range_standard"
 
-# Cooking stuff end
 
 
-# Boxes & crates
 
 [[object]]
 id = "loc.fai_varrock_boxes"
@@ -257,7 +246,6 @@ id = "loc.fai_varrock_large_crates"
 inherit = "loc.fai_varrock_large_crates"
 contentGroup = "content.empty_boxes"
 
-# Boxes & crates end
 
 [[object]]
 id = "loc.fai_varrock_bankbooth"

@@ -14,22 +14,8 @@ public object ReachStrategy {
     private const val WALLDECOR_DIAGONAL_NOOFFSET_SHAPE = 7
 
     /**
-     * Returns true if coordinates ([srcX], [srcZ]) can reach coordinates ([destX], [destZ]), taking
-     * into account the dimensions [destWidth], [destLength] and [srcSize].
-     *
-     * @param destWidth the _absolute_ width of the destination. This value should _not_ be changed
-     *   when passing the width of a rotated loc. (it is done for us within the function)
-     * @param destLength the _absolute_ length of the destination. Similar to [destWidth], this
-     *   value should _not_ be changed or altered for rotated locs.
-     * @param locAngle the angle of the target loc being used as the destination. If the path is
-     *   meant for something that is _not_ a loc, this value should be passed or left as the
-     *   default 0.
-     * @param locShape the shape of the target loc being used as the destination. If the path is
-     *   meant for something that is _not_ a loc, this value should be passed or left as the default
-     *   -1.
-     * @param blockAccessFlags packed directional bitflags where interaction should be blocked. This
-     *   can be seen in locs such as staircases, where all directions excluding the direction with
-     *   access to the steps are "blocked." (see [org.rsmod.routefinder.flag.BlockAccessFlag])
+     * Pass unrotated destination dimensions; reach logic applies locAngle. blockAccessFlags
+     * restrict approach directions.
      */
     public fun reached(
         flags: CollisionFlagMap,

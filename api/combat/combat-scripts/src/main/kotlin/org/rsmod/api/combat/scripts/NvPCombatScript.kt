@@ -4,11 +4,10 @@ import jakarta.inject.Inject
 import org.rsmod.api.area.checker.AreaChecker
 import org.rsmod.api.combat.NvPCombat
 import org.rsmod.api.combat.commons.CombatAttack
-import org.rsmod.api.combat.commons.types.AttackType
+import org.rsmod.api.combat.commons.npc.resolveAttackType
 import org.rsmod.api.combat.commons.types.MeleeAttackType
 import org.rsmod.api.combat.commons.types.RangedAttackType
 import org.rsmod.api.combat.player.aggressiveNpc
-import org.rsmod.api.config.refs.params
 import org.rsmod.api.npc.access.StandardNpcAccess
 import org.rsmod.api.npc.owner.isSpawnOwnedBy
 import org.rsmod.api.player.isInPvnCombat
@@ -38,7 +37,6 @@ constructor(private val combat: NvPCombat, private val areaChecker: AreaChecker)
     }
 
     private fun StandardNpcAccess.canAttack(target: Player): Boolean {
-        // Owned spawns (barrows brothers, slayer superiors) are dedicated to their owner.
         val singleCombat = !mapMultiway(areaChecker) && !npc.isSpawnOwnedBy(target)
         if (singleCombat) {
             if (target.isInPvpCombat()) {
@@ -59,23 +57,8 @@ constructor(private val combat: NvPCombat, private val areaChecker: AreaChecker)
         return when {
             attackType.isRanged ->
                 CombatAttack.NpcRanged(RangedAttackType.from(attackType) ?: RangedAttackType.Standard)
-            // `maxHit = 0` defers max-hit resolution to the npc's magic stats in [NvPCombat].
             attackType.isMagic -> CombatAttack.NpcMagic(maxHit = 0)
             else -> CombatAttack.NpcMelee(MeleeAttackType.from(attackType))
-        }
-    }
-
-    private fun Npc.resolveAttackType(): AttackType {
-        val category = visType.paramOrNull(params.npc_attack_type) ?: return AttackType.Crush
-
-        return when {
-            category.isType("category.attacktype_stab") -> AttackType.Stab
-            category.isType("category.attacktype_slash") -> AttackType.Slash
-            category.isType("category.attacktype_light") -> AttackType.Light
-            category.isType("category.attacktype_standard") -> AttackType.Standard
-            category.isType("category.attacktype_heavy") -> AttackType.Heavy
-            category.isType("category.attacktype_magic") -> AttackType.Magic
-            else -> AttackType.Crush
         }
     }
 }

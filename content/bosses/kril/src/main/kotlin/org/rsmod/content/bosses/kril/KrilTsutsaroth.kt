@@ -45,7 +45,7 @@ class KrilTsutsaroth @Inject constructor(deps: BossDeps) : BossPluginScript(deps
                 ability("melee") {
                     anim("seq.godwars_zamorak_attack")
                     hit {
-                        damage(0..46).roll()
+                        damage(0..46).rollWithAccuracy()
                         type(Melee)
                     }
                 }
@@ -55,16 +55,18 @@ class KrilTsutsaroth @Inject constructor(deps: BossDeps) : BossPluginScript(deps
                     anim("seq.godwars_zamorak_magic_attack")
                     spotanim("spotanim.godwars_zamorak_magic_attack_spot")
                     hit {
-                        damage(10..30).roll()
+                        damage(10..30).rollWithAccuracy()
                         type(Magic)
                     }
                 }
 
+            // TODO: Rename magic_drain; this ability is a melee prayer smash.
             val magicDrain =
                 ability("magic_drain") {
                     anim("seq.godwars_zamorak_attack")
                     say("YARRRRRRR!")
                     hit {
+                        // Prayer smash always connects through Protect from Melee.
                         damage(35..49).roll()
                         type(Melee)
                     }

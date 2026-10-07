@@ -48,7 +48,7 @@ internal class AncientSpellEffects(private val random: GameRandom) {
         }
         val severity = if (sceptre) spell.effectStrength + 1 else spell.effectStrength
         when (target) {
-            is Npc -> NpcPoison.tryPoison(target, severity)
+            is Npc -> NpcPoison.tryPoison(target, severity = severity)
             is Player -> PlayerPoison.tryPoison(target, severity = severity)
         }
     }

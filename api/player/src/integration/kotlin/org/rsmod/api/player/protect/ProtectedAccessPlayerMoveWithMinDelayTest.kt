@@ -115,7 +115,7 @@ class ProtectedAccessPlayerMoveWithMinDelayTest {
             locRepo.del(loc, 20)
 
             mes("You pick some grain.")
-            soundSynth("synth.pick")
+            soundSynth("synth.PICK")
             invAddOrDrop(objRepo, "obj.grain")
         }
     }

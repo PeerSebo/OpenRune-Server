@@ -4,27 +4,14 @@ import org.rsmod.api.combat.accuracy.safePercentScale
 import org.rsmod.api.combat.accuracy.scaleByPercent
 
 public object PlayerMagicAccuracy {
-    /**
-     * @param effectiveMagic The effective magic level, as calculated by [calculateEffectiveMagic].
-     * @see [calculateEffectiveMagic]
-     */
     public fun calculateBaseAttackRoll(effectiveMagic: Int, magicBonus: Int): Int {
         val effectiveBonus = magicBonus + 64
         return effectiveMagic * effectiveBonus
     }
 
     /**
-     * This function accepts `Double` values for certain modifiers but internally scales them to
-     * integers for emulation accuracy.
-     *
-     * @param visibleMagicLvl The visible magic level, including boosts (e.g., 103 if boosted by a
-     *   magic potion).
-     * @param styleBonus The attack style bonus, including a base `+9` every style provides. (e.g.,
-     *   `Accurate` = `11`, Otherwise: `9`).
-     * @param prayerBonus The prayer multiplier as a decimal (e.g., `1.25` for a `+25%` bonus).
-     * @param voidBonus A multiplier applied when using Void equipment. (e.g., `1.45` when wearing
-     *   full Magic void or Elite magic void armour).
-     * @throws IllegalArgumentException if any multiplier is below `1.0`.
+     * Scale decimal modifiers to integers before arithmetic to preserve emulation rounding;
+     * styleBonus includes the base +9.
      */
     public fun calculateEffectiveMagic(
         visibleMagicLvl: Int,
@@ -45,41 +32,14 @@ public object PlayerMagicAccuracy {
         return effectiveLevel
     }
 
-    /**
-     * @param effectiveDefence The effective defence level, as calculated by
-     *   [calculateEffectiveDefence].
-     * @see [calculateEffectiveDefence]
-     */
     public fun calculateBaseDefenceRoll(effectiveDefence: Int, defenceBonus: Int): Int {
         val effectiveBonus = defenceBonus + 64
         return effectiveDefence * effectiveBonus
     }
 
     /**
-     * This function accepts `Double` values for certain modifiers but internally scales them to
-     * integers for emulation accuracy.
-     *
-     * _Note: Unlike [PlayerMeleeAccuracy] and [PlayerRangedAccuracy], this function incorporates
-     * both the player's magic level and a [magicPrayerBonus]. This is because magic defence rolls
-     * take into account the target's magic level and an additional magic defence bonus from certain
-     * prayers. The effective defence level is first adjusted based on the defence prayer and armour
-     * bonuses. It is then combined with the scaled magic level using a 30% defence, 70% magic
-     * split, before finally adding the style bonus._
-     *
-     * @param visibleDefenceLvl The visible defence level, including boosts (e.g., 118 if boosted by
-     *   a super defence potion).
-     * @param visibleMagicLvl The visible magic level, including boosts (e.g., 103 if boosted by a
-     *   magic potion).
-     * @param styleBonus The attack style bonus, including the base `+8` every style provides.
-     *   (e.g., `Defensive` = `11`, `Longrange` = `11`, `Controlled` = `9`, `Aggressive` = `8`).
-     * @param defencePrayerBonus The defence prayer multiplier as a decimal (e.g., `1.05` for Mystic
-     *   vigour's `+5%` defence bonus).
-     * @param magicPrayerBonus The magic defence prayer multiplier as a decimal (e.g., `1.18` for
-     *   Mystic vigour's `+18%` magic defence bonus).
-     * @param armourBonus A multiplier accounting for special armour effects (e.g., `1.05` for a
-     *   `+5%` bonus). _Currently, only Torag's armour set passive should make use of this
-     *   modifier._
-     * @throws IllegalArgumentException if any multiplier is below `1.0`.
+     * Apply integer-scaled bonuses before combining 30% Defence and 70% Magic; add styleBonus
+     * last.
      */
     public fun calculateEffectiveDefence(
         visibleDefenceLvl: Int,

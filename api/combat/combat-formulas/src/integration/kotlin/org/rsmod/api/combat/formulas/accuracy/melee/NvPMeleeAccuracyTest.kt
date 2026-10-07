@@ -237,13 +237,13 @@ class NvPMeleeAccuracyTest {
                 Matchup(expectedAccuracy = 67.2)
                     .withNpcSource(test_npcs.glod)
                     .withAttackType(MeleeAttackType.Crush)
-                    .withBlockStance(CombatStance.Stance1) // Dinh's "Pummel" stance.
+                    .withBlockStance(CombatStance.Stance1)
                     .withWeapon("obj.dinhs_bulwark")
                     .withDefenceLevel(defenceLvl = 50),
                 Matchup(expectedAccuracy = 67.2)
                     .withNpcSource(test_npcs.glod)
                     .withAttackType(MeleeAttackType.Crush)
-                    .withBlockStance(CombatStance.Stance4) // Dinh's "Block" stance.
+                    .withBlockStance(CombatStance.Stance4)
                     .withWeapon("obj.dinhs_bulwark")
                     .withDefenceLevel(defenceLvl = 50),
             )

@@ -21,7 +21,6 @@ class DepositBoxScript
 constructor(private val eventBus: EventBus, private val bankInv: BankInvScript) : PluginScript() {
     override fun ScriptContext.startup() {
 
-        //handlers by category. This associates category 276 objects to the deposit box code so we don't have to revisit the loc.toml.
         onOpLocCategory1("category.deposit_box") { openDepositBox() }
         onOpLocCategoryU("category.deposit_box") { depositUsedItem(it.invSlot) }
     }
@@ -34,7 +33,6 @@ constructor(private val eventBus: EventBus, private val bankInv: BankInvScript) 
         player.ifOpenMainModal(DepositBoxConstants.INTERFACE_MAIN, eventBus)
     }
 
-    /** Code that runs when using an item on the deposit box. */
     private suspend fun ProtectedAccess.depositUsedItem(invSlot: Int) {
         arriveDelay()
         if (IronmanRestrictions.blockUimBank(player)) {

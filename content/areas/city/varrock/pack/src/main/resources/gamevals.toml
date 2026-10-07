@@ -1,0 +1,54 @@
+[gamevals.dbtable]
+apothecary_potions = 63952
+varrock_garden_patches = 63939
+varrock_garden_corners = 63950
+
+[gamevals.dbrow]
+apothecary_strength = 62983
+apothecary_energy = 62984
+apothecary_antipoison = 62985
+varrock_garden_delphiniums = 61794
+varrock_garden_snowdrops = 61795
+varrock_garden_white_roses = 61796
+varrock_garden_red_roses = 61797
+varrock_garden_pink_roses = 61798
+varrock_garden_white_tree = 61799
+varrock_garden_vines = 61800
+varrock_garden_corner_delphiniums = 61856
+varrock_garden_corner_white_roses = 61857
+varrock_garden_corner_red_roses = 61858
+varrock_garden_corner_pink_roses = 61859
+varrock_garden_corner_snowdrops = 61860
+
+[gamevals.loc]
+varrock_garden_corner_delphiniums = 63500
+varrock_garden_corner_delphiniums_weeds_3 = 63501
+varrock_garden_corner_delphiniums_weeds_2 = 63502
+varrock_garden_corner_delphiniums_weeds_1 = 63503
+varrock_garden_corner_delphiniums_weeded = 63504
+varrock_garden_corner_white_roses = 63505
+varrock_garden_corner_white_roses_weeds_3 = 63506
+varrock_garden_corner_white_roses_weeds_2 = 63507
+varrock_garden_corner_white_roses_weeds_1 = 63508
+varrock_garden_corner_white_roses_weeded = 63509
+varrock_garden_corner_red_roses = 63510
+varrock_garden_corner_red_roses_weeds_3 = 63511
+varrock_garden_corner_red_roses_weeds_2 = 63512
+varrock_garden_corner_red_roses_weeds_1 = 63513
+varrock_garden_corner_red_roses_weeded = 63514
+varrock_garden_corner_pink_roses = 63515
+varrock_garden_corner_pink_roses_weeds_3 = 63516
+varrock_garden_corner_pink_roses_weeds_2 = 63517
+varrock_garden_corner_pink_roses_weeds_1 = 63518
+varrock_garden_corner_pink_roses_weeded = 63519
+varrock_garden_corner_snowdrops = 63520
+varrock_garden_corner_snowdrops_weeds_3 = 63521
+varrock_garden_corner_snowdrops_weeds_2 = 63522
+varrock_garden_corner_snowdrops_weeds_1 = 63523
+varrock_garden_corner_snowdrops_weeded = 63524
+
+[gamevals.models]
+varrock_garden_corner_cleared = 63000
+varrock_garden_corner_weeds_1 = 63001
+varrock_garden_corner_weeds_2 = 63002
+varrock_garden_corner_weeds_3 = 63003

@@ -8,14 +8,6 @@ import org.rsmod.map.square.MapSquareGrid
 import org.rsmod.map.square.MapSquareKey
 
 public object PolygonMapSquareClipper {
-    /**
-     * Calls [clip] after ensuring the input polygon is explicitly closed.
-     *
-     * If the first and last vertex in [vertices] are not equal, the first coordinate is appended to
-     * close the polygon before clipping.
-     *
-     * @see [clip]
-     */
     public fun closeAndClip(vertices: List<CoordGrid>): Map<MapSquareKey, List<CoordGrid>> {
         require(vertices.isNotEmpty()) { "List of vertices must not be empty." }
         val implicitClose = vertices.size > 1 && vertices.first() != vertices.last()
@@ -24,24 +16,8 @@ public object PolygonMapSquareClipper {
     }
 
     /**
-     * Given a list of polygon vertices, returns a map of clipped polygon segments, one per
-     * intersected [MapSquareKey].
-     *
-     * This function is primarily used to convert multi-map-square polygons into a form that can be
-     * processed by systems which only accept polygons fully contained within a single 64x64 map
-     * square.
-     *
-     * The polygon is clipped using the Sutherland-Hodgman algorithm against the boundaries of each
-     * relevant map square. For each intersected square, a list of vertices is returned representing
-     * the clipped sub-polygon that lies entirely within it.
-     *
-     * If all input vertices lie within a single [MapSquareKey], the original [vertices] list is
-     * returned under that key. The polygon is treated as closed - the first and last vertex will be
-     * connected even if not explicitly closed in the input.
-     *
-     * @param vertices the polygon vertex coordinates as [CoordGrid]s.
-     * @return map of [MapSquareKey] to clipped polygon segments within that square.
-     * @throws IllegalArgumentException if [vertices] is empty.
+     * Clip into per-map-square closed polygons before rasterizing; edges on square boundaries
+     * must survive in each relevant square.
      */
     public fun clip(vertices: List<CoordGrid>): Map<MapSquareKey, List<CoordGrid>> {
         require(vertices.isNotEmpty()) { "List of vertices must not be empty." }

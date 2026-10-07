@@ -10,20 +10,8 @@ import dev.openrune.rscm.RSCMType
 import dev.openrune.types.dbcol.DbColumnCodec
 import dev.openrune.types.dbcol.decodeEnumSlotForEnum
 
-/** Represents a typed key/value pair from an enum. */
 public data class EnumPair<K, V>(val key: K, val value: V)
 
-/**
- * Top-level helper to retrieve a type-safe list of enum entries by name.
- *
- * Example:
- * ```
- * val entries = enum("enums.bone_data", DbColumnCodec.IntCodec, DbColumnCodec.IntCodec)
- * entries.forEach { (key, value) ->
- *     println("Key: $key, Value: $value")
- * }
- * ```
- */
 public fun <V1, V2> enum(
     enumName: String,
     keyCodec: DbColumnCodec<*, V1>,
@@ -43,15 +31,6 @@ public fun <K, V> enumKey(
     valueCodec: DbColumnCodec<*, V>,
 ): V? = enum(enumName, keyCodec, valueCodec).firstOrNull { it.key == key }?.value
 
-/**
- * Type-safe helper for working with an [dev.openrune.definition.type.EnumType].
- *
- * Example:
- * ```
- * val helper = EnumHelper.of("enums.bone_data")
- * val entries = helper.getEnum(DbColumnCodec.IntCodec, DbColumnCodec.IntCodec)
- * ```
- */
 public class EnumHelper private constructor(public val enum: EnumType) {
 
     public val id: Int

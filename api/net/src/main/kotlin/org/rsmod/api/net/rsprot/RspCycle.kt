@@ -15,15 +15,21 @@ import net.rsprot.protocol.game.outgoing.info.util.safeReleaseOrThrow
 import net.rsprot.protocol.game.outgoing.map.RebuildLoginV2
 import net.rsprot.protocol.game.outgoing.map.RebuildNormalV2
 import net.rsprot.protocol.game.outgoing.map.RebuildRegionV2
+import net.rsprot.protocol.game.outgoing.map.RebuildWorldEntityV4
 import net.rsprot.protocol.game.outgoing.map.util.RebuildRegionZone
 import net.rsprot.protocol.game.outgoing.map.util.ReferenceZone
 import net.rsprot.protocol.message.OutgoingGameMessage
 import org.rsmod.api.config.refs.params
+import org.rsmod.api.game.process.player.WorldEntityZoneUpdates
 import org.rsmod.api.net.rsprot.ext.setFaceTarget
 import org.rsmod.api.player.righthand
+import org.rsmod.api.player.vars.varMoveSpeed
 import org.rsmod.api.registry.region.RegionRegistry
+import org.rsmod.api.registry.worldentity.WorldEntityRegistry
+import org.rsmod.api.utils.map.BuildAreaUtils
 import org.rsmod.game.client.ClientCycle
 import org.rsmod.game.entity.Player
+import org.rsmod.game.entity.WorldEntity
 import org.rsmod.game.entity.util.EntityFaceAngle
 import org.rsmod.game.headbar.Headbar
 import org.rsmod.game.hit.Hitmark
@@ -40,14 +46,33 @@ class RspCycle(
     private val session: Session<Player>,
     private val infos: Infos,
     private val regions: RegionRegistry,
+    private val worldEntities: WorldEntityRegistry,
+    private val worldZoneUpdates: WorldEntityZoneUpdates,
 ) : ClientCycle {
     private var knownCoords: CoordGrid = CoordGrid.ZERO
 
     private var knownBuildArea: CoordGrid = CoordGrid.NULL
 
-    private var knownCachedSpeed: MoveSpeed = MoveSpeed.Stationary
+    private var knownRootBuildArea: CoordGrid = CoordGrid.NULL
+
+    private var knownAboard: Boolean = false
+
+    private var forceAreaRebuild: Boolean = false
+
+    /**
+     * World entity indices this client currently has a map for. Populated when rsprot reports a
+     * world as freshly added, drained from `InfoPackets.removedWorldIndices` - which exists
+     * precisely to let "the server stop tracking the worlds for zone updates".
+     */
+    private val trackedWorldIndices: MutableSet<Int> = HashSet()
+
+    private var worldEntityZoneProvider: RebuildWorldEntityV4.RebuildWorldEntityZoneProvider? = null
+
+    private var knownCachedSpeed: MoveSpeed? = null
 
     private var knownFaceEntity: Int? = -1
+
+    private var knownSyncedAngle: Int = -1
 
     private var knownRegionUid: Int? = null
 
@@ -59,7 +84,11 @@ class RspCycle(
     private val playerExtendedInfo: PlayerAvatarExtendedInfo
         get() = playerInfo.avatar.extendedInfo
 
-    private val worldId: Int
+    /**
+     * Rebuild V2 worldArea identifies the active world, not an instance region. Deck and root
+     * rebuilds must use their respective client world.
+     */
+    private val worldArea: Int
         get() = -1
 
     fun init(player: Player) {
@@ -68,7 +97,7 @@ class RspCycle(
     }
 
     private fun Player.queueRebuildLogin() {
-        val rebuild = RebuildLoginV2(x shr 3, z shr 3, worldId, playerInfo)
+        val rebuild = RebuildLoginV2(x shr 3, z shr 3, worldArea, playerInfo)
         session.queue(rebuild)
     }
 
@@ -80,6 +109,7 @@ class RspCycle(
         player.applyPublicMessage()
         player.applyFacePathingEntity()
         player.applyFaceAngle()
+        player.syncFaceAngle()
         player.applyAnim()
         player.applySpotanims()
         player.applySay()
@@ -99,14 +129,68 @@ class RspCycle(
         session.queuePacketResult(rootPackets.playerInfo)
         session.queueNpcInfoPacket(rootPackets.npcInfo)
 
+        // Carries no packet of its own: the client drops a world once world entity info stops
+        // transmitting it. All the server has to do is stop tracking it. Drained before the add
+        // loop so a same-cycle remove-then-add cannot clear a freshly tracked index.
+        for (removed in infoPackets.removedWorldIndices) {
+            trackedWorldIndices.remove(removed)
+        }
+
         for (world in infoPackets.activeWorlds) {
             session.queue(world.activeWorld)
+            if (world.added) {
+                queueWorldEntityRebuild(world.worldId)
+            }
+            worldEntities[world.worldId]?.let {
+                worldZoneUpdates.send(player, it, world.added) { message -> session.queue(message) }
+            }
             session.queue(world.npcUpdateOrigin)
             session.queueNpcInfoPacket(world.npcInfo)
         }
 
         session.queue(rootPackets.activeWorld)
     }
+
+    /**
+     * A newly visible boat needs its deck rebuild before any updates addressed to that client
+     * world.
+     */
+    private fun queueWorldEntityRebuild(index: Int) {
+        val worldEntity = worldEntities[index] ?: return
+        if (!trackedWorldIndices.add(index)) {
+            return
+        }
+        val provider = worldEntityZoneProvider ?: createWorldEntityZoneProvider()
+        worldEntityZoneProvider = provider
+        val base = worldEntity.instanceSouthWest
+        // `baseX`/`baseZ` are absolute TILE coords here (the packet does `baseX ushr 3` itself),
+        // unlike `RebuildRegionV2` whose first two arguments are already zone coords.
+        val rebuild =
+            RebuildWorldEntityV4(
+                baseX = base.x,
+                baseZ = base.z,
+                sizeX = worldEntity.zoneSizeX,
+                sizeZ = worldEntity.zoneSizeZ,
+                zoneProvider = provider,
+            )
+        session.queue(rebuild)
+    }
+
+    private fun createWorldEntityZoneProvider(): RebuildWorldEntityV4.RebuildWorldEntityZoneProvider =
+        RebuildWorldEntityV4.RebuildWorldEntityZoneProvider { zoneX, zoneZ, level ->
+            val copyZone = regions[ZoneKey(zoneX, zoneZ, level)]
+            if (copyZone == RegionZoneCopy.NULL) {
+                null
+            } else {
+                val ref = ReferenceZone(copyZone.packed)
+                RebuildRegionZone(
+                    zoneX = ref.zoneX,
+                    zoneZ = ref.zoneZ,
+                    level = ref.level,
+                    rotation = ref.rotation,
+                )
+            }
+        }
 
     override fun release() {
         val infoPackets = infos.getPackets()
@@ -147,18 +231,14 @@ class RspCycle(
     }
 
     private fun Player.updateMoveSpeed() {
-        if (knownCachedSpeed != cachedMoveSpeed) {
-            val extendedInfo = playerInfo.avatar.extendedInfo
-            extendedInfo.setMoveSpeed(cachedMoveSpeed.steps)
-            knownCachedSpeed = cachedMoveSpeed
+        val cachedSpeed = cachedMoveSpeed.takeUnless { it == MoveSpeed.Stationary } ?: varMoveSpeed
+        if (knownCachedSpeed != cachedSpeed) {
+            playerExtendedInfo.setMoveSpeed(cachedSpeed.steps)
+            knownCachedSpeed = cachedSpeed
         }
         val moveSpeed = resolvePendingMoveSpeed()
-        // Telejumps always transmit their temp move speed; it is what tells the client to snap
-        // instead of interpolating, and `cachedMoveSpeed` is already `Stationary` until the
-        // player moves for the first time.
-        if ((moveSpeed != cachedMoveSpeed || pendingTelejump) && coords != knownCoords) {
-            val extendedInfo = playerInfo.avatar.extendedInfo
-            extendedInfo.setTempMoveSpeed(moveSpeed.steps)
+        if (moveSpeed != knownCachedSpeed && coords != knownCoords) {
+            playerExtendedInfo.setTempMoveSpeed(moveSpeed.steps)
         }
     }
 
@@ -177,7 +257,27 @@ class RspCycle(
     }
 
     private fun Player.rebuildArea() {
-        val recalcBuildArea = knownBuildArea != buildArea && buildArea != CoordGrid.NULL
+        // `findByInstanceCoords` rejects any coord below the instance working area (x < 6400)
+        // before it scans anything, so every player who is not standing on a world entity's deck -
+        // which is every player on a server that has never spawned one - falls straight through to
+        // the original code path below, byte-for-byte unchanged.
+        val worldEntity = worldEntities.findByInstanceCoords(coords)
+        if (worldEntity != null) {
+            rebuildAreaAboard(worldEntity)
+            return
+        }
+
+        if (knownAboard) {
+            // Disembarked this cycle. Force a recompute even in the pathological case where the
+            // new build area happens to equal the instance-land one we last stored.
+            knownAboard = false
+            knownRootBuildArea = CoordGrid.NULL
+            forceAreaRebuild = true
+        }
+
+        val recalcBuildArea =
+            buildArea != CoordGrid.NULL && (forceAreaRebuild || knownBuildArea != buildArea)
+        forceAreaRebuild = false
         if (recalcBuildArea) {
             val zone = ZoneKey.from(buildArea)
             val area = BuildArea(zone.x, zone.z)
@@ -188,14 +288,13 @@ class RspCycle(
             return
         }
 
-        // Skip log-in rebuild as RebuildLogin is already sent.
         if (knownBuildArea == CoordGrid.NULL) {
             knownBuildArea = buildArea
             return
         }
 
         if (regionUid == null) {
-            val rebuild = RebuildNormalV2(x shr 3, z shr 3, worldId)
+            val rebuild = RebuildNormalV2(x shr 3, z shr 3, worldArea)
             knownBuildArea = buildArea
             knownRegionUid = null
             cachedRegionZoneProvider = null
@@ -225,20 +324,54 @@ class RspCycle(
         session.queue(rebuild)
     }
 
-    private fun createRegionZoneProvider(region: Region): RebuildRegionV2.RebuildRegionZoneProvider {
+    /**
+     * While aboard, rsprot still needs a valid root-world build area for other entities; deck
+     * coordinates cannot stand in for it.
+     */
+    private fun Player.rebuildAreaAboard(worldEntity: WorldEntity) {
+        knownAboard = true
+
+        val rootCoords = worldEntity.rootCoords
+        val rootBuildArea = BuildAreaUtils.calculateBuildArea(ZoneKey.from(rootCoords))
+        if (knownRootBuildArea == rootBuildArea) {
+            return
+        }
+
+        val zone = ZoneKey.from(rootBuildArea)
+        infos.updateRootBuildArea(BuildArea(zone.x, zone.z))
+
+        knownRootBuildArea = rootBuildArea
+        knownBuildArea = buildArea
+        knownRegionUid = null
+        cachedRegionZoneProvider = null
+
+        val rebuild = RebuildNormalV2(rootCoords.x shr 3, rootCoords.z shr 3, worldArea)
+        session.queue(rebuild)
+    }
+
+    private fun createRegionZoneProvider(
+        region: Region
+    ): RebuildRegionV2.RebuildRegionZoneProvider {
         val regionZones = region.toZoneList()
-        val rebuildZones = regionZones.associateWith { zone ->
-            val copyZone = regions[zone]
-            if (copyZone == RegionZoneCopy.NULL) {
-                return@associateWith null
+        val rebuildZones =
+            regionZones.associateWith { zone ->
+                val copyZone = regions[zone]
+                if (copyZone == RegionZoneCopy.NULL) {
+                    return@associateWith null
+                }
+                ReferenceZone(copyZone.packed)
             }
-            ReferenceZone(copyZone.packed)
-        }
-        val zoneProvider = RebuildRegionV2.RebuildRegionZoneProvider { zoneX, zoneZ, level ->
-            rebuildZones[ZoneKey(zoneX, zoneZ, level)]?.let { ref ->
-                RebuildRegionZone(zoneX = ref.zoneX, zoneZ = ref.zoneZ, level = ref.level, rotation = ref.rotation)
+        val zoneProvider =
+            RebuildRegionV2.RebuildRegionZoneProvider { zoneX, zoneZ, level ->
+                rebuildZones[ZoneKey(zoneX, zoneZ, level)]?.let { ref ->
+                    RebuildRegionZone(
+                        zoneX = ref.zoneX,
+                        zoneZ = ref.zoneZ,
+                        level = ref.level,
+                        rotation = ref.rotation,
+                    )
+                }
             }
-        }
         return zoneProvider
     }
 
@@ -257,7 +390,7 @@ class RspCycle(
 
     private fun Player.applyFacePathingEntity() {
         if (knownFaceEntity != faceEntity.entitySlot) {
-            playerExtendedInfo.setFaceTarget(faceEntity)
+            playerExtendedInfo.setFaceTarget(faceEntity, faceEntityFallbackAngle)
             knownFaceEntity = faceEntity.entitySlot
         }
     }
@@ -265,6 +398,15 @@ class RspCycle(
     private fun Player.applyFaceAngle() {
         if (pendingFaceAngle != EntityFaceAngle.NULL) {
             playerExtendedInfo.setFaceAngle(pendingFaceAngle.intValue)
+        }
+    }
+
+    private fun Player.syncFaceAngle() {
+        // Silently keeps the avatar's angle up to date so new observers see the player facing the
+        // correct direction, without replaying a face-angle update for existing observers.
+        if (faceAngle != knownSyncedAngle) {
+            playerExtendedInfo.syncAngle(faceAngle)
+            knownSyncedAngle = faceAngle
         }
     }
 
@@ -376,7 +518,11 @@ class RspCycle(
         )
 
         val bas = this.appearance.bas
-        val weapon = this.righthand
+        // `hideObjs` renders the appearance identkit-only: the worn entries are skipped below, and
+        // the weapon must not contribute a base animation set the (empty) equipment block cannot
+        // justify - live's stripped-gear appearances carry the default human bas.
+        val hideObjs = this.appearance.hideObjs
+        val weapon = if (hideObjs) null else this.righthand
         val transmog = this.transmog
 
         val readyAnim: Int
@@ -437,7 +583,7 @@ class RspCycle(
         )
 
         for (wearpos in Wearpos.visibleWearpos) {
-            val obj = worn[wearpos.slot]
+            val obj = appearance.wornObj(wearpos.slot, worn[wearpos.slot])
             if (obj == null) {
                 info.setWornObj(wearpos.slot, -1, -1, -1)
                 continue

@@ -4,15 +4,12 @@ import org.rsmod.game.entity.util.PathingEntityCommon
 
 @JvmInline
 public value class Headbar(public val packed: Long) {
-    /** The headbar id shown to the entity (player) that took the hit. */
     public val self: Int
         get() = ((packed shr HEADBAR_SELF_BIT_OFFSET) and HEADBAR_ID_BIT_MASK).toInt()
 
-    /** The headbar id shown to other players that see the hit. */
     public val public: Int
         get() = ((packed shr HEADBAR_PUBLIC_BIT_OFFSET) and HEADBAR_ID_BIT_MASK).toInt()
 
-    /** Returns `true` when the headbar should only be visible to "self." */
     public val isPrivate: Boolean
         get() = public == HEADBAR_ID_BIT_MASK.toInt()
 
@@ -82,7 +79,7 @@ public value class Headbar(public val packed: Long) {
             ")"
 
     public companion object {
-        public const val HEADBAR_ID_BIT_COUNT: Int = 8 // 2 headbar ids represented; 16 total bits.
+        public const val HEADBAR_ID_BIT_COUNT: Int = 8
         public const val START_FILL_BIT_COUNT: Int = 8
         public const val END_FILL_BIT_COUNT: Int = 8
         public const val START_TIME_BIT_COUNT: Int = 7

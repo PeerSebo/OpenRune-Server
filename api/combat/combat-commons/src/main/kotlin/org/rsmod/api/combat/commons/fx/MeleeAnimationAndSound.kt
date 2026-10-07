@@ -1,7 +1,5 @@
 package org.rsmod.api.combat.commons.fx
 
-import dev.openrune.types.SequenceServerType
-import dev.openrune.types.aconverted.SynthType
 import org.rsmod.api.combat.commons.CombatStance
 import org.rsmod.api.config.aliases.ParamSeq
 import org.rsmod.api.config.aliases.ParamSynth
@@ -19,7 +17,7 @@ public data class MeleeAnimationAndSound(
                 animParam = params.attack_anim_stance1,
                 soundParam = params.attack_sound_stance1,
                 defaultAnim = "seq.human_unarmedpunch",
-                defaultSound = "synth.human_unarmedpunch",
+                defaultSound = "synth.HUMAN_ATTACK",
             )
 
         private val stance2 =
@@ -27,7 +25,7 @@ public data class MeleeAnimationAndSound(
                 animParam = params.attack_anim_stance2,
                 soundParam = params.attack_sound_stance2,
                 defaultAnim = "seq.human_unarmedkick",
-                defaultSound = "synth.human_unarmedkick",
+                defaultSound = "synth.UNARMED_KICK",
             )
 
         private val stance3 =
@@ -35,7 +33,7 @@ public data class MeleeAnimationAndSound(
                 animParam = params.attack_anim_stance3,
                 soundParam = params.attack_sound_stance3,
                 defaultAnim = "seq.human_unarmedpunch",
-                defaultSound = "synth.human_unarmedpunch",
+                defaultSound = "synth.HUMAN_ATTACK",
             )
 
         private val stance4 =
@@ -43,7 +41,7 @@ public data class MeleeAnimationAndSound(
                 animParam = params.attack_anim_stance4,
                 soundParam = params.attack_sound_stance4,
                 defaultAnim = "seq.human_unarmedpunch",
-                defaultSound = "synth.human_unarmedpunch",
+                defaultSound = "synth.HUMAN_ATTACK",
             )
 
         public fun from(stance: CombatStance?): MeleeAnimationAndSound =

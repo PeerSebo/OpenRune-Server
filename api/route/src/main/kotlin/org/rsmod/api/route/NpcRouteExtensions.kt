@@ -7,22 +7,8 @@ import org.rsmod.map.CoordGrid
 import org.rsmod.routefinder.collision.CollisionStrategy
 
 /**
- * Pathfinds a route from the npc's current position to [dest] (respecting the npc's size and
- * collision) and walks it, running [onArrival] once the route completes.
- *
- * Unlike [Npc.walk] with a raw [CoordGrid] destination - which queues the single tile and lets the
- * engine step naively straight toward it, wedging on any obstacle - this computes a full route via
- * [routeFactory] and feeds the waypoints in, so the npc navigates around walls, pillars and other
- * blocked tiles.
- *
- * The route is computed with `moveNear` enabled, so if [dest] itself is not standable (e.g. it is
- * occupied by a loc) the npc walks to the closest reachable tile and still fires [onArrival]. If no
- * route exists at all the npc does not move and [onArrival] fires on the next post-tick.
- *
- * When [passThroughEntities] is `true` (default), the npc's [Npc.moveRestrict] is set to
- * [MoveRestrict.PassThru] for the duration of the walk so it ignores players and npcs in its path
- * (walls/locs are still respected) and cannot be blocked/griefed by bodies standing in the way. The
- * original move restriction is restored automatically once the route completes.
+ * onArrival also fires for a nearest-tile route or next post-tick when no route exists.
+ * PassThru ignores entities, not walls; restore the original restriction afterward.
  */
 public fun Npc.walkTo(
     routeFactory: RouteFactory,

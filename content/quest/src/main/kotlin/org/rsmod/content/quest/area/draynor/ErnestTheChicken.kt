@@ -7,14 +7,19 @@ import dev.openrune.rscm.RSCMType
 import jakarta.inject.Inject
 import org.rsmod.api.player.dialogue.Dialogue
 import org.rsmod.api.player.protect.ProtectedAccess
+import org.rsmod.api.player.vars.boolVarBit
+import org.rsmod.api.player.vars.intVarp
 import org.rsmod.api.repo.npc.NpcRepository
 import org.rsmod.api.repo.world.WorldRepository
 import org.rsmod.api.script.onOpNpc1
+import org.rsmod.api.script.onPlayerLogin
+import org.rsmod.api.script.onPlayerQueue
 import org.rsmod.content.quest.manager.ItemRewardDisplay
 import org.rsmod.content.quest.manager.QuestProgressState
 import org.rsmod.content.quest.manager.QuestScript
 import org.rsmod.content.quest.manager.rewards
 import org.rsmod.game.entity.Npc
+import org.rsmod.game.entity.Player
 import org.rsmod.game.entity.util.PathingEntityCommon
 import org.rsmod.game.proj.ProjAnim
 import org.rsmod.map.CoordGrid
@@ -32,8 +37,9 @@ constructor(
     QuestScript(
         "quest_ernestthechicken",
         "varp.haunted",
-        rewards { item("obj.coins", ErnestProgress.CoinReward) },
+        rewards { item("obj.coins", 300) },
         ItemRewardDisplay("obj.coins"),
+        completionJingle = 153,
     ) {
 
     private val logger = InlineLogger()
@@ -41,6 +47,12 @@ constructor(
     override fun ScriptContext.init() {
         onOpNpc1("npc.veronica") { startVeronica(it.npc) }
         onOpNpc1("npc.professor_oddenstein") { startOddenstein(it.npc) }
+        onPlayerQueue(CompletionQueue) { finishPendingCompletion(this) }
+        onPlayerLogin {
+            if (pendingCompletion.get(player)) {
+                player.queue(CompletionQueue, 1)
+            }
+        }
     }
 
     override fun subTitle(): String =
@@ -54,30 +66,29 @@ constructor(
             )
 
             objective("I should speak to whoever lives in the manor.") {
-                attribute(progress.foundErnest, "I found Ernest. He is a chicken.").strike()
+                attribute(FOUND_ERNEST, "I found Ernest. He is a chicken.").strike()
             }
 
-            if (progress.foundErnest.get(access.player) && !progress.hasReceivedParts(access.player)) {
+            if (FOUND_ERNEST.get(access.player) && !access.ernestRestored) {
                 line(
                     "<red>Professor Oddenstein</red> needs three parts for his machine before he can " +
                         "turn Ernest back."
                 )
-                objective("I still need to find the <red>rubber tube</red>.") {
-                    hasItem("rubber_tube", "I have found the <red>rubber tube</red>.")
-                }
-                objective("I still need to find the <red>pressure gauge</red>.") {
-                    hasItem("pressure_gauge", "I have found the <red>pressure gauge</red>.")
-                }
-                objective("I still need to find the <red>oil can</red>.") {
-                    hasItem("oil_can", "I have found the <red>oil can</red>.")
+                for (part in PARTS) {
+                    val name = partName(part)
+                    objective("I still need to find the <red>$name</red>.") {
+                        custom(
+                            part in access.inv || part in access.bank,
+                            "I have found the <red>$name</red>.",
+                        )
+                    }
                 }
             }
-
             objective(
                 "I gave all three parts to <red>Professor Oddenstein</red>. " +
                     "I should speak to him to finish restoring Ernest."
             ) {
-                visibleWhen { progress.hasReceivedParts(access.player) }
+                visibleWhen { access.ernestRestored }
             }
         }
 
@@ -93,7 +104,13 @@ constructor(
             )
         }
 
-    private val progress = ErnestProgress(quest)
+    private var ProtectedAccess.ernestRestored by boolVarBit("varbit.ernesthandin_complete")
+
+    // Keep the quest attribute and native stage mirror synchronized during delayed completion.
+    private var ProtectedAccess.hauntedStage by intVarp("varp.haunted")
+
+    private val FOUND_ERNEST = quest.boolean("FOUND_ERNEST", "varp.ernest_found", "varp.ernest_found_migrated")
+    private val pendingCompletion = quest.boolean("PENDING_COMPLETION", "varp.ernest_completion_pending", "varp.ernest_completion_pending_migrated")
 
     private suspend fun ProtectedAccess.startVeronica(npc: Npc) = startDialogue(npc) { veronica() }
 
@@ -149,12 +166,13 @@ constructor(
             return
         }
 
-        if (!progress.foundErnest.get(player)) {
+        if (!FOUND_ERNEST.get(player)) {
             introduceErnest()
             return
         }
 
-        if (progress.hasReceivedParts(player) || progress.hasAllParts(player)) {
+        // The hand-in flag permits resuming the machine scene after the parts have already been consumed.
+        if (access.ernestRestored || hasAllParts(player)) {
             handIn(npc)
             return
         }
@@ -237,26 +255,30 @@ constructor(
             "I'm missing the pressure gauge and a rubber tube. They've also taken my oil can, " +
                 "which I'm going to need to get this thing started again.",
         )
-        progress.foundErnest.set(player, true)
+        FOUND_ERNEST.set(player, true)
     }
 
     private suspend fun Dialogue.handIn(npc: Npc) {
-        if (!progress.hasReceivedParts(player)) {
+        if (!access.ernestRestored) {
             chatPlayer(happy, "I have everything!")
             chatNpc(happy, "Give 'em here then.")
 
-            if (!progress.receiveParts(access)) {
+            if (!hasAllParts(player)) {
                 return
             }
+
+            for (part in PARTS) {
+                if (access.invDel(access.inv, part, 1).failure) {
+                    return
+                }
+            }
+
+            // This is the parts-received flag; Ernest's visible form reads the separate haunted varp.
+            access.ernestRestored = true
 
             access.mes("You give a rubber tube, a pressure gauge, ")
             access.mes("and a can of oil to the professor.")
             chatNpc(neutral, "Let's get this fixed then.")
-        }
-
-        if (!progress.canReceiveReward(access)) {
-            chatNpc(neutral, "Make some room for your reward, then speak to me again.")
-            return
         }
 
         PathingEntityCommon.telejump(npc, collision, OddensteinMachineTile)
@@ -292,7 +314,7 @@ constructor(
         access.soundSynth(StunSound, loops = 2)
         access.delay(2)
 
-        progress.restoreErnest(access) {
+        restoreErnest(access) {
             spawnHumanErnest(findChicken()?.coords ?: ChickenSpawn)
             access.soundSynth(TransformSound)
             chatNpcSpecific(
@@ -305,6 +327,25 @@ constructor(
             chatPlayer(happy, "Well a cash reward is always nice...")
             chatNpcSpecific("Ernest", "npc.ernest", happy, "Of course, of course.")
         }
+    }
+
+    internal suspend fun restoreErnest(access: ProtectedAccess, scene: suspend () -> Unit) {
+        access.hauntedStage = quest.maxSteps
+        try {
+            scene()
+        } finally {
+            pendingCompletion.set(access.player, true)
+            // Modal cancellation closes every interface after the dialogue's finally block.
+            access.queue(CompletionQueue, 1)
+        }
+    }
+
+    internal fun finishPendingCompletion(access: ProtectedAccess) {
+        if (!pendingCompletion.get(access.player)) {
+            return
+        }
+        quest.completeQuest(access)
+        pendingCompletion.set(access.player, false)
     }
 
     private suspend fun Dialogue.afterQuest() {
@@ -324,6 +365,8 @@ constructor(
         chatNpc(neutral, "It's a teleport machine.")
     }
 
+    private fun hasAllParts(player: Player): Boolean = PARTS.all { player.inv.count(it) > 0 }
+
     private fun findChicken(): Npc? =
         npcRepo.findAll(ZoneKey.from(MachineCoord), zoneRadius = 1).firstOrNull {
             it.isType(ChickenNpc)
@@ -341,14 +384,15 @@ constructor(
     }
 
     private companion object {
+        private const val CompletionQueue = "queue.ernest_complete"
         private const val RubberTube = "obj.rubber_tube"
         private const val PressureGauge = "obj.pressure_gauge"
         private const val OilCan = "obj.oil_can"
         private val PARTS = listOf(RubberTube, PressureGauge, OilCan)
 
-        private const val RumbleSound = "synth.swan_rumble"
-        private const val StunSound = "synth.stun_all"
-        private const val TransformSound = "synth.chicken_into_human"
+        private const val RumbleSound = "synth.SWAN_RUMBLE"
+        private const val StunSound = "synth.STUN_ALL"
+        private const val TransformSound = "synth.CHICKEN_INTO_HUMAN"
 
         private const val MachineSeq = "seq.human_pickuptable"
 

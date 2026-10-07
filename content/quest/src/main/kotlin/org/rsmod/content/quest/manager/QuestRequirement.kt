@@ -5,4 +5,3 @@ public enum class QuestRequirement {
     InProgress,
     NotCompleted,
 }
-

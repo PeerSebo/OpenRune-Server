@@ -94,7 +94,6 @@ coords = "0_40_47_11_18"
 obj = "obj.tomato"
 coords = "0_40_46_24_22"
 
-## Feldip Hills Southern Region
 
 [[spawn]]
 obj = "obj.bones"
@@ -144,7 +143,6 @@ coords = "1_39_44_62_40"
 obj = "obj.skull"
 coords = "0_38_45_53_48"
 
-## Gu'tanoth
 
 [[spawn]]
 obj = "obj.bones"
@@ -197,6 +195,3 @@ coords = "0_39_47_55_34"
 [[spawn]]
 obj = "obj.knife"
 coords = "0_39_47_33_22"
-
-## Gu'tanoth End
-

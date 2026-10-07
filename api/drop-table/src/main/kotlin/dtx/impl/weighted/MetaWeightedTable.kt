@@ -1,15 +1,15 @@
 package dtx.impl.weighted
 
 import dtx.core.ArgMap
-import dtx.core.Rollable
 import dtx.core.RollResult
-import dtx.table.DefaultTableBuilder
-import dtx.table.TableHooks
+import dtx.core.Rollable
 import dtx.impl.meta.AbstractMetaRollableBuilder
 import dtx.impl.meta.MetaEntryFilter
 import dtx.impl.meta.MetaEntryFilterBuilder
 import dtx.impl.meta.MetaRollable
 import dtx.impl.meta.MetaTable
+import dtx.table.DefaultTableBuilder
+import dtx.table.TableHooks
 import dtx.util.NoTransform
 import dtx.util.isSortedBy
 
@@ -21,7 +21,7 @@ public class MetaWeightedRollable<T, R>(
     public val maximumWeight: Double,
     public var currentWeight: Double = initialWeight.coerceIn(minimumWeight, maximumWeight),
     public override val metaEntryFilters: MutableSet<MetaEntryFilter<T, R>> = mutableSetOf()
-): MetaRollable<T, R>, WeightedRollable<T, R> {
+) : MetaRollable<T, R>, WeightedRollable<T, R> {
 
     override fun selectResult(target: T, otherArgs: ArgMap): RollResult<R> {
         return rollable.selectResult(target, otherArgs)
@@ -29,27 +29,22 @@ public class MetaWeightedRollable<T, R>(
 
     public override val weight: Double by ::currentWeight
 
-
     public override lateinit var parentTable: MetaWeightedTable<T, R>
-
 
     public fun increaseCurrentWeightBy(amount: Double) {
         currentWeight = (currentWeight + amount).coerceIn(minimumWeight, maximumWeight)
     }
-
 
     public fun decreaseCurrentWeightBy(amount: Double) {
         currentWeight = currentWeight - amount.coerceIn(minimumWeight, maximumWeight)
     }
 }
 
-
 public fun <T, R> entryFilter(block: MetaEntryFilterBuilder<T, R>.() -> Unit): MetaEntryFilter<T, R> {
     return MetaEntryFilterBuilder<T, R>().apply(block).build()
 }
 
-
-public class MetaWeightedRollableBuilder<T, R>: AbstractMetaRollableBuilder<T, R, MetaWeightedRollable<T, R>, MetaWeightedRollableBuilder<T, R>>() {
+public class MetaWeightedRollableBuilder<T, R> : AbstractMetaRollableBuilder<T, R, MetaWeightedRollable<T, R>, MetaWeightedRollableBuilder<T, R>>() {
 
     public var weight: Double by ::initialValue
     public var minWeight: Double by ::minValue
@@ -79,12 +74,11 @@ public class MetaWeightedRollableBuilder<T, R>: AbstractMetaRollableBuilder<T, R
     }
 }
 
-
 public class MetaWeightedTable<T, R>(
     tableName: String,
     entries: List<MetaWeightedRollable<T, R>>,
     hooks: TableHooks<T, R>,
-): MetaTable<T, R>, WeightedTableImpl<T, R>(
+) : MetaTable<T, R>, WeightedTableImpl<T, R>(
     tableName, entries, hooks
 ) {
     public override val tableEntries: MutableList<MetaWeightedRollable<T, R>> = entries
@@ -101,7 +95,7 @@ public class MetaWeightedTable<T, R>(
         return result
     }
 
-    private fun reSortWeights(): Unit {
+    private fun reSortWeights() {
 
         if (tableEntries.isSortedBy(MetaWeightedRollable<T, R>::currentWeight)) {
             return
@@ -116,7 +110,7 @@ public class MetaWeightedTable<T, R>(
     }
 }
 
-public class MetaWeightedTableBuilder<T, R>: DefaultTableBuilder<
+public class MetaWeightedTableBuilder<T, R> : DefaultTableBuilder<
         T,
         R,
         MetaWeightedRollable<T, R>,

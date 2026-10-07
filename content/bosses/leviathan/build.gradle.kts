@@ -2,6 +2,10 @@ plugins {
     id("base-conventions")
 }
 
+tasks.test {
+    workingDir(rootProject.projectDir)
+}
+
 dependencies {
     implementation(projects.api.bossHpBarPlugin)
     implementation(projects.api.bosses)

@@ -68,6 +68,10 @@ public sealed class InstanceArea {
         override val npcSpawns: List<InstanceNpc> = emptyList(),
     ) : InstanceArea()
 
+    /**
+     * Multi-map-square templates must fit the allocated region after rotation; large regions
+     * hold at most 40 zones per side.
+     */
     public data class CopyRegions(
         val regionIds: List<Int>,
         val level: Int = 0,
@@ -115,6 +119,10 @@ public sealed class InstanceArea {
             npcSpawns: List<InstanceNpc> = emptyList(),
         ): CopyRegions = CopyRegions(regionIds, level, rotation, enterCoord, exitCoord, npcSpawns)
 
+        /**
+         * Choose region size after accounting for rotated block dimensions; the largest build
+         * square is 40 zones per side.
+         */
         public fun copyRegions(
             centerRegionId: Int,
             gridSize: Int = 1,
@@ -214,6 +222,17 @@ public sealed interface InstanceAccess {
     public data object Friends : InstanceAccess
 
     public data class Code(val value: String) : InstanceAccess
+
+    /**
+     * No owning player and no access check: anyone may join. This is the access mode for
+     * **server-hosted** sessions (see [InstanceManager.createServerOwned] and
+     * [InstanceManager.joinOrCreateServerOwned]) - minigame voyages, public boss rooms, and any
+     * other world-hosted activity that unrelated players walk into and out of.
+     *
+     * Never offer this from a player-facing "who can join your instance?" menu; it is not an
+     * owner-selectable setting.
+     */
+    public data object Public : InstanceAccess
 }
 
 public sealed interface SessionState {

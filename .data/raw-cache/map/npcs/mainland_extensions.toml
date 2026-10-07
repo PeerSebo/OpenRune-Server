@@ -194,7 +194,6 @@ coords = "0_36_71_5_40"
 npc = "npc.regicide_rabbit"
 coords = "0_36_71_60_29"
 
-## Air Altar
 
 [[spawn]]
 npc = "npc.regicide_rabbit"
@@ -212,7 +211,6 @@ coords = "0_44_75_42_31"
 npc = "npc.regicide_rabbit"
 coords = "0_44_75_7_27"
 
-## Arandar Mainland
 
 [[spawn]]
 npc = "npc.deadly_red_spider"
@@ -282,7 +280,6 @@ coords = "0_36_51_7_7"
 npc = "npc.goblin_armed"
 coords = "0_37_52_5_5"
 
-## Braindeath Island
 
 [[spawn]]
 npc = "npc.deal_50luke"
@@ -512,13 +509,11 @@ coords = "0_33_79_33_30"
 npc = "npc.deal_zombie_protester_6"
 coords = "0_33_79_45_28"
 
-## Clan Hall
 
 [[spawn]]
 npc = "npc.clan_medieval_stool_cat"
 coords = "0_27_85_20_26"
 
-## Enlightened Journey Crash Site
 
 [[spawn]]
 npc = "npc.zep_piccard_crash"
@@ -536,7 +531,6 @@ coords = "0_28_76_12_31"
 npc = "npc.zep_shark_3"
 coords = "0_28_76_13_31"
 
-## Evil Bob Island
 
 [[spawn]]
 npc = "npc.macro_evil_bob_female_servant"
@@ -546,7 +540,6 @@ coords = "0_39_74_31_41"
 npc = "npc.macro_evil_bob_island"
 coords = "0_39_74_28_41"
 
-## Eyes Of Glouphrie Gnome And Goblin Battle Cutscene
 
 [[spawn]]
 npc = "npc.eyeglo_gnome_soldier_1"
@@ -596,7 +589,6 @@ coords = "0_33_77_36_33"
 npc = "npc.gnome_glouphrie"
 coords = "0_33_77_37_32"
 
-## Fisher Kings Realm
 
 [[spawn]]
 npc = "npc.0_41_73_freshfish"
@@ -858,7 +850,6 @@ coords = "0_43_73_36_49"
 npc = "npc.unhappy_peasant"
 coords = "0_43_73_37_26"
 
-## Gwenith
 
 [[spawn]]
 npc = "npc.cow"
@@ -916,7 +907,6 @@ coords = "0_34_53_34_21"
 npc = "npc.gwenith_elf_6"
 coords = "0_34_53_31_13"
 
-## Isle Of Souls
 
 [[spawn]]
 npc = "npc.butterfly_viceroy"
@@ -926,7 +916,6 @@ coords = "0_33_94_10_16"
 npc = "npc.fai_squirrel_02"
 coords = "0_33_94_14_4"
 
-## Karamja Instance South Of Musa Point
 
 [[spawn]]
 npc = "npc.0_45_48_karambwan"
@@ -1000,7 +989,6 @@ coords = "0_39_71_27_23"
 npc = "npc.tbwt_tiadeche"
 coords = "0_39_71_32_45"
 
-## Keep Le Faye
 
 [[spawn]]
 npc = "npc.kr_cam_bedivere"
@@ -1098,7 +1086,6 @@ coords = "1_26_66_36_36"
 npc = "npc.sir_mordred"
 coords = "2_26_66_31_34"
 
-## Lletya
 
 [[spawn]]
 npc = "npc.elena_lletya"
@@ -1268,7 +1255,6 @@ coords = "0_36_49_35_28"
 npc = "npc.sote_ysgawyn"
 coords = "0_36_49_47_38"
 
-## Lms Arena Wild Varrock
 
 [[spawn]]
 npc = "npc.dark_warrior"
@@ -1294,7 +1280,6 @@ coords = "0_54_94_51_56"
 npc = "npc.dark_warrior"
 coords = "0_54_94_51_59"
 
-## Mynydd
 
 [[spawn]]
 npc = "npc.black_dragon2"
@@ -1352,7 +1337,6 @@ coords = "0_33_53_56_38"
 npc = "npc.prif_ghost_visible"
 coords = "0_33_53_60_38"
 
-## Nature Altar
 
 [[spawn]]
 npc = "npc.mm_jungle_bird_blue"
@@ -1422,7 +1406,6 @@ coords = "0_37_75_49_32"
 npc = "npc.seabird1"
 coords = "0_37_75_53_42"
 
-## Poison Waste
 
 [[spawn]]
 npc = "npc.badger1"
@@ -1444,7 +1427,6 @@ coords = "0_34_48_45_20"
 npc = "npc.sote_lady_hefin_island"
 coords = "0_35_48_36_21"
 
-## Puro Puro
 
 [[spawn]]
 npc = "npc.ii_common_impling_precursor"
@@ -1894,7 +1876,6 @@ coords = "0_40_67_6_6"
 npc = "npc.imp_defender_no_patrol"
 coords = "0_40_67_9_9"
 
-## Random Event Classroom
 
 [[spawn]]
 npc = "npc.pattern_giant_desk"
@@ -1924,13 +1905,11 @@ coords = "0_29_78_28_28"
 npc = "npc.pattern_zombie_desk"
 coords = "0_29_78_29_34"
 
-## Random Event Drill Demon
 
 [[spawn]]
 npc = "npc.macro_drilldemon"
 coords = "0_49_75_27_18"
 
-## Random Event Freaky Forester
 
 [[spawn]]
 npc = "npc.macro_forester_m"
@@ -1984,7 +1963,6 @@ coords = "0_40_74_46_42"
 npc = "npc.macro_pheasant_twotail"
 coords = "0_40_74_48_36"
 
-## Ratcatchers House
 
 [[spawn]]
 npc = "npc.butterfly"
@@ -2146,7 +2124,6 @@ coords = "0_44_79_41_35"
 npc = "npc.vc_partyrat_multi6"
 coords = "0_44_79_47_30"
 
-## Ship Sailing
 
 [[spawn]]
 npc = "npc.fever_pirate_enemy_02"
@@ -2300,7 +2277,6 @@ coords = "1_28_75_31_28"
 npc = "npc.rat"
 coords = "1_28_75_34_29"
 
-## Sorceress Garden
 
 [[spawn]]
 npc = "npc.100_osman_autumn_elemental_1"
@@ -2410,7 +2386,6 @@ coords = "0_45_85_11_43"
 npc = "npc.100_osman_winter_elemental_6"
 coords = "0_45_85_20_45"
 
-## Sote Cutscene Ardougne Square
 
 [[spawn]]
 npc = "npc.deadman_guard_ardougne"
@@ -2424,7 +2399,6 @@ coords = "0_52_92_15_27"
 npc = "npc.rooftops_bigredjapan"
 coords = "3_52_92_33_31"
 
-## Tirannwn Mainland
 
 [[spawn]]
 npc = "npc.0_34_50_freshfish"
@@ -3678,7 +3652,6 @@ coords = "0_34_50_0_11"
 npc = "npc.sote_ysgawyn_forest"
 coords = "0_35_49_16_32"
 
-## Tirannwn Sea
 
 [[spawn]]
 npc = "npc.sailing_transport_trader_stan_crew_man1"
@@ -3688,7 +3661,6 @@ coords = "0_33_48_32_50"
 npc = "npc.sailing_transport_tyras_guard"
 coords = "0_33_48_29_50"
 
-## Tree Gnome Stronghold
 
 [[spawn]]
 npc = "npc.d_skingnomeknight"
@@ -3714,7 +3686,6 @@ coords = "0_31_87_42_41"
 npc = "npc.mm2_zooknock_postboss_multi"
 coords = "0_31_87_42_42"
 
-## Yanille
 
 [[spawn]]
 npc = "npc.dragon_bartender"
@@ -3732,7 +3703,6 @@ coords = "0_45_73_55_6"
 npc = "npc.yanille_soldier"
 coords = "0_45_73_44_30"
 
-## Yanille Watchtower Top
 
 [[spawn]]
 npc = "npc.qip_watchtower_wizard_02"
@@ -3749,6 +3719,3 @@ coords = "2_45_73_53_40"
 [[spawn]]
 npc = "npc.watchtower_wizard"
 coords = "2_45_73_53_44"
-
-## Yanille Watchtower Top End
-

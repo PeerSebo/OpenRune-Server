@@ -1,18 +1,18 @@
 package org.rsmod.content.skills.smithing.util
 
 import dev.openrune.types.ItemServerType
-import dev.openrune.types.enums.EnumTypeMap
-import dev.openrune.types.enums.enum
 import org.rsmod.api.enums.SmithingProductToEnums
-import org.rsmod.api.table.smithing.SmithingBarsRow
+import org.rsmod.content.skills.smithing.table.SmithingBar
 
 object SmithingData {
     const val ANVIL_CATEGORY = "category.anvil"
     const val SMITHING_INTERFACE = "interface.smithing"
     const val SMITHING_BAR_TYPE_VARBIT = "varbit.smithing_bar_type"
 
-    val barsByOutput: Map<String, SmithingBarsRow> =
-        SmithingBarsRow.all().associateBy { it.output.internalName }
+    // Resolve lazily so an unavailable dbcol cannot poison class initialization.
+    val barsByOutput: Map<String, SmithingBar> by lazy {
+        SmithingBar.all().associateBy { it.output.internalName }
+    }
 
     private val barEnum = SmithingProductToEnums.smithing_product_to_item
 
@@ -20,15 +20,21 @@ object SmithingData {
         barEnum.values.mapNotNull { it?.internalName }.toSet()
     }
 
-    val allBars: List<SmithingBarsRow> by lazy {
-        SmithingBarsRow.all().filter { it.output.internalName in barOutputInternals }
+    val allBars: List<SmithingBar> by lazy {
+        SmithingBar.all().filter { it.output.internalName in barOutputInternals }
     }
 
     val productMeta: List<SmithingProductMeta> by lazy {
         SmithingProductToEnums.smithing_product_to_requirement.keys.mapNotNull { product ->
-            val level = SmithingProductToEnums.smithing_product_to_requirement[product] ?: return@mapNotNull null
-            val barCount = SmithingProductToEnums.smithing_product_to_bars_required[product] ?: return@mapNotNull null
-            val numProduced = SmithingProductToEnums.smithing_product_to_quantity[product] ?: return@mapNotNull null
+            val level =
+                SmithingProductToEnums.smithing_product_to_requirement[product]
+                    ?: return@mapNotNull null
+            val barCount =
+                SmithingProductToEnums.smithing_product_to_bars_required[product]
+                    ?: return@mapNotNull null
+            val numProduced =
+                SmithingProductToEnums.smithing_product_to_quantity[product]
+                    ?: return@mapNotNull null
             val bar = barForProduct(product.name) ?: return@mapNotNull null
             if (bar.output.internalName !in barOutputInternals) {
                 return@mapNotNull null
@@ -48,7 +54,6 @@ object SmithingData {
         productMeta.associateBy { it.bar.output.id to it.name }
     }
 
-    /** Every smithing interface item button (see [typeForChild]). */
     val smithingButtonComponents: List<String> =
         listOf(
             "component.smithing:dagger",
@@ -80,11 +85,10 @@ object SmithingData {
             "component.smithing:limbs",
         )
 
-
-    fun metaForName(bar: SmithingBarsRow, itemName: String): SmithingProductMeta? =
+    fun metaForName(bar: SmithingBar, itemName: String): SmithingProductMeta? =
         productMetaByBarAndName[bar.output.id to itemName]
 
-    fun barIndexFor(bar: SmithingBarsRow): Int? {
+    fun barIndexFor(bar: SmithingBar): Int? {
         for ((index, barType) in barEnum.backing) {
             if (barType?.id == bar.output.id) {
                 return index
@@ -93,14 +97,16 @@ object SmithingData {
         return null
     }
 
-    fun barAtIndex(index: Int): SmithingBarsRow? =
+    fun barAtIndex(index: Int): SmithingBar? =
         barEnum[index]?.internalName?.let { barsByOutput[it] }
 
-    fun barForProduct(productName: String): SmithingBarsRow? {
+    fun barForProduct(productName: String): SmithingBar? {
         val lower = productName.lowercase()
-        allBars.firstOrNull { lower.startsWith(it.prefix) }?.let {
-            return it
-        }
+        allBars
+            .firstOrNull { lower.startsWith(it.prefix) }
+            ?.let {
+                return it
+            }
         return when {
             lower.endsWith("lantern frame") -> barsByOutput["obj.iron_bar"]
             lower.endsWith("lantern (unf)") -> barsByOutput["obj.steel_bar"]
@@ -160,11 +166,27 @@ object SmithingData {
                     val level = index + 1
                     component to "shayzien $type ($level)"
                 }
-            }.toMap()
+            }
+            .toMap()
     }
 
-    fun typeForChild(child: String, bar: SmithingBarsRow): String? =
-        when {
+    private val productNameOverrides: Map<Pair<String, String>, String> =
+        mapOf(
+            ("obj.adamantite_bar" to "component.smithing:limbs") to "adamantite limbs",
+            ("obj.runite_bar" to "component.smithing:limbs") to "runite limbs",
+            ("obj.adamantite_bar" to "component.smithing:nails") to "adamantite nails",
+            ("obj.adamantite_bar" to "component.smithing:bolts") to "adamant bolts(unf)",
+            ("obj.runite_bar" to "component.smithing:bolts") to "runite bolts (unf)",
+            ("obj.iron_bar" to "component.smithing:other_2") to "oil lantern frame",
+            ("obj.steel_bar" to "component.smithing:other_2") to "bullseye lantern (unf)",
+            ("obj.lovakite_bar" to "component.smithing:other_3") to "shayzien body (5)",
+        )
+
+    fun typeForChild(child: String, bar: SmithingBar): String? {
+        productNameOverrides[bar.output.internalName to child]?.let {
+            return it
+        }
+        return when {
             bar.output.internalName == "obj.lovakite_bar" -> shayzien[child]
             child == "component.smithing:dagger" -> "${bar.prefix} dagger"
             child == "component.smithing:sword" -> "${bar.prefix} sword"
@@ -185,12 +207,6 @@ object SmithingData {
             child == "component.smithing:fullhelm" -> "${bar.prefix} full helm"
             child == "component.smithing:squareshield" -> "${bar.prefix} sq shield"
             child == "component.smithing:kiteshield" -> "${bar.prefix} kiteshield"
-            child == "component.smithing:other_2" ->
-                when (bar.output.internalName) {
-                    "obj.iron_bar" -> "${bar.prefix} lantern frame"
-                    "obj.steel_bar" -> "${bar.prefix} lantern (unf)"
-                    else -> null
-                }
             child == "component.smithing:darttips" -> "${bar.prefix} dart tip"
             child == "component.smithing:arrowheads" -> "${bar.prefix} arrowtips"
             child == "component.smithing:knives" -> "${bar.prefix} knife"
@@ -207,6 +223,7 @@ object SmithingData {
             child == "component.smithing:other_3" -> "${bar.prefix} javelin tips"
             else -> null
         }
+    }
 }
 
 data class SmithingProductMeta(
@@ -215,5 +232,5 @@ data class SmithingProductMeta(
     val level: Int,
     val barCount: Int,
     val numProduced: Int,
-    val bar: SmithingBarsRow,
+    val bar: SmithingBar,
 )

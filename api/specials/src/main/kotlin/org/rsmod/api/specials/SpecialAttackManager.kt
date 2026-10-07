@@ -3,9 +3,6 @@ package org.rsmod.api.specials
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
 import dev.openrune.types.ItemServerType
-import dev.openrune.types.ProjAnimType
-import dev.openrune.types.aconverted.SpotanimType
-import dev.openrune.types.aconverted.SynthType
 import jakarta.inject.Inject
 import org.rsmod.api.combat.commons.CombatAttack
 import org.rsmod.api.combat.commons.styles.MagicAttackStyle
@@ -42,42 +39,27 @@ constructor(
         weapons.getSpecialEnergy(obj.asRSCM(RSCMType.OBJ))
 
     /**
-     * Sets [Player.actionDelay] to the current map clock + [cycles].
-     *
-     * This determines the delay before the player's next attack (after the current one completes).
-     * For example, setting [cycles] to `2` allows the player to perform their next attack in `2`
-     * cycles.
-     *
-     * **Note:** Systems that use this special attack manager should preemptively apply the delay
-     * based on the `attackrate` of the weapon being used, eliminating the need for manual
-     * adjustments. This function is intended for special cases where fine-tuning or custom attack
-     * delays are required after a special attack.
-     *
-     * @param cycles The number of cycles to wait before the next attack can be performed.
+     * The combat system arms the default weapon delay; this adjusts exceptional special-attack
+     * timing.
      */
     public fun setNextAttackDelay(access: ProtectedAccess, cycles: Int) {
         manager.setNextAttackDelay(access.player, cycles)
     }
 
-    /** @see [PlayerAttackManager.continueCombat] */
     public fun continueCombat(source: ProtectedAccess, target: PathingEntity) {
         manager.continueCombat(source.player, target)
     }
 
-    /** @see [PlayerAttackManager.continueCombat] */
     public fun continueCombat(source: ProtectedAccess, target: Npc) {
         manager.continueCombat(source.player, target)
     }
 
-    /** @see [PlayerAttackManager.continueCombat] */
     public fun continueCombat(source: ProtectedAccess, target: Player) {
         manager.continueCombat(source.player, target)
     }
 
-    /** @see [PlayerAttackManager.stopCombat] */
     public fun stopCombat(access: ProtectedAccess): Unit = manager.stopCombat(access.player)
 
-    /** @see [PlayerAttackManager.giveCombatXp] */
     public fun giveCombatXp(
         source: ProtectedAccess,
         target: PathingEntity,
@@ -85,7 +67,6 @@ constructor(
         damage: Int,
     ): Unit = manager.giveCombatXp(source.player, target, attack, damage)
 
-    /** @see [PlayerAttackManager.giveCombatXp] */
     public fun giveCombatXp(
         source: ProtectedAccess,
         target: PathingEntity,
@@ -93,7 +74,6 @@ constructor(
         damage: Int,
     ): Unit = manager.giveCombatXp(source.player, target, attack, damage)
 
-    /** @see [PlayerAttackManager.giveCombatXp] */
     public fun giveCombatXp(
         source: ProtectedAccess,
         target: PathingEntity,
@@ -101,7 +81,6 @@ constructor(
         damage: Int,
     ): Unit = manager.giveCombatXp(source.player, target, attack, damage)
 
-    /** @see [PlayerAttackManager.giveCombatXp] */
     public fun giveCombatXp(
         source: ProtectedAccess,
         target: PathingEntity,
@@ -109,7 +88,6 @@ constructor(
         damage: Int,
     ): Unit = manager.giveCombatXp(source.player, target, attack, damage)
 
-    /** @see [PlayerAttackManager.rollMeleeDamage] */
     public fun rollMeleeDamage(
         source: ProtectedAccess,
         target: PathingEntity,
@@ -131,7 +109,6 @@ constructor(
             blockType = blockType,
         )
 
-    /** @see [PlayerAttackManager.rollMeleeAccuracy] */
     public fun rollMeleeAccuracy(
         source: ProtectedAccess,
         target: PathingEntity,
@@ -149,7 +126,6 @@ constructor(
             multiplier = multiplier,
         )
 
-    /** @see [PlayerAttackManager.rollMeleeMaxHit] */
     public fun rollMeleeMaxHit(
         source: ProtectedAccess,
         target: PathingEntity,
@@ -158,7 +134,6 @@ constructor(
         multiplier: Double,
     ): Int = manager.rollMeleeMaxHit(source.player, target, attackType, attackStyle, multiplier)
 
-    /** @see [PlayerAttackManager.calculateMeleeMaxHit] */
     public fun calculateMeleeMaxHit(
         source: ProtectedAccess,
         target: PathingEntity,
@@ -168,7 +143,6 @@ constructor(
     ): Int =
         manager.calculateMeleeMaxHit(source.player, target, attackType, attackStyle, multiplier)
 
-    /** @see [PlayerAttackManager.queueMeleeHit] */
     public fun queueMeleeHit(
         source: ProtectedAccess,
         target: PathingEntity,
@@ -176,7 +150,6 @@ constructor(
         delay: Int = 1,
     ): Hit = manager.queueMeleeHit(source.player, target, damage, delay)
 
-    /** @see [PlayerAttackManager.rollRangedDamage] */
     public fun rollRangedDamage(
         source: ProtectedAccess,
         target: PathingEntity,
@@ -200,7 +173,6 @@ constructor(
             boltSpecDamage = boltSpecDamage,
         )
 
-    /** @see [PlayerAttackManager.rollRangedAccuracy] */
     public fun rollRangedAccuracy(
         source: ProtectedAccess,
         target: PathingEntity,
@@ -218,7 +190,6 @@ constructor(
             multiplier = multiplier,
         )
 
-    /** @see [PlayerAttackManager.rollRangedMaxHit] */
     public fun rollRangedMaxHit(
         source: ProtectedAccess,
         target: PathingEntity,
@@ -236,7 +207,6 @@ constructor(
             boltSpecDamage = boltSpecDamage,
         )
 
-    /** @see [PlayerAttackManager.calculateRangedMaxHit] */
     public fun calculateRangedMaxHit(
         source: ProtectedAccess,
         target: PathingEntity,
@@ -254,7 +224,6 @@ constructor(
             boltSpecDamage = boltSpecDamage,
         )
 
-    /** @see [PlayerAttackManager.queueRangedHit] */
     public fun queueRangedHit(
         source: ProtectedAccess,
         target: PathingEntity,
@@ -272,7 +241,6 @@ constructor(
             hitDelay = hitDelay,
         )
 
-    /** @see [PlayerAttackManager.queueRangedDamage] */
     public fun queueRangedDamage(
         source: ProtectedAccess,
         target: PathingEntity,
@@ -288,7 +256,6 @@ constructor(
             hitDelay = hitDelay,
         )
 
-    /** @see [PlayerAttackManager.rollStaffAccuracy] */
     public fun rollStaffAccuracy(
         source: ProtectedAccess,
         target: PathingEntity,
@@ -302,7 +269,6 @@ constructor(
             multiplier = multiplier,
         )
 
-    /** @see [PlayerAttackManager.rollStaffMaxHit] */
     public fun rollStaffMaxHit(
         source: ProtectedAccess,
         target: PathingEntity,
@@ -316,7 +282,6 @@ constructor(
             multiplier = multiplier,
         )
 
-    /** @see [PlayerAttackManager.calculateStaffMaxHit] */
     public fun calculateStaffMaxHit(
         source: ProtectedAccess,
         target: PathingEntity,
@@ -330,7 +295,6 @@ constructor(
             multiplier = multiplier,
         )
 
-    /** @see [PlayerAttackManager.queueMagicHit] */
     public fun queueMagicHit(
         source: ProtectedAccess,
         target: PathingEntity,
@@ -348,7 +312,6 @@ constructor(
             hitDelay = hitDelay,
         )
 
-    /** @see [PlayerAttackManager.spawnProjectile] */
     public fun spawnProjectile(
         source: ProtectedAccess,
         target: PathingEntity,
@@ -356,7 +319,6 @@ constructor(
         projanim: String,
     ): ProjAnim = manager.spawnProjectile(source.player, target, spotanim, projanim)
 
-    /** @see [PlayerAttackManager.soundArea] */
     public fun soundArea(
         source: PathingEntity,
         synth: String,

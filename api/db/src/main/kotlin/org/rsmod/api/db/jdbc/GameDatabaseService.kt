@@ -13,6 +13,8 @@ constructor(
     private val connector: GameConnection,
     private val database: GameDatabase,
 ) : Service {
+    override val shutdownPhase: Service.ShutdownPhase = Service.ShutdownPhase.RESOURCES
+
     private val logger = InlineLogger()
 
     private var databaseConnected = false
@@ -35,6 +37,7 @@ constructor(
             logger.info { "Game database service successfully shut down." }
         } catch (t: Throwable) {
             logger.error(t) { "Game database service failed to shut down." }
+            throw t
         }
     }
 }

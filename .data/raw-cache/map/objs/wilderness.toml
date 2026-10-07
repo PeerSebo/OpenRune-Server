@@ -1,4 +1,3 @@
-## Demonic Ruins
 
 [[spawn]]
 obj = "obj.bones_burnt"
@@ -20,7 +19,6 @@ coords = "0_51_60_27_48"
 obj = "obj.bones_burnt"
 coords = "0_51_60_28_47"
 
-## Frozen Waste Plateau
 
 [[spawn]]
 obj = "obj.bones"
@@ -52,13 +50,11 @@ obj = "obj.waterrune"
 coords = "0_46_60_16_59"
 count = 5
 
-## Wilderness Chaos Temple
 
 [[spawn]]
 obj = "obj.wine_of_zamorak"
 coords = "0_46_59_6_48"
 
-## Wilderness High
 
 [[spawn]]
 obj = "obj.bones"
@@ -119,7 +115,6 @@ coords = "3_51_61_15_34"
 obj = "obj.knife"
 coords = "0_48_61_34_52"
 
-## Wilderness Low
 
 [[spawn]]
 obj = "obj.bodyrune"
@@ -174,7 +169,6 @@ coords = "0_46_55_33_9"
 obj = "obj.skull"
 coords = "0_46_55_34_11"
 
-## Wilderness Mid
 
 [[spawn]]
 obj = "obj.airrune"
@@ -925,7 +919,6 @@ coords = "0_51_57_11_16"
 obj = "obj.woodplank"
 coords = "0_51_57_27_4"
 
-## Wilderness areas with lava in them
 
 [[spawn]]
 obj = "obj.black_dagger"
@@ -1095,6 +1088,3 @@ coords = "0_50_59_14_33"
 [[spawn]]
 obj = "obj.white_berries"
 coords = "0_50_59_18_36"
-
-## Wilderness areas with lava in them End
-

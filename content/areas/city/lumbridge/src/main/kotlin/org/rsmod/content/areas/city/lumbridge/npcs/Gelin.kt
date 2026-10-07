@@ -6,7 +6,6 @@ import org.rsmod.game.entity.Npc
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
-/** The retired Deadman hitpoints insurance broker in the Lumbridge graveyard. */
 class Gelin : PluginScript() {
     override fun ScriptContext.startup() {
         onOpNpc1("npc.deadman_gelin") { startDialogue(it.npc) }

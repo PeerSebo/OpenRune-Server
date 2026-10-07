@@ -9,7 +9,6 @@ import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
 import org.rsmod.content.drops.brimstoneKeyRoll
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.content.drops.shouldDropSanguineTorvaKit
 import org.rsmod.content.drops.vestigeProgressRoll
 import org.rsmod.game.entity.Player
 
@@ -53,7 +52,7 @@ public val dukeSucellusDropTable: RSDropTable<Player, DropRollItem> = RSDropTabl
             1 weight "obj.virtus_legs" count 1
         }
         1 outOf 26 separate "obj.duke_sucellus_tablet" count 1 condition { player ->
-            // Drops Need Manual: The frozen tablet will become more common at an unknown rate as kill count increases until the first drop is received. Afterwards, the item will no longer be dropped.
+            // TODO: The frozen tablet will become more common at an unknown rate as kill count increases until the first drop is received. Afterwards, the item will no longer be dropped.
              true
         }
         1 outOf 49 separate "obj.dt2_awakeners_orb" count 1
@@ -66,11 +65,11 @@ public val dukeSucellusDropTable: RSDropTable<Player, DropRollItem> = RSDropTabl
         22 weight nothing()
     },
     tertiaries = rsPlayerTertiaryTable {
+        1 outOf 1 weight "obj.dt2_duke_medallion_key" count 1 killCondition { _, npc, _ ->
+            npc.isType("npc.duke_sucellus_asleep_quest") || npc.isType("npc.duke_sucellus_awake_quest")
+        }
         onBuilder { brimstoneKeyRoll() }
         1 outOf 2500 weight "obj.dukesucelluspet" count 1
-        1 outOf 1 weight "obj.dt2_sanguine_torva_kit" count 1 killCondition { player, npc, _ ->
-            player.shouldDropSanguineTorvaKit(npc, "obj.dt2_sanguine_torva_kit")
-        }
         1 outOf 152 weight "obj.trail_clue_easy_simple001" count 1 transformObj { player ->
              player.clueScrollTransformObj("obj.trail_clue_easy_simple001")
         }

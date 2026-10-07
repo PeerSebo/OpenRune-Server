@@ -4,7 +4,6 @@ import dev.openrune.types.ItemServerType
 import jakarta.inject.Inject
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.player.vars.VarPlayerIntMapSetter
-import org.rsmod.api.table.fishing.FishingSpotRow
 import org.rsmod.content.other.pets.PetFollowers
 import org.rsmod.content.other.pets.Pets
 import org.rsmod.content.other.pets.onPetOp
@@ -105,8 +104,7 @@ class GullDialogue @Inject constructor(private val followers: PetFollowers) : Pl
     }
 
     private fun rawFish(): Set<String> =
-        cachedRawFish ?: FishingSpotRow.all()
-            .mapTo(hashSetOf(RAW_KARAMBWAN)) { it.fish.internalName }.also { cachedRawFish = it }
+        cachedRawFish ?: (rawFishingItems() + RAW_KARAMBWAN).also { cachedRawFish = it }
 
     private companion object {
         const val GULL = "npc.gryphonboss_pet"

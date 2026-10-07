@@ -19,7 +19,6 @@ class CoalBagScript : PluginScript() {
 
         onOpHeld2("obj.coal_bag") { openBag() }
         onOpHeld2("obj.coal_bag_open") { closeBag() }
-
     }
 
     private fun ProtectedAccess.fillBag() {
@@ -29,14 +28,15 @@ class CoalBagScript : PluginScript() {
             return
         }
 
-        val coalInInv = inv.count("obj.coal")
+        // Use physical coal only; storage-aware counts include the bag itself and make Fill a no-op.
+        val coalInInv = inv.physicalCount("obj.coal")
         if (coalInInv <= 0) {
             mes("You don't have any coal to fill your coal bag with.")
             return
         }
 
         val toDeposit = minOf(coalInInv, freeSpace)
-        if (invDel(inv, "obj.coal", toDeposit).success) {
+        if (invDel(inv, "obj.coal", toDeposit, ignoreVirtualStorage = true).success) {
             CoalBag.addStored(player, toDeposit)
             mes("You fill the coal bag with $toDeposit coal.")
         }
@@ -49,7 +49,9 @@ class CoalBagScript : PluginScript() {
             return
         }
 
-        val added = invAdd(inv, "obj.coal", current, strict = false, ignoreVirtualStorage = true).completed()
+        val added =
+            invAdd(inv, "obj.coal", current, strict = false, ignoreVirtualStorage = true)
+                .completed()
         if (added <= 0) {
             mes("You don't have any free space in your inventory.")
             return

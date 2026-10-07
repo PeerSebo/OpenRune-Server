@@ -3,7 +3,6 @@ package org.rsmod.content.drops
 import dev.openrune.ServerCacheManager
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
-import dev.openrune.types.varp.VarpServerType
 import dtx.core.RollResult
 import dtx.core.Rollable
 import dtx.core.singleRollable
@@ -14,8 +13,6 @@ import org.rsmod.api.player.vars.VarPlayerIntMapSetter
 import org.rsmod.game.entity.Npc
 import org.rsmod.game.entity.Player
 
-private const val VESTIGE_ROLLS_REQUIRED = 3
-
 public fun vestigeProgressRoll(varp: String, vestigeObj: String): Rollable<Player, DropRollItem> =
     singleRollable {
         selectResult { player, _ ->
@@ -25,19 +22,10 @@ public fun vestigeProgressRoll(varp: String, vestigeObj: String): Rollable<Playe
                 RollResult.Single(DropRollItem(vestigeObj, 1))
             } else {
                 VarPlayerIntMapSetter.set(player, varp, progress)
-                RollResult.Single(DropRollItem("obj.gold_ring", progress))
+                RollResult.Nothing()
             }
         }
     }
-
-private val DT2_AWAKENED_KILLCOUNT_VARPS: List<VarpServerType> by lazy {
-    listOf(
-        "varp.total_duke_sucellus_awakened_kills",
-        "varp.total_leviathan_awakened_kills",
-        "varp.total_vardorvis_awakened_kills",
-        "varp.total_whisperer_awakened_kills",
-    ).map { ServerCacheManager.getVarp(it.asRSCM(RSCMType.VARP))!! }
-}
 
 public fun Npc.isDt2AwakenedEncounter(): Boolean = vars["varn.awakened_state"] == 1
 
@@ -51,7 +39,16 @@ public fun dt2Drop(obj: String, regular: Int, awakened: Int): Rollable<Player, D
 
 public fun Player.shouldDropSanguineTorvaKit(npc: Npc, kitObj: String): Boolean {
     if (!npc.isDt2AwakenedEncounter()) return false
-    val defeatedVarp = npc.paramOrNull(BaseParams.killcount_varp_awakened) ?: return false
-    if (hasObjInInventoryOrBank(kitObj)) return false
-    return DT2_AWAKENED_KILLCOUNT_VARPS.filter { it != defeatedVarp }.all { vars[it] > 0 }
+    val defeated = npc.paramOrNull(BaseParams.killcount_varp_awakened) ?: return false
+    if (kitObj in inv || invMap["inv.bank"]?.let { kitObj in it } == true) return false
+    return AWAKENED_KILLCOUNTS.filter { it.id != defeated.id }.all { vars[it] > 0 }
 }
+
+private val AWAKENED_KILLCOUNTS by lazy {
+    listOf("duke_sucellus", "leviathan", "vardorvis", "whisperer").map { boss ->
+        val id = "varp.total_${boss}_awakened_kills".asRSCM(RSCMType.VARP)
+        checkNotNull(ServerCacheManager.getVarp(id))
+    }
+}
+
+private const val VESTIGE_ROLLS_REQUIRED = 3

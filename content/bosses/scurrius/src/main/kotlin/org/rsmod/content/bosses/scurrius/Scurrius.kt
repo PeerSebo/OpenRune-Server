@@ -116,13 +116,11 @@ constructor(
                 npc.ignoreCombatInteractions = false
                 deps.encounter(npc).transitionTo("feeding", deps.mapClock.cycle)
                 engageRanged(npc, target)
-                // Lock facing on cheese pile
                 npc.lockFacing(CoordGrid(npc.coords.level, npc.coords.mx, npc.coords.mz, pile.first, pile.second))
             }
         }
 
         deps.extensionRegistry.register("scurrius.enrage_walk") { _, npc, target, _ ->
-            // Force walk to center of arena
             val centreTile = CoordGrid(npc.coords.level, npc.coords.mx, npc.coords.mz, 33, 10)
             npc.resetFaceEntity()
             npc.ignoreCombatInteractions = true
@@ -153,11 +151,12 @@ constructor(
                 ability("melee") {
                     anim("seq.npc_rat_boss_attack_melee_01")
                     hit {
-                        damage(0..13).roll()
+                        damage(0..13).rollWithAccuracy()
                         type(Melee)
                     }
                 }
 
+            // Falling bricks check position at impact, without an accuracy roll.
             val rockfall =
                 ability("rockfall") {
                     anim("seq.npc_rat_boss_attack_stomp_01")
@@ -177,7 +176,7 @@ constructor(
                     anim("seq.npc_rat_boss_feeding_attack_magic_01")
                     projectile(
                         spotanim = "spotanim.vfx_rat_boss_proj_magic_01",
-                        hit = Effect.Hit(damage = Roll(0..8), type = Magic),
+                        hit = Effect.Hit(damage = Roll(0..8).withAccuracy(), type = Magic),
                     )
                 }
 
@@ -186,7 +185,7 @@ constructor(
                     anim("seq.npc_rat_boss_feeding_attack_ranged_01")
                     projectile(
                         spotanim = "spotanim.vfx_rat_boss_proj_ranged_01",
-                        hit = Effect.Hit(damage = Roll(0..7), type = Ranged),
+                        hit = Effect.Hit(damage = Roll(0..7).withAccuracy(), type = Ranged),
                     )
                 }
 
@@ -215,7 +214,7 @@ constructor(
                     anim("seq.npc_rat_boss_attack_magic_01")
                     projectile(
                         spotanim = "spotanim.vfx_rat_boss_proj_magic_01",
-                        hit = Effect.Hit(damage = Roll(0..8), type = Magic),
+                        hit = Effect.Hit(damage = Roll(0..8).withAccuracy(), type = Magic),
                     )
                 }
 
@@ -224,7 +223,7 @@ constructor(
                     anim("seq.npc_rat_boss_attack_ranged_01")
                     projectile(
                         spotanim = "spotanim.vfx_rat_boss_proj_ranged_01",
-                        hit = Effect.Hit(damage = Roll(0..7), type = Ranged),
+                        hit = Effect.Hit(damage = Roll(0..7).withAccuracy(), type = Ranged),
                     )
                 }
 

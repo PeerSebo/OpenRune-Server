@@ -14,7 +14,7 @@ public class ShopRestockProcess @Inject constructor(private val mapClock: MapClo
     private val logger = InlineLogger()
 
     public operator fun plusAssign(inventory: Inventory) {
-        modifiedShops += inventory
+        if (inventory.type.restock) modifiedShops += inventory
     }
 
     public fun process() {
@@ -43,7 +43,9 @@ public class ShopRestockProcess @Inject constructor(private val mapClock: MapClo
                 continue
             }
 
-            val restockRate = stockObj?.restockCycles ?: NON_STOCK_NORMALIZE_CYCLES
+            val configuredRate = stockObj?.restockCycles ?: NON_STOCK_NORMALIZE_CYCLES
+            if (configuredRate == 0) continue
+            val restockRate = if (configuredRate < 0) NON_STOCK_NORMALIZE_CYCLES else configuredRate
             if (mapClock % restockRate != 0) {
                 fullyRestocked = false
                 continue

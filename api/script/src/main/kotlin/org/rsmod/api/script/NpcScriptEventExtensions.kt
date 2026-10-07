@@ -23,7 +23,6 @@ import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.events.EventBus
 import org.rsmod.plugin.scripts.ScriptContext
 
-/* Op functions */
 public fun ScriptContext.onOpNpc1(
     type: NpcServerType,
     action: suspend ProtectedAccess.(NpcEvents.Op1) -> Unit,
@@ -106,7 +105,6 @@ public fun ScriptContext.onOpNpcU(
     action: suspend ProtectedAccess.(NpcUDefaultEvents.OpType) -> Unit,
 ): Unit = onProtectedEvent(npcType.asRSCM(RSCMType.NPC), action)
 
-
 public fun ScriptContext.onOpContentNpcU(
     content: String,
     action: suspend ProtectedAccess.(NpcUDefaultEvents.OpContent) -> Unit,
@@ -118,13 +116,22 @@ public fun ScriptContext.onOpNpcU(
     action: suspend ProtectedAccess.(NpcUEvents.Op) -> Unit,
 ): Unit = onProtectedEvent(EventBus.composeLongKey(npcType.id, objType.id), action)
 
+public fun ScriptContext.onOpNpcU(
+    npcType: String,
+    objType: String,
+    action: suspend ProtectedAccess.(NpcUEvents.Op) -> Unit,
+): Unit =
+    onProtectedEvent(
+        EventBus.composeLongKey(npcType.asRSCM(RSCMType.NPC), objType.asRSCM(RSCMType.OBJ)),
+        action,
+    )
+
 public fun ScriptContext.onOpContentNpcU(
     content: String,
     objType: String,
     action: suspend ProtectedAccess.(NpcUContentEvents.Op) -> Unit,
 ): Unit = onProtectedEvent(EventBus.composeLongKey(content.asRSCM(RSCMType.CONTENT), objType.asRSCM(RSCMType.OBJ)), action)
 
-/* Ap functions */
 public fun ScriptContext.onApNpc1(
     type: String,
     action: suspend ProtectedAccess.(NpcEvents.Ap1) -> Unit,
@@ -214,7 +221,6 @@ public fun ScriptContext.onApNpcU(
     action: suspend ProtectedAccess.(NpcUContentEvents.Ap) -> Unit,
 ): Unit = onProtectedEvent(EventBus.composeLongKey(content.asRSCM(RSCMType.CONTENT), objType.id), action)
 
-/* Timer functions */
 public fun ScriptContext.onNpcTimer(
     timer: String,
     action: suspend StandardNpcAccess.(NpcTimerEvents.Default) -> Unit,
@@ -232,7 +238,6 @@ public fun ScriptContext.onNpcTimer(
     action: suspend StandardNpcAccess.(NpcTimerEvents.Content) -> Unit,
 ): Unit = onNpcAccessEvent(EventBus.composeLongKey(content.asRSCM(RSCMType.CONTENT), timer.asRSCM(RSCMType.TIMER)), action)
 
-/* Queue functions */
 public fun ScriptContext.onNpcQueue(
     type: String,
     action: suspend StandardNpcAccess.(NpcQueueEvents.Default<Nothing>) -> Unit,
@@ -267,7 +272,6 @@ public fun <T> ScriptContext.onNpcQueueWithArgs(
     action: suspend StandardNpcAccess.(NpcQueueEvents.Content<T>) -> Unit,
 ): Unit = onNpcAccessEvent(EventBus.composeLongKey(content.asRSCM(RSCMType.CONTENT), queue.asRSCM(RSCMType.QUEUE)), action)
 
-/* Walk trigger functions */
 public fun ScriptContext.onNpcWalkTrigger(
     trigger: WalkTriggerType,
     action: NpcMovementEvent.WalkTrigger.() -> Unit,
@@ -282,10 +286,6 @@ public fun ScriptContext.onModifyNpcHit(
     action: NpcHitEvents.Modify.() -> Unit,
 ): Unit = onEvent(type.id, action)
 
-/**
- * Registers a script that triggers when the associated npc receives a hit (when the hitsplat is
- * displayed).
- */
 public fun ScriptContext.onNpcHit(
     type: NpcServerType,
     action: NpcHitEvents.Impact.() -> Unit,

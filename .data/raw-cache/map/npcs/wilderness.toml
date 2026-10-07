@@ -1,4 +1,3 @@
-## Frozen Waste Plateau
 
 [[spawn]]
 npc = "npc.fris_ice_chunk_one"
@@ -224,7 +223,6 @@ coords = "0_46_61_61_22"
 npc = "npc.whitewolf"
 coords = "0_46_61_62_17"
 
-## Mage Arena
 
 [[spawn]]
 npc = "npc.guthix_mage"
@@ -262,7 +260,6 @@ coords = "0_48_61_30_34"
 npc = "npc.zamorak_mage"
 coords = "0_48_61_44_30"
 
-## Weiss Region
 
 [[spawn]]
 npc = "npc.fris_ice_chunk_one"
@@ -288,7 +285,6 @@ coords = "0_45_61_59_59"
 npc = "npc.fris_ice_chunk_two"
 coords = "0_45_61_61_47"
 
-## Wilderness Chaos Temple
 
 [[spawn]]
 npc = "npc.secret_ghost8"
@@ -298,7 +294,6 @@ coords = "0_46_59_6_44"
 npc = "npc.wild_chaos_uncerter"
 coords = "0_46_59_10_42"
 
-## Wilderness High
 
 [[spawn]]
 npc = "npc.49_61_crabs"
@@ -608,7 +603,6 @@ coords = "0_50_61_41_17"
 npc = "npc.wolf"
 coords = "0_50_61_7_15"
 
-## Wilderness Low
 
 [[spawn]]
 npc = "npc.bearded_dark_wizard"
@@ -798,7 +792,6 @@ coords = "0_46_55_40_48"
 npc = "npc.young_dark_wizard"
 coords = "0_46_55_41_55"
 
-## Wilderness Mid
 
 [[spawn]]
 npc = "npc.0_47_57_saltfish"
@@ -991,6 +984,14 @@ coords = "0_48_57_48_5"
 [[spawn]]
 npc = "npc.brownbear"
 coords = "0_48_57_53_45"
+
+[[spawn]]
+npc = "npc.callisto"
+coords = "0_52_161_29_16"
+
+[[spawn]]
+npc = "npc.callisto_singles"
+coords = "0_27_180_30_16"
 
 [[spawn]]
 npc = "npc.canoeing_marten"
@@ -2920,7 +2921,6 @@ coords = "0_49_57_25_31"
 npc = "npc.zombie_armed_rural5"
 coords = "0_49_57_32_20"
 
-## Wilderness North Of Resource Area
 
 [[spawn]]
 npc = "npc.hellhound"
@@ -2966,7 +2966,6 @@ coords = "0_49_61_58_56"
 npc = "npc.wilderness_resource_guardian"
 coords = "0_49_61_47_41"
 
-## Wilderness Slayer Cave
 
 [[spawn]]
 npc = "npc.wild_cave_ankou"
@@ -3124,7 +3123,6 @@ coords = "0_52_157_8_54"
 npc = "npc.wild_cave_nechryael"
 coords = "0_52_157_9_59"
 
-## Wilderness Slayer Cave - Snow Area
 
 [[spawn]]
 npc = "npc.wild_cave_icegiant"
@@ -3150,7 +3148,6 @@ coords = "0_52_157_17_4"
 npc = "npc.wild_cave_icegiant3"
 coords = "0_52_157_8_8"
 
-## Wilderness areas with lava in them
 
 [[spawn]]
 npc = "npc.0_47_59_lavafish"
@@ -3367,6 +3364,3 @@ coords = "0_50_56_49_24"
 [[spawn]]
 npc = "npc.wilderness_chaos_druid"
 coords = "0_50_56_49_27"
-
-## Wilderness areas with lava in them End
-

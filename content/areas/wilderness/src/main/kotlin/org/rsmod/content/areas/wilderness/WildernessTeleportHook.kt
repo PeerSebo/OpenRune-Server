@@ -3,7 +3,6 @@ package org.rsmod.content.areas.wilderness
 import jakarta.inject.Inject
 import org.rsmod.api.area.checker.AreaChecker
 import org.rsmod.api.area.checker.wildernessLevel
-import org.rsmod.api.attr.AttributeKey
 import org.rsmod.api.player.hook.PlayerTeleportValidateHook
 import org.rsmod.api.player.hook.TeleportType
 import org.rsmod.game.entity.Player
@@ -46,6 +45,7 @@ public class WildernessTeleportHook @Inject constructor() : PlayerTeleportValida
                 TeleportType.Standard -> STANDARD_MAX_WILDERNESS_LEVEL
                 TeleportType.Chronicle,
                 TeleportType.Minigame,
+                TeleportType.Lever,
                 TeleportType.Exempt,
                 -> return null
             }
@@ -62,13 +62,11 @@ public class WildernessTeleportHook @Inject constructor() : PlayerTeleportValida
     }
 
     private fun isPvpSpecTeleportBlocked(player: Player): Boolean {
-        val lastSpecTick = player.attr[LAST_PVP_OFFENSIVE_SPEC_TICK_ATTR] ?: return false
+        val lastSpecTick = player.wildernessLastSpecTick ?: return false
         return (player.currentMapClock - lastSpecTick) <= PVP_SPEC_TELEPORT_BLOCK_TICKS
     }
 
     public companion object {
-        public val LAST_PVP_OFFENSIVE_SPEC_TICK_ATTR: AttributeKey<Int> = AttributeKey()
-
         private const val STANDARD_MAX_WILDERNESS_LEVEL = 20
         private const val MEMBER_MAX_WILDERNESS_LEVEL = 30
         private const val PVP_SPEC_TELEPORT_BLOCK_TICKS = 3

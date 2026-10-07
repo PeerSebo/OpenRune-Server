@@ -43,7 +43,7 @@ public class EventBus(
     ) {
         val previous = suspend.putIfAbsent(type, id, action)
         if (previous != null) {
-            error("Event with id already registered: id=$id, type=$type")
+            error("Event with id already registered: id=$id, type=$type, previous=${previous.javaClass.name}, attempted=${action.javaClass.name}")
         }
     }
 

@@ -10,7 +10,6 @@ coords = "0_51_50_4_26"
 npc = "npc.borderguard2"
 coords = "0_51_50_4_29"
 
-## Al Kharid
 
 [[spawn]]
 npc = "npc.0_51_49_saltfish"
@@ -67,10 +66,6 @@ coords = "0_51_49_24_45"
 [[spawn]]
 npc = "npc.cam_the_camel"
 coords = "0_51_50_32_27"
-
-[[spawn]]
-npc = "npc.contact_osman_multi"
-coords = "0_51_49_25_45"
 
 [[spawn]]
 npc = "npc.elly_the_camel"
@@ -132,7 +127,6 @@ coords = "0_51_49_7_8"
 npc = "npc.tote_persten_alkharid_parent"
 coords = "0_51_50_22_32"
 
-## Al Kharid Buildings
 
 [[spawn]]
 npc = "npc.al_kharid_man"
@@ -250,7 +244,6 @@ coords = "3_51_49_38_56"
 npc = "npc.zeke"
 coords = "0_51_49_24_54"
 
-## Al Kharid Mine
 
 [[spawn]]
 npc = "npc.avan"
@@ -304,7 +297,6 @@ coords = "0_51_51_38_42"
 npc = "npc.scorpion"
 coords = "0_51_51_39_28"
 
-## Bandit Bargains
 
 [[spawn]]
 npc = "npc.dt_bandit_shopkeeper"
@@ -314,7 +306,6 @@ coords = "0_49_46_39_44"
 npc = "npc.uncerter_bandit"
 coords = "0_49_46_42_42"
 
-## Desert Mining Camp
 
 [[spawn]]
 npc = "npc.capt_siad"
@@ -416,7 +407,6 @@ coords = "0_51_47_32_18"
 npc = "npc.tourtrap_qip_slave_male_1"
 coords = "0_51_47_30_8"
 
-## East Al Kharid
 
 [[spawn]]
 npc = "npc.clanwars_doctor"
@@ -454,7 +444,6 @@ coords = "0_52_49_53_11"
 npc = "npc.giants_foundry_kovac_multi_outside"
 coords = "0_52_49_33_11"
 
-## Kharidian Desert
 
 [[spawn]]
 npc = "npc.agrith_badden_uzer"
@@ -904,7 +893,6 @@ coords = "0_51_48_57_32"
 npc = "npc.ugthanki"
 coords = "0_51_48_5_38"
 
-## Kharidian Desert Coast Goats
 
 [[spawn]]
 npc = "npc.desert_goat_white1"
@@ -926,7 +914,6 @@ coords = "0_53_49_47_18"
 npc = "npc.desert_goat_white3"
 coords = "0_53_49_45_18"
 
-## Kharidian Desert Deep
 
 [[spawn]]
 npc = "npc.agility_pyramid_penny_waterfall_npc_east"
@@ -1320,7 +1307,6 @@ coords = "0_52_43_24_47"
 npc = "npc.ugthanki"
 coords = "0_50_46_45_16"
 
-## Kharidian Desert Mid
 
 [[spawn]]
 npc = "npc.al_shabim"
@@ -2166,7 +2152,6 @@ coords = "0_51_47_54_12"
 npc = "npc.ugthanki"
 coords = "0_51_47_54_32"
 
-## Mage Training Arena
 
 [[spawn]]
 npc = "npc.magictraining_flying_book"
@@ -2204,19 +2189,16 @@ coords = "0_52_51_35_40"
 npc = "npc.magictraining_guard_rewards"
 coords = "1_52_51_34_54"
 
-## Nardah General Store
 
 [[spawn]]
 npc = "npc.elid_general_seller"
 coords = "0_53_45_22_26"
 
-## Nardah Hunter Shop
 
 [[spawn]]
 npc = "npc.hunting_shop_owner_nardah"
 coords = "0_53_45_51_22"
 
-## Necropolis
 
 [[spawn]]
 npc = "npc.bcs_maisa_necropolis_outer"
@@ -2318,7 +2300,6 @@ coords = "0_51_42_25_49"
 npc = "npc.salamander_orange"
 coords = "0_51_42_25_53"
 
-## Pvp Arena
 
 [[spawn]]
 npc = "npc.aluft_pilot_daerkin"
@@ -2476,7 +2457,6 @@ coords = "0_52_51_58_5"
 npc = "npc.rat"
 coords = "0_51_50_55_50"
 
-## Region South Of Unkah
 
 [[spawn]]
 npc = "npc.0_49_43_rarefish"
@@ -2546,7 +2526,6 @@ coords = "0_49_43_2_32"
 npc = "npc.seabird1"
 coords = "0_49_43_3_18"
 
-## River Elid
 
 [[spawn]]
 npc = "npc.bcs_crocodile"
@@ -2944,7 +2923,6 @@ coords = "0_52_47_56_5"
 npc = "npc.uncerter_pollnivneach"
 coords = "0_52_46_31_46"
 
-## Ruins Of Unkah
 
 [[spawn]]
 npc = "npc.ics_little_croc"
@@ -3082,7 +3060,6 @@ coords = "0_49_44_25_23"
 npc = "npc.tempoross_timallus"
 coords = "0_49_44_26_27"
 
-## Shantay Pass
 
 [[spawn]]
 npc = "npc.jarr_desert_diary"
@@ -3108,7 +3085,6 @@ coords = "0_51_48_43_51"
 npc = "npc.shantay_guard_still"
 coords = "0_51_48_39_46"
 
-## Sophanem
 
 [[spawn]]
 npc = "npc.contact_guard_female_01_multi"
@@ -3490,7 +3466,6 @@ coords = "0_51_43_25_2"
 npc = "npc.ntk_tarik"
 coords = "0_51_43_25_35"
 
-## Sophanem Building Floors
 
 [[spawn]]
 npc = "npc.contact_stone_mason"
@@ -3512,7 +3487,6 @@ coords = "0_51_43_23_3"
 npc = "npc.ics_little_linen2"
 coords = "0_51_43_51_34"
 
-## Sophanem Temple Floors
 
 [[spawn]]
 npc = "npc.bcs_maisa_sophanem"
@@ -3530,7 +3504,6 @@ coords = "0_51_43_16_17"
 npc = "npc.ics_little_priest"
 coords = "0_51_43_19_18"
 
-## Sorceress Garden House
 
 [[spawn]]
 npc = "npc.arabian_sorceress"
@@ -3552,7 +3525,6 @@ coords = "0_51_49_58_5"
 npc = "npc.spider"
 coords = "0_51_49_60_2"
 
-## South Of Ruins Of Ullek
 
 [[spawn]]
 npc = "npc.hunting_bird_jungle"
@@ -3642,7 +3614,6 @@ coords = "0_53_43_49_60"
 npc = "npc.ullek_locust"
 coords = "0_53_43_52_62"
 
-## Uzer Oasis
 
 [[spawn]]
 npc = "npc.coa_arrav_fort"
@@ -3751,6 +3722,3 @@ coords = "0_54_47_51_24"
 [[spawn]]
 npc = "npc.sw_bird_blue"
 coords = "0_54_47_54_16"
-
-## Uzer Oasis End
-

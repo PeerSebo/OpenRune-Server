@@ -1,0 +1,41 @@
+[[varp]]
+id = "varp.player_stun_movement_until"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.player_stun_action_until"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.player_stun_message_cycle"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.player_absorption_points"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.player_next_death_safe"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.player_last_pvp_hit_cycle"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.player_death_drops_bypass_admin"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"

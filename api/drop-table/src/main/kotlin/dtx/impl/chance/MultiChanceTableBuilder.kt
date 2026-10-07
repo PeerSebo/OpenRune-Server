@@ -9,7 +9,7 @@ import dtx.table.AbstractTableBuilder
 import dtx.table.DefaultTableHooksBuilder
 import dtx.table.TableHooks
 
-public open class MultiChanceTableBuilder<T, R>: AbstractTableBuilder<
+public open class MultiChanceTableBuilder<T, R> : AbstractTableBuilder<
         T,
         R,
         ChanceRollable<T, R>,

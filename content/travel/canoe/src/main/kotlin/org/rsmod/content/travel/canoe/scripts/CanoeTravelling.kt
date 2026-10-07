@@ -6,6 +6,8 @@ import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
 import jakarta.inject.Inject
 import org.rsmod.api.config.refs.params
+import org.rsmod.api.player.events.PlayerAction
+import org.rsmod.api.player.events.PlayerActionCompleteEvent
 import org.rsmod.api.player.output.ClientScripts.highlightingOff
 import org.rsmod.api.player.output.ClientScripts.highlightingOn
 import org.rsmod.api.player.protect.ProtectedAccess
@@ -201,6 +203,8 @@ constructor(
     }
 
     suspend fun start(access: ProtectedAccess, dest: CanoeDestination, type: CutsceneType) {
+        val origin = access.player.coords
+        val waka = access.canoeType == Canoe.Waka
         access.setUpCutscene()
         val region = createRegion(type)
         if (region == null) {
@@ -209,6 +213,10 @@ constructor(
             return
         }
         access.startCutscene(region, type, dest)
+        if (waka) {
+            access.publish(PlayerActionCompleteEvent(access.player, PlayerAction.WakaTravel,
+                dest.component, origin))
+        }
     }
 
     private fun Npc.onSceneryTimer() {
@@ -278,7 +286,7 @@ constructor(
             delay(1)
             anim("seq.canoeing_rowing")
             faceDirection(Direction.West)
-            soundSynth("synth.canoe_paddle", loops = 16)
+            soundSynth("synth.CANOE_PADDLE_LOOP", loops = 16)
             camMoveTo(region.normal[0, 28, 70, 20, 35], height = 2500, rate = 100, rate2 = 100)
             camMoveTo(region.normal[0, 28, 70, 20, 35], height = 255, rate = 100, rate2 = 100)
             camLookAt(region.normal[0, 28, 70, 25, 35], height = 255, rate = 100, rate2 = 100)
@@ -290,7 +298,7 @@ constructor(
             delay(1)
             anim("seq.canoeing_rowing")
             faceDirection(Direction.West)
-            soundSynth("synth.canoe_paddle", loops = 10)
+            soundSynth("synth.CANOE_PADDLE_LOOP", loops = 10)
             camMoveTo(region.normal[0, 28, 70, 46, 12], height = 275, rate = 100, rate2 = 100)
             camLookAt(region.normal[0, 28, 70, 53, 12], height = 100, rate = 100, rate2 = 100)
             spawnWildScenery(region)
@@ -358,7 +366,7 @@ constructor(
             val sinking = lcParam(ServerCacheManager.getObject(canoe.loc.asRSCM(RSCMType.LOC))!!, params.next_loc_stage)
             locRepo.add(coords, sinking, 4, angle, LocShape.CentrepieceStraight)
         }
-        soundSynth("synth.canoe_sink")
+        soundSynth("synth.CANOE_SINK")
     }
 
     private fun CanoeDestination.arrivalMessage(): String =

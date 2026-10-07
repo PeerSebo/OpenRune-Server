@@ -1,6 +1,5 @@
 package dtx.example.rs_tables
 
-import dtx.rs.*
 import dtx.core.ArgMap
 import dtx.core.RollResult
 import dtx.core.flatten
@@ -10,6 +9,7 @@ import dtx.example.Player
 import dtx.example.allowPlayerMessages
 import dtx.example.examplePlayer
 import dtx.example.randTo
+import dtx.rs.*
 
 val oborGuaranteed = rsGuaranteedTable<Player, Item> {
     tableIdentifier = "Obor guaranteed drops"
@@ -47,7 +47,6 @@ val oborMainTable = rsWeightedTable<Player, Item> {
     1 weight oborUnique
 }
 
-
 val oborTertiaries = rsTertiaryTable<Player, Item> {
     name("Obor tertiaries")
     1 outOf 16 chance Item("giant_key")
@@ -62,7 +61,7 @@ val fullOborTable = RSDropTable(
     tertiaries = oborTertiaries,
 )
 
-fun <T, R, E: RSTable<T, R>> E.countRoll(rolls: Int, target: T, idSelector: (R) -> String, otherArgs: ArgMap = ArgMap.Empty): Map<String, Int> = buildMap {
+fun <T, R, E : RSTable<T, R>> E.countRoll(rolls: Int, target: T, idSelector: (R) -> String, otherArgs: ArgMap = ArgMap.Empty): Map<String, Int> = buildMap {
     fun R.inc() {
         val itemId = idSelector(this)
         putIfAbsent(itemId, 0)
@@ -118,7 +117,7 @@ fun oborRollComparison(player: Player, rolls: Int = 817_368) {
 
         *mainExpected.toTypedArray(),
 
-        //unique
+        // unique
         "hill_giant_club" to 0.85,
 
         // Tertiary
@@ -129,10 +128,10 @@ fun oborRollComparison(player: Player, rolls: Int = 817_368) {
     )
     // OSRS wiki-sourced seed drop amount to get the above expected chances
     val rollAmount = rolls
-    val fullResults = fullOborTable.countRoll(rollAmount, player, { it.itemId } )
+    val fullResults = fullOborTable.countRoll(rollAmount, player, { it.itemId })
     println("full: $fullResults")
     println(mainExpected.sumOf { it.second })
-    println(fullResults.entries.filter { fr -> mainExpected.any { it.first == fr.key }}.sumOf { it.value.toDouble() / rollAmount })
+    println(fullResults.entries.filter { fr -> mainExpected.any { it.first == fr.key } }.sumOf { it.value.toDouble() / rollAmount })
     println(fullResults.entries.sumOf { it.value })
     expected.forEach { (itemId, expectedDropRate) ->
         print("$itemId - expected[${expectedDropRate}] got[")

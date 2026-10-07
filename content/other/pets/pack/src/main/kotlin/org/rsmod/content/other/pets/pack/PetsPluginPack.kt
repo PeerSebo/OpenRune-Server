@@ -7,9 +7,8 @@ class PetsPluginPack : PluginPack() {
     override fun dbTables(): List<DBTable> =
         listOf(
             PetsTable.pets(),
-            CatsTable.cats(),
-            PetMorphsTable.morphs(),
             DogsTable.dogs(),
+            PetMorphsTable.morphs(),
             PetDropsTable.drops(),
             PetSkillingTable.skilling(),
         )

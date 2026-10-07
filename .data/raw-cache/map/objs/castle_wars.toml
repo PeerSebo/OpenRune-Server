@@ -1,4 +1,3 @@
-## Castle Wars Arena Saradomin Side
 
 [[spawn]]
 obj = "obj.tinderbox"
@@ -8,7 +7,6 @@ coords = "0_37_48_63_0"
 obj = "obj.tinderbox"
 coords = "1_37_48_55_8"
 
-## Castle Wars Arena Zamorak Side
 
 [[spawn]]
 obj = "obj.tinderbox"
@@ -17,6 +15,3 @@ coords = "0_37_48_0_63"
 [[spawn]]
 obj = "obj.tinderbox"
 coords = "1_37_48_8_55"
-
-## Castle Wars Arena Zamorak Side End
-

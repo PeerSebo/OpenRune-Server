@@ -2,6 +2,7 @@ package org.rsmod.api.repo.npc
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import jakarta.inject.Inject
+import java.util.concurrent.ConcurrentLinkedQueue
 import org.rsmod.api.registry.npc.NpcRegistry
 import org.rsmod.api.registry.npc.isSuccess
 import org.rsmod.api.registry.region.RegionRegistry
@@ -11,7 +12,6 @@ import org.rsmod.game.entity.NpcList
 import org.rsmod.game.entity.npc.NpcStateEvents
 import org.rsmod.map.CoordGrid
 import org.rsmod.map.zone.ZoneKey
-import java.util.concurrent.ConcurrentLinkedQueue
 
 public class NpcRepository
 @Inject
@@ -41,12 +41,6 @@ constructor(
         }
     }
 
-    /**
-     * **Note**: This function will implicitly call [Npc.destroy] which will cancel any ongoing
-     * coroutine attached to the [npc].
-     *
-     * @see [Npc.activeCoroutine]
-     */
     public fun del(npc: Npc, duration: Int) {
         val del = registry.del(npc)
         check(del.isSuccess()) { "Failed to delete npc. (result=$del, npc=$npc)" }
@@ -91,20 +85,8 @@ constructor(
     }
 
     /**
-     * Schedules the npc to spawn after a specified delay.
-     *
-     * This function is inspired by a similar system used for obj spawns. Its primary use case is to
-     * delay the initial npc spawns during startup to ensure that scripts like `onNpcSpawn` are
-     * present for npcs that are spawned early during the map-loading phase of cache loading.
-     *
-     * _**Note**: It is not confirmed that this exact system exists in the original game. Content
-     * should avoid calling this function until such a system's existence and usage in the original
-     * game are suspected or verified._
-     *
-     * @param spawnDelay The number of cycles to wait before spawning the npc.
-     * @param duration The duration that the npc should remain active after spawning. Set to
-     *   [Int.MAX_VALUE] for permanent spawn.
-     * @throws IllegalStateException if the npc coords are within a region (instance).
+     * Delay startup spawns until onNpcSpawn handlers are registered. Runtime equivalence
+     * remains unverified; instance coordinates are unsupported.
      */
     public fun addDelayed(npc: Npc, spawnDelay: Int, duration: Int) {
         check(!RegionRegistry.inWorkingArea(npc.coords)) {
@@ -186,12 +168,6 @@ constructor(
         return processAddDelayed(DELAYED_ADDS_PER_CYCLE)
     }
 
-    /**
-     * Drains all due delayed NPC spawns without the per-cycle cap.
-     *
-     * Used during boot after plugin scripts are loaded so map NPCs exist before login opens.
-     * Runtime [addDelayed] calls continue to use the paced [processDelayedAdd] path.
-     */
     internal fun flushDelayedAdds(): Int {
         if (addDelayedNpcs.isEmpty()) {
             return 0
@@ -199,12 +175,6 @@ constructor(
         return processAddDelayed(limit = Int.MAX_VALUE)
     }
 
-    /**
-     * Spawns due delayed NPCs. During the game loop this is capped per cycle so map-wide
-     * [addDelayed] bursts do not stall the game thread for hundreds of milliseconds.
-     *
-     * Uses [MapClock.cycle] >= trigger so leftovers remain eligible on subsequent cycles.
-     */
     private fun processAddDelayed(limit: Int): Int {
         var added = 0
         val iterator = addDelayedNpcs.iterator()
@@ -222,10 +192,6 @@ constructor(
     private fun shouldTrigger(triggerCycle: Int): Boolean = mapClock.cycle == triggerCycle
 
     private companion object {
-        /**
-         * Cap for runtime [processDelayedAdd] so large [addDelayed] bursts do not stall a tick.
-         * Boot-time map spawns are fully drained via [flushDelayedAdds] before login opens.
-         */
         private const val DELAYED_ADDS_PER_CYCLE: Int = 750
     }
 }

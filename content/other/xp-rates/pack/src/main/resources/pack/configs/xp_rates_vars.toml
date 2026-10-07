@@ -1,0 +1,23 @@
+[[varp]]
+isServerOnly = true
+id = "varp.xp_rates_personal_hundredths"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.xp_rates_personal_migrated"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.xp_rates_levels_reset"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.xp_rates_levels_reset_migrated"
+scope = "Perm"
+transmit = "Never"

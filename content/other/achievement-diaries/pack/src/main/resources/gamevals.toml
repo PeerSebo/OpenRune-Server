@@ -1,0 +1,56 @@
+[gamevals.dbtable]
+achievement_diary_tasks = 63895
+achievement_diary_tiers = 63896
+
+[gamevals.dbrow]
+diary_lumbridge_easy_rooftop = 62800
+diary_lumbridge_easy_cave_bug = 62801
+diary_lumbridge_easy_sedridor = 62802
+diary_lumbridge_easy_water_runes = 62803
+diary_lumbridge_easy_hans = 62804
+diary_lumbridge_easy_pickpocket = 62805
+diary_lumbridge_easy_oak_fire = 62806
+diary_lumbridge_easy_zombie = 62807
+diary_lumbridge_easy_anchovies = 62808
+diary_lumbridge_easy_bread = 62809
+diary_lumbridge_easy_iron = 62810
+diary_lumbridge_easy_ham = 62811
+diary_lumbridge_easy_oak_chop = 62812
+diary_lumbridge_easy_tier = 62813
+
+diary_lumbridge_medium_rooftop = 62900
+diary_lumbridge_medium_grapple = 62901
+diary_lumbridge_medium_ava = 62902
+diary_lumbridge_medium_fairy_ring = 62903
+diary_lumbridge_medium_teleport = 62904
+diary_lumbridge_medium_salmon = 62905
+diary_lumbridge_medium_coif = 62906
+diary_lumbridge_medium_willow = 62907
+diary_lumbridge_medium_martin = 62908
+diary_lumbridge_medium_chaeldar = 62909
+diary_lumbridge_medium_impling = 62910
+diary_lumbridge_medium_lava = 62911
+diary_lumbridge_medium_tier = 62912
+
+diary_lumbridge_hard_peaches = 62920
+diary_lumbridge_hard_wall = 62921
+diary_lumbridge_hard_cosmics = 62922
+diary_lumbridge_hard_waka = 62923
+diary_lumbridge_hard_tears = 62924
+diary_lumbridge_hard_train = 62925
+diary_lumbridge_hard_gloves = 62926
+diary_lumbridge_hard_belladonna = 62927
+diary_lumbridge_hard_helmet = 62928
+diary_lumbridge_hard_smite = 62929
+diary_lumbridge_hard_amulet = 62930
+diary_lumbridge_hard_amulet_cast = 62931
+diary_lumbridge_hard_amulet_string = 62932
+diary_lumbridge_hard_tier = 62933
+
+[gamevals.varp]
+diary_lumbridge_oak_stage = 64180
+diary_lumbridge_ring_reset_day = 64181
+diary_lumbridge_amulet_stage = 64182
+
+[gamevals.queue]
+diary_explorer_teleport = 64220

@@ -5,11 +5,7 @@ import org.rsmod.game.entity.Player
 
 object RaimentsOfTheEye {
     private val hatVariants =
-        setOf(
-            "obj.hat_of_the_eye",
-            "obj.hat_of_the_eye_blue",
-            "obj.hat_of_the_eye_green",
-        )
+        setOf("obj.hat_of_the_eye", "obj.hat_of_the_eye_blue", "obj.hat_of_the_eye_green")
 
     private val topVariants =
         setOf(
@@ -32,10 +28,6 @@ object RaimentsOfTheEye {
         return slots.count { variants -> variants.any { it in player.worn } }
     }
 
-    /**
-     * Each piece grants 10% extra runes; the full set adds another 20% (multiplier 6 on tens).
-     * Bonus runes do not grant additional experience.
-     */
     fun ProtectedAccess.applyBonus(baseRunes: Int): Int {
         val pieces = pieceCount(player)
         if (pieces == 0 || baseRunes <= 0) {

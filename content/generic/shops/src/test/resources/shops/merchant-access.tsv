@@ -1,0 +1,46 @@
+0	inv.bakery	loc.cakethiefstall	1500
+1	inv.bakery2	loc.cakethiefstall	1500
+2	inv.bakery3	loc.hos_stall_bread	1500
+3	inv.ardougnegemstall	loc.gemthiefstall	1000
+4	inv.kourendgemstall	loc.gemthiefstall	1000
+5	inv.spicestall	loc.spicethiefstall	600
+6	inv.viking_furshop	loc.furthiefstall	1000
+7	inv.keldagrim_silver_stall	loc.silverthiefstall	1000
+8	inv.silverstall	loc.dwarf_market_silver	1000
+9	inv.keldagrim_bread_stall	loc.dwarf_market_bakery	1000
+10	inv.keldagrim_gem_stall	loc.dwarf_market_gems	1000
+11	inv.keldagrim_crafting_stall	loc.dwarf_market_crafting	1000
+12	inv.seed_stall	loc.seed_stall	1000
+13	inv.teashop	loc.tea_stall	1000
+14	inv.fortis_shop_baker	loc.fortis_market_stall_bakers	1000
+15	inv.fortis_shop_fur	loc.fortis_market_stall_fur	1000
+16	inv.fortis_shop_gems	loc.fortis_market_stall_gems	1000
+17	inv.fortis_shop_silk	loc.fortis_market_stall_silk	1000
+18	inv.fortis_shop_spices	loc.fortis_market_stall_spice	1000
+19	inv.misc_fishmonger	loc.misc_fish_market	1000
+20	inv.misc_greengrocer	loc.misc_veg_market	1500
+21	inv.etc_fishmonger	loc.etc_fish_market	1000
+22	inv.etc_greengrocer	loc.etc_veg_market	1500
+23	inv.warrens_fishmonger	loc.fish_stall_warrens	1000
+24	inv.xbows_shop_addy	loc.xbows_dwarf_market	1000
+25	profile.prif_spice	loc.prif_marketstall_spice	1000
+26	profile.prif_silver	loc.prif_marketstall_silver	1000
+27	profile.prif_gem	loc.prif_marketstall_gem	1000
+28	inv.blurberrybar		0
+29	inv.death_pub		0
+30	inv.royal_bar		0
+31	inv.shayzien_pub		0
+32	inv.pub_cam_torum		0
+33	inv.pub_fortis_1		0
+34	inv.pub_fortis_2		0
+35	inv.pub_aldarin		0
+36	inv.pub_mistrock		0
+37	inv.pub_quetzacalli		0
+38	inv.pub_auburnvale		0
+39	inv.pub_nemus		0
+40	inv.pub_port_roberts		0
+41	inv.fd_bandit_bar		0
+42	inv.feud_alispub		0
+43	inv.pub_deepfin		0
+44	profile.lovakengj_bartender		0
+45	profile.hosidius_bartender_1		0

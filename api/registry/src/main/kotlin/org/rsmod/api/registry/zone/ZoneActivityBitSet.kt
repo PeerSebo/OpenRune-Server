@@ -3,7 +3,6 @@ package org.rsmod.api.registry.zone
 import org.rsmod.map.zone.ZoneKey
 
 public class ZonePlayerActivityBitSet {
-    // Class was designed to be allocated once per level.
     private val level0: ZoneActivityBitSet = ZoneActivityBitSet()
     private val level1: ZoneActivityBitSet = ZoneActivityBitSet()
     private val level2: ZoneActivityBitSet = ZoneActivityBitSet()

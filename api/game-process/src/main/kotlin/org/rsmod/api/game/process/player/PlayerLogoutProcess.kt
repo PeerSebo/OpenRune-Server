@@ -121,6 +121,7 @@ constructor(
         if (!pendingLogout) {
             return
         }
+        if (pendingAccountCommit != null) return
         ifCloseModals(eventBus)
         forceExitAreas()
 
@@ -171,18 +172,8 @@ constructor(
         }
 
     private companion object {
-        /**
-         * The grace period (in server cycles) during which a disconnected player is allowed to
-         * remain in the world before their logout is queued. This gives them a chance to reconnect
-         * in time, based on this constant.
-         */
         private const val RECONNECT_GRACE_PERIOD: Int = 16
 
-        /**
-         * A hard cap period (in server cycles) after which the player's [Player.preventLogoutUntil]
-         * will no longer apply. This prevents players from permanently being stuck online after
-         * x-logging.
-         */
         private const val PREVENT_LOGOUT_HARD_CAP_PERIOD: Int = 100
     }
 }

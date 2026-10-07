@@ -59,6 +59,8 @@ import org.rsmod.game.type.getInvObj
 import org.rsmod.game.type.getOrNull
 import org.rsmod.map.CoordGrid
 
+private const val ATTACK_SOUND_RADIUS: Int = 10
+
 public class PlayerAttackManager
 @Inject
 constructor(
@@ -75,41 +77,17 @@ constructor(
     private val playerTInteractions: PlayerTInteractions,
     private val pvpPlayerHitHooks: Set<PvPPlayerHitHook>,
 ) {
-    /**
-     * Determines if the player is still under an active attack delay.
-     *
-     * This returns `true` if the player's last attack delay has not yet expired, meaning they must
-     * wait before performing their next attack.
-     *
-     * @return `true` if the player attack is still delayed; `false` if they can attack immediately.
-     */
     public fun isAttackDelayed(player: Player): Boolean {
         return player.actionDelay > player.currentMapClock
     }
 
-    /**
-     * Sets player's attack delay to the current map clock + [cycles].
-     *
-     * This determines the delay before the player's **next** attack (after the current one). For
-     * example, setting [cycles] to `2` allows the player to perform their next attack in `2`
-     * cycles.
-     *
-     * @param cycles The number of cycles to wait before the next attack can be performed.
-     */
     public fun setNextAttackDelay(player: Player, cycles: Int) {
         player.actionDelay = player.currentMapClock + cycles
     }
 
     /**
-     * Maintains combat engagement with the given [target] by calling the appropriate interaction
-     * function.
-     *
-     * If [target] is an [Npc], this calls `opnpc2`; if [target] is a [Player], it calls
-     * `opplayer2`. These interaction functions are responsible for keeping the combat state active
-     * between attacks.
-     *
-     * This function should be invoked after each successful attack. Failure to do so will result in
-     * [source] breaking off combat until it is manually re-established or auto-retaliation occurs.
+     * Successful attacks must explicitly renew the interaction; otherwise combat stops after
+     * this attack.
      */
     public fun continueCombat(source: Player, target: PathingEntity) {
         when (target) {
@@ -118,35 +96,14 @@ constructor(
         }
     }
 
-    /**
-     * Maintains combat engagement with the given [Npc] by invoking `opnpc2`.
-     *
-     * This ensures that the combat interaction between [source] and [target] remains active. If not
-     * called, [source] may unintentionally break off combat engagement with the npc.
-     */
     public fun continueCombat(source: Player, target: Npc) {
         npcInteractions.interact(source, target, InteractionOp.Op2)
     }
 
-    /**
-     * Maintains combat engagement with the given [Player] by invoking `opplayer2`.
-     *
-     * This ensures that the combat interaction between [source] and [target] remains active. If not
-     * called, [source] may unintentionally break off combat engagement with the player.
-     */
     public fun continueCombat(source: Player, target: Player) {
         playerInteractions.interact(source, target, InteractionOp.Op2)
     }
 
-    /**
-     * Maintains combat engagement with the given [target] by invoking the appropriate interaction
-     * function using the [MagicSpell.component] as the interaction component.
-     *
-     * If [target] is an [Npc], this calls `opnpct`; if [target] is a [Player], it calls
-     * `opplayert`. This ensures that the combat interaction between [source] and [target] remains
-     * active. If not called, [source] may unintentionally break off combat engagement with the
-     * target.
-     */
     public fun continueCombat(source: Player, target: PathingEntity, spell: MagicSpell) {
         when (target) {
             is Npc -> continueCombat(source, target, spell)
@@ -154,46 +111,18 @@ constructor(
         }
     }
 
-    /**
-     * Maintains combat engagement with the given [Npc] by invoking `opnpct` using the
-     * [MagicSpell.component] as the interaction component.
-     *
-     * This ensures that the combat interaction between [source] and [target] remains active. If not
-     * called, [source] may unintentionally break off combat engagement with the npc.
-     */
     public fun continueCombat(source: Player, target: Npc, spell: MagicSpell) {
         npcTInteractions.interact(source, target, spell.component, comsub = -1, null)
     }
 
-    /**
-     * Maintains combat engagement with the given [Player] by invoking `opplayert` using the
-     * [MagicSpell.component] as the interaction component.
-     *
-     * This ensures that the combat interaction between [source] and [target] remains active. If not
-     * called, [source] may unintentionally break off combat engagement with the target.
-     */
     public fun continueCombat(source: Player, target: Player, spell: MagicSpell) {
         playerTInteractions.interact(source, target, spell.component, comsub = -1, null)
     }
 
-    /**
-     * Cancels the combat interaction while keeping the associated [Player.actionDelay] set to the
-     * preset delay determined by the combat weapon's attack rate.
-     *
-     * This ensures that the player's action delay remains consistent with their last action.
-     */
     public fun stopCombat(player: Player) {
         player.clearPendingAction(eventBus)
     }
 
-    /**
-     * Plays the animation and sound effects for the given [attack], using the
-     * [CombatAttack.Melee.weapon] obj type params and the [CombatAttack.Melee.stance] to determine
-     * which effects to play.
-     *
-     * If no specific params are found on the weapon, default animations and sounds for the stance
-     * are used.
-     */
     public fun playWeaponFx(player: Player, attack: CombatAttack.Melee) {
         val weapon = getOrNull(attack.weapon)
 
@@ -206,35 +135,29 @@ constructor(
             weapon?.paramOrNull(soundParam) ?: SynthType(defaultSound.asRSCM(RSCMType.SYNTH))
 
         player.anim(RSCM.getReverseMapping(RSCMType.SEQ, attackAnim.id), priority = 6)
-        player.soundSynth(attackSound)
+        playAttackSound(player, attackSound)
     }
 
-    /**
-     * Plays the animation and sound effects for the given [attack], using the
-     * [CombatAttack.Ranged.weapon] obj type params to determine which effects to play.
-     *
-     * If the weapon does not define an attack animation param (`attack_anim_stance1`), this
-     * function will return `false` to indicate that the weapon is considered "broken" or invalid in
-     * this context, and no effects will be played.
-     *
-     * @return `true` if the ranged weapon has an anim associated with param `attack_anim_stance1`.
-     */
     public fun playWeaponFx(player: Player, attack: CombatAttack.Ranged): Boolean {
         val weapon = getInvObj(attack.weapon)
         val attackAnim = weapon.paramOrNull(params.attack_anim_stance1) ?: return false
         player.anim(RSCM.getReverseMapping(RSCMType.SEQ, attackAnim.id), priority = 6)
         val attackSound = weapon.paramOrNull(params.attack_sound_stance1)
-        attackSound?.let(player::soundSynth)
+        attackSound?.let { playAttackSound(player, it) }
         return true
     }
 
-    /**
-     * Calculates and grants combat experience based on the given [attack], [damage], and the
-     * [target]'s predefined combat xp multiplier.
-     *
-     * @param damage The damage rolled to be inflicted on [target]. This value is implicitly capped
-     *   to the [target]'s remaining hitpoints.
-     */
+    /** Exclude [player] from the area sound because they already receive the local synth. */
+    private fun playAttackSound(player: Player, synth: SynthType) {
+        player.soundSynth(synth)
+        worldRepo.soundAreaExcept(
+            source = player,
+            synth = synth,
+            except = player,
+            radius = WorldRepository.COMBAT_SOUND_RADIUS,
+        )
+    }
+
     public fun giveCombatXp(
         player: Player,
         target: PathingEntity,
@@ -288,19 +211,11 @@ constructor(
                 statAdvance(player, "stat.defence", damage * 4.0, multiplier)
             }
             null -> {
-                /* no-op */
             }
         }
         statAdvance(player, "stat.hitpoints", damage * 1.33, multiplier)
     }
 
-    /**
-     * Calculates and grants combat experience based on the given [attack], [damage], and the
-     * [target]'s predefined combat xp multiplier.
-     *
-     * @param damage The damage rolled to be inflicted on [target]. This value is implicitly capped
-     *   to the [target]'s remaining hitpoints.
-     */
     public fun giveCombatXp(
         player: Player,
         target: PathingEntity,
@@ -355,19 +270,11 @@ constructor(
                 statAdvance(player, "stat.defence", damage * 2.0, multiplier)
             }
             null -> {
-                /* no-op */
             }
         }
         statAdvance(player, "stat.hitpoints", damage * 1.33, multiplier)
     }
 
-    /**
-     * Calculates and grants combat experience based on the given [attack], [damage], and the
-     * [target]'s predefined combat xp multiplier.
-     *
-     * @param damage The damage rolled to be inflicted on [target]. This value is implicitly capped
-     *   to the [target]'s remaining hitpoints.
-     */
     public fun giveCombatXp(
         player: Player,
         target: PathingEntity,
@@ -414,13 +321,6 @@ constructor(
         statAdvance(player, "stat.hitpoints", damage * 1.33, multiplier)
     }
 
-    /**
-     * Calculates and grants combat experience based on the given [damage] and the [target]'s
-     * predefined combat xp multiplier.
-     *
-     * @param damage The damage rolled to be inflicted on [target]. This value is implicitly capped
-     *   to the [target]'s remaining hitpoints.
-     */
     public fun giveCombatXp(
         player: Player,
         target: PathingEntity,
@@ -463,29 +363,6 @@ constructor(
         player.statAdvance(stat, baseXp * multiplier)
     }
 
-    /**
-     * Rolls for melee damage against [target], handling both accuracy and damage calculations.
-     *
-     * This function first determines if the attack hits by calling [rollMeleeAccuracy]. If the
-     * accuracy roll is successful, it then calculates the damage by calling [rollMeleeMaxHit].
-     *
-     * Note: Even if the accuracy roll succeeds, [rollMeleeMaxHit] can still return `0`.
-     *
-     * @param accuracyMultiplier Multiplier to apply to accuracy (`1.0` = no change, `1.1` = +10%
-     *   boost, `0.9` = -10% penalty).
-     * @param maxHitMultiplier Multiplier to apply to max hit (`1.0` = no change, `1.1` = +10%
-     *   boost, `0.9` = -10% penalty).
-     * @param attackType The [MeleeAttackType] used for the [source]'s accuracy and max hit rolls.
-     *   Usually based on the current `CombatAttack.Melee` attack but can be overridden.
-     * @param attackStyle The [MeleeAttackStyle] used for the [source]'s accuracy and max hit rolls.
-     *   Usually based on the current `CombatAttack.Melee` attack but can be overridden.
-     * @param blockType The [MeleeAttackType] used for the [target]'s defensive roll. Usually the
-     *   same as [attackType], but certain scenarios override this with a fixed value. For example,
-     *   a Dragon longsword special attack always uses `Slash` for [blockType], even though
-     *   [attackType] remains dynamic.
-     * @return `0` if the accuracy roll fails; otherwise, a random damage value from `0` up to the
-     *   calculated max hit.
-     */
     public fun rollMeleeDamage(
         source: Player,
         target: PathingEntity,
@@ -519,24 +396,6 @@ constructor(
         )
     }
 
-    /**
-     * Determines whether a melee attack from [source] will successfully hit [target].
-     *
-     * This function performs an accuracy roll by comparing [source]'s attack roll with [target]'s
-     * defence roll, applying any specified accuracy boosts.
-     *
-     * @param attackType The [MeleeAttackType] used for the [source]'s accuracy calculation. Usually
-     *   based on the current `CombatAttack.Melee` attack but can be overridden.
-     * @param attackStyle The [MeleeAttackStyle] used for the [source]'s accuracy calculation.
-     *   Usually based on the current `CombatAttack.Melee` attack but can be overridden.
-     * @param blockType The [MeleeAttackType] used for the [target]'s defensive roll. Usually the
-     *   same as [attackType], but certain scenarios override this with a fixed value. For example,
-     *   a Dragon longsword special attack always uses `Slash` for [blockType], even though
-     *   [attackType] remains dynamic.
-     * @param multiplier Multiplier to apply to accuracy (`1.0` = no change, `1.1` = +10% boost,
-     *   `0.9` = -10% penalty).
-     * @return `true` if the accuracy roll succeeds (the hit will "land"), `false` otherwise.
-     */
     public fun rollMeleeAccuracy(
         source: Player,
         target: PathingEntity,
@@ -594,20 +453,6 @@ constructor(
             random = random,
         )
 
-    /**
-     * Rolls a random damage value between `0` and the maximum possible melee hit.
-     *
-     * This function first calculates the maximum melee hit with any applicable boosts by calling
-     * [calculateMeleeMaxHit], and then rolls a random value within that range.
-     *
-     * @param attackType The [MeleeAttackType] used for the [source]'s max hit calculation. Usually
-     *   based on the current `CombatAttack.Melee` attack but can be overridden.
-     * @param attackStyle The [MeleeAttackStyle] used for the [source]'s max hit calculation.
-     *   Usually based on the current `CombatAttack.Melee` attack but can be overridden.
-     * @param multiplier Multiplier to apply to max hit (`1.0` = no change, `1.1` = +10% boost,
-     *   `0.9` = -10% penalty).
-     * @return A random damage value between `0` and the calculated max hit.
-     */
     public fun rollMeleeMaxHit(
         source: Player,
         target: PathingEntity,
@@ -624,20 +469,6 @@ constructor(
         return random.of(1..maxHit)
     }
 
-    /**
-     * Calculates the maximum melee hit that [source] can deal to [target].
-     *
-     * The maximum hit is determined based on [source]'s stats, equipment, combat bonuses, and the
-     * provided attack parameters, with any specified percentage boosts applied.
-     *
-     * @param attackType The [MeleeAttackType] used for the [source]'s max hit calculation. Usually
-     *   based on the current `CombatAttack.Melee` attack but can be overridden.
-     * @param attackStyle The [MeleeAttackStyle] used for the [source]'s max hit calculation.
-     *   Usually based on the current `CombatAttack.Melee` attack but can be overridden.
-     * @param multiplier Multiplier to apply to max hit (`1.0` = no change, `1.1` = +10% boost,
-     *   `0.9` = -10% penalty).
-     * @return The calculated maximum possible hit.
-     */
     public fun calculateMeleeMaxHit(
         source: Player,
         target: PathingEntity,
@@ -675,26 +506,8 @@ constructor(
         maxHits.getMeleeMaxHit(source, target, attackType, attackStyle, specMultiplier, roundUp)
 
     /**
-     * Queues a melee hit on [target], applying damage after the specified [delay].
-     *
-     * In addition to scheduling the hit, this also triggers the appropriate defensive animations
-     * and retaliation behavior for the [target].
-     *
-     * The returned [Hit] represents the pending hit that will be applied to [target]. For [Npc]
-     * targets, the final hit **may be modified** during **processing**, so the returned value is
-     * not always guaranteed to match the final damage dealt. In contrast, hits against [Player]
-     * targets are much more accurate and will only differ in rare situations (e.g., if the target
-     * dies before the hit is applied).
-     *
-     * **Notes:**
-     * - This function awards hero points to the [source] player based on the hit damage.
-     * - This function **does not** grant combat experience to [source]. To apply experience, call
-     *   [giveCombatXp] separately.
-     *
-     * @param damage The damage to apply to [target]. This value may still be modified during hit
-     *   processing.
-     * @param delay The number of cycles to wait before applying the hit. By default, this is set to
-     *   `1` for melee hits.
+     * Awards hero points, but callers must grant combat XP separately. Impact processing can
+     * still modify the returned Hit.
      */
     public fun queueMeleeHit(
         source: Player,
@@ -708,9 +521,7 @@ constructor(
         }
 
     private fun queueMeleeHit(source: Player, target: Npc, damage: Int, delay: Int): Hit {
-        // Note: Retaliation must be queued _before_ the hit. If queued after, every hit would
-        // trigger the "speed-up" death mechanic, since the hit queues would no longer be the
-        // last entries in the queue list at the time of processing.
+        // Queue retaliation before the hit to preserve the death queue ordering.
         target.queueCombatRetaliate(source)
 
         val hit = target.queueHit(source, delay, HitType.Melee, damage, npcHitModifier)
@@ -719,9 +530,7 @@ constructor(
     }
 
     private fun queueMeleeHit(source: Player, target: Player, damage: Int, delay: Int): Hit {
-        // Note: Retaliation must be queued _before_ the hit. If queued after, every hit would
-        // trigger the "speed-up" death mechanic, since the hit queues would no longer be the
-        // last entries in the queue list at the time of processing.
+        // Queue retaliation before the hit to preserve the death queue ordering.
         target.queueCombatRetaliate(source)
 
         val hit = target.queueHit(source, delay, HitType.Melee, damage, playerHitModifier)
@@ -730,29 +539,6 @@ constructor(
         return hit
     }
 
-    /**
-     * Rolls for ranged damage against [target], handling both accuracy and damage calculations.
-     *
-     * This function first determines if the attack hits by calling [rollRangedAccuracy]. If the
-     * accuracy roll is successful, it then calculates the damage by calling [rollRangedMaxHit].
-     *
-     * Note: Even if the accuracy roll succeeds, [rollRangedMaxHit] can still return `0`.
-     *
-     * @param accuracyMultiplier Multiplier to apply to accuracy (`1.0` = no change, `1.1` = +10%
-     *   boost, `0.9` = -10% penalty).
-     * @param maxHitMultiplier Multiplier to apply to max hit (`1.0` = no change, `1.1` = +10%
-     *   boost, `0.9` = -10% penalty).
-     * @param attackType The [RangedAttackType] used for the [source]'s accuracy and max hit rolls.
-     *   Usually based on the current `CombatAttack.Ranged` attack but can be overridden.
-     * @param attackStyle The [RangedAttackStyle] used for the [source]'s accuracy and max hit
-     *   rolls. Usually based on the current `CombatAttack.Ranged` attack but can be overridden.
-     * @param blockType The [RangedAttackType] used for the [target]'s defensive roll. Usually the
-     *   same as [attackType], but certain scenarios override this with a fixed value.
-     * @param boltSpecDamage The additive bonus damage from bolt special attacks. For example, Opal
-     *   bolts (e) special should set this value to `visible ranged level * 10%, rounded down`.
-     * @return `0` if the accuracy roll fails; otherwise, a random damage value from `0` up to the
-     *   calculated max hit.
-     */
     public fun rollRangedDamage(
         source: Player,
         target: PathingEntity,
@@ -786,22 +572,6 @@ constructor(
         )
     }
 
-    /**
-     * Determines whether a ranged attack from [source] will successfully hit [target].
-     *
-     * This function performs an accuracy roll by comparing [source]'s attack roll with [target]'s
-     * defence roll, applying any specified accuracy boosts.
-     *
-     * @param attackType The [RangedAttackType] used for the [source]'s accuracy calculation.
-     *   Usually based on the current `CombatAttack.Ranged` attack but can be overridden.
-     * @param attackStyle The [RangedAttackStyle] used for the [source]'s accuracy calculation.
-     *   Usually based on the current `CombatAttack.Ranged` attack but can be overridden.
-     * @param blockType The [RangedAttackType] used for the [target]'s defensive roll. Usually the
-     *   same as [attackType], but certain scenarios override this with a fixed value.
-     * @param multiplier Multiplier to apply to accuracy (`1.0` = no change, `1.1` = +10% boost,
-     *   `0.9` = -10% penalty).
-     * @return `true` if the accuracy roll succeeds (the hit will "land"), `false` otherwise.
-     */
     public fun rollRangedAccuracy(
         source: Player,
         target: PathingEntity,
@@ -855,22 +625,6 @@ constructor(
             random = random,
         )
 
-    /**
-     * Rolls a random damage value between `0` and the maximum possible ranged hit.
-     *
-     * This function first calculates the maximum ranged hit with any applicable boosts by calling
-     * [calculateRangedMaxHit], and then rolls a random value within that range.
-     *
-     * @param attackType The [RangedAttackType] used for the [source]'s max hit calculation. Usually
-     *   based on the current `CombatAttack.Ranged` attack but can be overridden.
-     * @param attackStyle The [RangedAttackStyle] used for the [source]'s max hit calculation.
-     *   Usually based on the current `CombatAttack.Ranged` attack but can be overridden.
-     * @param multiplier Multiplier to apply to max hit (`1.0` = no change, `1.1` = +10% boost,
-     *   `0.9` = -10% penalty).
-     * @param boltSpecDamage The additive bonus damage from bolt special attacks. For example, Opal
-     *   bolts (e) special should set this value to `visible ranged level * 10%, rounded down`.
-     * @return A random damage value between `0` and the calculated max hit.
-     */
     public fun rollRangedMaxHit(
         source: Player,
         target: PathingEntity,
@@ -894,23 +648,6 @@ constructor(
         return random.of(1..maxHit)
     }
 
-    /**
-     * Calculates the maximum ranged hit that [source] can deal to [target].
-     *
-     * The maximum hit is determined based on [source]'s stats, equipment, combat bonuses, and the
-     * provided attack parameters, with any specified percentage boosts and bolt special damage
-     * applied.
-     *
-     * @param attackType The [RangedAttackType] used for the [source]'s max hit calculation. Usually
-     *   based on the current `CombatAttack.Ranged` attack but can be overridden.
-     * @param attackStyle The [RangedAttackStyle] used for the [source]'s max hit calculation.
-     *   Usually based on the current `CombatAttack.Ranged` attack but can be overridden.
-     * @param multiplier Multiplier to apply to max hit (`1.0` = no change, `1.1` = +10% boost,
-     *   `0.9` = -10% penalty).
-     * @param boltSpecDamage The additive bonus damage from bolt special attacks. For example, Opal
-     *   bolts (e) special should set this value to `visible ranged level * 10%, rounded down`.
-     * @return The calculated maximum possible hit.
-     */
     public fun calculateRangedMaxHit(
         source: Player,
         target: PathingEntity,
@@ -976,34 +713,8 @@ constructor(
         )
 
     /**
-     * Queues a ranged hit on [target], applying damage after the specified [hitDelay].
-     *
-     * In addition to scheduling the hit, this also triggers the appropriate defensive animations
-     * and retaliation behavior for the [target].
-     *
-     * The returned [Hit] represents the pending hit that will be applied to [target]. For [Npc]
-     * targets, the final hit **may be modified** during **processing**, so the returned value is
-     * not always guaranteed to match the final damage dealt. In contrast, hits against [Player]
-     * targets are much more accurate and will only differ in rare situations (e.g., if the target
-     * dies before the hit is applied).
-     *
-     * **Notes:**
-     * - This function awards hero points to the [source] player based on the hit damage.
-     * - This function **does not** grant combat experience to [source]. To apply experience, call
-     *   [giveCombatXp] separately.
-     *
-     * @param ammo Sets the [Hit.secondaryObj] to the provided value. Some hit scripts may rely on
-     *   this for special logic. For ranged attacks, this should be the ammunition used by [source]
-     *   for the attack. For example, if the player is using a Magic shortbow with Rune arrows, this
-     *   should be set to the Rune arrows obj type. If the player is using a thrown weapon, pass
-     *   `null` for this parameter, as the thrown weapon is already stored in [Hit.righthandObj].
-     * @param damage The damage to apply to [target]. This value may still be modified during hit
-     *   processing.
-     * @param clientDelay The delay in client cycles (`20ms` per cycle) before the projectile
-     *   visually lands on the target. This is usually derived from the projectile's metadata and
-     *   determines when the [target]'s block animation should play.
-     * @param hitDelay The number of server cycles to wait before applying the hit, usually
-     *   calculated as `1 + (clientDelay / 30)`.
+     * Awards hero points, not combat XP. Use null ammo for thrown weapons; clientDelay is in 20
+     * ms cycles, hitDelay in server cycles. Impact processing can still change damage.
      */
     public fun queueRangedHit(
         source: Player,
@@ -1026,9 +737,7 @@ constructor(
         clientDelay: Int,
         hitDelay: Int,
     ): Hit {
-        // Note: Retaliation must be queued _before_ the hit. If queued after, every hit would
-        // trigger the "speed-up" death mechanic, since the hit queues would no longer be the
-        // last entries in the queue list at the time of processing.
+        // Queue retaliation before the hit to preserve the death queue ordering.
         target.queueCombatRetaliate(source, hitDelay)
 
         val hit =
@@ -1053,9 +762,7 @@ constructor(
         clientDelay: Int,
         hitDelay: Int,
     ): Hit {
-        // Note: Retaliation must be queued _before_ the hit. If queued after, every hit would
-        // trigger the "speed-up" death mechanic, since the hit queues would no longer be the
-        // last entries in the queue list at the time of processing.
+        // Queue retaliation before the hit to preserve the death queue ordering.
         target.queueCombatRetaliate(source, hitDelay)
 
         val hit =
@@ -1080,17 +787,8 @@ constructor(
     }
 
     /**
-     * Queues a ranged hit on [target], applying damage after the specified [hitDelay].
-     *
-     * Unlike [queueRangedHit], this function **does not** trigger any block animations, visual
-     * effects, or retaliation behavior from the [target]. It simply applies the damage after the
-     * delay, while also awarding hero points to [source] based on the damage.
-     *
-     * This is useful for situations where damage should occur silently or as part of a scripted
-     * sequence where no defensive behavior from the target is required (e.g., secondary hits from
-     * Dark bow).
-     *
-     * @see [queueRangedHit]
+     * Damage only: no defend animations, impact effects or retaliation (e.g. Dark bow secondary hits).
+     * Still awards hero points; use [queueRangedHit] for full hit effects.
      */
     public fun queueRangedDamage(
         source: Player,
@@ -1142,19 +840,6 @@ constructor(
         return hit
     }
 
-    /**
-     * Determines whether a magic spell cast by [source] will successfully hit [target].
-     *
-     * This function performs an accuracy roll by comparing [source]'s magic attack roll with
-     * [target]'s magic defence roll.
-     *
-     * @param spell The [ItemServerType] representing the spell being cast (e.g.,
-     *   `"obj.01_wind_strike"` for the Wind Strike spell).
-     * @param spellbook The [Spellbook] the spell belongs to (e.g., Standard or Ancients), usually
-     *   derived from the player's current spellbook.
-     * @param sunfireRune Set to `true` if the spell was cast using a Sunfire rune.
-     * @return `true` if the accuracy roll succeeds (the spell will "land"), `false` otherwise.
-     */
     public fun rollSpellAccuracy(
         source: Player,
         target: PathingEntity,
@@ -1203,25 +888,6 @@ constructor(
             random = random,
         )
 
-    /**
-     * Rolls a magic spell damage value between the minimum and maximum possible spell hit.
-     *
-     * This function first calculates the minimum and maximum hit by calling [calculateSpellMaxHit],
-     * then rolls a random value within that range. The minimum hit is usually `0`; however, certain
-     * modifiers - such as one enabled through [sunfireRune] - can affect this value.
-     *
-     * @param spell The [ItemServerType] representing the spell being cast (e.g.,
-     *   `"obj.01_wind_strike"` for the Wind strike spell).
-     * @param spellbook The [Spellbook] the spell belongs to (e.g., Standard or Ancients), usually
-     *   derived from the player's current spellbook.
-     * @param baseMaxHit The spell's base max hit, used as a baseline for calculating the maximum
-     *   (and minimum, when applicable) hit.
-     * @param attackRate The delay in server cycles at which the player is currently attacking. This
-     *   is usually `5` for spell attacks.
-     * @param sunfireRune Set to `true` if the spell was cast using a Sunfire rune. Sunfire runes
-     *   apply modifiers, such as increasing the minimum hit for Fire-based spells.
-     * @return A random damage value between the calculated minimum and maximum hit.
-     */
     public fun rollSpellMaxHit(
         source: Player,
         target: PathingEntity,
@@ -1247,26 +913,6 @@ constructor(
         return random.of(hitRange)
     }
 
-    /**
-     * Calculates the minimum and maximum magic spell hit that [source] can deal to [target].
-     *
-     * The hit range is determined based on the spell's base max hit, the player's attack speed,
-     * spellbook, and other modifiers - such as the use of a Sunfire rune. The minimum hit is
-     * usually `0`; however, modifiers like Sunfire runes can increase the lower bound for certain
-     * spells.
-     *
-     * @param spell The [ItemServerType] representing the spell being cast (e.g.,
-     *   `"obj.01_wind_strike"` for the Wind Strike spell).
-     * @param spellbook The [Spellbook] the spell belongs to (e.g., Standard or Ancients), usually
-     *   derived from the player's current spellbook.
-     * @param baseMaxHit The spell's base max hit, used as a baseline for calculating the maximum
-     *   (and minimum, when applicable) hit.
-     * @param attackRate The delay in server cycles at which the player is currently attacking. This
-     *   is usually `5` for spell attacks.
-     * @param sunfireRune Set to `true` if the spell was cast using a Sunfire rune. Sunfire runes
-     *   apply modifiers, such as increasing the minimum hit for Fire-based spells.
-     * @return A range representing the minimum and maximum possible hit values for the spell.
-     */
     public fun calculateSpellMaxHit(
         source: Player,
         target: PathingEntity,
@@ -1334,19 +980,6 @@ constructor(
             usedSunfireRune = sunfireRune,
         )
 
-    /**
-     * Determines whether the **built-in spell** from a **powered staff** used by [source] will
-     * successfully hit [target].
-     *
-     * This function performs an accuracy roll by comparing [source]'s magic attack roll with
-     * [target]'s magic defence roll.
-     *
-     * @param attackStyle The [MagicAttackStyle] used for the [source]'s accuracy calculation.
-     *   Usually based on the current `CombatAttack.Staff` attack but can be overridden.
-     * @param multiplier Multiplier to apply to accuracy (`1.0` = no change, `1.1` = +10% boost,
-     *   `0.9` = -10% penalty).
-     * @return `true` if the accuracy roll succeeds (the spell will "land"), `false` otherwise.
-     */
     public fun rollStaffAccuracy(
         source: Player,
         target: PathingEntity,
@@ -1387,19 +1020,6 @@ constructor(
             random,
         )
 
-    /**
-     * Rolls a random damage value between `0` and the maximum possible hit for a powered staff's
-     * built-in spell.
-     *
-     * This function first calculates the maximum magic hit for the built-in spell by calling
-     * [calculateStaffMaxHit], and then rolls a random value within that range.
-     *
-     * @param baseMaxHit The base max hit of the powered staff's built-in spell before any modifiers
-     *   are applied.
-     * @param multiplier Multiplier to apply to max hit (`1.0` = no change, `1.1` = +10% boost,
-     *   `0.9` = -10% penalty).
-     * @return A random damage value between `0` and the calculated max hit.
-     */
     public fun rollStaffMaxHit(
         source: Player,
         target: PathingEntity,
@@ -1413,19 +1033,6 @@ constructor(
         return random.of(1..maxHit)
     }
 
-    /**
-     * Calculates the maximum magic hit that a **powered staff**'s built-in spell can deal to
-     * [target] from [source].
-     *
-     * The maximum hit is determined based on the [source]'s magic stats and the provided
-     * [baseMaxHit] of the staff's built-in spell.
-     *
-     * @param baseMaxHit The base max hit of the powered staff's built-in spell before any modifiers
-     *   are applied.
-     * @param multiplier Multiplier to apply to max hit (`1.0` = no change, `1.1` = +10% boost,
-     *   `0.9` = -10% penalty).
-     * @return The calculated maximum possible hit.
-     */
     public fun calculateStaffMaxHit(
         source: Player,
         target: PathingEntity,
@@ -1465,38 +1072,9 @@ constructor(
         )
 
     /**
-     * Queues a magic hit on [target], applying damage after the specified [hitDelay].
-     *
-     * In addition to scheduling the hit, this also triggers the appropriate defensive animations
-     * and retaliation behavior for the [target].
-     *
-     * The returned [Hit] represents the pending hit that will be applied to [target]. For [Npc]
-     * targets, the final hit **may be modified** during **processing**, so the returned value is
-     * not always guaranteed to match the final damage dealt. In contrast, hits against [Player]
-     * targets are much more accurate and will only differ in rare situations (e.g., if the target
-     * dies before the hit is applied).
-     *
-     * **Notes:**
-     * - This function awards hero points to the [source] player based on the hit damage.
-     * - This function **does not** grant combat experience to [source]. To apply experience, call
-     *   [giveCombatXp] separately.
-     * - This function **does not** handle magic sounds or impact spotanims. These must be handled
-     *   separately by calling [playMagicHitFx], or [playMagicSplashFx] for splashed hits.
-     *
-     * @param spell Sets the [Hit.secondaryObj] to the provided value. Some hit scripts may rely on
-     *   this for special logic. For magic attacks, this should be the spell-associated obj used by
-     *   [source] for the attack. For example, if the player attacks with the Wind strike spell,
-     *   this should be set to `"obj.01_wind_strike"`.
-     * @param damage The damage to apply to [target]. This value may still be modified during hit
-     *   processing.
-     * @param clientDelay The delay in client cycles (`20ms` per cycle) before the projectile
-     *   visually lands on the target. This is usually derived from the projectile's metadata and
-     *   determines when the [target]'s block animation should play.
-     * @param hitDelay The number of server cycles to wait before applying the hit, usually
-     *   calculated as `1 + (clientDelay / 30)`.
-     * @param retaliationDelay The number of server cycles to set as the retaliation queue delay for
-     *   the [target]. By default, this matches [hitDelay]. When the magic hit "splashes," this is
-     *   often set to `1` to trigger faster retaliation.
+     * Awards hero points, not combat XP. Callers supply magic sounds/spotanims separately.
+     * clientDelay uses 20 ms cycles; hitDelay and retaliationDelay use server cycles. Impact
+     * processing can still change damage.
      */
     public fun queueMagicHit(
         source: Player,
@@ -1539,9 +1117,7 @@ constructor(
         hitDelay: Int,
         retaliationDelay: Int,
     ): Hit {
-        // Note: Retaliation must be queued _before_ the hit. If queued after, every hit would
-        // trigger the "speed-up" death mechanic, since the hit queues would no longer be the
-        // last entries in the queue list at the time of processing.
+        // Queue retaliation before the hit to preserve the death queue ordering.
         target.queueCombatRetaliate(source, retaliationDelay)
 
         val hit =
@@ -1553,7 +1129,7 @@ constructor(
                 modifier = npcHitModifier,
                 sourceSecondary = spell,
             )
-        target.combatPlayDefendAnim(clientDelay)
+        // Targets never play their defend animation for a spell, only for melee and ranged.
         return hit
     }
 
@@ -1566,9 +1142,7 @@ constructor(
         hitDelay: Int,
         retaliationDelay: Int,
     ): Hit {
-        // Note: Retaliation must be queued _before_ the hit. If queued after, every hit would
-        // trigger the "speed-up" death mechanic, since the hit queues would no longer be the
-        // last entries in the queue list at the time of processing.
+        // Queue retaliation before the hit to preserve the death queue ordering.
         target.queueCombatRetaliate(source, retaliationDelay)
 
         val hit =
@@ -1581,20 +1155,12 @@ constructor(
                 sourceSecondary = spell,
             )
         notifyPlayerHit(source, target)
-        target.combatPlayDefendAnim(clientDelay)
+        // Targets never play their defend animation for a spell, only for melee and ranged.
         return hit
     }
 
     /**
-     * Queues a magic **splash** hit on [target], triggering auto-retaliation after 1 server cycle -
-     * a quirk of how splashing works.
-     *
-     * This is equivalent to calling [queueMagicHit] with `damage = 0` and `retaliationDelay = 1`.
-     *
-     * **Note:** This function **does not** play splash sounds or visual effects on the [target].
-     * These must be handled separately by calling [playMagicSplashFx].
-     *
-     * @see [PlayerAttackManager.queueMagicHit]
+     * Splashes retaliate after one server cycle. Call [playMagicSplashFx] separately for effects.
      */
     public fun queueSplashHit(
         source: Player,
@@ -1613,20 +1179,6 @@ constructor(
             retaliationDelay = 1,
         )
 
-    /**
-     * Plays the visual and sound effects for non-splash magic hits.
-     *
-     * @param clientDelay The delay in client cycles (`20ms` per cycle) before the projectile
-     *   visually lands on [target]. This is usually derived from the projectile's metadata and
-     *   determines when the [hitSpot] spotanim should play on [target].
-     * @param castSound The sound to play immediately. Plays as a `sound_area` if the target is a
-     *   [Player], or a `sound_synth` if target is an [Npc]. If `null`, no cast sound is played.
-     * @param soundRadius The radius to use for [castSound] when played as a `soundarea`.
-     * @param hitSpot The spotanim to play on [target] after [clientDelay]. If `null`, no spotanim
-     *   is shown.
-     * @param hitSpotHeight The height to use for [hitSpot] when applicable.
-     * @param hitSound The sound to play as a `soundarea` on [target]'s coords after [clientDelay].
-     */
     public fun playMagicHitFx(
         source: Player,
         target: PathingEntity,
@@ -1671,7 +1223,14 @@ constructor(
         hitSound: String?,
     ) {
         if (castSound != null) {
-            source.soundSynth(castSound)
+            soundArea(
+                source = source.coords,
+                synth = castSound,
+                delay = 0,
+                loops = 1,
+                radius = ATTACK_SOUND_RADIUS,
+                size = 0,
+            )
         }
 
         if (hitSpot != null) {
@@ -1727,15 +1286,6 @@ constructor(
         }
     }
 
-    /**
-     * Plays the visual and sound effects for magic **splash** hits.
-     *
-     * @param clientDelay The delay in client cycles (`20ms` per cycle) before the splash spotanim
-     *   and sound are played on [target]. Typically derived from the projectile's metadata.
-     * @param castSound The sound to play immediately. Plays as a `soundarea` if [target] is a
-     *   [Player], or a `soundsynth` if [target] is an [Npc]. If `null`, no cast sound is played.
-     * @param soundRadius The radius to use for [castSound] when played as a `soundarea`.
-     */
     public fun playMagicSplashFx(
         source: Player,
         target: PathingEntity,
@@ -1768,12 +1318,19 @@ constructor(
         castSound: String?,
     ) {
         if (castSound != null) {
-            source.soundSynth(castSound)
+            soundArea(
+                source = source.coords,
+                synth = castSound,
+                delay = 0,
+                loops = 1,
+                radius = ATTACK_SOUND_RADIUS,
+                size = 0,
+            )
         }
         target.spotanim("spotanim.failedspell_impact", delay = clientDelay, height = 124)
         soundArea(
             source = target.coords,
-            synth = "synth.spellfail",
+            synth = "synth.SPELLFAIL",
             delay = clientDelay,
             loops = 1,
             radius = 10,
@@ -1801,7 +1358,7 @@ constructor(
         target.spotanim("spotanim.failedspell_impact", delay = clientDelay, height = 124)
         soundArea(
             source = target.coords,
-            synth = "synth.spellfail",
+            synth = "synth.SPELLFAIL",
             delay = clientDelay,
             loops = 1,
             radius = 10,
@@ -1809,18 +1366,6 @@ constructor(
         )
     }
 
-    /**
-     * Determines whether a magical-melee attack from [source] will successfully hit [target].
-     *
-     * This function performs an accuracy roll by comparing [source]'s melee attack roll with the
-     * [target]'s magic defence roll, applying any specified accuracy boosts.
-     *
-     * @param attackType The [MeleeAttackType] used for the [source]'s accuracy calculation.
-     * @param attackStyle The [MeleeAttackStyle] used for the [source]'s accuracy calculation.
-     * @param multiplier Multiplier to apply to accuracy (`1.0` = no change, `1.1` = +10% boost,
-     *   `0.9` = -10% penalty).
-     * @return `true` if the accuracy roll succeeds (the hit will "land"), `false` otherwise.
-     */
     public fun rollMagicalMeleeAccuracy(
         source: Player,
         target: PathingEntity,
@@ -1870,19 +1415,6 @@ constructor(
             random = random,
         )
 
-    /**
-     * Determines whether a ranged-melee attack from [source] will successfully hit [target].
-     *
-     * This function performs an accuracy roll by comparing [source]'s melee attack roll with the
-     * [target]'s ranged defence roll, applying any specified accuracy boosts.
-     *
-     * @param attackType The [MeleeAttackType] used for the [source]'s accuracy calculation.
-     * @param attackStyle The [MeleeAttackStyle] used for the [source]'s accuracy calculation.
-     * @param blockType The [RangedAttackType] used for the [target]'s defensive roll.
-     * @param multiplier Multiplier to apply to accuracy (`1.0` = no change, `1.1` = +10% boost,
-     *   `0.9` = -10% penalty).
-     * @return `true` if the accuracy roll succeeds (the hit will "land"), `false` otherwise.
-     */
     public fun rollRangedMeleeAccuracy(
         source: Player,
         target: PathingEntity,
@@ -1948,18 +1480,6 @@ constructor(
             random = random,
         )
 
-    /**
-     * Determines whether a ranged-magic attack from [source] will successfully hit [target].
-     *
-     * This function performs an accuracy roll by comparing [source]'s magic attack roll with the
-     * [target]'s ranged defence roll, applying any specified accuracy boosts.
-     *
-     * @param attackStyle The [MagicAttackStyle] used for the [source]'s accuracy calculation.
-     * @param blockType The [RangedAttackType] used for the [target]'s defensive roll.
-     * @param multiplier Multiplier to apply to accuracy (`1.0` = no change, `1.1` = +10% boost,
-     *   `0.9` = -10% penalty).
-     * @return `true` if the accuracy roll succeeds (the hit will "land"), `false` otherwise.
-     */
     public fun rollRangedMagicAccuracy(
         source: Player,
         target: PathingEntity,
@@ -2003,18 +1523,6 @@ constructor(
             random = random,
         )
 
-    /**
-     * Determines whether a magical-ranged attack from [source] will successfully hit [target].
-     *
-     * This function performs an accuracy roll by comparing [source]'s ranged attack roll with the
-     * [target]'s magic defence roll, applying any specified accuracy boosts.
-     *
-     * @param attackType The [RangedAttackType] used for the [source]'s accuracy calculation.
-     * @param attackStyle The [RangedAttackStyle] used for the [source]'s accuracy calculation.
-     * @param multiplier Multiplier to apply to accuracy (`1.0` = no change, `1.1` = +10% boost,
-     *   `0.9` = -10% penalty).
-     * @return `true` if the accuracy roll succeeds (the hit will "land"), `false` otherwise.
-     */
     public fun rollMagicalRangedAccuracy(
         source: Player,
         target: PathingEntity,

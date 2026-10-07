@@ -50,7 +50,7 @@ constructor(
         }
         if (isAccessProtected) {
             mes("Please finish what you're doing before opening this menu.")
-            soundSynth("synth.pillory_wrong")
+            soundSynth("synth.PILLORY_WRONG")
             return
         }
         protectedAccess.launch(this) {
@@ -224,7 +224,7 @@ constructor(
         val keepCount = inventory.kept.count(Objects::nonNull)
         val keepObjs = inventory.kept.map { it?.id ?: -1 }
         runClientScript(
-            972,
+            "clientscript.[clientscript,deathkeep_init]",
             if (settings.skullActive) 1 else 0,
             if (settings.protectItemPrayer) 1 else 0,
             settings.wildernessLvl,

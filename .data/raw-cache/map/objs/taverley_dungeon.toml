@@ -166,7 +166,6 @@ coords = "0_45_153_54_42"
 obj = "obj.dusty_key"
 coords = "0_45_152_20_38"
 
-## Dwarven Mines
 
 [[spawn]]
 obj = "obj.bronze_chainbody"
@@ -184,7 +183,6 @@ coords = "0_46_153_59_9"
 obj = "obj.piedish"
 coords = "0_46_153_49_55"
 
-## Entrana Dungeon
 
 [[spawn]]
 obj = "obj.bones"
@@ -206,7 +204,6 @@ coords = "0_44_152_41_23"
 obj = "obj.bones"
 coords = "0_44_152_43_18"
 
-## Taverley Dungeon Gravel
 
 [[spawn]]
 obj = "obj.bones"
@@ -216,7 +213,6 @@ coords = "0_46_152_22_44"
 obj = "obj.bones"
 coords = "0_46_152_24_43"
 
-## White Wolf Mountain passage
 
 [[spawn]]
 obj = "obj.dwarven_stout"
@@ -229,6 +225,3 @@ coords = "0_44_154_47_19"
 [[spawn]]
 obj = "obj.dwarven_stout"
 coords = "0_44_154_54_22"
-
-## White Wolf Mountain passage End
-

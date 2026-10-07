@@ -47,8 +47,6 @@ class TumekensShadowWeapons @Inject constructor(private val charges: CombatCharg
                 manager.stopCombat(this)
                 return
             }
-            // Tumeken's Shadow has an attack rate of 5, unlike standard powered staves which
-            // typically have a rate of 4.
             manager.setNextAttackDelay(this, 5)
 
             anim("seq.toa_sot_cast_b")
@@ -63,7 +61,7 @@ class TumekensShadowWeapons @Inject constructor(private val charges: CombatCharg
                 )
             val (serverDelay, clientDelay) = proj.durations
 
-            val castSound = "synth.toa_shadow_weapon_cast_fire_01"
+            val castSound = "synth.TOA_SHADOW_WEAPON_CAST_FIRE_01"
             val splash = manager.rollStaffSplash(this, target, attack)
             if (splash) {
                 manager.playSplashFx(this, target, clientDelay, castSound, soundRadius = 10)
@@ -79,7 +77,7 @@ class TumekensShadowWeapons @Inject constructor(private val charges: CombatCharg
                     soundRadius = 10,
                     hitSpot = "spotanim.tumekens_shadow_impact",
                     hitSpotHeight = 124,
-                    hitSound = "synth.contact_darkness_impact",
+                    hitSound = "synth.CONTACT_DARKNESS_IMPACT",
                 )
                 manager.giveCombatXp(this, target, attack, damage)
                 manager.queueMagicHit(this, target, damage, clientDelay, serverDelay)

@@ -10,10 +10,12 @@ public enum class RsColor(public val tag: String, public val hex: String) {
     BLACK("black", "000000");
 
     public companion object {
+        private val HEX_COLOR_PATTERN = Regex("^[0-9a-fA-F]{3,8}$")
+
         public fun lookup(nameOrHex: String): String? {
             val key = nameOrHex.lowercase()
-            for (c in values()) if (c.tag == key) return c.hex
-            return if (key.matches(Regex("^[0-9a-fA-F]{3,8}$"))) key else null
+            for (c in entries) if (c.tag == key) return c.hex
+            return if (HEX_COLOR_PATTERN.matches(key)) key else null
         }
     }
 }
@@ -30,6 +32,8 @@ public enum class RsStyle(public val tag: String, public val rsBase: String) {
 
 private data class ActiveTag(val type: String, val value: String?)
 
+private val COLORED_STYLE_PATTERN = Regex("^(strike|underline|shad)=([a-z0-9]+)$")
+
 public fun String.toRs(inheritPreviousTags: Boolean = true, wrapAt: Int? = null): String {
     val out = StringBuilder()
     val stack = ArrayDeque<ActiveTag>()
@@ -39,7 +43,6 @@ public fun String.toRs(inheritPreviousTags: Boolean = true, wrapAt: Int? = null)
     while (i < length) {
         val ch = this[i]
 
-        // Restore previous tag if inheritance enabled
         if (pendingRestore != null && inheritPreviousTags) {
             if (ch != '<' && !ch.isWhitespace()) {
                 appendTag(out, pendingRestore!!)
@@ -58,39 +61,28 @@ public fun String.toRs(inheritPreviousTags: Boolean = true, wrapAt: Int? = null)
             val tagContent = rawTag.lowercase().trim()
             i = closeIndex + 1
 
-            when {
-                // Closing tag
-                tagContent.startsWith("/") -> {
-                    val popped = stack.removeLastOrNull()
-                    if (popped != null) out.append(closeTag(popped))
-                    pendingRestore = if (inheritPreviousTags) stack.lastOrNull() else null
+            if (tagContent.startsWith("/")) {
+                val popped = stack.removeLastOrNull()
+                if (popped != null) out.append(closeTag(popped))
+                pendingRestore = if (inheritPreviousTags) stack.lastOrNull() else null
+                continue
+            }
+
+            val styleMatch = COLORED_STYLE_PATTERN.matchEntire(tagContent)
+            val style = RsStyle.fromTag(styleMatch?.groupValues?.get(1) ?: tagContent)
+            val activeTag =
+                if (style != null) {
+                    val color = styleMatch?.groupValues?.get(2)?.let { RsColor.lookup(it) ?: it }
+                    ActiveTag(style.rsBase, color)
+                } else {
+                    RsColor.lookup(tagContent)?.let { ActiveTag("col", it) }
                 }
 
-                // Style with color <strike=red>
-                Regex("^(strike|underline|shad)=([a-z0-9]+)$").matchEntire(tagContent) != null -> {
-                    val match = Regex("^(strike|underline|shad)=([a-z0-9]+)$").matchEntire(tagContent)!!
-                    val style = RsStyle.fromTag(match.groupValues[1])!!
-                    val color = RsColor.lookup(match.groupValues[2]) ?: match.groupValues[2].lowercase()
-                    out.append("<${style.rsBase}=$color>")
-                    stack.addLast(ActiveTag(style.rsBase, color))
-                }
-
-                // Plain style <strike>
-                RsStyle.fromTag(tagContent) != null -> {
-                    val style = RsStyle.fromTag(tagContent)!!
-                    out.append("<${style.rsBase}>")
-                    stack.addLast(ActiveTag(style.rsBase, null))
-                }
-
-                // Color tag <red> or <ff00ff>
-                RsColor.lookup(tagContent) != null -> {
-                    val hex = RsColor.lookup(tagContent)!!
-                    out.append("<col=$hex>")
-                    stack.addLast(ActiveTag("col", hex))
-                }
-
-                // Unknown tag → literal
-                else -> out.append("<$rawTag>")
+            if (activeTag != null) {
+                appendTag(out, activeTag)
+                stack.addLast(activeTag)
+            } else {
+                out.append("<$rawTag>")
             }
             continue
         }
@@ -99,13 +91,10 @@ public fun String.toRs(inheritPreviousTags: Boolean = true, wrapAt: Int? = null)
         i++
     }
 
-    // Final pending restore
     if (pendingRestore != null && inheritPreviousTags) appendTag(out, pendingRestore)
 
-    // Close remaining tags
     while (stack.isNotEmpty()) out.append(closeTag(stack.removeLast()))
 
-    // Apply wrapping if wrapAt is defined
     return if (wrapAt != null) out.toString().wrapLines(wrapAt) else out.toString()
 }
 
@@ -115,19 +104,16 @@ private fun appendTag(sb: StringBuilder, tag: ActiveTag) {
 }
 
 private fun closeTag(tag: ActiveTag) = when (tag.type) {
-    "col"  -> "</col>"
-    "str"  -> "</str>"
-    "u"    -> "</u>"
+    "col" -> "</col>"
+    "str" -> "</str>"
+    "u" -> "</u>"
     "shad" -> "</shad>"
-    else   -> ""
+    else -> ""
 }
 
-// -----------------------
-// Word-wrapping ignoring tags
-// -----------------------
 private fun String.wrapLines(maxLength: Int = 60): String {
     val out = StringBuilder()
-    val activeTags = ArrayDeque<String>() // stack of currently open tags
+    val activeTags = ArrayDeque<String>()
     var visibleCount = 0
     var lastSpaceIndex = -1
     var lastSpaceVisibleCount = 0
@@ -169,7 +155,6 @@ private fun String.wrapLines(maxLength: Int = 60): String {
         if (visibleCount >= maxLength) {
             val wrapPos = if (lastSpaceIndex != -1) lastSpaceIndex + 1 else out.length
 
-            // Close tags
             val tagsToClose = activeTags.toList().reversed()
             val closeTagsStr = tagsToClose.joinToString("") { tag ->
                 val type = tag.drop(1).takeWhile { it != '=' && it != '>' }
@@ -177,7 +162,6 @@ private fun String.wrapLines(maxLength: Int = 60): String {
             }
             out.insert(wrapPos, "$closeTagsStr<br>")
 
-            // Reopen tags safely, avoiding duplicates
             val reopenTagsStr = StringBuilder()
             for (tag in activeTags) {
                 val checkLen = tag.length

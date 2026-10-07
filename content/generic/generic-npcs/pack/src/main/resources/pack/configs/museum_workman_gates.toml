@@ -1,0 +1,11 @@
+[[object]]
+id = "loc.museum_workman_fencegate_open_l"
+inherit = "loc.vm_fencegate_l"
+option1 = "Hidden"
+desc = "A wooden gate."
+
+[[object]]
+id = "loc.museum_workman_fencegate_open_r"
+inherit = "loc.vm_fencegate_r"
+option1 = "Hidden"
+desc = "A wooden gate."

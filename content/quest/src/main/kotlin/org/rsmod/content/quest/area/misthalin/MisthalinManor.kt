@@ -2,7 +2,6 @@ package org.rsmod.content.quest.area.misthalin
 
 import kotlin.math.abs
 import org.rsmod.api.config.constants
-import org.rsmod.api.player.output.CamShakeAxis
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.repo.loc.LocRepository
 import org.rsmod.api.script.onOpHeld1
@@ -105,7 +104,7 @@ internal class MisthalinManor(
             return
         }
         anim(seq)
-        soundSynth("synth.pick")
+        soundSynth("synth.PICK")
         mes(text)
     }
 
@@ -154,6 +153,8 @@ internal class MisthalinManor(
 
         quest.setQuestStage(this, MisthalinStage.BucketFilled)
         objbox("obj.bucket_water", "You fill the bucket from the barrel.")
+
+        mes(constants.dm_default)
     }
 
     private suspend fun ProtectedAccess.enterFront() {
@@ -167,7 +168,7 @@ internal class MisthalinManor(
                 return
             }
             mes("You use the manor key to unlock the door.")
-            soundSynth("synth.ds_big_door_unlock")
+            soundSynth("synth.DS_BIG_DOOR_UNLOCK")
             quest.setQuestStage(this, MisthalinStage.InsideManor)
         }
 
@@ -207,12 +208,12 @@ internal class MisthalinManor(
         }
 
         delay(2)
-        camShake(axis = CamShakeAxis.PAN_UP_DOWN, random = 4, amplitude = 0, rate = 1)
+        camShake(axis = 4, random = 4, amplitude = 0, rate = 1)
         delay(2)
-        soundSynth("synth.explosion")
+        soundSynth("synth.EXPLOSION")
         quest.setQuestStage(this, MisthalinStage.WallBlown)
         delay(1)
-        camShakeReset(axis = CamShakeAxis.PAN_UP_DOWN)
+        camShakeReset(axis = 4)
     }
 
     private suspend fun ProtectedAccess.gemDoor(
@@ -225,14 +226,14 @@ internal class MisthalinManor(
         if (quest.getQuestStage(player) < unlockedAt) {
             if (invTotal(inv, key) <= 0) {
                 mesbox("The door is securely locked.")
-                soundSynth("synth.locked")
+                soundSynth("synth.LOCKED")
                 return false
             }
             if (invDel(inv, key, 1).failure) {
                 return false
             }
             mes(unlockText)
-            soundSynth("synth.unlock")
+            soundSynth("synth.UNLOCK")
             quest.setQuestStage(this, unlockedAt)
         }
 
@@ -245,7 +246,7 @@ internal class MisthalinManor(
 
     private suspend fun ProtectedAccess.lockedDoor() {
         mesbox("The door is securely locked.")
-        soundSynth("synth.locked")
+        soundSynth("synth.LOCKED")
     }
 
     private suspend fun ProtectedAccess.taytenDoor() {
@@ -310,6 +311,7 @@ internal class MisthalinManor(
         anim("seq.human_knife_chop")
         quest.setQuestStage(this, MisthalinStage.PaintingSlashed)
         mesbox("You slash open the painting, revealing a hidden storage compartment.")
+        mes(constants.dm_default)
     }
 
     private suspend fun ProtectedAccess.lightCandle(index: Int) {
@@ -364,7 +366,7 @@ internal class MisthalinManor(
         val facing = if (goingEast) constants.em_face_east else constants.em_face_west
 
         anim("seq.human_walk_crumbledwall", delay = WallClimbDelay)
-        soundSynth("synth.climb_wall", delay = WallClimbDelay)
+        soundSynth("synth.CLIMB_WALL", delay = WallClimbDelay)
         exactMove(start, end, delay1 = WallClimbDelay, delay2 = WallClimbArrival, dir = facing)
         delay(2)
     }
@@ -417,7 +419,7 @@ internal class MisthalinManor(
             return
         }
         anim(PickupTable)
-        soundSynth("synth.pick")
+        soundSynth("synth.PICK")
         objbox(key, text)
     }
 

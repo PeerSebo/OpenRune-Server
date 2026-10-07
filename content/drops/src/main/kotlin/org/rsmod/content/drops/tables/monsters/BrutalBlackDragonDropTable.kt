@@ -2,17 +2,15 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
 import org.rsmod.api.droptable.rsPlayerGuaranteedTable
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.content.drops.tables.shared.SharedDropTables
-import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.content.drops.brimstoneKeyRoll
-import org.rsmod.content.drops.hasCompletedQuest
-import org.rsmod.content.drops.isOnQuest
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.content.drops.hasCompletedQuest
+import org.rsmod.content.drops.tables.shared.SharedDropTables
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -26,7 +24,7 @@ public val brutalBlackDragonDropTable: RSDropTable<Player, DropRollItem> = RSDro
     mainTable = rsPlayerWeightedTable(total = 139) {
         name("Brutal black dragon Drops")
         10 weight "obj.brut_rune_spear" count 1 condition { player ->
-            // Drops Need Manual: Players who have not completed Barbarian training will receive the spear instead of the hasta.
+            // TODO: Players who have not completed Barbarian training will receive the spear instead of the hasta.
              true
         }
         10 weight "obj.rune_spear" count 1

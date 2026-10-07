@@ -2,15 +2,14 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.api.droptable.dropRollable
 import org.rsmod.api.droptable.rsPlayerGuaranteedTable
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.api.droptable.dropRollable
-import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.content.drops.brimstoneKeyRoll
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.api.droptable.RegisterDropTable
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -20,7 +19,7 @@ public val commanderZilyanaDropTable: RSDropTable<Player, DropRollItem> = RSDrop
     npcs = npcs("npc.godwars_saradomin_avatar"),
     guaranteed = rsPlayerGuaranteedTable {
         "obj.nex_frozen_key_saradomin" count 1 condition { player ->
-            // Drops Need Manual: Frozen key pieces are only dropped during The Frozen Door miniquest.
+            // TODO: Frozen key pieces are only dropped during The Frozen Door miniquest.
              true
         }
     },
@@ -41,7 +40,7 @@ public val commanderZilyanaDropTable: RSDropTable<Player, DropRollItem> = RSDrop
         )))
         8 weight "obj.3dose1magic" count 3
         31 weight "obj.coins" count (19500..20000) condition { player ->
-            // Drops Need Manual: Coins come from rolls on all loot tables, including the unique table, GDT and RDT.
+            // TODO: Coins come from rolls on all loot tables, including the unique table, GDT and RDT.
              true
         }
         8 weight "obj.cert_diamond" count 6

@@ -1,4 +1,3 @@
-## Sophanem Temple Bank Post Contact
 
 [[spawn]]
 npc = "npc.contact_banker_deadman"
@@ -24,7 +23,6 @@ coords = "0_43_80_49_42"
 npc = "npc.contact_sophanem_guard_male_01"
 coords = "0_43_80_46_42"
 
-## Sophanem Temple Bank Pre Contact
 
 [[spawn]]
 npc = "npc.contact_sophanem_guard_female_01"
@@ -33,6 +31,3 @@ coords = "0_43_80_15_13"
 [[spawn]]
 npc = "npc.contact_sophanem_guard_male_01"
 coords = "0_43_80_12_13"
-
-## Sophanem Temple Bank Pre Contact End
-

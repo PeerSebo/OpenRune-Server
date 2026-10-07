@@ -1,0 +1,35 @@
+[[varp]]
+id = "varp.player_admin_god_mode"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.player_admin_max_hit"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.player_admin_one_hit_kill"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.player_admin_infinite_runes"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.player_admin_no_clip"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.player_component_click_debug"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"

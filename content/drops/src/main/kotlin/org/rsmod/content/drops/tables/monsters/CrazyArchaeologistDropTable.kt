@@ -2,19 +2,15 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.api.droptable.rsPlayerPrerollTable
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.api.droptable.rsPlayerPrerollTable
-import org.rsmod.api.droptable.dropRollable
-import org.rsmod.content.drops.tables.shared.SharedDropTables
-import org.rsmod.api.droptable.DropRollItem
-import org.rsmod.content.drops.shouldDropLootingBag
 import org.rsmod.content.drops.brimstoneKeyRoll
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.api.droptable.wearingRingOfWealth
-import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.content.drops.shouldDropLootingBag
+import org.rsmod.content.drops.tables.shared.SharedDropTables
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -44,7 +40,7 @@ public val crazyArchaeologistDropTable: RSDropTable<Player, DropRollItem> = RSDr
         6 weight "obj.cert_white_berries" count 10
         6 weight "obj.cert_silver_ore" count 40
         5 weight "obj.cert_uncut_emerald" count 6 condition { player ->
-            // Drops Need Manual: 6 uncut emeralds are dropped along with 4 uncut sapphires.
+            // TODO: 6 uncut emeralds are dropped along with 4 uncut sapphires.
              true
         }
         5 weight "obj.cert_uncut_sapphire" count 4

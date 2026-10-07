@@ -6,24 +6,22 @@ import dev.openrune.definition.opcode.OpcodeList
 import dev.openrune.definition.opcode.OpcodeType
 import dev.openrune.definition.opcode.OpcodeType.BOOLEAN.enumType
 import dev.openrune.definition.opcode.impl.DefinitionOpcodeEntityOps
-import dev.openrune.definition.opcode.impl.DefinitionOpcodeParams
 import dev.openrune.definition.opcode.impl.DefinitionOpcodeTransforms
 import dev.openrune.definition.type.NpcType
-import dev.openrune.revision
 import dev.openrune.rscm.RSCM.asRSCM
+import dev.openrune.tools.SlayerSuperiorMonsterLoader
 import dev.openrune.types.MoveRestrict
 import dev.openrune.types.NpcMode
 import dev.openrune.types.NpcServerType
 import dev.openrune.util.BlockWalk
 import dev.openrune.util.Coord
 import dev.openrune.util.DefinitionOpcodeParamMap
-import dev.openrune.tools.SlayerSuperiorMonsterLoader
 import dev.openrune.util.NpcPatrol
 import dev.openrune.util.NpcPatrolWaypoint
 import org.rsmod.game.map.Direction
 
 class NpcServerCodec(
-    val rev : Int,
+    val rev: Int,
     val npcs: Map<Int, NpcType>? = null,
     val custom: Map<Int, NpcServerType>? = emptyMap(),
     val examines: Map<Int, String> = emptyMap(),
@@ -32,10 +30,11 @@ class NpcServerCodec(
     val slayerSuperiorByNpcId: Map<Int, SlayerSuperiorMonsterLoader.SuperiorNpcParam> = emptyMap(),
 ) : OpcodeDefinitionCodec<NpcServerType>() {
 
-    private val slayerTaskParamId = "param.slayer_task_id".asRSCM()
-    private val slayerTaskTipParamId = "param.slayer_task_tip".asRSCM()
-    private val slayerSuperiorParamId = "param.slayer_superior".asRSCM()
-    private val slayerSuperiorWildernessOnlyParamId = "param.available_in_wilderness".asRSCM()
+    // Only packing needs these symbols; decoding must work with isolated gameval mappings.
+    private val slayerTaskParamId by lazy { "param.slayer_task_id".asRSCM() }
+    private val slayerTaskTipParamId by lazy { "param.slayer_task_tip".asRSCM() }
+    private val slayerSuperiorParamId by lazy { "param.slayer_superior".asRSCM() }
+    private val slayerSuperiorWildernessOnlyParamId by lazy { "param.available_in_wilderness".asRSCM() }
 
     override val definitionCodec =
         OpcodeList<NpcServerType>().apply {
@@ -163,10 +162,25 @@ class NpcServerCodec(
         magic = obj.magic
         paramsRaw = obj.params?.toMutableMap() ?: mutableMapOf()
 
+        // Npc examine text is server-side only in OSRS - it is never present in the npc cache
+        // config - so `.data/raw-cache/examines/npcs.csv` is its only source. This assignment used
+        // to live inside the `customData != null` branch below, which meant the CSV reached only
+        // the ~1,000 npcs that happen to carry a toml override for unrelated reasons; every other
+        // npc packed with `examine=""` and examining it printed an empty line. Measured before the
+        // fix: 951 of 16,349 packed npcs had examine text while the CSV named 12,694 of them.
+        examine = examines[id] ?: ""
+
         val customData = custom?.get(id)
 
         if (customData != null) {
             customData.paramsRaw?.forEach { (paramId, value) -> paramsRaw?.set(paramId, value) }
+
+            // `name` normally comes straight from the cache, but three rev-240 npcs decode with a
+            // corrupted name because NPCCodec cannot read opcode 252 (see docs/quirks.md). Allowing
+            // a toml override is the only repair available without patching the external codec.
+            // Guarded on isNotEmpty() so the 452 existing entries, which never set a name, are
+            // unaffected.
+            if (customData.name.isNotEmpty()) name = customData.name
 
             if (customData.category != -1) category = customData.category
             timer = customData.timer
@@ -179,7 +193,7 @@ class NpcServerCodec(
             defaultMode = customData.defaultMode
             blockWalk = customData.blockWalk
             respawnRate = customData.respawnRate
-            examine = customData.examine.takeIf { it.isNotEmpty() } ?: examines[obj.id] ?: ""
+            examine = customData.examine.takeIf { it.isNotEmpty() } ?: examine
             maxRange = customData.maxRange
             wanderRange = customData.wanderRange
             attackRange = customData.attackRange

@@ -30,12 +30,8 @@ class PlayerProtectedAccessTest {
             assertTrue(launched)
             assertNotNull(activeCoroutine)
             assertEquals(true, activeCoroutine?.isSuspended)
-            // Active coroutine is suspended for the player, so their protected access should be
-            // restricted.
             assertTrue(isAccessProtected)
 
-            // Add a delay to player so the lambda block never resumes back to the suspension point,
-            // as protected-access is now restricted. (from said delay)
             delay()
             check(activeCoroutine?.isSuspended == true)
 

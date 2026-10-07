@@ -1,28 +1,10 @@
 package org.rsmod.api.combat.commons
 
-import org.rsmod.api.combat.commons.styles.AttackStyle
-import org.rsmod.api.combat.commons.types.AttackType
 import org.rsmod.api.utils.vars.VarEnumDelegate
 
 /**
- * Represents the selectable stances available in the combat tab.
- *
- * ### Clarification
- * This is **not** the same as [AttackStyle]. Attack styles include `Accurate`, `Aggressive`,
- * `Defensive`, and `Controlled`.
- *
- * This distinction becomes necessary when a weapon type has repeated attack styles in the combat
- * tab selection.
- *
- * For example, in the godsword's combat tab, the second and third `attackStyle` selections both
- * represent `Aggressive`, even though they are separate stance selections with different attack
- * animations and sound effects (`Slash` and `Crush` types, respectively). To avoid confusion, we
- * decouple the selection variable from [AttackStyle].
- *
- * Likewise, this **cannot** be represented by [AttackType]. Using the `Unarmed` weapon type as an
- * example, all its selections are `Crush` types. However, these selections also differ in
- * animations and sound effects, making it necessary to decouple the selection variable from
- * [AttackType].
+ * Stances identify combat-tab selections; several selections can share an AttackStyle or
+ * AttackType while using different animations.
  */
 public enum class CombatStance(override val varValue: Int) : VarEnumDelegate {
     Stance1(varValue = 0),

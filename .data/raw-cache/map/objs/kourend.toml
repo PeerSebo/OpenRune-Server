@@ -170,7 +170,6 @@ coords = "0_21_56_25_51"
 obj = "obj.strawberry"
 coords = "0_21_54_32_47"
 
-## Arceuus
 
 [[spawn]]
 obj = "obj.bones"
@@ -192,7 +191,6 @@ coords = "0_27_60_36_23"
 obj = "obj.skull"
 coords = "0_24_58_55_48"
 
-## Farming Guild
 
 [[spawn]]
 obj = "obj.logs"
@@ -206,7 +204,6 @@ coords = "0_19_58_45_28"
 obj = "obj.logs"
 coords = "0_19_58_46_30"
 
-## Farming Guild Interior
 
 [[spawn]]
 obj = "obj.bucket_empty"
@@ -216,7 +213,6 @@ coords = "0_19_58_35_24"
 obj = "obj.spade"
 coords = "0_19_58_35_23"
 
-## Giant Pit
 
 [[spawn]]
 obj = "obj.big_bones"
@@ -258,7 +254,6 @@ coords = "0_22_56_41_22"
 obj = "obj.bones"
 coords = "0_22_56_41_37"
 
-## Hosidius
 
 [[spawn]]
 obj = "obj.beer"
@@ -316,13 +311,11 @@ coords = "0_27_56_14_20"
 obj = "obj.vial_empty"
 coords = "0_27_56_39_5"
 
-## Jennifer
 
 [[spawn]]
 obj = "obj.tinderbox"
 coords = "0_23_56_49_7"
 
-## Jennifer's General Supplies
 
 [[spawn]]
 obj = "obj.bucket_empty"
@@ -332,7 +325,6 @@ coords = "0_23_56_49_3"
 obj = "obj.pot_empty"
 coords = "0_23_56_45_3"
 
-## Kebos Interior
 
 [[spawn]]
 obj = "obj.horsey_grey"
@@ -370,7 +362,6 @@ coords = "1_19_57_28_36"
 obj = "obj.tinderbox"
 coords = "0_19_57_25_55"
 
-## Kebos Lowlands
 
 [[spawn]]
 obj = "obj.woodplank"
@@ -380,7 +371,6 @@ coords = "0_18_57_50_1"
 obj = "obj.woodplank"
 coords = "0_18_57_51_4"
 
-## Kourend Battlefront
 
 [[spawn]]
 obj = "obj.bones_burnt"
@@ -538,13 +528,11 @@ coords = "0_21_58_39_54"
 obj = "obj.raw_shrimp"
 coords = "0_21_58_32_37"
 
-## Kourend Castle
 
 [[spawn]]
 obj = "obj.slayer_facemask"
 coords = "2_25_57_17_32"
 
-## Kourend Houses
 
 [[spawn]]
 obj = "obj.broken_glass"
@@ -558,7 +546,6 @@ coords = "2_26_57_18_29"
 obj = "obj.grain"
 coords = "2_26_57_19_30"
 
-## Lovakengj
 
 [[spawn]]
 obj = "obj.bucket_empty"
@@ -568,13 +555,11 @@ coords = "1_23_60_14_21"
 obj = "obj.rope"
 coords = "1_23_60_21_19"
 
-## Mahogany Homes
 
 [[spawn]]
 obj = "obj.bucket_empty"
 coords = "1_27_56_56_6"
 
-## Mess
 
 [[spawn]]
 obj = "obj.unlit_candle"
@@ -584,7 +569,6 @@ coords = "1_25_56_35_37"
 obj = "obj.unlit_candle"
 coords = "1_25_56_39_38"
 
-## Mess Hall Kitchen
 
 [[spawn]]
 obj = "obj.beer_glass"
@@ -594,7 +578,6 @@ coords = "0_25_56_43_44"
 obj = "obj.cup_empty"
 coords = "0_25_56_43_41"
 
-## Npc
 
 [[spawn]]
 obj = "obj.iron_pickaxe"
@@ -604,7 +587,6 @@ coords = "0_23_60_27_20"
 obj = "obj.iron_pickaxe"
 coords = "0_23_60_9_28"
 
-## Shayzien
 
 [[spawn]]
 obj = "obj.beer"
@@ -614,7 +596,6 @@ coords = "0_24_56_24_2"
 obj = "obj.skull"
 coords = "0_22_55_61_50"
 
-## Shayzien Encampment
 
 [[spawn]]
 obj = "obj.beer_glass"
@@ -665,7 +646,6 @@ coords = "0_23_56_42_29"
 obj = "obj.spade"
 coords = "0_23_57_28_7"
 
-## Shayzien Interiors Cobble
 
 [[spawn]]
 obj = "obj.blackwizhat"
@@ -707,13 +687,11 @@ coords = "0_24_55_6_24"
 obj = "obj.thread"
 coords = "0_23_56_39_7"
 
-## Shayzien Shayzia Ruin
 
 [[spawn]]
 obj = "obj.iron_warhammer"
 coords = "0_24_56_54_5"
 
-## South Quidamortem
 
 [[spawn]]
 obj = "obj.bread"
@@ -727,7 +705,6 @@ coords = "0_20_54_32_15"
 obj = "obj.wooden_shield"
 coords = "0_20_54_33_17"
 
-## Woodcutting Guild
 
 [[spawn]]
 obj = "obj.cup_of_tea"
@@ -737,7 +714,6 @@ coords = "0_25_54_21_45"
 obj = "obj.triangle_sandwich"
 coords = "0_25_54_20_45"
 
-## Xeric's Lookout
 
 [[spawn]]
 obj = "obj.broken_glass"
@@ -747,13 +723,11 @@ coords = "2_24_55_55_8"
 obj = "obj.broken_glass"
 coords = "2_24_55_58_10"
 
-## Zeah Snowy Northern Region
 
 [[spawn]]
 obj = "obj.hamlet_journal"
 coords = "0_26_61_27_35"
 
-## Zeah Woodland Areas
 
 [[spawn]]
 obj = "obj.beer"
@@ -1291,6 +1265,3 @@ coords = "0_25_55_57_49"
 [[spawn]]
 obj = "obj.unlit_candle"
 coords = "0_28_56_2_29"
-
-## Zeah Woodland Areas End
-

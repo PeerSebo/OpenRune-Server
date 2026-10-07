@@ -51,17 +51,47 @@ public class HeldUInteractions @Inject constructor(private val eventBus: EventBu
         targetItemServerType: ItemServerType,
         targetSlot: Int,
     ) {
-        val firstCombination =
-            opTrigger(selectedItemServerType, selectedSlot, targetItemServerType, targetSlot)
-        if (firstCombination != null) {
-            eventBus.publish(this, firstCombination)
-            return
-        }
+        // Try both operand orders at each specificity tier before falling back, so a wildcard
+        // cannot beat a reversed exact pair.
+        val combination =
+            eitherOrientation(
+                selectedItemServerType,
+                selectedSlot,
+                targetItemServerType,
+                targetSlot,
+                HeldUEvents::Type,
+            )
+                ?: eitherOrientation(
+                    selectedItemServerType,
+                    selectedSlot,
+                    targetItemServerType,
+                    targetSlot,
+                    HeldUContentEvents::Type,
+                )
+                ?: eitherOrientation(
+                    selectedItemServerType,
+                    selectedSlot,
+                    targetItemServerType,
+                    targetSlot,
+                    HeldUContentEvents::Content,
+                )
+                ?: eitherOrientation(
+                    selectedItemServerType,
+                    selectedSlot,
+                    targetItemServerType,
+                    targetSlot,
+                    HeldUDefaultEvents::Type,
+                )
+                ?: eitherOrientation(
+                    selectedItemServerType,
+                    selectedSlot,
+                    targetItemServerType,
+                    targetSlot,
+                    HeldUDefaultEvents::Content,
+                )
 
-        val secondCombination =
-            opTrigger(targetItemServerType, targetSlot, selectedItemServerType, selectedSlot)
-        if (secondCombination != null) {
-            eventBus.publish(this, secondCombination)
+        if (combination != null) {
+            eventBus.publish(this, combination)
             return
         }
 
@@ -72,35 +102,28 @@ public class HeldUInteractions @Inject constructor(private val eventBus: EventBu
         }
     }
 
-    private fun opTrigger(
+    /**
+     * Resolves a single registration tier, trying `first on second` and then `second on first`.
+     *
+     * The event is always built in the orientation that actually matched, so the objs a script
+     * receives still line up with the order it registered them in - the guarantee documented on
+     * `ScriptContext.onOpHeldU`.
+     */
+    private fun eitherOrientation(
         first: ItemServerType,
         firstSlot: Int,
         second: ItemServerType,
         secondSlot: Int,
+        event: (ItemServerType, Int, ItemServerType, Int) -> SuspendEvent<ProtectedAccess>,
     ): SuspendEvent<ProtectedAccess>? {
-        val typeScript = HeldUEvents.Type(first, firstSlot, second, secondSlot)
-        if (eventBus.contains(typeScript::class.java, typeScript.id)) {
-            return typeScript
+        val forward = event(first, firstSlot, second, secondSlot)
+        if (eventBus.contains(forward::class.java, forward.id)) {
+            return forward
         }
 
-        val contentTypeScript = HeldUContentEvents.Type(first, firstSlot, second, secondSlot)
-        if (eventBus.contains(contentTypeScript::class.java, contentTypeScript.id)) {
-            return contentTypeScript
-        }
-
-        val contentScript = HeldUContentEvents.Content(first, firstSlot, second, secondSlot)
-        if (eventBus.contains(contentScript::class.java, contentScript.id)) {
-            return contentScript
-        }
-
-        val defaultTypeScript = HeldUDefaultEvents.Type(first, firstSlot, second, secondSlot)
-        if (eventBus.contains(defaultTypeScript::class.java, defaultTypeScript.id)) {
-            return defaultTypeScript
-        }
-
-        val defaultContentScript = HeldUDefaultEvents.Content(first, firstSlot, second, secondSlot)
-        if (eventBus.contains(defaultContentScript::class.java, defaultContentScript.id)) {
-            return defaultContentScript
+        val reversed = event(second, secondSlot, first, firstSlot)
+        if (eventBus.contains(reversed::class.java, reversed.id)) {
+            return reversed
         }
 
         return null

@@ -3,7 +3,6 @@ package org.rsmod.content.other.pets.dialogue
 import dev.openrune.types.ItemServerType
 import jakarta.inject.Inject
 import org.rsmod.api.player.protect.ProtectedAccess
-import org.rsmod.api.table.fishing.FishingSpotRow
 import org.rsmod.content.other.pets.onPetOp
 import org.rsmod.content.other.pets.onPetOpU
 import org.rsmod.game.entity.Npc
@@ -93,8 +92,7 @@ class SoupDialogue @Inject constructor() : PluginScript() {
             obj.name in VEGETABLES
 
     private fun rawFish(): Set<String> =
-        cachedRawFish ?: FishingSpotRow.all()
-            .mapTo(hashSetOf()) { it.fish.internalName }.also { cachedRawFish = it }
+        cachedRawFish ?: rawFishingItems().also { cachedRawFish = it }
 
     private companion object {
         const val NPC = "npc.skillpet_sailing"

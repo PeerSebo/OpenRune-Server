@@ -1,10 +1,10 @@
 package org.rsmod.api.account.autosave
 
 import com.github.michaelbull.logging.InlineLogger
+import dev.openrune.types.InvScope
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import java.util.concurrent.ConcurrentHashMap
-import dev.openrune.types.InvScope
 import org.rsmod.api.account.AccountManager
 import org.rsmod.api.account.saver.request.AccountSaveResponse
 import org.rsmod.api.attr.AttributeKey
@@ -12,10 +12,6 @@ import org.rsmod.api.attr.AttributeMap
 import org.rsmod.game.entity.Player
 import org.rsmod.game.entity.PlayerPersistenceHints
 
-/**
- * Queues background character saves (same pipeline as logout) on a timer and when important state
- * changes. Coalesces overlapping requests per player while a save is already in flight.
- */
 @Singleton
 public class PlayerAutosaveOrchestrator
 @Inject
@@ -26,6 +22,12 @@ constructor(
 
     private val queuedSave: MutableSet<Player> =
         ConcurrentHashMap.newKeySet()
+
+    private val dirtyPlayers: MutableSet<Player> = ConcurrentHashMap.newKeySet()
+    private val retryAfterCycle = ConcurrentHashMap<Player, Int>()
+    private val preparingPlayer = ThreadLocal<Player?>()
+
+    @Volatile private var saveCycle: Int = 0
 
     private var periodicCounter: Int = PERIODIC_INTERVAL_CYCLES
 
@@ -41,22 +43,23 @@ constructor(
      * report [org.rsmod.game.inv.Inventory.hasModifiedSlots]).
      */
     public fun processEndOfTick(players: Iterable<Player>) {
-        for (player in players) {
-            if (!player.canProcess) {
-                continue
-            }
+        saveCycle++
+        val active = players.filter { it.canProcess && it.persistenceSaveEligible() }.toSet()
+        dirtyPlayers.retainAll(active)
+        retryAfterCycle.keys.retainAll(active)
+        for (player in active) {
             if (player.invMap.values.any { it.type.scope == InvScope.Perm && it.hasModifiedSlots() }) {
-                onPersistenceRelevantChange(player)
+                dirtyPlayers.add(player)
             }
         }
         periodicCounter--
         if (periodicCounter <= 0) {
             periodicCounter = PERIODIC_INTERVAL_CYCLES
-            for (player in players) {
-                if (player.canProcess && player.persistenceSaveEligible()) {
-                    requestBackgroundSave(player)
-                }
-            }
+            dirtyPlayers.addAll(active)
+        }
+        for (player in active) {
+            if (player in dirtyPlayers && player !in queuedSave &&
+                saveCycle >= retryAfterCycle.getOrDefault(player, 0)) requestBackgroundSave(player)
         }
     }
 
@@ -66,10 +69,10 @@ constructor(
     }
 
     private fun onPersistenceRelevantChange(player: Player) {
-        if (!player.persistenceSaveEligible()) {
+        if (!player.persistenceSaveEligible() || preparingPlayer.get() === player) {
             return
         }
-        requestBackgroundSave(player)
+        dirtyPlayers.add(player)
     }
 
     private fun requestBackgroundSave(player: Player) {
@@ -79,20 +82,42 @@ constructor(
         if (!queuedSave.add(player)) {
             return
         }
-        accountManager.save(player) { response ->
-            queuedSave.remove(player)
-            when (response) {
-                is AccountSaveResponse.Success -> {}
-                is AccountSaveResponse.ExcessiveRetries ->
-                    logger.error { "Background autosave failed after retries for ${player.displayName}" }
-                is AccountSaveResponse.InternalShutdownError ->
-                    logger.error { "Background autosave shutdown error for ${player.displayName}" }
+        dirtyPlayers.remove(player)
+        retryAfterCycle.remove(player)
+        preparingPlayer.set(player)
+        try {
+            accountManager.save(player) { response ->
+                if (response is AccountSaveResponse.Failure) scheduleRetry(player)
+                queuedSave.remove(player)
+                when (response) {
+                    is AccountSaveResponse.Success, is AccountSaveResponse.QueueFull -> {}
+                    is AccountSaveResponse.ExcessiveRetries ->
+                        logger.error { "Background autosave failed after retries for character ${player.characterId}" }
+                    is AccountSaveResponse.RecoveryFailure ->
+                        logger.error { "Background autosave and local recovery failed for character ${player.characterId}" }
+                    is AccountSaveResponse.InternalShutdownError ->
+                        logger.error { "Background autosave shutdown error for character ${player.characterId}" }
+                    is AccountSaveResponse.PreparationFailure ->
+                        logger.error { "Background autosave preparation failed for character ${player.characterId}" }
+                }
             }
+        } catch (failure: Exception) {
+            scheduleRetry(player)
+            queuedSave.remove(player)
+            logger.error(failure) { "Could not queue background save for character ${player.characterId}" }
+        } finally {
+            preparingPlayer.remove()
         }
+    }
+
+    private fun scheduleRetry(player: Player) {
+        retryAfterCycle[player] = saveCycle + FAILED_SAVE_RETRY_CYCLES
+        dirtyPlayers.add(player)
     }
 
     private companion object {
         private const val PERIODIC_INTERVAL_CYCLES: Int = 500
+        private const val FAILED_SAVE_RETRY_CYCLES: Int = 50
     }
 }
 

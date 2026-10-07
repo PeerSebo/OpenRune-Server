@@ -26,8 +26,8 @@ import org.rsmod.game.entity.Player
 import org.rsmod.game.inv.InvObj
 import org.rsmod.game.type.getInvObj
 
-internal fun ProtectedAccess.attackRange(style: AttackStyle?): Int =
-    if (autocastEnabled && autocastSpell > 0) {
+internal fun ProtectedAccess.attackRange(style: AttackStyle?, spell: MagicSpell?): Int =
+    if (spell != null) {
         MAGIC_ATTACK_RANGE
     } else {
         weaponAttackRange(style)

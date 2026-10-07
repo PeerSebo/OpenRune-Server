@@ -37,7 +37,7 @@ kotlin {
 
 tasks.withType<KotlinJvmCompile>().configureEach {
     if (project.isUnderTools) {
-        // Kotlin emits JVM 17; Java extension stays 21 so project deps (e.g. :or-cache) resolve.
+// Kotlin targets JVM 17; Java stays 21 so project dependencies resolve.
         jvmTargetValidationMode.set(JvmTargetValidationMode.IGNORE)
     }
 }

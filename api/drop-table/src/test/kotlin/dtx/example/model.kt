@@ -15,7 +15,6 @@ sealed interface Item {
         operator fun invoke(itemId: String, min: Int, max: Int): Item = RandAmtItem(itemId, min, max)
         operator fun invoke(itemId: String, range: RandomIntRange): Item = RandAmtItem(itemId, range.start, range.endInclusive)
         operator fun invoke(itemId: String, range: IntRange): Item = Item(itemId, range.toRandomIntRange())
-
     }
 
     fun copyItem() = if (this is ConcreteItem) {
@@ -32,9 +31,9 @@ data class RandAmtItem(
     override val itemId: String,
     internal val minAmount: Int,
     internal val maxAmount: Int,
-): Item {
+) : Item {
 
-    internal val range = (minAmount ..< maxAmount).toRandomIntRange()
+    internal val range = (minAmount..<maxAmount).toRandomIntRange()
 
     override val itemAmount: Int get() = range.random()
 }
@@ -42,10 +41,10 @@ data class RandAmtItem(
 data class ConcreteItem(
     override val itemId: String,
     override val itemAmount: Int = 1
-): Item
+) : Item
 
 enum class Gender {
-    PlatelegEnjoyer, PlateskirtEnthusiast;
+    PlatelegEnjoyer, PlateskirtEnthusiast
 }
 
  sealed interface QuestStatus {
@@ -160,6 +159,5 @@ fun Player.sendMessage(message: String) {
         println("[to: $username]: $message")
     }
 }
-
 
 val examplePlayer = Player("player")

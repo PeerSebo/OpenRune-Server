@@ -10,12 +10,14 @@ import jakarta.inject.Inject
 import org.rsmod.api.player.output.ClientScripts.interfaceInvInit
 import org.rsmod.api.player.output.ClientScripts.shopMainInit
 import org.rsmod.api.player.startInvTransmit
+import org.rsmod.api.player.stopInvTransmit
 import org.rsmod.api.player.ui.ifOpenMainSidePair
 import org.rsmod.api.player.ui.ifSetEvents
 import org.rsmod.api.shops.config.ShopParams
 import org.rsmod.events.EventBus
 import org.rsmod.game.entity.Npc
 import org.rsmod.game.entity.Player
+import org.rsmod.game.inv.InvObj
 import org.rsmod.game.inv.Inventory
 import org.rsmod.game.shop.Shop
 
@@ -25,26 +27,33 @@ public class Shops @Inject constructor(private val eventBus: EventBus) {
     public fun open(
         player: Player,
         activeNpc: Npc,
-        currency: String = "currency.standard_gp"
+        currency: String = "currency.standard_gp",
+        infiniteStock: Boolean = false,
+        allowSelling: Boolean = true,
     ) {
-        val buyPercentage = activeNpc.type.param(ShopParams.shop_buy_percentage) / 10.0
-        val sellPercentage = activeNpc.type.param(ShopParams.shop_sell_percentage) / 10.0
-        val changePercentage = activeNpc.type.param(ShopParams.shop_change_percentage) / 10.0
-
         val inventoryID = activeNpc.paramOrNull(ShopParams.shop_invetnory) ?: return
-        val title = activeNpc.paramOrNull(ShopParams.shop_name) ?: "${activeNpc.name} Shop"
-
-        open(
-            player = player,
-            title = title,
-            shopInv = RSCM.getReverseMapping(RSCMType.INV,inventoryID),
-            buyPercentage = buyPercentage,
-            sellPercentage = sellPercentage,
-            changePercentage = changePercentage,
-            currency = currency
+        openConfigured(
+            player, activeNpc, RSCM.getReverseMapping(RSCMType.INV, inventoryID), currency,
+            infiniteStock = infiniteStock,
+            allowSelling = allowSelling,
         )
     }
 
+    public fun openConfigured(
+        player: Player,
+        activeNpc: Npc,
+        shopInv: String,
+        currency: String = "currency.standard_gp",
+        infiniteStock: Boolean = false,
+        allowSelling: Boolean = true,
+    ) {
+        val config = checkNotNull(ServerCacheManager.getInventory(shopInv.asRSCM(RSCMType.INV))) {
+            "Missing shop inventory: $shopInv"
+        }
+        val title = activeNpc.paramOrNull(ShopParams.shop_name)?.takeIf(String::isNotBlank)
+            ?: config.name.takeIf(String::isNotBlank) ?: "${activeNpc.name} Shop"
+        open(player, activeNpc, title, shopInv, currency, infiniteStock = infiniteStock, allowSelling = allowSelling)
+    }
 
     public fun open(
         player: Player,
@@ -53,10 +62,21 @@ public class Shops @Inject constructor(private val eventBus: EventBus) {
         shopInv: String,
         currency: String = "currency.standard_gp",
         subtext: String = DEFAULT_SUBTEXT,
+        infiniteStock: Boolean = false,
+        allowSelling: Boolean = true,
     ) {
-        val buyPercentage = activeNpc.type.param(ShopParams.shop_buy_percentage) / 10.0
-        val sellPercentage = activeNpc.type.param(ShopParams.shop_sell_percentage) / 10.0
-        val changePercentage = activeNpc.type.param(ShopParams.shop_change_percentage) / 10.0
+        val config = checkNotNull(ServerCacheManager.getInventory(shopInv.asRSCM(RSCMType.INV))) {
+            "Missing shop inventory: $shopInv"
+        }
+        val buyPercentage = (activeNpc.paramOrNull(ShopParams.shop_buy_percentage)
+            ?: config.buyMultiplier.takeIf { it >= 0 }
+            ?: activeNpc.type.param(ShopParams.shop_buy_percentage)) / 10.0
+        val sellPercentage = (activeNpc.paramOrNull(ShopParams.shop_sell_percentage)
+            ?: config.sellMultiplier.takeIf { it >= 0 }
+            ?: activeNpc.type.param(ShopParams.shop_sell_percentage)) / 10.0
+        val changePercentage = (activeNpc.paramOrNull(ShopParams.shop_change_percentage)
+            ?: config.delta.takeIf { it >= 0 }
+            ?: activeNpc.type.param(ShopParams.shop_change_percentage)) / 10.0
         open(
             player = player,
             title = title,
@@ -66,6 +86,8 @@ public class Shops @Inject constructor(private val eventBus: EventBus) {
             changePercentage = changePercentage,
             currency = currency,
             subtext = subtext,
+            infiniteStock = infiniteStock,
+            allowSelling = allowSelling,
         )
     }
 
@@ -78,6 +100,8 @@ public class Shops @Inject constructor(private val eventBus: EventBus) {
         changePercentage: Double,
         currency: String = "currency.standard_gp",
         subtext: String = DEFAULT_SUBTEXT,
+        infiniteStock: Boolean = false,
+        allowSelling: Boolean = true,
     ) {
         val inv = shopInv.toInventory(player)
         open(
@@ -90,6 +114,8 @@ public class Shops @Inject constructor(private val eventBus: EventBus) {
             sellPercentage = sellPercentage,
             changePercentage = changePercentage,
             subtext = subtext,
+            infiniteStock = infiniteStock,
+            allowSelling = allowSelling,
         )
     }
 
@@ -103,11 +129,16 @@ public class Shops @Inject constructor(private val eventBus: EventBus) {
         sellPercentage: Double,
         changePercentage: Double,
         subtext: String,
+        infiniteStock: Boolean = false,
+        allowSelling: Boolean = true,
+        unsellableItems: Set<Int> = emptySet(),
+        purchaseExtras: Map<Int, List<InvObj>> = emptyMap(),
+        sellableItems: Set<Int> = emptySet(),
     ) {
-        player.openedShop = Shop(shopInv, currency, buyPercentage, sellPercentage, changePercentage)
-
-        player.startInvTransmit(shopInv)
-        player.startInvTransmit(sideInv)
+        player.openedShop?.let { previous ->
+            player.stopInvTransmit(previous.inv)
+            player.openedShop = null
+        }
         player.ifOpenMainSidePair(
             main = "interface.shopmain",
             side = "interface.shopside",
@@ -115,6 +146,10 @@ public class Shops @Inject constructor(private val eventBus: EventBus) {
             transparency = -1,
             eventBus = eventBus,
         )
+        player.openedShop = Shop(shopInv, currency, buyPercentage, sellPercentage, changePercentage, infiniteStock, allowSelling, unsellableItems,
+            purchaseExtras.mapValues { (_, extras) -> extras.toList() }, sellableItems.toSet())
+        player.startInvTransmit(shopInv)
+        player.startInvTransmit(sideInv)
         shopMainInit(player, shopInv.type, title)
 
         player.ifSetEvents(
@@ -136,10 +171,10 @@ public class Shops @Inject constructor(private val eventBus: EventBus) {
             objRowCount = 4,
             objColCount = 7,
             op1 = "Value<col=ff9040>",
-            op2 = "Sell 1<col=ff9040>",
-            op3 = "Sell 5<col=ff9040>",
-            op4 = "Sell 10<col=ff9040>",
-            op5 = "Sell 50<col=ff9040>",
+            op2 = "Sell 1<col=ff9040>".takeIf { allowSelling },
+            op3 = "Sell 5<col=ff9040>".takeIf { allowSelling },
+            op4 = "Sell 10<col=ff9040>".takeIf { allowSelling },
+            op5 = "Sell 50<col=ff9040>".takeIf { allowSelling },
         )
         player.ifSetEvents(
             "component.shopside:items",

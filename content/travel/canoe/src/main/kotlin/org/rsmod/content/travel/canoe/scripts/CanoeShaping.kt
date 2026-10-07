@@ -81,10 +81,7 @@ constructor(
         ifClose()
 
         if (player.woodcuttingLvl < lcParam(ServerCacheManager.getObject(canoe.loc.asRSCM(RSCMType.LOC))!!, params.levelrequire)) {
-            // Cs2 removes the "Make" option on canoes when the player does not meet their level
-            // requirement. No need for a message as this is not meant to be possible.
-            // Could in theory test what is _meant_ to happen by faking an if_button packet
-            // and seeing if a message is sent, but it's a low-priority addition either way.
+            // CS2 removes Make when the level requirement is unmet.
             return
         }
 

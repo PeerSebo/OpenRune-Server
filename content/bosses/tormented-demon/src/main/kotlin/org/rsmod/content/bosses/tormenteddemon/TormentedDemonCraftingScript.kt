@@ -1,11 +1,18 @@
 package org.rsmod.content.bosses.tormenteddemon
 
+import dev.openrune.rscm.RSCM.asRSCM
+import dev.openrune.rscm.RSCMType
+import org.rsmod.api.invtx.invTransaction
+import org.rsmod.api.invtx.select
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.player.stat.craftingLvl
 import org.rsmod.api.player.stat.fletchingLvl
 import org.rsmod.api.player.stat.smithingLvl
 import org.rsmod.api.script.onOpHeldU
 import org.rsmod.api.script.onOpLocCategoryU
+import org.rsmod.game.inv.InvObj
+import org.rsmod.objtx.Transaction
+import org.rsmod.objtx.TransactionInventory
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
@@ -18,8 +25,7 @@ class TormentedDemonCraftingScript : PluginScript() {
     }
 
     private fun ProtectedAccess.combineBurningClaws() {
-        if (invDel(inv, "obj.bone_claw", 2).success) {
-            invAdd(inv, "obj.bone_claws", 1)
+        if (createWeapon("obj.bone_claws", "obj.bone_claw" to 2)) {
             mes("You bring the two claws together and combine them.")
         }
     }
@@ -53,11 +59,10 @@ class TormentedDemonCraftingScript : PluginScript() {
         mesbox("You set to work fusing the synapse into Arclight's blade...")
         delay(3)
         anim("seq.human_smithing")
-        soundSynth(3771)
+        soundSynth("synth.ANVIL02")
         delay(4)
 
-        if (invDel(inv, "obj.tormented_synapse", 1).success && invDel(inv, "obj.arclight", 1).success) {
-            invAdd(inv, "obj.emberlight", 1)
+        if (createWeapon("obj.emberlight", "obj.tormented_synapse" to 1, "obj.arclight" to 1)) {
             statAdvance("stat.smithing", 730.0)
             objbox("obj.emberlight", "The synapse fuses with the blade, and Emberlight is complete.")
         }
@@ -75,15 +80,16 @@ class TormentedDemonCraftingScript : PluginScript() {
         mesbox("You set to work fusing the synapse into the battlestaff...")
         delay(3)
         anim("seq.human_smithing")
-        soundSynth(3771)
+        soundSynth("synth.ANVIL02")
         delay(4)
 
-        val consumed =
-            invDel(inv, "obj.tormented_synapse", 1).success &&
-                invDel(inv, "obj.iron_bar", 1).success &&
-                invDel(inv, "obj.battlestaff", 1).success
+        val consumed = createWeapon(
+            "obj.purging_staff",
+            "obj.tormented_synapse" to 1,
+            "obj.iron_bar" to 1,
+            "obj.battlestaff" to 1,
+        )
         if (consumed) {
-            invAdd(inv, "obj.purging_staff", 1)
             statAdvance("stat.crafting", 730.0)
             statAdvance("stat.smithing", 13.0)
             objbox("obj.purging_staff", "The synapse fuses with the staff, and it starts to purge.")
@@ -102,20 +108,44 @@ class TormentedDemonCraftingScript : PluginScript() {
         mesbox("You bind the synapse to the bow, and it begins to smoulder...")
         delay(3)
         anim("seq.stringing_magic_longbow")
-        soundSynth(3771)
+        soundSynth("synth.ANVIL02")
         delay(2)
 
-        if (invDel(inv, "obj.tormented_synapse", 1).success &&
-            invDel(inv, "obj.unstrung_magic_longbow", 1).success
-        ) {
-            invAdd(inv, "obj.scorching_bow", 1)
+        if (createWeapon("obj.scorching_bow", "obj.tormented_synapse" to 1, "obj.unstrung_magic_longbow" to 1)) {
             statAdvance("stat.fletching", 730.0)
             objbox("obj.scorching_bow", "The synapse fuses with the bow, and it starts to smoulder.")
         }
     }
 
+    private fun ProtectedAccess.createWeapon(output: String, vararg materials: Pair<String, Int>): Boolean =
+        player.invTransaction(inv) {
+            exchangeWeaponMaterials(
+                select(inv),
+                output.asRSCM(RSCMType.OBJ),
+                materials.map { (material, count) -> material.asRSCM(RSCMType.OBJ) to count },
+            )
+        }.success
+
     private fun ProtectedAccess.hasHammer(): Boolean =
         inv.contains("obj.hammer") ||
             inv.contains("obj.imcando_hammer") ||
             inv.contains("obj.imcando_hammer_offhand")
+}
+
+internal fun Transaction<InvObj>.exchangeWeaponMaterials(
+    inventory: TransactionInventory<InvObj>,
+    output: Int,
+    materials: List<Pair<Int, Int>>,
+) {
+    for ((material, count) in materials) {
+        delete {
+            from = inventory
+            obj = material
+            strictCount = count
+        }
+    }
+    insert {
+        into = inventory
+        obj = output
+    }
 }

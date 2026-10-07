@@ -20,7 +20,6 @@ import org.rsmod.plugin.scripts.ScriptContext
 
 class TannerInterfaceScript : PluginScript() {
     override fun ScriptContext.startup() {
-        // Registers every tanning exchange with CraftingRecipes so ::craftmat can resolve leather.
         CraftingTanningRow.all().forEach { it.toCraftingProduct() }
         for ((slot, row) in tannerSlotRows) {
             for (op in TannerOp.entries) {

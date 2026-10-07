@@ -1,0 +1,19 @@
+[gamevals.dbtable]
+trawler_catch = 63907
+trawler_angler_outfit = 63908
+
+[gamevals.dbrow]
+trawler_catch_mantaray = 63318
+trawler_catch_raw_seaturtle = 63319
+trawler_catch_raw_shark = 63320
+trawler_catch_raw_swordfish = 63321
+trawler_catch_raw_lobster = 63322
+trawler_catch_raw_tuna = 63323
+trawler_catch_oystershell = 63324
+trawler_catch_raw_anchovies = 63325
+trawler_catch_raw_sardine = 63326
+trawler_catch_raw_shrimp = 63327
+trawler_angler_hat = 63328
+trawler_angler_top = 63329
+trawler_angler_legs = 63330
+trawler_angler_boots = 63331

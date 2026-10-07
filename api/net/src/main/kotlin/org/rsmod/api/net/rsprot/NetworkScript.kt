@@ -8,12 +8,14 @@ import net.rsprot.protocol.common.client.OldSchoolClientType
 import org.rsmod.api.account.character.main.CharacterAccountRepository
 import org.rsmod.api.db.jdbc.GameDatabase
 import org.rsmod.api.game.process.GameLifecycle
+import org.rsmod.api.game.process.player.WorldEntityZoneUpdates
 import org.rsmod.api.net.central.OpenRuneCentralWorldLink
 import org.rsmod.api.net.central.logging.CentralActivityLogWriter
 import org.rsmod.api.net.rsprot.player.SessionStart
 import org.rsmod.api.player.events.interact.HeldDropEvents
 import org.rsmod.api.registry.player.PlayerRegistry
 import org.rsmod.api.registry.region.RegionRegistry
+import org.rsmod.api.registry.worldentity.WorldEntityRegistry
 import org.rsmod.api.script.onEvent
 import org.rsmod.api.server.config.ServerConfig
 import org.rsmod.game.GameUpdate
@@ -21,8 +23,13 @@ import org.rsmod.game.MapClock
 import org.rsmod.game.client.Client
 import org.rsmod.game.entity.Npc
 import org.rsmod.game.entity.Player
+import org.rsmod.game.entity.WorldEntity
 import org.rsmod.game.entity.npc.NpcStateEvents
 import org.rsmod.game.entity.player.SessionStateEvent
+import org.rsmod.game.entity.player.StaffVisibilityChanged
+import org.rsmod.game.entity.worldentity.NoopWorldEntityInfo
+import org.rsmod.game.entity.worldentity.WorldEntityStateEvents
+import org.rsmod.map.zone.ZoneKey
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
@@ -33,6 +40,8 @@ constructor(
     private val mapClock: MapClock,
     private val service: NetworkService<Player>,
     private val regionReg: RegionRegistry,
+    private val worldEntityReg: WorldEntityRegistry,
+    private val worldZoneUpdates: WorldEntityZoneUpdates,
     private val config: ServerConfig,
     private val openRuneCentral: OpenRuneCentralWorldLink,
     private val gameUpdate: GameUpdate,
@@ -40,8 +49,10 @@ constructor(
     private val characterRepository: CharacterAccountRepository,
     private val playerRegistry: PlayerRegistry,
     private val centralActivityLogWriter: CentralActivityLogWriter,
+    private val staffVisibility: StaffVisibilityProtocol,
 ) : PluginScript() {
     private val logger = InlineLogger()
+    private var shuttingDown = false
 
     private companion object {
         private const val DB_ONLINE_SESSION_TIMING_INFO_MS = 100L
@@ -54,19 +65,19 @@ constructor(
                 "(${config.name}=${config.revision}, rsprot=${RSProtConstants.REVISION})"
         }
         onEvent<GameLifecycle.Startup> {
+            shuttingDown = false
             centralActivityLogWriter.start()
             initService()
             if (openRuneCentral.isEnabled) {
                 openRuneCentral.startInboundWatch()
             }
         }
+        onEvent<GameLifecycle.PreShutdown> { shuttingDown = true }
         onEvent<GameLifecycle.Shutdown> {
             openRuneCentral.stopInboundWatch()
             centralActivityLogWriter.stop()
         }
-        onEvent<HeldDropEvents.Drop> {
-            centralActivityLogWriter.logItemDrop(player, type, obj)
-        }
+        onEvent<HeldDropEvents.Drop> { centralActivityLogWriter.logItemDrop(player, type, obj) }
         onEvent<HeldDropEvents.Destroy> {
             centralActivityLogWriter.logItemDestroy(player, type, obj)
         }
@@ -75,6 +86,7 @@ constructor(
             maybeHeartbeatCentralSessions()
         }
         onEvent<SessionStart> { startSession() }
+        onEvent<StaffVisibilityChanged> { staffVisibility.maskHiddenPlayers() }
         onEvent<SessionStateEvent.Delete> {
             closeSession()
             finalizeCentralSessionIfNeeded()
@@ -83,6 +95,8 @@ constructor(
         onEvent<SessionStateEvent.Logout> { notifyCentralLogout() }
         onEvent<NpcStateEvents.Create> { createNpcAvatar(npc) }
         onEvent<NpcStateEvents.Delete> { deleteNpcAvatar(npc) }
+        onEvent<WorldEntityStateEvents.Create> { createWorldEntityAvatar(worldEntity) }
+        onEvent<WorldEntityStateEvents.Delete> { deleteWorldEntityAvatar(worldEntity) }
     }
 
     private fun initService() {
@@ -98,7 +112,7 @@ constructor(
     }
 
     private fun maybeHeartbeatCentralSessions() {
-        if (!openRuneCentral.isEnabled) {
+        if (shuttingDown || !openRuneCentral.isEnabled) {
             return
         }
         if (mapClock.cycle % CENTRAL_HEARTBEAT_INTERVAL_CYCLES != 0L) {
@@ -135,9 +149,10 @@ constructor(
         val slot = player.slotId
 
         val infos = service.infoProtocols.alloc(slot, OldSchoolClientType.DESKTOP)
+        staffVisibility.register(player, infos.playerInfo)
 
         val client = RspClient(session, infos) as Client<Any, Any>
-        val cycle = RspCycle(session, infos, regionReg)
+        val cycle = RspCycle(session, infos, regionReg, worldEntityReg, worldZoneUpdates)
 
         player.client = client
         player.clientCycle = cycle
@@ -146,6 +161,7 @@ constructor(
     }
 
     private fun SessionStateEvent.Delete.closeSession() {
+        staffVisibility.unregister(player)
         val client = player.client as? RspClient ?: return
         client.unregister(service, player)
     }
@@ -158,16 +174,15 @@ constructor(
         val startedAt = System.nanoTime()
         try {
             database.withTransactionBlocking { connection ->
-                characterRepository.setOnlineSession(
-                    connection,
-                    player.characterId,
-                    config.world,
-                )
+                characterRepository.setOnlineSession(connection, player.characterId, config.world)
             }
         } catch (e: Exception) {
-            logger.warn(e) { "Could not set DB online-session for characterId=${player.characterId}" }
+            logger.warn(e) {
+                "Could not set DB online-session for characterId=${player.characterId}"
+            }
         }
-        val elapsedMs = java.util.concurrent.TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startedAt)
+        val elapsedMs =
+            java.util.concurrent.TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startedAt)
         if (config.loginTimingLogs && elapsedMs >= DB_ONLINE_SESSION_TIMING_INFO_MS) {
             logger.info {
                 "Login set-online-session user='${player.username}' characterId=${player.characterId} elapsed=${elapsedMs}ms"
@@ -187,7 +202,9 @@ constructor(
                 characterRepository.clearOnlineSession(connection, player.characterId)
             }
         } catch (e: Exception) {
-            logger.warn(e) { "Could not clear DB online-session for characterId=${player.characterId}" }
+            logger.warn(e) {
+                "Could not clear DB online-session for characterId=${player.characterId}"
+            }
         }
         val token = player.openRuneCentralSessionToken ?: return
         openRuneCentral.notifyLogout(token)
@@ -214,5 +231,39 @@ constructor(
         if (infoProtocol is RspNpcInfo) {
             service.npcAvatarFactory.release(infoProtocol.rspAvatar)
         }
+    }
+
+    /**
+     * Allocation makes the world-entity avatar discoverable immediately; create its deck before
+     * exposing it.
+     */
+    private fun createWorldEntityAvatar(worldEntity: WorldEntity) {
+        val southWestZone = ZoneKey.from(worldEntity.instanceSouthWest)
+        val rspAvatar =
+            service.worldEntityAvatarFactory.alloc(
+                index = worldEntity.slotId,
+                id = worldEntity.configId,
+                ownerIndex = worldEntity.ownerSlot,
+                sizeX = worldEntity.zoneSizeX,
+                sizeZ = worldEntity.zoneSizeZ,
+                southWestZoneX = southWestZone.x,
+                southWestZoneZ = southWestZone.z,
+                minLevel = worldEntity.minLevel,
+                maxLevel = worldEntity.maxLevel,
+                fineX = worldEntity.fineX,
+                fineZ = worldEntity.fineZ,
+                projectedLevel = worldEntity.projectedLevel,
+                activeLevel = worldEntity.activeLevel,
+                angle = worldEntity.angle,
+            )
+        worldEntity.infoProtocol = RspWorldEntityInfo(rspAvatar)
+    }
+
+    private fun deleteWorldEntityAvatar(worldEntity: WorldEntity) {
+        val infoProtocol = worldEntity.infoProtocol
+        if (infoProtocol is RspWorldEntityInfo) {
+            service.worldEntityAvatarFactory.release(infoProtocol.rspAvatar)
+        }
+        worldEntity.infoProtocol = NoopWorldEntityInfo
     }
 }

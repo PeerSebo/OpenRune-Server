@@ -2,6 +2,8 @@ package org.rsmod.content.skills.crafting
 
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.script.onOpLoc1
+import org.rsmod.api.script.onOpLocU
+import org.rsmod.content.interfaces.bank.exchangeBankCurrency
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
@@ -9,6 +11,11 @@ class CraftingGuildBank : PluginScript() {
     override fun ScriptContext.startup() {
         onOpLoc1("loc.diary_guild_bankchest") { useBankChest() }
         onOpLoc1("loc.diary_guild_deposit_box") { useDepositBox() }
+        for (currency in listOf("obj.coins", "obj.platinum")) {
+            onOpLocU("loc.diary_guild_bankchest", currency) {
+                if (requirementMet()) exchangeBankCurrency(it.invSlot, it.objType)
+            }
+        }
     }
 
     private suspend fun ProtectedAccess.useBankChest() {

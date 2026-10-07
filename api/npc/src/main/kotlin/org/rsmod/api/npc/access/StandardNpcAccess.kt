@@ -5,23 +5,18 @@ import dev.openrune.types.HitmarkTypeGroup
 import dev.openrune.types.ItemServerType
 import dev.openrune.types.NpcServerType
 import dev.openrune.types.SequenceServerType
-import dev.openrune.types.aconverted.AreaType
 import dev.openrune.types.aconverted.CategoryType
-import dev.openrune.types.aconverted.SpotanimType
 import dev.openrune.types.hunt.HuntVis
 import kotlin.getValue
 import kotlin.setValue
 import org.rsmod.annotations.InternalApi
 import org.rsmod.api.area.checker.AreaChecker
-import org.rsmod.api.config.refs.done.BaseHitmarkGroups
 import org.rsmod.api.config.refs.done.hitmark_groups
 import org.rsmod.api.hunt.NpcSearch
 import org.rsmod.api.hunt.PlayerSearch
 import org.rsmod.api.npc.hit.modifier.NpcHitModifier
-import org.rsmod.api.npc.hit.modifier.StandardNpcHitModifier
 import org.rsmod.api.npc.hit.process
 import org.rsmod.api.npc.hit.processor.NpcHitProcessor
-import org.rsmod.api.npc.hit.processor.StandardNpcHitProcessor
 import org.rsmod.api.npc.hit.queueHit
 import org.rsmod.api.npc.interact.AiPlayerInteractions
 import org.rsmod.api.npc.mapMultiway
@@ -45,14 +40,6 @@ import org.rsmod.map.util.Bounds
 import org.rsmod.routefinder.collision.CollisionFlagMap
 import org.rsmod.routefinder.flag.CollisionFlag
 
-/**
- * Manages scoped actions for npcs that implicitly launch a coroutine, allowing functions such as
- * `delay`.
- *
- * This system is similar to `ProtectedAccess` for players but differs in that it does not enforce
- * safeguards when launching this scope for the [npc]. Even if the [npc] already has an active
- * [coroutine] or if [Npc.isBusy] is `true`, a new [StandardNpcAccess] can still be invoked.
- */
 public class StandardNpcAccess(
     public val npc: Npc,
     private val coroutine: GameCoroutine,
@@ -82,12 +69,6 @@ public class StandardNpcAccess(
         delay()
     }
 
-    /**
-     * Delays the npc for a number of ticks equal to the time duration of [seq].
-     *
-     * @param seq The seq type whose tick duration determines the delay.
-     * @throws IllegalStateException if [SequenceServerType.tickDuration] is `0`.
-     */
     public suspend fun delay(seq: SequenceServerType) {
         val ticks = seq.tickDuration
         check(ticks > 0) { "Seq tick duration must be positive: $seq" }
@@ -117,38 +98,8 @@ public class StandardNpcAccess(
     }
 
     /**
-     * Queues a hit dealt by [source] with an impact cycle delay of [delay] before the hit is
-     * displayed and health is deducted from the npc.
-     *
-     * _[modifier] is applied immediately when this function is called (via
-     * [NpcHitModifier.modify]). This means that effects like npc prayer protection reducing damage
-     * are handled at this point and **not** on impact._
-     *
-     * **Notes:**
-     * - [StandardNpcHitProcessor] is invoked when the cycle [delay] completes and the hit takes
-     *   effect. It is responsible for reducing the [npc]'s health, triggering the associated
-     *   `onNpcHit` scripts, displaying the hitsplat, and handling other related mechanics.
-     * - Though the hit is immediately modified, an accurate [Hit] representation of what will be
-     *   dealt after the [delay] cycle **cannot be guaranteed**. This is because npc hit processing
-     *   can further modify the hit in certain cases, such as when a npc is restricted from falling
-     *   below a specific health threshold during a particular "phase." Be mindful of this when
-     *   using the returned [Hit] instance.
-     * - If you need an **accurate** [Hit] representation, use the [Hit] instance provided in
-     *   `onNpcHit` scripts rather than the value returned by this function.
-     *
-     * @param damage The initial damage intended for the [npc]. This value may change based on
-     *   various factors from [modifier] and [StandardNpcHitProcessor].
-     * @param hitmark The hitmark group used for the visual hitsplat. See [BaseHitmarkGroups] or
-     *   reference [hitmark_groups] for a list of available hitmark groups.
-     * @param sourceWeapon An optional [ItemServerType] reference of a "weapon" used by the [source]
-     *   that hit modifiers and/or processors can use for specialized logic. Typically unnecessary
-     *   when [source] is an [Npc], though there may be niche use cases.
-     * @param sourceSecondary Similar to [sourceWeapon], except this refers to objs that are **not**
-     *   the primary weapon, such as ammunition for ranged attacks or objs tied to magic spells.
-     * @param modifier An [NpcHitModifier] used to adjust damage and other hit properties. By
-     *   default, this is set to [StandardNpcHitModifier], which applies standard modifications,
-     *   such as damage reduction from npc protection prayers.
-     * @see [BaseHitmarkGroups]
+     * Standard-hit modifiers run when queued, not at impact. Returned NPC damage remains
+     * provisional because impact hooks can still alter it; combat XP is separate.
      */
     public fun queueHit(
         source: Npc,
@@ -172,41 +123,8 @@ public class StandardNpcAccess(
         )
 
     /**
-     * Queues a hit dealt by [source] with an impact cycle delay of [delay] before the hit is
-     * displayed and health is deducted from the npc.
-     *
-     * _[modifier] is applied immediately when this function is called (via
-     * [NpcHitModifier.modify]). This means that effects like npc prayer protection reducing damage
-     * are handled at this point and **not** on impact._
-     *
-     * **Notes:**
-     * - The [Hit.righthandObj] is implicitly set based on the `righthand` obj equipped in
-     *   [Player.worn] for [source]. This behavior is not configurable to ensure consistency across
-     *   systems such as [modifier] and other processors.
-     * - [StandardNpcHitProcessor] is invoked when the cycle [delay] completes and the hit takes
-     *   effect. It is responsible for reducing the [npc]'s health, triggering the associated
-     *   `onNpcHit` scripts, displaying the hitsplat, and handling other related mechanics.
-     * - Though the hit is immediately modified, an accurate [Hit] representation of what will be
-     *   dealt after the [delay] cycle **cannot be guaranteed**. This is because npc hit processing
-     *   can further modify the hit in certain cases, such as when a npc is restricted from falling
-     *   below a specific health threshold during a particular "phase." Be mindful of this when
-     *   using the returned [Hit] instance.
-     * - If you need an **accurate** [Hit] representation, use the [Hit] instance provided in
-     *   `onNpcHit` scripts rather than the value returned by this function.
-     *
-     * @param damage The initial damage intended for the [npc]. This value may change based on
-     *   various factors from [modifier] and [StandardNpcHitProcessor].
-     * @param hitmark The hitmark group used for the visual hitsplat. See [BaseHitmarkGroups] or
-     *   reference [hitmark_groups] for a list of available hitmark groups.
-     * @param specific If `true`, only [source] will see the hitsplat; this does not affect actual
-     *   damage calculations.
-     * @param sourceSecondary The "secondary" obj used in the attack by [source]. If the hit is from
-     *   a ranged attack, this should be set to the ammunition obj (if applicable). If the attack is
-     *   from a magic spell, this should be the associated spell obj.
-     * @param modifier An [NpcHitModifier] used to adjust damage and other hit properties. By
-     *   default, this is set to [StandardNpcHitModifier], which applies standard modifications,
-     *   such as damage reduction from npc protection prayers.
-     * @see [BaseHitmarkGroups]
+     * Player weapon metadata is snapshotted when queued. Modifiers run now, but NPC impact
+     * hooks can still alter final damage.
      */
     public fun queueHit(
         source: Player,
@@ -229,35 +147,6 @@ public class StandardNpcAccess(
             modifier = modifier,
         )
 
-    /**
-     * Queues a hit that does not originate from either a [Player] or an [Npc], with an impact cycle
-     * delay of [delay] before the hit is displayed and health is deducted from the npc.
-     *
-     * _[modifier] is applied immediately when this function is called (via
-     * [NpcHitModifier.modify]). This means that effects like npc prayer protection reducing damage
-     * are handled at this point and **not** on impact._
-     *
-     * **Notes:**
-     * - [StandardNpcHitProcessor] is invoked when the cycle [delay] completes and the hit takes
-     *   effect. It is responsible for reducing the [npc]'s health, triggering the associated
-     *   `onNpcHit` scripts, displaying the hitsplat, and handling other related mechanics.
-     * - Though the hit is immediately modified, an accurate [Hit] representation of what will be
-     *   dealt after the [delay] cycle **cannot be guaranteed**. This is because npc hit processing
-     *   can further modify the hit in certain cases, such as when a npc is restricted from falling
-     *   below a specific health threshold during a particular "phase." Be mindful of this when
-     *   using the returned [Hit] instance.
-     * - If you need an **accurate** [Hit] representation, use the [Hit] instance provided in
-     *   `onNpcHit` scripts rather than the value returned by this function.
-     *
-     * @param damage The initial damage intended for the [npc]. This value may change based on
-     *   various factors from [modifier] and [StandardNpcHitProcessor].
-     * @param hitmark The hitmark group used for the visual hitsplat. See [BaseHitmarkGroups] or
-     *   reference [hitmark_groups] for a list of available hitmark groups.
-     * @param modifier An [NpcHitModifier] used to adjust damage and other hit properties. By
-     *   default, this is set to [StandardNpcHitModifier], which applies standard modifications,
-     *   such as damage reduction from npc protection prayers.
-     * @see [BaseHitmarkGroups]
-     */
     public fun queueHit(
         delay: Int,
         type: HitType,
@@ -293,25 +182,10 @@ public class StandardNpcAccess(
         npc.clearQueue(queue)
     }
 
-    /**
-     * Adds "hero points" (also known as kill credits) for [source], where [points] typically
-     * represent the amount of damage dealt to [npc].
-     */
     public fun heroPoints(source: Player, points: Int) {
         npc.heroPoints(source, points)
     }
 
-    /**
-     * Finds the player with the highest "hero points" stored in this [Npc.heroPoints].
-     *
-     * **Notes:**
-     * - Only players who have dealt damage greater than `0` can occupy an entry.
-     * - [Npc.heroPoints] is limited to `16` entries by default. Once all entries are occupied, no
-     *   additional players can accrue kill credit (hero points) for this [npc] until its hero
-     *   points are cleared.
-     * - Npcs can override the default hero points entry limit by modifying their
-     *   [UnpackedNpcType.heroCount].
-     */
     public fun findHero(playerList: PlayerList): Player? {
         return npc.findHero(playerList)
     }
@@ -370,12 +244,10 @@ public class StandardNpcAccess(
         npc.resetAnim()
     }
 
-    /** Sets a persistent idle animation kept displayed while the npc is stationary and not animating. */
     public fun setIdleAnim(seq: String) {
         npc.setIdleAnim(seq)
     }
 
-    /** Clears the persistent idle animation, reverting the npc to its cache `standAnim`. */
     public fun clearIdleAnim() {
         npc.clearIdleAnim()
     }
@@ -433,19 +305,6 @@ public class StandardNpcAccess(
 
     public fun distanceTo(loc: BoundLocInfo): Int = npc.distanceTo(loc)
 
-    /**
-     * Searches for and returns a validated coordinate within a [minRadius] to [maxRadius] tile
-     * radius of [centre].
-     *
-     * A coordinate is considered valid if:
-     * - It does **not** have the [CollisionFlag.BLOCK_WALK] collision flags set.
-     *
-     * This function calls [validatedSquares], which **randomizes** the order of candidate
-     * coordinates before validation. The first valid coordinate from the shuffled list is returned.
-     *
-     * @return A randomly selected, **validated** coordinate within range, or `null` if none are
-     *   found.
-     */
     public fun mapFindSquareNone(
         centre: CoordGrid,
         minRadius: Int,
@@ -456,21 +315,6 @@ public class StandardNpcAccess(
         return squares.firstOrNull()
     }
 
-    /**
-     * Searches for and returns a validated coordinate within a [minRadius] to [maxRadius] tile
-     * radius of [centre].
-     *
-     * A coordinate is considered valid if:
-     * - It has a valid line-of-walk from [centre].
-     * - It does **not** have the [CollisionFlag.BLOCK_PLAYERS] or [CollisionFlag.BLOCK_WALK]
-     *   collision flags set.
-     *
-     * This function calls [validatedLineOfWalkSquares], which **randomizes** the order of candidate
-     * coordinates before validation. The first valid coordinate from the shuffled list is returned.
-     *
-     * @return A randomly selected, **validated** coordinate within range, or `null` if none are
-     *   found.
-     */
     public fun mapFindSquareLineOfWalk(
         centre: CoordGrid,
         minRadius: Int,
@@ -481,21 +325,6 @@ public class StandardNpcAccess(
         return squares.firstOrNull()
     }
 
-    /**
-     * Searches for and returns a validated coordinate within a [minRadius] to [maxRadius] tile
-     * radius of [centre].
-     *
-     * A coordinate is considered valid if:
-     * - It has a valid line-of-sight from [centre].
-     * - It does **not** have the [CollisionFlag.BLOCK_PLAYERS] or [CollisionFlag.BLOCK_WALK]
-     *   collision flags set.
-     *
-     * This function calls [validatedLineOfWalkSquares], which **randomizes** the order of candidate
-     * coordinates before validation. The first valid coordinate from the shuffled list is returned.
-     *
-     * @return A randomly selected, **validated** coordinate within range, or `null` if none are
-     *   found.
-     */
     public fun mapFindSquareLineOfSight(
         centre: CoordGrid,
         minRadius: Int,
@@ -506,17 +335,6 @@ public class StandardNpcAccess(
         return squares.firstOrNull()
     }
 
-    /**
-     * Returns a sequence of **shuffled** and **validated** coordinates centered around [centre],
-     * within a radius of [minRadius] to [maxRadius] tiles.
-     *
-     * A coordinate is considered valid if:
-     * - It has a valid line-of-walk from [centre].
-     * - It does **not** have the [CollisionFlag.BLOCK_PLAYERS] or [CollisionFlag.BLOCK_WALK]
-     *   collision flags set.
-     *
-     * @return A **shuffled** and **validated** [Sequence] of coordinates within range.
-     */
     public fun validatedLineOfWalkSquares(
         centre: CoordGrid,
         minRadius: Int,
@@ -530,17 +348,6 @@ public class StandardNpcAccess(
         }
     }
 
-    /**
-     * Returns a sequence of **shuffled** and **validated** coordinates centered around [centre],
-     * within a radius of [minRadius] to [maxRadius] tiles.
-     *
-     * A coordinate is considered valid if:
-     * - It has a valid line-of-sight from [centre].
-     * - It does **not** have the [CollisionFlag.BLOCK_PLAYERS] or [CollisionFlag.BLOCK_WALK]
-     *   collision flags set.
-     *
-     * @return A **shuffled** and **validated** [Sequence] of coordinates within range.
-     */
     public fun validatedLineOfSightSquares(
         centre: CoordGrid,
         minRadius: Int,
@@ -554,15 +361,6 @@ public class StandardNpcAccess(
         }
     }
 
-    /**
-     * Returns a sequence of **shuffled** and **validated** coordinates centered around [centre],
-     * within a radius of [minRadius] to [maxRadius] tiles.
-     *
-     * A coordinate is considered valid if it does **not** have the [CollisionFlag.BLOCK_WALK]
-     * collision flag set.
-     *
-     * @return A **shuffled** and **validated** [Sequence] of coordinates within range.
-     */
     public fun validatedSquares(
         centre: CoordGrid,
         minRadius: Int,
@@ -590,22 +388,16 @@ public class StandardNpcAccess(
         return bounds.shuffled().filter { centre.chebyshevDistance(it) >= minRadius }
     }
 
-    /** Returns `true` if there is a valid line-of-walk from [from] to [to] */
     public fun lineOfWalk(from: CoordGrid, to: CoordGrid, collision: CollisionFlagMap): Boolean {
         val validator = RayCastValidator(collision)
         return validator.hasLineOfWalk(from, to, extraFlag = CollisionFlag.BLOCK_PLAYERS)
     }
 
-    /** Returns `true` if there is a valid line-of-sight from [from] to [to] */
     public fun lineOfSight(from: CoordGrid, to: CoordGrid, collision: CollisionFlagMap): Boolean {
         val validator = RayCastValidator(collision)
         return validator.hasLineOfSight(from, to, extraFlag = CollisionFlag.BLOCK_PLAYERS)
     }
 
-    /**
-     * Returns `true` if there is a valid line-of-walk from [from] to **every** coordinate occupied
-     * by [bounds].
-     */
     public fun lineOfWalk(from: CoordGrid, bounds: Bounds, collision: CollisionFlagMap): Boolean {
         val validator = RayCastValidator(collision)
         val squares = bounds.asSequence()
@@ -614,10 +406,6 @@ public class StandardNpcAccess(
         }
     }
 
-    /**
-     * Returns `true` if there is a valid line-of-sight from [from] to **every** coordinate occupied
-     * by [bounds].
-     */
     public fun lineOfSight(from: CoordGrid, bounds: Bounds, collision: CollisionFlagMap): Boolean {
         val validator = RayCastValidator(collision)
         val squares = bounds.asSequence()
@@ -626,7 +414,6 @@ public class StandardNpcAccess(
         }
     }
 
-    /** @see [NpcSearch.find] */
     public fun npcFind(
         coord: CoordGrid,
         npc: String,
@@ -637,7 +424,6 @@ public class StandardNpcAccess(
         return search.find(coord, npc, distance, checkVis)
     }
 
-    /** @see [NpcSearch.findCat] */
     public fun npcFindCat(
         coord: CoordGrid,
         category: CategoryType,
@@ -648,7 +434,6 @@ public class StandardNpcAccess(
         return search.findCat(coord, category, distance, checkVis)
     }
 
-    /** @see [NpcSearch.findAllAny] */
     public fun npcFindAllAny(
         coord: CoordGrid,
         distance: Int,
@@ -658,7 +443,6 @@ public class StandardNpcAccess(
         return search.findAllAny(coord, distance, checkVis)
     }
 
-    /** @see [NpcSearch.findAll] */
     public fun npcFindAll(
         coord: CoordGrid,
         npc: String,
@@ -669,7 +453,6 @@ public class StandardNpcAccess(
         return search.findAll(coord, npc, distance, checkVis)
     }
 
-    /** @see [NpcSearch.findAllZone] */
     public fun npcFindAllZone(
         coord: CoordGrid,
         distance: Int,
@@ -679,7 +462,6 @@ public class StandardNpcAccess(
         return search.findAllZone(coord, distance, checkVis)
     }
 
-    /** @see [PlayerSearch.findAll] */
     public fun huntAll(
         coord: CoordGrid,
         distance: Int,
@@ -689,7 +471,6 @@ public class StandardNpcAccess(
         return search.findAll(coord, distance, checkVis)
     }
 
-    /** @see [NpcSearch.hunt] */
     public fun npcHunt(
         coord: CoordGrid,
         distance: Int,
@@ -699,7 +480,6 @@ public class StandardNpcAccess(
         return search.hunt(coord, distance, checkVis)
     }
 
-    /** @see [NpcSearch.huntAll] */
     public fun npcHuntAll(
         coord: CoordGrid,
         npc: NpcServerType,
@@ -710,25 +490,8 @@ public class StandardNpcAccess(
         return search.huntAll(coord, npc, distance, checkVis)
     }
 
-    /**
-     * Returns the param value associated with [param] from the **base** `npc` [Npc.type], or `null`
-     * if the type does not have a value associated with [param] and [param] does not have a
-     * non-null `default` value.
-     *
-     * If you wish to retrieve the param value for the current (transmog) type, use [Npc.visType] to
-     * retrieve it.
-     */
     public fun <T : Any> paramOrNull(param: TypedParamType<T>): T? = npc.paramOrNull(param)
 
-    /**
-     * Returns the param value associated with [param] from the **base** npc` [Npc.type].
-     *
-     * If you wish to retrieve the param value for the current (transmog) type, use [Npc.visType] to
-     * retrieve it.
-     *
-     * @throws IllegalStateException if the type does not have a value associated with [param] and
-     *   [param] does not have a non-null `default` value.
-     */
     public fun <T : Any> param(param: TypedParamType<T>): T = npc.param(param)
 
     override fun toString(): String = "StandardNpcAccess(npc=$npc, coroutine=$coroutine)"

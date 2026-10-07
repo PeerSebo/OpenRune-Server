@@ -46,12 +46,12 @@ class DraynorCryptCandles @Inject constructor(private val random: GameRandom) : 
         private val EXCLAMATIONS = listOf("Ow!", "Eeek!", "Gah!", "Oooch!")
         private val SOUNDS =
             listOf(
-                "synth.female_hit_1",
-                "synth.female_hit_2",
-                "synth.human_hit_1",
-                "synth.human_hit_2",
-                "synth.human_hit_3",
-                "synth.human_hit_4",
+                "synth.FEMALE_HIT_01",
+                "synth.FEMALE_HIT_02",
+                "synth.HUMAN_HIT_01",
+                "synth.HUMAN_HIT_02",
+                "synth.HUMAN_HIT_03",
+                "synth.HUMAN_HIT_04",
             )
 
         fun inCrypt(player: Player): Boolean =

@@ -147,10 +147,10 @@ class ErnestLeverPuzzle @Inject constructor(private val locRepo: LocRepository) 
 
         private const val PullDownAnim = "seq.macro_lever_switch_down"
         private const val PullUpAnim = "seq.macro_lever_switch_up"
-        private const val LeverSound = "synth.lever"
-        private const val ClunkSound = "synth.ernest_clunk"
+        private const val LeverSound = "synth.LEVER"
+        private const val ClunkSound = "synth.ERNEST_CLUNK"
         private const val ClunkSoundDelay = 5
-        private const val DoorSound = "synth.iron_door_open"
+        private const val DoorSound = "synth.IRON_DOOR_OPEN"
         private const val DoorSoundDelay = 15
 
         private const val OpenDoorLoc = "loc.inactiveprisondoor_l"

@@ -159,5 +159,4 @@ class ElderChaosDruid : PluginScript() {
             else -> countDialog("Enter amount:").coerceIn(0, maxExchange)
         }
     }
-
 }

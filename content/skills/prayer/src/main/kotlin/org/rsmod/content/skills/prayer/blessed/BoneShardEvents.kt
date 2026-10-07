@@ -19,6 +19,9 @@ import org.rsmod.plugin.scripts.ScriptContext
 class BoneShardEvents : PluginScript() {
 
     private val rows = PrayerBlessedBoneRow.all()
+
+    private val blessableRows = rows.filterNot { it.input.internalName == "obj.sun_kissed_bone" }
+
     private val wines = mapOf(
         "obj.jug_wine" to "obj.jug_wine_blessed",
         "obj.jug_sunfire_wine" to "obj.jug_sunfire_wine_blessed",
@@ -26,8 +29,11 @@ class BoneShardEvents : PluginScript() {
 
     override fun ScriptContext.startup() {
 
-        rows.forEach { row ->
+        blessableRows.forEach { row ->
             onOpLocU("loc.varlamore_prayer_activity_altar", row.input) { blessBones(row) }
+        }
+
+        rows.forEach { row ->
             onOpHeld1(row.output) { breakDownBone(row) }
             onOpHeldU(row.output, "obj.chisel") { breakDownBone(row) }
         }
@@ -40,7 +46,7 @@ class BoneShardEvents : PluginScript() {
 
         onOpLoc1("loc.varlamore_prayer_activity_altar") {
 
-            val availableBones = rows.filter { inv.contains(it.input.internalName) }
+            val availableBones = blessableRows.filter { inv.contains(it.input.internalName) }
 
             val availableWines = wines.filterKeys(inv::contains)
 
@@ -102,12 +108,11 @@ class BoneShardEvents : PluginScript() {
         if (inv.contains(row.output.internalName)) {
             weakQueue("queue.prayer_break_down_bone", 4, row.output)
         }
-
     }
 
     private fun ProtectedAccess.blessBones(row: PrayerBlessedBoneRow, amount: Int = inv.count(row.input.internalName)) {
         player.anim("seq.human_openchest")
-        player.soundSynth(2738)
+        player.soundSynth("synth.BONES_DOWN")
 
         val blessedName = row.output.internalName
 
@@ -121,10 +126,10 @@ class BoneShardEvents : PluginScript() {
         mes("You bless $toConvert bone${if (toConvert == 1) "" else "s"} on the altar.")
     }
 
-    private fun ProtectedAccess.blessWine(wine: String, blessedWine: String, amount: Int = inv.count(wine), ) {
+    private fun ProtectedAccess.blessWine(wine: String, blessedWine: String, amount: Int = inv.count(wine),) {
 
         player.anim("seq.human_openchest")
-        player.soundSynth(2738)
+        player.soundSynth("synth.BONES_DOWN")
 
         val toConvert = minOf(amount, inv.count(wine))
 
@@ -134,5 +139,4 @@ class BoneShardEvents : PluginScript() {
 
         mes("You bless $toConvert jug${if (toConvert == 1) "" else "s"} of wine on the altar.")
     }
-
 }

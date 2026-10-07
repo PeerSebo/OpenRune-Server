@@ -2,8 +2,8 @@ package dtx.impl.sequential
 
 import dtx.core.ArgMap
 import dtx.core.ModifyRoll
-import dtx.core.Rollable
 import dtx.core.RollResult
+import dtx.core.Rollable
 import dtx.core.Single
 import dtx.table.AbstractTableBuilder
 import dtx.table.AbstractTableHooksBuilder
@@ -26,7 +26,6 @@ internal class WrappingInt(
         onWrapFunc()
     }
 
-
     fun inc() {
 
         currentValue += 1
@@ -38,7 +37,7 @@ internal class WrappingInt(
     }
 }
 
-public interface SequentialTableHooks<T, R>: TableHooks<T, R> {
+public interface SequentialTableHooks<T, R> : TableHooks<T, R> {
 
     public fun tableIsActive(table: SequentialTable<T, R>): Boolean
 
@@ -51,15 +50,13 @@ public interface SequentialTableHooks<T, R>: TableHooks<T, R> {
     }
 }
 
-
-internal data object DefaultSequentialTableHooks: SequentialTableHooks<Any?, Any?>, TableHooks<Any?, Any?> by DefaultTableHooks {
+internal data object DefaultSequentialTableHooks : SequentialTableHooks<Any?, Any?>, TableHooks<Any?, Any?> by DefaultTableHooks {
 
     override fun tableIsActive(table: SequentialTable<Any?, Any?>): Boolean {
         return true
     }
 
-    override fun resetTable(table: SequentialTable<Any?, Any?>): Unit {
-
+    override fun resetTable(table: SequentialTable<Any?, Any?>) {
     }
 }
 
@@ -68,7 +65,7 @@ internal data class SequentialTableHooksImpl<T, R>(
     val modifyRollFunc: ModifyRoll<T> = TableHooks.Default<T, R>()::modifyRoll,
     val tableIsActiveFunc: SequentialTable<T, R>.() -> Boolean = SequentialTableHooks.Default<T, R>()::tableIsActive,
     val resetTableFunc: SequentialTable<T, R>.() -> Unit = SequentialTableHooks.Default<T, R>()::resetTable
-): SequentialTableHooks<T, R>, TableHooks<T, R> by baseTableHooks {
+) : SequentialTableHooks<T, R>, TableHooks<T, R> by baseTableHooks {
 
     override fun tableIsActive(table: SequentialTable<T, R>): Boolean = with(table) {
         return tableIsActiveFunc()
@@ -83,7 +80,7 @@ public class SequentialTable<T, R>(
     public override val tableIdentifier: String,
     public override val tableEntries: List<Rollable<T, R>>,
     private val hooks: SequentialTableHooks<T, R>,
-): Table<T, R>, SequentialTableHooks<T, R> by hooks {
+) : Table<T, R>, SequentialTableHooks<T, R> by hooks {
 
     private val pointer = WrappingInt(0, 0, tableEntries.size) {
         resetTable(this)
@@ -104,7 +101,7 @@ public class SequentialTable<T, R>(
     }
 }
 
-public open class SequentialTableHooksBuilder<T, R>: AbstractTableHooksBuilder<T, R, SequentialTableHooks<T, R>, SequentialTableHooksBuilder<T, R>>() {
+public open class SequentialTableHooksBuilder<T, R> : AbstractTableHooksBuilder<T, R, SequentialTableHooks<T, R>, SequentialTableHooksBuilder<T, R>>() {
 
     public var tableIsActiveFunc: SequentialTable<T, R>.() -> Boolean = SequentialTableHooks.Default<T, R>()::tableIsActive
     public var resetTableFunc: SequentialTable<T, R>.() -> Unit = SequentialTableHooks.Default<T, R>()::resetTable
@@ -136,7 +133,7 @@ public open class SequentialTableHooksBuilder<T, R>: AbstractTableHooksBuilder<T
 
 public open class SequentialTableBuilder<T, R>(
     createHookBuilder: () -> SequentialTableHooksBuilder<T, R> = { SequentialTableHooksBuilder() }
-): AbstractTableBuilder<
+) : AbstractTableBuilder<
         T,
         R,
         Rollable<T, R>,

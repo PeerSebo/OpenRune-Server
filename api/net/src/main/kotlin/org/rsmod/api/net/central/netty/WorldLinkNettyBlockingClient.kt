@@ -65,14 +65,8 @@ internal object WorldLinkNettyChannelSupport {
             WorldLinkHandlerNames.LENGTH_FRAME_ENCODER,
             LengthFieldPrepender(LENGTH_FIELD_LENGTH),
         )
-        p.addLast(
-            WorldLinkHandlerNames.INBOUND_PACKET_DECODER,
-            WorldLinkInboundPacketDecoder(),
-        )
-        p.addLast(
-            WorldLinkHandlerNames.INBOUND_QUEUE,
-            WorldLinkInboundQueueHandler(inboundQueue),
-        )
+        p.addLast(WorldLinkHandlerNames.INBOUND_PACKET_DECODER, WorldLinkInboundPacketDecoder())
+        p.addLast(WorldLinkHandlerNames.INBOUND_QUEUE, WorldLinkInboundQueueHandler(inboundQueue))
     }
 
     private const val LENGTH_FIELD_OFFSET = 0
@@ -81,9 +75,6 @@ internal object WorldLinkNettyChannelSupport {
     private const val INITIAL_BYTES_TO_STRIP = 4
 }
 
-/**
- * Blocking façade over one world-link Netty channel (caller thread performs send/recv; I/O on [WorldLinkNettyIOLoop.group]).
- */
 internal class WorldLinkNettyBlockingSession(
     val channel: Channel,
     private val inbound: BlockingQueue<ByteArray>,
@@ -93,18 +84,15 @@ internal class WorldLinkNettyBlockingSession(
         channel.writeAndFlush(Unpooled.wrappedBuffer(body)).sync()
     }
 
-    /**
-     * Blocks up to [timeoutMs] for the next inbound packet.
-     * @return `null` on timeout, empty array if the channel closed or failed, otherwise the frame bytes.
-     */
     fun pollInbound(timeoutMs: Long): ByteArray? {
         val f = inbound.poll(timeoutMs, TimeUnit.MILLISECONDS) ?: return null
         return f
     }
 
-    /** Blocks for one frame or throws [SocketTimeoutException] / [java.io.IOException] on close. */
     fun recvInbound(timeoutMs: Long): ByteArray {
-        val f = pollInbound(timeoutMs) ?: throw SocketTimeoutException("Timed out waiting for Central world-link frame")
+        val f =
+            pollInbound(timeoutMs)
+                ?: throw SocketTimeoutException("Timed out waiting for Central world-link frame")
         if (f.isEmpty()) {
             throw java.io.IOException("Central world-link channel closed")
         }
@@ -119,10 +107,7 @@ internal class WorldLinkNettyBlockingSession(
 internal object WorldLinkNettyBlockingClient {
     private const val CONNECT_TIMEOUT_MS = 10_000
 
-    fun connect(
-        address: InetSocketAddress,
-        readIdleSeconds: Int?,
-    ): WorldLinkNettyBlockingSession {
+    fun connect(address: InetSocketAddress, readIdleSeconds: Int?): WorldLinkNettyBlockingSession {
         val queue = LinkedBlockingQueue<ByteArray>()
         val bootstrap =
             Bootstrap()
@@ -134,9 +119,13 @@ internal object WorldLinkNettyBlockingClient {
                 .handler(
                     object : ChannelInitializer<SocketChannel>() {
                         override fun initChannel(ch: SocketChannel) {
-                            WorldLinkNettyChannelSupport.initChildPipeline(ch, queue, readIdleSeconds)
+                            WorldLinkNettyChannelSupport.initChildPipeline(
+                                ch,
+                                queue,
+                                readIdleSeconds,
+                            )
                         }
-                    },
+                    }
                 )
         val future = bootstrap.connect(address)
         future.sync()

@@ -6,7 +6,6 @@ import dev.openrune.definition.opcode.OpcodeList
 import dev.openrune.definition.opcode.OpcodeType
 import dev.openrune.definition.type.SequenceType
 import dev.openrune.types.SequenceServerType
-import kotlin.math.ceil
 
 class SequenceServerCodec(val sequences: Map<Int, SequenceType>? = null) :
     OpcodeDefinitionCodec<SequenceServerType>() {
@@ -25,23 +24,14 @@ class SequenceServerCodec(val sequences: Map<Int, SequenceType>? = null) :
         val seq = sequences[id] ?: return
 
         if (seq.skeletalId >= 0) {
-            tickDuration = (seq.getSkeletalLength() / 30.0).toInt()
-            totalDelay = seq.getSkeletalLength()
+            tickDuration = SequenceDuration.skeletalTicks(seq.rangeBegin, seq.rangeEnd)
+            totalDelay = seq.rangeEnd - seq.rangeBegin
         } else {
-            tickDuration = tickDuration(seq.frameDelays!!)
+            tickDuration = SequenceDuration.frameTicks(seq.frameDelays!!)
             totalDelay = seq.frameDelays!!.sum()
         }
         maxLoops = seq.maxLoops
         priority = seq.forcedPriority
-    }
-
-    private fun SequenceType.getSkeletalLength(): Int = rangeEnd - rangeBegin
-
-    private fun tickDuration(shorts: List<Int>): Int {
-        val validDelays = shorts.dropLastWhile { it > 30 }
-        val buffer = if (validDelays.size != shorts.size) 5 else 0
-        val duration = (validDelays.sum() + buffer) * 20
-        return ceil(duration / 600.0).toInt()
     }
 
     override fun createDefinition(): SequenceServerType = SequenceServerType()

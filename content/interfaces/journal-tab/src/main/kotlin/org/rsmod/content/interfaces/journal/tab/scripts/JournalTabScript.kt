@@ -1,6 +1,7 @@
 package org.rsmod.content.interfaces.journal.tab.scripts
 
 import jakarta.inject.Inject
+import org.rsmod.api.player.protect.NonInterruptingComponents
 import org.rsmod.api.script.onIfOpen
 import org.rsmod.api.script.onIfOverlayButton
 import org.rsmod.content.interfaces.journal.tab.SideJournalTab
@@ -14,6 +15,11 @@ import org.rsmod.plugin.scripts.ScriptContext
 
 class JournalTabScript @Inject constructor(private val eventBus: EventBus) : PluginScript() {
     override fun ScriptContext.startup() {
+        // Journal tab selection must preserve any running dialogue.
+        NonInterruptingComponents.register("component.side_journal:summary_list")
+        NonInterruptingComponents.register("component.side_journal:quest_list")
+        NonInterruptingComponents.register("component.side_journal:task_list")
+
         onIfOpen("interface.side_journal") { player.openActiveJournal() }
 
         onIfOverlayButton("component.side_journal:summary_list") {
@@ -26,6 +32,10 @@ class JournalTabScript @Inject constructor(private val eventBus: EventBus) : Plu
 
         onIfOverlayButton("component.side_journal:task_list") {
             player.switchJournalTab(SideJournalTab.Tasks)
+        }
+
+        onIfOverlayButton("component.side_journal:adventurepath_list") {
+            player.switchJournalTab(SideJournalTab.AdventurePaths)
         }
     }
 

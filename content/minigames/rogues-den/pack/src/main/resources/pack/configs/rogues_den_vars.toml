@@ -1,0 +1,18 @@
+[[varp]]
+id = "varp.rogues_den_in_maze"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.rogues_den_maze_access"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.rogues_den_state_migrated"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+

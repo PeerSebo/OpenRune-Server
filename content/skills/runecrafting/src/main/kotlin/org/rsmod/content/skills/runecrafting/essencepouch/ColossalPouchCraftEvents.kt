@@ -13,9 +13,7 @@ import org.rsmod.plugin.scripts.ScriptContext
 
 class ColossalPouchCraftEvents : PluginScript() {
     override fun ScriptContext.startup() {
-        val pouchItems = EssencePouch.Tier.entries.flatMap { tier ->
-            tier.items.toList()
-        }
+        val pouchItems = EssencePouch.Tier.entries.flatMap { tier -> tier.items.toList() }
 
         pouchItems.forEach { pouch ->
             onOpHeldU(ABYSSAL_NEEDLE, pouch) { craftColossalPouch(it) }
@@ -25,7 +23,9 @@ class ColossalPouchCraftEvents : PluginScript() {
 
     private suspend fun ProtectedAccess.craftColossalPouch(ev: HeldUEvents.Type) {
         if (isColossalPouchInteraction(ev)) {
-            mes("You don't want to poke the pouch with a needle again. It was bad enough the first time.")
+            mes(
+                "You don't want to poke the pouch with a needle again. It was bad enough the first time."
+            )
             return
         }
 
@@ -35,12 +35,16 @@ class ColossalPouchCraftEvents : PluginScript() {
         }
 
         if (player.baseRunecraftingLvl < RUNECRAFT_LEVEL_REQ) {
-            mes("You need level $RUNECRAFT_LEVEL_REQ Runecrafting to stitch these pouches together.")
+            mes(
+                "You need level $RUNECRAFT_LEVEL_REQ Runecrafting to stitch these pouches together."
+            )
             return
         }
 
         if (player.baseCraftingLvl < CRAFTING_LEVEL_REQ) {
-            mes("You need level $CRAFTING_LEVEL_REQ Crafting to even attempt stitching these together.")
+            mes(
+                "You need level $CRAFTING_LEVEL_REQ Crafting to even attempt stitching these together."
+            )
             return
         }
 
@@ -87,7 +91,7 @@ class ColossalPouchCraftEvents : PluginScript() {
         mes(
             "You attempt to stitch together all of the pouches. It's difficult, but you eventually " +
                 "craft a strange, kind of gross, fleshy container. It seems capable of storing up to " +
-                "$capacity essence at the moment.",
+                "$capacity essence at the moment."
         )
     }
 

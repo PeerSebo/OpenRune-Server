@@ -1,14 +1,16 @@
 package org.rsmod.api.account.character.inv
 
+import com.fasterxml.jackson.databind.JsonNode
 import dev.openrune.types.InvScope
 import dev.or2.sql.OpenRuneSql
 import jakarta.inject.Inject
 import org.rsmod.api.account.character.CharacterDataStage
 import org.rsmod.api.account.character.CharacterMetadataList
+import org.rsmod.api.account.character.withRecoveryData
 import org.rsmod.api.account.persistence.GamePersistenceRscmKeys
 import org.rsmod.api.db.DatabaseConnection
 import org.rsmod.game.entity.Player
-import org.rsmod.game.inv.Inventory
+import org.rsmod.game.inv.InvObj
 
 private typealias CharacterInventory = CharacterInventoryData.Inventory
 
@@ -19,13 +21,33 @@ private data class InventoryParent(
     val invDbKey: String,
 )
 
+private data class InventorySnapshot(val internalName: String, val objs: List<InvObj?>) {
+    val indices get() = objs.indices
+    operator fun get(slot: Int): InvObj? = objs[slot]
+}
+
 public class CharacterInventoryPipeline
 @Inject
 constructor(private val applier: CharacterInventoryApplier) : CharacterDataStage.Pipeline {
+    override val recoveryKey: String = "inventories"
+
+    override fun restoreSave(data: JsonNode): CharacterDataStage.PreparedSave {
+        require(data.isArray)
+        val inventories = data.map { inventory ->
+            InventorySnapshot(inventory.required("type").textValue(), inventory.required("slots").map { obj ->
+                if (obj.isNull) null else InvObj(GamePersistenceRscmKeys.decodeObjKey(obj.required("obj").textValue()),
+                    obj.required("count").intValue(), obj.required("vars").intValue())
+            })
+        }
+        require(inventories.map { it.internalName }.distinct().size == inventories.size)
+        return CharacterDataStage.PreparedSave { connection, characterId ->
+            saveInventories(connection, inventories, characterId)
+        }
+    }
+
     override fun append(connection: DatabaseConnection, metadata: CharacterMetadataList) {
         val inventories = selectInventories(connection, metadata)
 
-        // Avoid a malformed query if no inventories exist.
         if (inventories.isEmpty()) {
             metadata.add(applier, CharacterInventoryData(inventories))
             return
@@ -92,7 +114,27 @@ constructor(private val applier: CharacterInventoryApplier) : CharacterDataStage
     }
 
     override fun save(connection: DatabaseConnection, player: Player, characterId: Int) {
-        val persistentInvs = player.invMap.values.filter { it.type.scope == InvScope.Perm }
+        prepareSave(player).save(connection, characterId)
+    }
+
+    override fun prepareSave(player: Player): CharacterDataStage.PreparedSave {
+        val inventories = player.invMap.values.filter { it.type.scope == InvScope.Perm }.map { inv ->
+            InventorySnapshot(inv.internalName, inv.indices.map { inv[it] })
+        }
+        return CharacterDataStage.PreparedSave { connection, characterId ->
+            saveInventories(connection, inventories, characterId)
+        }.withRecoveryData("inventories", inventories.map { inventory ->
+            mapOf("type" to inventory.internalName, "slots" to inventory.objs.map { obj ->
+                obj?.let { mapOf("obj" to GamePersistenceRscmKeys.encodeObjKey(it.id), "count" to it.count, "vars" to it.vars) }
+            })
+        })
+    }
+
+    private fun saveInventories(
+        connection: DatabaseConnection,
+        persistentInvs: List<InventorySnapshot>,
+        characterId: Int,
+    ) {
         deleteStaleInventories(connection, characterId, persistentInvs)
 
         val delete =
@@ -100,9 +142,6 @@ constructor(private val applier: CharacterInventoryApplier) : CharacterDataStage
                 OpenRuneSql.text("game/inventory/delete_obj_by_inventory_slot.sql"),
             )
 
-        // Note: Not all database engines support `ON CONFLICT`. This syntax works with our current
-        // database setup (PostgreSQL), but may need to be adapted for others (e.g., mysql uses
-        // `ON DUPLICATE KEY UPDATE` for similar functionality).
         val upsert =
             connection.prepareStatement(
                 OpenRuneSql.text("game/inventory/upsert_inventory_obj.sql"),
@@ -116,7 +155,7 @@ constructor(private val applier: CharacterInventoryApplier) : CharacterDataStage
                     val parent = ensureInventoryRow(connection, characterId, invTypeKey)
                     if (parent == null) {
                         val message =
-                            "Fatal error fetching inventory row for: ${inventory.type} (player=$player)"
+                            "Could not fetch ${inventory.internalName} inventory row for character $characterId"
                         throw IllegalStateException(message)
                     }
 
@@ -151,11 +190,9 @@ constructor(private val applier: CharacterInventoryApplier) : CharacterDataStage
     private fun deleteStaleInventories(
         connection: DatabaseConnection,
         characterId: Int,
-        inventories: Collection<Inventory>,
+        inventories: Collection<InventorySnapshot>,
     ) {
-        // Important: This function assumes `inventory_objs` references `inventories` with
-        // `ON DELETE CASCADE`, so deleting a parent inventory also deletes its associated
-        // `inventory_objs` rows.
+        // The inventory_objs foreign key cascades deletion of stale parent inventories.
         if (inventories.isNotEmpty()) {
             val activeInvPlaceholders = (0 until inventories.size).joinToString(",") { "?" }
             val deleteStaleInventories =

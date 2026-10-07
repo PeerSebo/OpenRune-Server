@@ -1,0 +1,35 @@
+[[varp]]
+id = "varp.vardorvis_vestige_progress"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.duke_sucellus_vestige_progress"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.leviathan_vestige_progress"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.whisperer_vestige_progress"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varn]]
+id = "varn.awakened_state"
+
+[[varn]]
+id = "varn.skip_killcount"
+
+[[params]]
+id = "param.killcount_varp_awakened"
+isServerOnly = true
+type = "VARP"
+isMembers = true

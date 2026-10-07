@@ -2,18 +2,20 @@ package dev.openrune.codec.osrs
 
 import dev.openrune.cache.filestore.definition.ConfigDefinitionDecoder
 import dev.openrune.codec.osrs.impl.*
+import dev.openrune.definition.type.VarBitType
 import dev.openrune.types.*
 import dev.openrune.types.varp.VarpServerType
 
-class ObjectDecoder(rev : Int) : ConfigDefinitionDecoder<ObjectServerType>(ObjectServerCodec(rev), 55)
+class ObjectDecoder(rev: Int) :
+    ConfigDefinitionDecoder<ObjectServerType>(ObjectServerCodec(rev), 55)
 
 class HealthBarDecoder : ConfigDefinitionDecoder<HealthBarServerType>(HealthBarServerCodec(), 56)
 
 class SequenceDecoder : ConfigDefinitionDecoder<SequenceServerType>(SequenceServerCodec(), 57)
 
-class NpcDecoder(rev : Int) : ConfigDefinitionDecoder<NpcServerType>(NpcServerCodec(rev), 58)
+class NpcDecoder(rev: Int) : ConfigDefinitionDecoder<NpcServerType>(NpcServerCodec(rev), 58)
 
-class ItemDecoder(rev : Int) : ConfigDefinitionDecoder<ItemServerType>(ItemServerCodec(rev), 59)
+class ItemDecoder(rev: Int) : ConfigDefinitionDecoder<ItemServerType>(ItemServerCodec(rev), 59)
 
 class InventoryDecoder : ConfigDefinitionDecoder<InventoryServerType>(InventoryServerCodec(), 60)
 
@@ -41,3 +43,5 @@ class VarConDecoder : ConfigDefinitionDecoder<VarConType>(VarConCodec(), 85)
 class VarObjBitDecoder : ConfigDefinitionDecoder<VarObjBitType>(VarObjCodec(), 86)
 
 class HuntModeDecoder : ConfigDefinitionDecoder<HuntModeType>(HuntCodec(), 87)
+
+class VarBitServerDecoder : ConfigDefinitionDecoder<VarBitType>(VarBitServerTypeCodec(), 88)

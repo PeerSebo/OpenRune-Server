@@ -1,4 +1,3 @@
-## Desert Treasure Pyramid Level 1
 
 [[spawn]]
 npc = "npc.deserttreasure_mummy_3"
@@ -8,7 +7,6 @@ coords = "3_45_77_20_20"
 npc = "npc.deserttreasure_mummy_4"
 coords = "3_45_77_46_37"
 
-## Desert Treasure Pyramid Level 2
 
 [[spawn]]
 npc = "npc.deserttreasure_mummy_2"
@@ -26,7 +24,6 @@ coords = "2_44_77_42_36"
 npc = "npc.deserttreasure_mummy_5"
 coords = "2_44_77_48_18"
 
-## Desert Treasure Pyramid Level 3
 
 [[spawn]]
 npc = "npc.deserttreasure_mummy_2"
@@ -132,7 +129,6 @@ coords = "1_43_77_57_25"
 npc = "npc.deserttreasure_mummy_5"
 coords = "1_43_77_9_22"
 
-## Desert Treasure Pyramid Level 4
 
 [[spawn]]
 npc = "npc.azzanadra"
@@ -321,6 +317,3 @@ coords = "0_50_145_6_53"
 [[spawn]]
 npc = "npc.deserttreasure_mummy_5"
 coords = "0_50_145_9_19"
-
-## Desert Treasure Pyramid Level 4 End
-

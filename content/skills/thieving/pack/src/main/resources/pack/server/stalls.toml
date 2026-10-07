@@ -1,0 +1,480 @@
+# Steal-from is op2 on these stalls; handlers bind onOpContentLoc2.
+
+
+[[object]]
+id = "loc.misc_veg_market"
+inherit = "loc.misc_veg_market"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 2
+"param.skill_xp" = 100
+"param.respawn_time" = 2
+"param.next_loc_stage" = "loc.viking_market"
+
+[[object]]
+id = "loc.etc_veg_market"
+inherit = "loc.etc_veg_market"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 2
+"param.skill_xp" = 100
+"param.respawn_time" = 2
+"param.next_loc_stage" = "loc.viking_market"
+
+
+[[object]]
+id = "loc.cakethiefstall"
+inherit = "loc.cakethiefstall"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 5
+"param.skill_xp" = 160
+"param.respawn_time" = 4
+"param.next_loc_stage" = "loc.market"
+"param.thieving_guard_range" = 6
+
+[[object]]
+id = "loc.hos_stall_bread"
+inherit = "loc.hos_stall_bread"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 5
+"param.skill_xp" = 160
+"param.respawn_time" = 4
+"param.next_loc_stage" = "loc.hos_stall_empty"
+
+[[object]]
+id = "loc.fortis_market_stall_bakers"
+inherit = "loc.fortis_market_stall_bakers"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 5
+"param.skill_xp" = 160
+"param.respawn_time" = 4
+"param.next_loc_stage" = "loc.fortis_market_stall"
+
+[[object]]
+id = "loc.dwarf_market_bakery"
+inherit = "loc.dwarf_market_bakery"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 5
+"param.skill_xp" = 160
+"param.respawn_time" = 16
+"param.next_loc_stage" = "loc.dwarf_market_empty_stall"
+
+
+[[object]]
+id = "loc.tea_stall"
+inherit = "loc.tea_stall"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 5
+"param.skill_xp" = 160
+"param.respawn_time" = 4
+"param.next_loc_stage" = "loc.market"
+
+
+[[object]]
+id = "loc.mm_stall_food"
+inherit = "loc.mm_stall_food"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 5
+"param.skill_xp" = 160
+"param.respawn_time" = 6
+"param.next_loc_stage" = "loc.mm_desk"
+"param.thieving_success_low" = 209
+"param.thieving_success_high" = 255
+
+[[object]]
+id = "loc.mm_stall_crafting"
+inherit = "loc.mm_stall_crafting"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 5
+"param.skill_xp" = 200
+"param.respawn_time" = 8
+"param.next_loc_stage" = "loc.mm_desk"
+"param.thieving_success_low" = 129
+"param.thieving_success_high" = 503
+
+# TODO: Verify the general stall's borrowed crafting-stall success curve; removing it makes success guaranteed.
+[[object]]
+id = "loc.mm_stall_general"
+inherit = "loc.mm_stall_general"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 5
+"param.skill_xp" = 250
+"param.respawn_time" = 8
+"param.next_loc_stage" = "loc.mm_desk"
+"param.thieving_success_low" = 129
+"param.thieving_success_high" = 503
+
+[[object]]
+id = "loc.mm_stall_magic"
+inherit = "loc.mm_stall_magic"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 65
+"param.skill_xp" = 900
+"param.respawn_time" = 12
+"param.next_loc_stage" = "loc.mm_desk"
+"param.thieving_success_low" = 20
+"param.thieving_success_high" = 180
+
+[[object]]
+id = "loc.mm_stall_scimitar"
+inherit = "loc.mm_stall_scimitar"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 65
+"param.skill_xp" = 2100
+"param.respawn_time" = 32
+"param.next_loc_stage" = "loc.mm_desk"
+"param.thieving_success_low" = 20
+"param.thieving_success_high" = 180
+
+
+[[object]]
+id = "loc.dwarf_market_crafting"
+inherit = "loc.dwarf_market_crafting"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 5
+"param.skill_xp" = 200
+"param.respawn_time" = 8
+"param.next_loc_stage" = "loc.dwarf_market_empty_stall"
+
+[[object]]
+id = "loc.xbows_dwarf_market"
+inherit = "loc.xbows_dwarf_market"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 49
+"param.skill_xp" = 520
+"param.respawn_time" = 8
+"param.next_loc_stage" = "loc.dwarf_market_empty_stall"
+
+[[object]]
+id = "loc.dwarf_market_silver"
+inherit = "loc.dwarf_market_silver"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 50
+"param.skill_xp" = 2050
+"param.respawn_time" = 32
+"param.next_loc_stage" = "loc.dwarf_market_empty_stall"
+
+[[object]]
+id = "loc.dwarf_market_gems"
+inherit = "loc.dwarf_market_gems"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 75
+"param.skill_xp" = 4080
+"param.respawn_time" = 100
+"param.next_loc_stage" = "loc.dwarf_market_empty_stall"
+
+
+[[object]]
+id = "loc.rockcounter_withcakes"
+inherit = "loc.rockcounter_withcakes"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 15
+"param.skill_xp" = 64
+"param.respawn_time" = 12
+"param.next_loc_stage" = "loc.empty_rock_cake_counter"
+
+
+[[object]]
+id = "loc.silkthiefstall"
+inherit = "loc.silkthiefstall"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 20
+"param.skill_xp" = 240
+"param.respawn_time" = 8
+"param.next_loc_stage" = "loc.market"
+"param.thieving_guard_range" = 6
+
+[[object]]
+id = "loc.prif_marketstall_silk"
+inherit = "loc.prif_marketstall_silk"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 20
+"param.skill_xp" = 240
+"param.respawn_time" = 8
+"param.next_loc_stage" = "loc.prif_marketstall_empty"
+
+[[object]]
+id = "loc.fortis_market_stall_silk"
+inherit = "loc.fortis_market_stall_silk"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 20
+"param.skill_xp" = 240
+"param.respawn_time" = 8
+"param.next_loc_stage" = "loc.fortis_market_stall"
+
+
+[[object]]
+id = "loc.rag_market_stall"
+inherit = "loc.rag_market_stall"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 22
+"param.skill_xp" = 270
+"param.respawn_time" = 8
+"param.next_loc_stage" = "loc.rag_market_stall_empty"
+"param.thieving_guard_range" = 6
+
+
+[[object]]
+id = "loc.hos_fruit_stall_02"
+inherit = "loc.hos_fruit_stall_02"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 25
+"param.skill_xp" = 285
+"param.respawn_time" = 4
+"param.next_loc_stage" = "loc.hos_fruit_stall"
+"param.thieving_guard_range" = 6
+
+
+[[object]]
+id = "loc.seed_stall"
+inherit = "loc.seed_stall"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 27
+"param.skill_xp" = 100
+"param.respawn_time" = 4
+"param.next_loc_stage" = "loc.market"
+"param.thieving_guard_range" = 6
+
+
+[[object]]
+id = "loc.furthiefstall"
+inherit = "loc.furthiefstall"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 35
+"param.skill_xp" = 450
+"param.respawn_time" = 12
+"param.next_loc_stage" = "loc.market"
+"param.thieving_guard_range" = 6
+
+[[object]]
+id = "loc.viking_fur_market"
+inherit = "loc.viking_fur_market"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 35
+"param.skill_xp" = 450
+"param.respawn_time" = 12
+"param.next_loc_stage" = "loc.viking_market"
+"param.thieving_guard_range" = 6
+
+[[object]]
+id = "loc.fortis_market_stall_fur"
+inherit = "loc.fortis_market_stall_fur"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 35
+"param.skill_xp" = 450
+"param.respawn_time" = 12
+"param.next_loc_stage" = "loc.fortis_market_stall"
+
+
+[[object]]
+id = "loc.viking_fish_market"
+inherit = "loc.viking_fish_market"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 42
+"param.skill_xp" = 420
+"param.respawn_time" = 12
+"param.next_loc_stage" = "loc.viking_market"
+"param.thieving_guard_range" = 6
+
+[[object]]
+id = "loc.misc_fish_market"
+inherit = "loc.misc_fish_market"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 42
+"param.skill_xp" = 420
+"param.respawn_time" = 12
+"param.next_loc_stage" = "loc.viking_market"
+
+[[object]]
+id = "loc.etc_fish_market"
+inherit = "loc.etc_fish_market"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 42
+"param.skill_xp" = 420
+"param.respawn_time" = 12
+"param.next_loc_stage" = "loc.viking_market"
+
+[[object]]
+id = "loc.fish_stall_warrens"
+inherit = "loc.fish_stall_warrens"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 42
+"param.skill_xp" = 420
+"param.respawn_time" = 12
+"param.next_loc_stage" = "loc.market"
+"param.thieving_guard_range" = 6
+
+
+[[object]]
+id = "loc.silverthiefstall"
+inherit = "loc.silverthiefstall"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 50
+"param.skill_xp" = 2050
+"param.respawn_time" = 32
+"param.next_loc_stage" = "loc.market"
+"param.thieving_guard_range" = 6
+
+[[object]]
+id = "loc.prif_marketstall_silver"
+inherit = "loc.prif_marketstall_silver"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 50
+"param.skill_xp" = 2050
+"param.respawn_time" = 32
+"param.next_loc_stage" = "loc.prif_marketstall_empty"
+
+
+[[object]]
+id = "loc.spicethiefstall"
+inherit = "loc.spicethiefstall"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 65
+"param.skill_xp" = 920
+"param.respawn_time" = 10
+"param.next_loc_stage" = "loc.market"
+"param.thieving_guard_range" = 6
+
+[[object]]
+id = "loc.prif_marketstall_spice"
+inherit = "loc.prif_marketstall_spice"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 65
+"param.skill_xp" = 920
+"param.respawn_time" = 10
+"param.next_loc_stage" = "loc.prif_marketstall_empty"
+
+[[object]]
+id = "loc.fortis_market_stall_spice"
+inherit = "loc.fortis_market_stall_spice"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 65
+"param.skill_xp" = 920
+"param.respawn_time" = 10
+"param.next_loc_stage" = "loc.fortis_market_stall"
+
+
+[[object]]
+id = "loc.gemthiefstall"
+inherit = "loc.gemthiefstall"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 75
+"param.skill_xp" = 4080
+"param.respawn_time" = 100
+"param.next_loc_stage" = "loc.market"
+"param.thieving_guard_range" = 6
+
+[[object]]
+id = "loc.prif_marketstall_gem"
+inherit = "loc.prif_marketstall_gem"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 75
+"param.skill_xp" = 4080
+"param.respawn_time" = 100
+"param.next_loc_stage" = "loc.prif_marketstall_empty"
+
+[[object]]
+id = "loc.fortis_market_stall_gems"
+inherit = "loc.fortis_market_stall_gems"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 75
+"param.skill_xp" = 4080
+"param.respawn_time" = 100
+"param.next_loc_stage" = "loc.fortis_market_stall"
+
+
+[[object]]
+id = "loc.tzhaar_shopcounter_ore"
+inherit = "loc.tzhaar_shopcounter_ore"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 82
+"param.skill_xp" = 3500
+"param.respawn_time" = 50
+"param.next_loc_stage" = "loc.tzhaar_shopcounter_empty"
+
+[[object]]
+id = "loc.tzhaar_shopcounter_gem"
+inherit = "loc.tzhaar_shopcounter_gem"
+contentGroup = "content.stall"
+
+[object.params]
+"param.levelrequire" = 75
+"param.skill_xp" = 4080
+"param.respawn_time" = 175
+"param.next_loc_stage" = "loc.tzhaar_shopcounter_empty"

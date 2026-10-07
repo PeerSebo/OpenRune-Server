@@ -200,6 +200,3 @@ denominator = 1000
 weight = 1
 obj = "obj.lava_battlestaff"
 count = 1
-
-
-# Main table pool padding uses a nothing roll (F2P drops removed and/or subtable access missing from wiki parse) (21 weight)

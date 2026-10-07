@@ -20,10 +20,6 @@ public abstract class DbColumn<T, R> {
         get() = internalName ?: error("`internalName` must not be null.")
 }
 
-/**
- * A column that stores a single decoded value, which can be made up of one or more
- * [CacheVarLiteral] values as listed by [types].
- */
 public class DbValueColumn<T, R>(private val codec: DbColumnCodec<T, R>) : DbColumn<List<T>, R>() {
     public val types: List<CacheVarLiteral> by codec::types
 
@@ -37,7 +33,6 @@ public class DbValueColumn<T, R>(private val codec: DbColumnCodec<T, R>) : DbCol
     }
 }
 
-/** A column that stores multiple values, each used to construct a decoded result. */
 public class DbListColumn<T, R>(private val codec: DbColumnCodec<T, R>) :
     DbColumn<List<T>, List<R>>() {
     public val types: List<CacheVarLiteral> by codec::types

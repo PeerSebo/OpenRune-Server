@@ -15,11 +15,6 @@ import org.rsmod.game.entity.Player
 
 @Singleton
 public class AutocastWeapons @Inject constructor(private val spells: AutocastSpells) {
-    /**
-     * Returns `true` if [weapon] is a valid staff that can be used to cast the spell associated
-     * with [autocastId]. Otherwise, sends the appropriate missing-requirement message to the player
-     * and returns `false`.
-     */
     public fun canStaffAutocast(player: Player, weapon: ItemServerType, autocastId: Int): Boolean {
         val spell = spells[autocastId]
         if (spell != null) {
@@ -41,8 +36,6 @@ public class AutocastWeapons @Inject constructor(private val spells: AutocastSpe
     public fun canStaffAutocast(weapon: ItemServerType, autocastId: Int): Boolean {
         val spell = spells[autocastId]
 
-        // This can occur if a player was auto-casting a spell that is now removed (or at least
-        // its ability to be autocast). We return false so it can be cleared by the caller.
         if (spell == null) {
             return false
         }
@@ -51,13 +44,10 @@ public class AutocastWeapons @Inject constructor(private val spells: AutocastSpe
             return false
         }
 
-        // We return early if the spell is a standard autocast spell. (Can be cast by any staff)
         if (!spells.isRestrictedSpell(spell)) {
             return true
         }
 
-        // Certain spells can only be autocast by specific weapons, such as Iban blast only being
-        // available with Iban's staff.
         val staffAdditionalSpells = weapon.additionalAutocastSpells()
         val isValidAdditionalSpell = staffAdditionalSpells.any { it.isType(spell) }
         return isValidAdditionalSpell

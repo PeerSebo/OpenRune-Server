@@ -44,7 +44,6 @@ constructor(private val eventBus: EventBus, private val protectedAccess: Protect
             return
         }
 
-        // No need to verify again if dragging objs on the same interface.
         val skipTargetVerification = selectedInterface.isType(targetInterface)
         if (!skipTargetVerification) {
             val isTargetOpenedModal = ui.containsModal(targetInterface)

@@ -1,0 +1,753 @@
+[[npc]]
+id = "npc.godwars_bandos_avatar"
+inherit = "npc.godwars_bandos_avatar"
+huntMode = "stalk.aggressive_melee"
+huntRange = 30
+maxRange = 30
+defaultMode = "Wander"
+
+[npc.params]
+"param.boss_hp_bar_mode" = 1
+"param.attack_anim" = "seq.godwars_bandos_attack"
+"param.defend_anim" = "seq.godwars_bandos_defend"
+"param.death_anim" = "seq.godwars_bandos_death"
+"param.defend_sound" = "synth.GODWARS_BANDOS_AVATAR_HIT"
+"param.elemental_weakness_percent" = 40
+"param.elemental_weakness_type" = 2
+"param.killcount_varp" = "varp.total_bandos_kills"
+
+[[npc]]
+id = "npc.godwars_sergeant_goblin1"
+inherit = "npc.godwars_sergeant_goblin1"
+category = "category.godwars_bandos_bodyguard"
+huntMode = "stalk.aggressive_melee"
+huntRange = 30
+maxRange = 30
+defaultMode = "Wander"
+
+[npc.params]
+"param.attack_anim" = "seq.slice_surface_goblin_sergent_attack"
+"param.defend_anim" = "seq.slice_surface_goblin_sergent_defend"
+"param.death_anim" = "seq.slice_surface_goblin_sergent_death"
+"param.npc_attack_type" = "category.attacktype_crush"
+"param.attack_sound" = "synth.GOBLIN_ATTACK"
+"param.defend_sound" = "synth.GOBLIN_HIT"
+"param.death_sound" = "synth.GOBLIN_DEATH"
+
+[[npc]]
+id = "npc.godwars_sergeant_goblin2"
+inherit = "npc.godwars_sergeant_goblin2"
+category = "category.godwars_bandos_bodyguard"
+huntMode = "stalk.aggressive_ranged"
+huntRange = 30
+maxRange = 30
+attackRange = 7
+defaultMode = "Wander"
+
+[npc.params]
+"param.npc_attack_type" = "category.attacktype_magic"
+"param.attack_anim" = "seq.godwars_sergeant_goblin2_sonic"
+"param.defend_anim" = "seq.slice_surface_goblin_sergent_defend"
+"param.death_anim" = "seq.slice_surface_goblin_sergent_death"
+"param.proj_type" = "projanim.magic_spell"
+"param.proj_travel" = "spotanim.godwars_goblin2_sonic_attk_proj"
+"param.defend_sound" = "synth.GOBLIN_HIT"
+"param.death_sound" = "synth.GOBLIN_DEATH"
+
+[[npc]]
+id = "npc.godwars_sergeant_goblin3"
+inherit = "npc.godwars_sergeant_goblin3"
+category = "category.godwars_bandos_bodyguard"
+huntMode = "stalk.aggressive_ranged"
+huntRange = 30
+maxRange = 30
+attackRange = 7
+defaultMode = "Wander"
+
+[npc.params]
+"param.npc_attack_type" = "category.attacktype_heavy"
+"param.attack_anim" = "seq.godwars_sergeant_goblin3_ranged"
+"param.defend_anim" = "seq.slice_surface_goblin_sergent_defend"
+"param.death_anim" = "seq.slice_surface_goblin_sergent_death"
+"param.proj_type" = "projanim.thrown"
+"param.proj_travel" = "spotanim.godwars_goblin3_handaxe_proj"
+"param.defend_sound" = "synth.GOBLIN_HIT"
+"param.death_sound" = "synth.GOBLIN_DEATH"
+
+[[npc]]
+id = "npc.godwars_saradomin_avatar"
+inherit = "npc.godwars_saradomin_avatar"
+huntMode = "stalk.aggressive_melee"
+huntRange = 30
+maxRange = 30
+defaultMode = "Wander"
+
+[npc.params]
+"param.boss_hp_bar_mode" = 1
+"param.death_anim" = "seq.godwars_saradomin_death"
+"param.killcount_varp" = "varp.total_saradomin_kills"
+
+[[npc]]
+id = "npc.godwars_saradomin_unicorn"
+inherit = "npc.godwars_saradomin_unicorn"
+category = "category.godwars_saradomin_bodyguard"
+huntMode = "stalk.aggressive_melee"
+huntRange = 30
+maxRange = 30
+defaultMode = "Wander"
+
+[npc.params]
+"param.attack_anim" = "seq.unicorn_rework_attack"
+"param.defend_anim" = "seq.unicorn_rework_defend"
+"param.death_anim" = "seq.unicorn_rework_death"
+"param.npc_attack_type" = "category.attacktype_crush"
+"param.attack_sound" = "synth.GODWARS_UNICORN_ATTACK"
+"param.defend_sound" = "synth.GODWARS_UNICORN_HIT"
+"param.death_sound" = "synth.GODWARS_UNICORN_DEATH"
+
+[[npc]]
+id = "npc.godwars_saradomin_lion"
+inherit = "npc.godwars_saradomin_lion"
+category = "category.godwars_saradomin_bodyguard"
+huntMode = "stalk.aggressive_ranged"
+huntRange = 30
+maxRange = 30
+attackRange = 7
+defaultMode = "Wander"
+
+[npc.params]
+"param.attack_anim" = "seq.godwars_lion_magic_attack"
+"param.defend_anim" = "seq.godwars_lion_defend"
+"param.death_anim" = "seq.godwars_lion_death"
+"param.npc_attack_type" = "category.attacktype_magic"
+"param.proj_type" = "projanim.magic_spell"
+"param.proj_travel" = "spotanim.godwars_lion_magic_proj"
+"param.attack_sound" = "synth.GODWARS_LION_MAGIC_CASTANDFIRE"
+"param.defend_sound" = "synth.GODWARS_LION_HIT"
+"param.death_sound" = "synth.GODWARS_LION_DEATH"
+
+[[npc]]
+id = "npc.godwars_saradomin_centaur"
+inherit = "npc.godwars_saradomin_centaur"
+category = "category.godwars_saradomin_bodyguard"
+huntMode = "stalk.aggressive_ranged"
+huntRange = 30
+maxRange = 30
+attackRange = 7
+defaultMode = "Wander"
+
+[npc.params]
+"param.attack_anim" = "seq.godwars_centaur_attack_ranged"
+"param.defend_anim" = "seq.godwars_centaur_defend"
+"param.death_anim" = "seq.godwars_centaur_death"
+"param.npc_attack_type" = "category.attacktype_light"
+"param.proj_type" = "projanim.arrow"
+"param.proj_travel" = "spotanim.godwars_centaur_arrow_proj"
+
+[[npc]]
+id = "npc.godwars_zamorak_avatar"
+inherit = "npc.godwars_zamorak_avatar"
+huntMode = "stalk.aggressive_melee"
+huntRange = 30
+maxRange = 30
+defaultMode = "Wander"
+
+[npc.params]
+"param.boss_hp_bar_mode" = 1
+"param.death_anim" = "seq.godwars_zamorak_death"
+"param.elemental_weakness_percent" = 30
+"param.elemental_weakness_type" = 1
+"param.killcount_varp" = "varp.total_zamorak_kills"
+
+[[npc]]
+id = "npc.godwars_ancient_black_demon"
+inherit = "npc.godwars_ancient_black_demon"
+category = "category.godwars_zamorak_bodyguard"
+huntMode = "stalk.aggressive_ranged"
+huntRange = 30
+maxRange = 30
+attackRange = 7
+defaultMode = "Wander"
+
+[npc.params]
+"param.attack_anim" = "seq.demon_update_fireball_cast"
+"param.defend_anim" = "seq.demon_block"
+"param.death_anim" = "seq.demon_death"
+"param.npc_attack_type" = "category.attacktype_magic"
+"param.proj_type" = "projanim.magic_spell"
+"param.proj_travel" = "spotanim.godwars_black_demon_fireball_proj"
+"param.attack_sound" = "synth.BLACK_DEMON_ATTACK"
+"param.defend_sound" = "synth.BLACK_DEMON_HIT"
+"param.death_sound" = "synth.BLACK_DEMON_DEATH"
+
+[[npc]]
+id = "npc.godwars_ancient_greater_demon"
+inherit = "npc.godwars_ancient_greater_demon"
+category = "category.godwars_zamorak_bodyguard"
+huntMode = "stalk.aggressive_melee"
+huntRange = 30
+maxRange = 30
+defaultMode = "Wander"
+
+[npc.params]
+"param.attack_anim" = "seq.demon_attack_greater"
+"param.defend_anim" = "seq.demon_block"
+"param.death_anim" = "seq.demon_death_greater"
+"param.npc_attack_type" = "category.attacktype_crush"
+"param.attack_sound" = "synth.DEMON_ATTACK"
+"param.defend_sound" = "synth.DEMON_HIT"
+"param.death_sound" = "synth.DEMON_DEATH"
+
+[[npc]]
+id = "npc.godwars_ancient_lesser_demon"
+inherit = "npc.godwars_ancient_lesser_demon"
+category = "category.godwars_zamorak_bodyguard"
+huntMode = "stalk.aggressive_ranged"
+huntRange = 30
+maxRange = 30
+attackRange = 7
+defaultMode = "Wander"
+
+[npc.params]
+"param.attack_anim" = "seq.godwars_zamorak_bdygrd_ranged"
+"param.defend_anim" = "seq.demon_block"
+"param.death_anim" = "seq.demon_death"
+"param.npc_attack_type" = "category.attacktype_heavy"
+"param.proj_type" = "projanim.thrown"
+"param.proj_travel" = "spotanim.godwars_zamorak_bdygrd_ranged_proj"
+"param.defend_sound" = "synth.DEMON_HIT"
+"param.death_sound" = "synth.DEMON_DEATH"
+
+[[npc]]
+id = "npc.godwars_armadyl_avatar"
+inherit = "npc.godwars_armadyl_avatar"
+huntMode = "stalk.aggressive_ranged"
+huntRange = 30
+maxRange = 30
+attackRange = 7
+defaultMode = "Wander"
+
+[npc.params]
+"param.boss_hp_bar_mode" = 1
+"param.death_anim" = "seq.godwars_armadyl_avatar_death"
+
+[[npc]]
+id = "npc.godwars_armadyl_bodyguard_geerin"
+inherit = "npc.godwars_armadyl_bodyguard_geerin"
+category = "category.godwars_armadyl_bodyguard"
+huntMode = "stalk.aggressive_ranged"
+huntRange = 30
+maxRange = 30
+attackRange = 7
+defaultMode = "Wander"
+
+[npc.params]
+"param.attack_anim" = "seq.godwars_armadyl_spear_attack"
+"param.defend_anim" = "seq.godwars_armadyl_defend"
+"param.death_anim" = "seq.godwars_armadyl_death"
+"param.npc_attack_type" = "category.attacktype_standard"
+"param.proj_type" = "projanim.thrown"
+"param.proj_travel" = "spotanim.godwars_armadyl_spear_travel_spotanim"
+"param.defend_sound" = "synth.GODWARS_ARMADYL_HIT"
+"param.death_sound" = "synth.GODWARS_ARMADYL_DEATH"
+
+[[npc]]
+id = "npc.godwars_armadyl_bodyguard_kilisa"
+inherit = "npc.godwars_armadyl_bodyguard_kilisa"
+category = "category.godwars_armadyl_bodyguard"
+huntMode = "stalk.aggressive_melee"
+huntRange = 30
+maxRange = 30
+defaultMode = "Wander"
+
+[npc.params]
+"param.attack_anim" = "seq.godwars_armadyl_sword_attack"
+"param.defend_anim" = "seq.godwars_armadyl_defend"
+"param.death_anim" = "seq.godwars_armadyl_death"
+"param.npc_attack_type" = "category.attacktype_slash"
+"param.defend_sound" = "synth.GODWARS_ARMADYL_HIT"
+"param.death_sound" = "synth.GODWARS_ARMADYL_DEATH"
+
+[[npc]]
+id = "npc.godwars_armadyl_bodyguard_skree"
+inherit = "npc.godwars_armadyl_bodyguard_skree"
+category = "category.godwars_armadyl_bodyguard"
+huntMode = "stalk.aggressive_ranged"
+huntRange = 30
+maxRange = 30
+attackRange = 7
+defaultMode = "Wander"
+
+[npc.params]
+"param.attack_anim" = "seq.godwars_armadyl_spear_attack"
+"param.defend_anim" = "seq.godwars_armadyl_defend"
+"param.death_anim" = "seq.godwars_armadyl_death"
+"param.npc_attack_type" = "category.attacktype_magic"
+"param.proj_type" = "projanim.magic_spell"
+"param.proj_travel" = "spotanim.godwars_armadyl_bolt_attack_spotanim"
+"param.defend_sound" = "synth.GODWARS_ARMADYL_HIT"
+"param.death_sound" = "synth.GODWARS_ARMADYL_DEATH"
+
+[[npc]]
+id = "npc.godwars_spiritual_bandos_mage"
+inherit = "npc.godwars_spiritual_bandos_mage"
+category = "category.godwars_bandos_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 30
+"param.elemental_weakness_type" = 0
+"param.killcount_varp" = "varp.kc_spiritual_mage"
+"param.killcount_notify" = false
+
+[[npc]]
+id = "npc.godwars_spiritual_bandos_ranger"
+inherit = "npc.godwars_spiritual_bandos_ranger"
+category = "category.godwars_bandos_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 30
+"param.elemental_weakness_type" = 0
+"param.killcount_varp" = "varp.kc_spiritual_ranger"
+"param.killcount_notify" = false
+
+[[npc]]
+id = "npc.godwars_spiritual_bandos_warrior"
+inherit = "npc.godwars_spiritual_bandos_warrior"
+category = "category.godwars_bandos_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 30
+"param.elemental_weakness_type" = 0
+"param.killcount_varp" = "varp.kc_spiritual_warrior"
+"param.killcount_notify" = false
+
+[[npc]]
+id = "npc.godwars_ancient_ork1"
+inherit = "npc.godwars_ancient_ork1"
+category = "category.godwars_bandos_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 15
+"param.elemental_weakness_type" = 2
+
+[[npc]]
+id = "npc.godwars_ancient_ork2"
+inherit = "npc.godwars_ancient_ork2"
+category = "category.godwars_bandos_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 15
+"param.elemental_weakness_type" = 2
+
+[[npc]]
+id = "npc.godwars_ancient_ork3"
+inherit = "npc.godwars_ancient_ork3"
+category = "category.godwars_bandos_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 15
+"param.elemental_weakness_type" = 2
+
+[[npc]]
+id = "npc.godwars_ancient_ork4"
+inherit = "npc.godwars_ancient_ork4"
+category = "category.godwars_bandos_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 15
+"param.elemental_weakness_type" = 2
+
+[[npc]]
+id = "npc.godwars_ancient_cyclops"
+inherit = "npc.godwars_ancient_cyclops"
+category = "category.godwars_bandos_follower"
+
+[[npc]]
+id = "npc.godwars_ancient_cyclops2"
+inherit = "npc.godwars_ancient_cyclops2"
+category = "category.godwars_bandos_follower"
+
+[[npc]]
+id = "npc.godwars_ancient_jogre"
+inherit = "npc.godwars_ancient_jogre"
+category = "category.godwars_bandos_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 25
+"param.elemental_weakness_type" = 2
+
+[[npc]]
+id = "npc.godwars_ancient_ogre"
+inherit = "npc.godwars_ancient_ogre"
+category = "category.godwars_bandos_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 20
+"param.elemental_weakness_type" = 2
+
+[[npc]]
+id = "npc.godwars_ancient_hobgoblin"
+inherit = "npc.godwars_ancient_hobgoblin"
+category = "category.godwars_bandos_follower"
+
+[[npc]]
+id = "npc.godwars_goblin1"
+inherit = "npc.godwars_goblin1"
+category = "category.godwars_bandos_follower"
+
+[[npc]]
+id = "npc.godwars_goblin2"
+inherit = "npc.godwars_goblin2"
+category = "category.godwars_bandos_follower"
+
+[[npc]]
+id = "npc.godwars_goblin3"
+inherit = "npc.godwars_goblin3"
+category = "category.godwars_bandos_follower"
+
+[[npc]]
+id = "npc.godwars_goblin4"
+inherit = "npc.godwars_goblin4"
+category = "category.godwars_bandos_follower"
+
+[[npc]]
+id = "npc.godwars_goblin5"
+inherit = "npc.godwars_goblin5"
+category = "category.godwars_bandos_follower"
+
+[[npc]]
+id = "npc.godwars_spiritual_armadyl_mage"
+inherit = "npc.godwars_spiritual_armadyl_mage"
+category = "category.godwars_armadyl_follower"
+
+[npc.params]
+"param.killcount_varp" = "varp.kc_spiritual_mage"
+"param.killcount_notify" = false
+
+[[npc]]
+id = "npc.godwars_spiritual_armadyl_ranger"
+inherit = "npc.godwars_spiritual_armadyl_ranger"
+category = "category.godwars_armadyl_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 30
+"param.elemental_weakness_type" = 0
+"param.killcount_varp" = "varp.kc_spiritual_ranger"
+"param.killcount_notify" = false
+
+[[npc]]
+id = "npc.godwars_spiritual_armadyl_warrior"
+inherit = "npc.godwars_spiritual_armadyl_warrior"
+category = "category.godwars_armadyl_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 30
+"param.elemental_weakness_type" = 0
+"param.killcount_varp" = "varp.kc_spiritual_warrior"
+"param.killcount_notify" = false
+
+[[npc]]
+id = "npc.godwars_armadyl_female_armor01_blue"
+inherit = "npc.godwars_armadyl_female_armor01_blue"
+category = "category.godwars_armadyl_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 45
+"param.elemental_weakness_type" = 0
+
+[[npc]]
+id = "npc.godwars_armadyl_female_armor01_green"
+inherit = "npc.godwars_armadyl_female_armor01_green"
+category = "category.godwars_armadyl_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 45
+"param.elemental_weakness_type" = 0
+
+[[npc]]
+id = "npc.godwars_armadyl_female_armor01_red"
+inherit = "npc.godwars_armadyl_female_armor01_red"
+category = "category.godwars_armadyl_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 45
+"param.elemental_weakness_type" = 0
+
+[[npc]]
+id = "npc.godwars_armadyl_female_armor02_blue"
+inherit = "npc.godwars_armadyl_female_armor02_blue"
+category = "category.godwars_armadyl_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 45
+"param.elemental_weakness_type" = 0
+
+[[npc]]
+id = "npc.godwars_armadyl_female_armor02_green"
+inherit = "npc.godwars_armadyl_female_armor02_green"
+category = "category.godwars_armadyl_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 45
+"param.elemental_weakness_type" = 0
+
+[[npc]]
+id = "npc.godwars_armadyl_female_armor02_red"
+inherit = "npc.godwars_armadyl_female_armor02_red"
+category = "category.godwars_armadyl_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 45
+"param.elemental_weakness_type" = 0
+
+[[npc]]
+id = "npc.godwars_armadyl_female_armor03_blue"
+inherit = "npc.godwars_armadyl_female_armor03_blue"
+category = "category.godwars_armadyl_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 45
+"param.elemental_weakness_type" = 0
+
+[[npc]]
+id = "npc.godwars_armadyl_male_armor01_blue"
+inherit = "npc.godwars_armadyl_male_armor01_blue"
+category = "category.godwars_armadyl_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 45
+"param.elemental_weakness_type" = 0
+
+[[npc]]
+id = "npc.godwars_armadyl_male_armor01_green"
+inherit = "npc.godwars_armadyl_male_armor01_green"
+category = "category.godwars_armadyl_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 45
+"param.elemental_weakness_type" = 0
+
+[[npc]]
+id = "npc.godwars_armadyl_male_armor01_red"
+inherit = "npc.godwars_armadyl_male_armor01_red"
+category = "category.godwars_armadyl_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 45
+"param.elemental_weakness_type" = 0
+
+[[npc]]
+id = "npc.godwars_armadyl_male_armor02_blue"
+inherit = "npc.godwars_armadyl_male_armor02_blue"
+category = "category.godwars_armadyl_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 45
+"param.elemental_weakness_type" = 0
+
+[[npc]]
+id = "npc.godwars_armadyl_male_armor02_green"
+inherit = "npc.godwars_armadyl_male_armor02_green"
+category = "category.godwars_armadyl_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 45
+"param.elemental_weakness_type" = 0
+
+[[npc]]
+id = "npc.godwars_armadyl_male_armor02_red"
+inherit = "npc.godwars_armadyl_male_armor02_red"
+category = "category.godwars_armadyl_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 45
+"param.elemental_weakness_type" = 0
+
+[[npc]]
+id = "npc.godwars_armadyl_male_armor03_green"
+inherit = "npc.godwars_armadyl_male_armor03_green"
+category = "category.godwars_armadyl_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 45
+"param.elemental_weakness_type" = 0
+
+[[npc]]
+id = "npc.godwars_armadyl_male_armor03_red"
+inherit = "npc.godwars_armadyl_male_armor03_red"
+category = "category.godwars_armadyl_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 45
+"param.elemental_weakness_type" = 0
+
+[[npc]]
+id = "npc.godwars_spiritual_saradomin_mage"
+inherit = "npc.godwars_spiritual_saradomin_mage"
+category = "category.godwars_saradomin_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 30
+"param.elemental_weakness_type" = 0
+"param.killcount_varp" = "varp.kc_spiritual_mage"
+"param.killcount_notify" = false
+
+[[npc]]
+id = "npc.godwars_spiritual_saradomin_ranger"
+inherit = "npc.godwars_spiritual_saradomin_ranger"
+category = "category.godwars_saradomin_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 30
+"param.elemental_weakness_type" = 0
+"param.killcount_varp" = "varp.kc_spiritual_ranger"
+"param.killcount_notify" = false
+
+[[npc]]
+id = "npc.godwars_spiritual_saradomin_warrior"
+inherit = "npc.godwars_spiritual_saradomin_warrior"
+category = "category.godwars_saradomin_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 30
+"param.elemental_weakness_type" = 0
+"param.killcount_varp" = "varp.kc_spiritual_warrior"
+"param.killcount_notify" = false
+
+[[npc]]
+id = "npc.godwars_saradomin_knight_1"
+inherit = "npc.godwars_saradomin_knight_1"
+category = "category.godwars_saradomin_follower"
+
+[[npc]]
+id = "npc.godwars_saradomin_knight_2"
+inherit = "npc.godwars_saradomin_knight_2"
+category = "category.godwars_saradomin_follower"
+
+[[npc]]
+id = "npc.godwars_ancient_saradomin_wizard"
+inherit = "npc.godwars_ancient_saradomin_wizard"
+category = "category.godwars_saradomin_follower"
+
+[[npc]]
+id = "npc.godwars_spiritual_zamorak_mage"
+inherit = "npc.godwars_spiritual_zamorak_mage"
+category = "category.godwars_zamorak_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 30
+"param.elemental_weakness_type" = 0
+"param.killcount_varp" = "varp.kc_spiritual_mage"
+"param.killcount_notify" = false
+
+[[npc]]
+id = "npc.godwars_spiritual_zamorak_ranger"
+inherit = "npc.godwars_spiritual_zamorak_ranger"
+category = "category.godwars_zamorak_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 30
+"param.elemental_weakness_type" = 0
+"param.killcount_varp" = "varp.kc_spiritual_ranger"
+"param.killcount_notify" = false
+
+[[npc]]
+id = "npc.godwars_spiritual_zamorak_warrior"
+inherit = "npc.godwars_spiritual_zamorak_warrior"
+category = "category.godwars_zamorak_follower"
+
+[npc.params]
+"param.killcount_varp" = "varp.kc_spiritual_warrior"
+"param.elemental_weakness_percent" = 30
+"param.elemental_weakness_type" = 0
+"param.killcount_notify" = false
+
+[[npc]]
+id = "npc.godwars_bloodveld"
+inherit = "npc.godwars_bloodveld"
+category = "category.godwars_zamorak_follower"
+
+[[npc]]
+id = "npc.godwars_gorak"
+inherit = "npc.godwars_gorak"
+category = "category.godwars_zamorak_follower"
+
+[[npc]]
+id = "npc.godwars_icefiend_1"
+inherit = "npc.godwars_icefiend_1"
+category = "category.godwars_zamorak_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 100
+"param.elemental_weakness_type" = 3
+"param.killcount_varp" = "varp.kc_bloodveld"
+"param.killcount_notify" = false
+"param.attack_anim" = "seq.pyrefiend_attack"
+"param.defend_anim" = "seq.pyrefiend_defend"
+"param.death_anim" = "seq.pyrefiend_death"
+"param.attack_sound" = "synth.ICEFIEND_ATTACK"
+"param.defend_sound" = "synth.ICEFIEND_HIT"
+"param.death_sound" = "synth.ICEFIEND_DEATH"
+"param.npc_attack_type" = "category.attacktype_crush"
+
+[[npc]]
+id = "npc.godwars_pyrefiend_1"
+inherit = "npc.godwars_pyrefiend_1"
+category = "category.godwars_zamorak_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 100
+"param.elemental_weakness_type" = 1
+"param.attack_anim" = "seq.pyrefiend_attack"
+"param.defend_anim" = "seq.pyrefiend_defend"
+"param.death_anim" = "seq.pyrefiend_death"
+"param.attack_sound" = "synth.PYREFIEND_ATTACK"
+"param.defend_sound" = "synth.PYREFIEND_HIT"
+"param.death_sound" = "synth.PYREFIEND_DEATH"
+"param.npc_attack_type" = "category.attacktype_crush"
+
+[[npc]]
+id = "npc.godwars_ancient_hellhound"
+inherit = "npc.godwars_ancient_hellhound"
+category = "category.godwars_zamorak_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 50
+"param.elemental_weakness_type" = 1
+
+[[npc]]
+id = "npc.godwars_ancient_imp"
+inherit = "npc.godwars_ancient_imp"
+category = "category.godwars_zamorak_follower"
+
+[npc.params]
+"param.elemental_weakness_percent" = 10
+"param.elemental_weakness_type" = 1
+
+[[npc]]
+id = "npc.godwars_ancient_vampire"
+inherit = "npc.godwars_ancient_vampire"
+category = "category.godwars_zamorak_follower"
+
+[[npc]]
+id = "npc.godwars_ancient_werewolf1"
+inherit = "npc.godwars_ancient_werewolf1"
+category = "category.godwars_zamorak_follower"
+
+[[npc]]
+id = "npc.godwars_ancient_werewolf2"
+inherit = "npc.godwars_ancient_werewolf2"
+category = "category.godwars_zamorak_follower"
+
+[[npc]]
+id = "npc.godwars_paladin_multi"
+inherit = "npc.godwars_paladin_multi"
+moveRestrict = "NoMove"
+wanderRange = 0
+
+[[npc]]
+id = "npc.godwars_dying_paladin"
+inherit = "npc.godwars_dying_paladin"
+moveRestrict = "NoMove"
+wanderRange = 0
+

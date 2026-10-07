@@ -1,6 +1,7 @@
 package org.rsmod.content.skills.cooking
 
 import org.rsmod.api.player.protect.ProtectedAccess
+import org.rsmod.api.player.stat.cookingLvl
 import org.rsmod.api.script.onOpHeldU
 import org.rsmod.content.skills.Material
 import org.rsmod.content.skills.SkillMultiConfig
@@ -25,14 +26,14 @@ class DoughMakingEvents : PluginScript() {
 
     private suspend fun ProtectedAccess.chooseDough(water: String, emptyContainer: String) {
         val materials = listOf(Material("obj.pot_flour"), Material(water))
-        openSkillMulti(SkillMultiConfig(
-            verb = "make",
-            entries = listOf(
-                SkillMultiEntry("obj.bread_dough", materials),
-                SkillMultiEntry("obj.pastry_dough", materials),
-                SkillMultiEntry("obj.pizza_base", materials),
-            ),
-        )) { selection ->
+        val entries = mutableListOf(
+            SkillMultiEntry("obj.bread_dough", materials),
+            SkillMultiEntry("obj.pastry_dough", materials),
+        )
+        if (player.cookingLvl >= 35) {
+            entries += SkillMultiEntry("obj.pizza_base", materials)
+        }
+        openSkillMulti(SkillMultiConfig(verb = "make", entries = entries)) { selection ->
             val dough = selection.entry.internal
             val amount = selection.amount
             repeat(amount) {

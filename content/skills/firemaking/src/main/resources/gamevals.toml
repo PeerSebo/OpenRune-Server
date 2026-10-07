@@ -8,6 +8,7 @@ firemaking_campfire_expiry_cycle = 3
 [gamevals.queue]
 firemaking_light = 40
 firemaking_campfire_tend = 41
+firemaking_campfire_rest = 104
 
 [gamevals.dbrow]
 firemaking_ironwood_logs       =55525
@@ -43,3 +44,5 @@ firemaking_colored_logs_green             = 55554
 firemaking_colored_logs_purple            = 55555
 firemaking_colored_logs_red               = 55556
 firemaking_colored_logs_white             = 55557
+firemaking_jatoba_logs                    = 55558
+firemaking_camphor_logs                   = 55559

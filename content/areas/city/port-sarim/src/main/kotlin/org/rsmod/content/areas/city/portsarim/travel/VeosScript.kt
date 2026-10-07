@@ -29,7 +29,6 @@ class VeosScript : PluginScript() {
             if (player.veosPiscVis == 0) player.veosPiscVis = VEOS_PISC_TRAVEL
         }
 
-        onOpNpc1(VEOS_SARIM) { startDialogue(it.npc) { veosAtSarim() } }
         onOpNpc3(VEOS_SARIM) { sail(VeosPort.PortPiscarilius) }
         onOpNpc4(VEOS_SARIM) { sail(VeosPort.LandsEnd) }
 
@@ -39,37 +38,6 @@ class VeosScript : PluginScript() {
 
         onOpLoc1("loc.sailing_sarim_veos_shipplank_off") { disembark(SARIM_QUAY) }
         onOpLoc1("loc.zeah_travel_kourend_shipplank_off") { disembark(PISCARILIUS_QUAY) }
-    }
-
-    private suspend fun Dialogue.veosAtSarim() {
-        chatPlayer(happy, "Hello Veos.")
-        chatNpc(quiz, "Hello there. What can I do for you?")
-        val topic =
-            choice3(
-                "Can you take me somewhere?",
-                VeosTopic.Travel,
-                "Tell me more about Great Kourend.",
-                VeosTopic.Kourend,
-                "Nothing.",
-                VeosTopic.Leave,
-            )
-        when (topic) {
-            VeosTopic.Travel -> {
-                chatPlayer(quiz, "Can you take me somewhere?")
-                chooseDestination(VeosPort.PortPiscarilius, "As you wish.")
-            }
-            VeosTopic.Kourend -> {
-                chatPlayer(quiz, "Tell me more about Great Kourend.")
-                describeKourend()
-                if (choice2("That's great, can you take me there please?", true, "Goodbye.", false)) {
-                    chatPlayer(quiz, "That's great, can you take me there please?")
-                    chooseDestination(VeosPort.PortPiscarilius, "As you wish.")
-                } else {
-                    chatPlayer(neutral, "Goodbye.")
-                }
-            }
-            else -> chatPlayer(neutral, "Nothing.")
-        }
     }
 
     private suspend fun Dialogue.veosAtPiscarilius() {

@@ -1,0 +1,35 @@
+[[npc]]
+id = "npc.sailing_intro_will_sarim"
+inherit = "npc.sailing_intro_will_sarim"
+isServerOnly = true
+wanderRange = 0
+
+[[npc]]
+id = "npc.sailing_intro_anne_sarim"
+inherit = "npc.sailing_intro_anne_sarim"
+isServerOnly = true
+wanderRange = 0
+
+[[npc]]
+id = "npc.sailing_intro_will_boat"
+inherit = "npc.sailing_intro_will_boat"
+isServerOnly = true
+wanderRange = 0
+
+[[npc]]
+id = "npc.sailing_intro_anne_boat"
+inherit = "npc.sailing_intro_anne_boat"
+isServerOnly = true
+wanderRange = 0
+
+[[npc]]
+id = "npc.steve_beanie"
+inherit = "npc.steve_beanie"
+isServerOnly = true
+wanderRange = 0
+
+[[npc]]
+id = "npc.junior_jim_shipyard"
+inherit = "npc.junior_jim_shipyard"
+isServerOnly = true
+wanderRange = 0

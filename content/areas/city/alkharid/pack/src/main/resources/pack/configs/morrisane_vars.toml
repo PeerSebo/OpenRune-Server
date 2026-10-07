@@ -1,0 +1,11 @@
+[[varp]]
+isServerOnly = true
+id = "varp.alkharid_heard_morrisane_gossip"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.alkharid_morrisane_gossip_migrated"
+scope = "Perm"
+transmit = "Never"

@@ -1,0 +1,22 @@
+
+[gamevals.queue]
+
+sailing_board = 96
+sailing_disembark = 97
+sailing_buy_boat = 98
+sailing_build_part = 99
+sailing_build_facility = 100
+sailing_cargo_transfer = 101
+sailing_salvage = 102
+sailing_escape = 103
+
+[gamevals.content]
+
+sailing_gangplank = 62
+sailing_shipwright = 63
+sailing_notice_board = 64
+sailing_ledger_table = 65
+sailing_shipwreck = 66
+sailing_buoy = 67
+sailing_helm = 68
+sailing_facility_hotspot = 69

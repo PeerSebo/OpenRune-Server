@@ -3,7 +3,7 @@ package org.rsmod.content.quest.manager
 import org.rsmod.api.server.config.ServerConfig
 
 public data class QuestRequirementPolicy(
-    public val mode: QuestRequirementMode = QuestRequirementMode.AssumeCompleted,
+    public val mode: QuestRequirementMode = QuestRequirementMode.Optional,
     public val virtualCompletions: Set<String> = emptySet(),
     public val virtualLines: Set<String> = emptySet(),
 ) {
@@ -19,13 +19,9 @@ public data class QuestRequirementPolicy(
             return QuestRequirementPolicy(
                 mode = QuestRequirementMode.parse(requirements.mode),
                 virtualCompletions =
-                    requirements.virtualCompletions.mapTo(hashSetOf()) {
-                        it.normalizedQuestKey()
-                    },
+                    requirements.virtualCompletions.mapTo(hashSetOf()) { it.normalizedQuestKey() },
                 virtualLines =
-                    requirements.virtualLines.mapTo(hashSetOf()) {
-                        it.normalizedQuestKey()
-                    },
+                    requirements.virtualLines.mapTo(hashSetOf()) { it.normalizedQuestKey() },
             )
         }
     }

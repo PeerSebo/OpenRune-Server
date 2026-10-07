@@ -27,7 +27,11 @@ class ResumePauseButtonHandler @Inject constructor() : MessageHandler<ResumePaus
             return
         }
 
-        val input = ResumePauseButtonInput(RSCM.getReverseMapping(RSCMType.COMPONENT,componentType.packed), message.sub)
+        val input =
+            ResumePauseButtonInput(
+                RSCM.getReverseMapping(RSCMType.COMPONENT, componentType.packed),
+                message.sub,
+            )
         val modal = player.ui.modals.getComponent(userInterface)
         if (modal != null) {
             player.ui.queueClose(modal)

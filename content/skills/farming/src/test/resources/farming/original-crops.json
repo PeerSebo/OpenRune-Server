@@ -1,0 +1,3295 @@
+[
+  {
+    "id": "potato",
+    "type": "ALLOTMENT",
+    "seed": "obj.potato_seed",
+    "produce": "obj.potato",
+    "levelReq": 1,
+    "deferredPlantXp": 8.0,
+    "harvestXp": 9.0,
+    "growthCycles": 4,
+    "cycleMinutes": 10,
+    "seedsPerPatch": 3,
+    "visuals": {
+      "growing": {
+        "loc": "loc.potato_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.potato_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.potato_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.potato_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.bucket_compost",
+      "count": 2
+    },
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 562
+  },
+  {
+    "id": "onion",
+    "type": "ALLOTMENT",
+    "seed": "obj.onion_seed",
+    "produce": "obj.onion",
+    "levelReq": 5,
+    "deferredPlantXp": 9.5,
+    "harvestXp": 10.5,
+    "growthCycles": 4,
+    "cycleMinutes": 10,
+    "seedsPerPatch": 3,
+    "visuals": {
+      "growing": {
+        "loc": "loc.onion_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.onion_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.onion_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.onion_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.sack_potato_10",
+      "count": 1
+    },
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 562
+  },
+  {
+    "id": "cabbage",
+    "type": "ALLOTMENT",
+    "seed": "obj.cabbage_seed",
+    "produce": "obj.cabbage",
+    "levelReq": 7,
+    "deferredPlantXp": 10.0,
+    "harvestXp": 11.5,
+    "growthCycles": 4,
+    "cycleMinutes": 10,
+    "seedsPerPatch": 3,
+    "visuals": {
+      "growing": {
+        "loc": "loc.cabbage_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.cabbage_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.cabbage_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.cabbage_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.sack_onion_10",
+      "count": 1
+    },
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 562
+  },
+  {
+    "id": "tomato",
+    "type": "ALLOTMENT",
+    "seed": "obj.tomato_seed",
+    "produce": "obj.tomato",
+    "levelReq": 12,
+    "deferredPlantXp": 12.5,
+    "harvestXp": 14.0,
+    "growthCycles": 4,
+    "cycleMinutes": 10,
+    "seedsPerPatch": 3,
+    "visuals": {
+      "growing": {
+        "loc": "loc.tomato_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.tomato_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.tomato_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.tomato_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.sack_cabbage_10",
+      "count": 2
+    },
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 562
+  },
+  {
+    "id": "sweetcorn",
+    "type": "ALLOTMENT",
+    "seed": "obj.sweetcorn_seed",
+    "produce": "obj.sweetcorn",
+    "levelReq": 20,
+    "deferredPlantXp": 17.0,
+    "harvestXp": 19.0,
+    "growthCycles": 6,
+    "cycleMinutes": 10,
+    "seedsPerPatch": 3,
+    "visuals": {
+      "growing": {
+        "loc": "loc.sweetcorn_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.sweetcorn_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.sweetcorn_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.sweetcorn_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.jute_fibre",
+      "count": 10
+    },
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 449
+  },
+  {
+    "id": "strawberry",
+    "type": "ALLOTMENT",
+    "seed": "obj.strawberry_seed",
+    "produce": "obj.strawberry",
+    "levelReq": 31,
+    "deferredPlantXp": 26.0,
+    "harvestXp": 29.0,
+    "growthCycles": 6,
+    "cycleMinutes": 10,
+    "seedsPerPatch": 3,
+    "visuals": {
+      "growing": {
+        "loc": "loc.strawberry_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.strawberry_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.strawberry_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.strawberry_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.basket_apple_5",
+      "count": 1
+    },
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 374
+  },
+  {
+    "id": "watermelon",
+    "type": "ALLOTMENT",
+    "seed": "obj.watermelon_seed",
+    "produce": "obj.watermelon",
+    "levelReq": 47,
+    "deferredPlantXp": 48.5,
+    "harvestXp": 54.5,
+    "growthCycles": 8,
+    "cycleMinutes": 10,
+    "seedsPerPatch": 3,
+    "visuals": {
+      "growing": {
+        "loc": "loc.watermelon_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.watermelon_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.watermelon_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.watermelon_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.curry_leaf",
+      "count": 10
+    },
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 321
+  },
+  {
+    "id": "snape_grass",
+    "type": "ALLOTMENT",
+    "seed": "obj.snape_grass_seed",
+    "produce": "obj.snape_grass",
+    "levelReq": 61,
+    "deferredPlantXp": 82.0,
+    "harvestXp": 82.0,
+    "growthCycles": 7,
+    "cycleMinutes": 10,
+    "seedsPerPatch": 3,
+    "visuals": {
+      "growing": {
+        "loc": "loc.snapegrass_seedling",
+        "stage": 0,
+        "stageLocs": [
+          "loc.snapegrass_seedling",
+          "loc.snapegrass_1",
+          "loc.snapegrass_2",
+          "loc.snapegrass_3",
+          "loc.snapegrass_4",
+          "loc.snapegrass_5",
+          "loc.snapegrass_6",
+          "loc.snapegrass_fullygrown"
+        ]
+      },
+      "watered": {
+        "loc": "loc.snapegrass_seed_watered",
+        "stage": 0,
+        "stageLocs": [
+          "loc.snapegrass_seed_watered",
+          "loc.snapegrass_1_watered",
+          "loc.snapegrass_2_watered",
+          "loc.snapegrass_3_watered",
+          "loc.snapegrass_4_watered",
+          "loc.snapegrass_5_watered",
+          "loc.snapegrass_6_watered"
+        ]
+      },
+      "diseased": {
+        "loc": "loc.snapegrass_1_diseased",
+        "stage": 1,
+        "stageLocs": [
+          "loc.snapegrass_1_diseased",
+          "loc.snapegrass_2_diseased",
+          "loc.snapegrass_3_diseased",
+          "loc.snapegrass_4_diseased",
+          "loc.snapegrass_5_diseased",
+          "loc.snapegrass_6_diseased"
+        ]
+      },
+      "dead": {
+        "loc": "loc.snapegrass_1_dead",
+        "stage": 1,
+        "stageLocs": [
+          "loc.snapegrass_1_dead",
+          "loc.snapegrass_2_dead",
+          "loc.snapegrass_3_dead",
+          "loc.snapegrass_4_dead",
+          "loc.snapegrass_5_dead",
+          "loc.snapegrass_6_dead"
+        ]
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.jangerberries",
+      "count": 5
+    },
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 347
+  },
+  {
+    "id": "guam",
+    "type": "HERB",
+    "seed": "obj.guam_seed",
+    "produce": "obj.unidentified_guam",
+    "levelReq": 9,
+    "deferredPlantXp": 11.0,
+    "harvestXp": 12.5,
+    "growthCycles": 4,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.herb_guam_leaf_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.herb_guam_leaf_diseased_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.herb_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 27,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 196
+  },
+  {
+    "id": "marrentill",
+    "type": "HERB",
+    "seed": "obj.marrentill_seed",
+    "produce": "obj.unidentified_marentill",
+    "levelReq": 14,
+    "deferredPlantXp": 13.5,
+    "harvestXp": 15.0,
+    "growthCycles": 4,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.herb_marrentill_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.herb_marentill_diseased_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.herb_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 27,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 196
+  },
+  {
+    "id": "tarromin",
+    "type": "HERB",
+    "seed": "obj.tarromin_seed",
+    "produce": "obj.unidentified_tarromin",
+    "levelReq": 19,
+    "deferredPlantXp": 16.0,
+    "harvestXp": 18.0,
+    "growthCycles": 4,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.herb_tarromin_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.herb_tarromin_diseased_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.herb_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 27,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 196
+  },
+  {
+    "id": "harralander",
+    "type": "HERB",
+    "seed": "obj.harralander_seed",
+    "produce": "obj.unidentified_harralander",
+    "levelReq": 26,
+    "deferredPlantXp": 21.5,
+    "harvestXp": 24.0,
+    "growthCycles": 4,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.herb_harralander_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.herb_harralander_diseased_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.herb_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 27,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 196
+  },
+  {
+    "id": "ranarr",
+    "type": "HERB",
+    "seed": "obj.ranarr_seed",
+    "produce": "obj.unidentified_ranarr",
+    "levelReq": 32,
+    "deferredPlantXp": 27.0,
+    "harvestXp": 30.5,
+    "growthCycles": 4,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.herb_ranarr_weed_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.herb_ranarr_weed_diseased_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.herb_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 27,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 196
+  },
+  {
+    "id": "toadflax",
+    "type": "HERB",
+    "seed": "obj.toadflax_seed",
+    "produce": "obj.unidentified_toadflax",
+    "levelReq": 38,
+    "deferredPlantXp": 34.0,
+    "harvestXp": 38.5,
+    "growthCycles": 4,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.herb_toadflax_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.herb_toadflax_diseased_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.herb_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 27,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 196
+  },
+  {
+    "id": "irit",
+    "type": "HERB",
+    "seed": "obj.irit_seed",
+    "produce": "obj.unidentified_irit",
+    "levelReq": 44,
+    "deferredPlantXp": 43.0,
+    "harvestXp": 48.5,
+    "growthCycles": 4,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.herb_irit_leaf_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.herb_irit_leaf_diseased_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.herb_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 27,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 196
+  },
+  {
+    "id": "avantoe",
+    "type": "HERB",
+    "seed": "obj.avantoe_seed",
+    "produce": "obj.unidentified_avantoe",
+    "levelReq": 50,
+    "deferredPlantXp": 54.5,
+    "harvestXp": 61.5,
+    "growthCycles": 4,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.herb_avantoe_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.herb_avantoe_diseased_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.herb_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 27,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 196
+  },
+  {
+    "id": "kwuarm",
+    "type": "HERB",
+    "seed": "obj.kwuarm_seed",
+    "produce": "obj.unidentified_kwuarm",
+    "levelReq": 56,
+    "deferredPlantXp": 69.0,
+    "harvestXp": 78.0,
+    "growthCycles": 4,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.herb_kwuarm_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.herb_kwuarm_diseased_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.herb_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 27,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 196
+  },
+  {
+    "id": "snapdragon",
+    "type": "HERB",
+    "seed": "obj.snapdragon_seed",
+    "produce": "obj.unidentified_snapdragon",
+    "levelReq": 62,
+    "deferredPlantXp": 87.5,
+    "harvestXp": 98.5,
+    "growthCycles": 4,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.herb_snapdragon_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.herb_snapdragon_diseased_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.herb_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 27,
+    "chanceToSave": {
+      "low": 57,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 196
+  },
+  {
+    "id": "huasca",
+    "type": "HERB",
+    "seed": "obj.huasca_seed",
+    "produce": "obj.unidentified_huasca",
+    "levelReq": 65,
+    "deferredPlantXp": 86.5,
+    "harvestXp": 110.0,
+    "growthCycles": 4,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.herb_huasca_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.herb_huasca_diseased_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.herb_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 27,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 196
+  },
+  {
+    "id": "cadantine",
+    "type": "HERB",
+    "seed": "obj.cadantine_seed",
+    "produce": "obj.unidentified_cadantine",
+    "levelReq": 67,
+    "deferredPlantXp": 106.5,
+    "harvestXp": 120.0,
+    "growthCycles": 4,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.herb_cadantine_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.herb_cadantine_diseased_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.herb_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 27,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 196
+  },
+  {
+    "id": "lantadyme",
+    "type": "HERB",
+    "seed": "obj.lantadyme_seed",
+    "produce": "obj.unidentified_lantadyme",
+    "levelReq": 73,
+    "deferredPlantXp": 134.5,
+    "harvestXp": 151.5,
+    "growthCycles": 4,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.herb_lantadyme_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.herb_lantadyme_diseased_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.herb_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 27,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 196
+  },
+  {
+    "id": "dwarf_weed",
+    "type": "HERB",
+    "seed": "obj.dwarf_weed_seed",
+    "produce": "obj.unidentified_dwarf_weed",
+    "levelReq": 79,
+    "deferredPlantXp": 170.5,
+    "harvestXp": 192.0,
+    "growthCycles": 4,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.herb_dwarf_weed_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.herb_dwarf_weed_diseased_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.herb_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 27,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 196
+  },
+  {
+    "id": "torstol",
+    "type": "HERB",
+    "seed": "obj.torstol_seed",
+    "produce": "obj.unidentified_torstol",
+    "levelReq": 85,
+    "deferredPlantXp": 199.5,
+    "harvestXp": 224.5,
+    "growthCycles": 4,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.herb_torstol_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.herb_torstol_diseased_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.herb_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 27,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 196
+  },
+  {
+    "id": "gout_tuber",
+    "type": "HERB",
+    "seed": "obj.village_rare_tuber",
+    "produce": "obj.eadgar_goutweed_herb",
+    "levelReq": 29,
+    "deferredPlantXp": 105.0,
+    "harvestXp": 45.0,
+    "growthCycles": 4,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.goutweed_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.goutweed_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.goutweed_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 27,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 196
+  },
+  {
+    "id": "marigold",
+    "type": "FLOWER",
+    "seed": "obj.marigold_seed",
+    "produce": "obj.marigold",
+    "levelReq": 2,
+    "deferredPlantXp": 8.5,
+    "harvestXp": 47.0,
+    "growthCycles": 4,
+    "cycleMinutes": 5,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.marigold_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.marigold_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.marigold_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.marigold_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 0,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": null,
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 562
+  },
+  {
+    "id": "rosemary",
+    "type": "FLOWER",
+    "seed": "obj.rosemary_seed",
+    "produce": "obj.rosemary",
+    "levelReq": 11,
+    "deferredPlantXp": 12.0,
+    "harvestXp": 66.5,
+    "growthCycles": 4,
+    "cycleMinutes": 5,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.rosemary_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.rosemary_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.rosemary_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.rosemary_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 0,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": null,
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 562
+  },
+  {
+    "id": "nasturtium",
+    "type": "FLOWER",
+    "seed": "obj.nasturtium_seed",
+    "produce": "obj.nasturtium",
+    "levelReq": 24,
+    "deferredPlantXp": 19.5,
+    "harvestXp": 111.0,
+    "growthCycles": 4,
+    "cycleMinutes": 5,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.nasturtium_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.nasturtium_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.nasturtium_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.nasturtium_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 0,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": null,
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 562
+  },
+  {
+    "id": "woad",
+    "type": "FLOWER",
+    "seed": "obj.woad_seed",
+    "produce": "obj.woadleaf",
+    "levelReq": 25,
+    "deferredPlantXp": 20.5,
+    "harvestXp": 115.5,
+    "growthCycles": 4,
+    "cycleMinutes": 5,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.woad_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.woad_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.woad_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.woad_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 0,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": null,
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 562
+  },
+  {
+    "id": "limpwurt",
+    "type": "FLOWER",
+    "seed": "obj.limpwurt_seed",
+    "produce": "obj.limpwurt_root",
+    "levelReq": 26,
+    "deferredPlantXp": 21.5,
+    "harvestXp": 120.0,
+    "growthCycles": 4,
+    "cycleMinutes": 5,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.limpwurt_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.limpwurt_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.limpwurt_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.limpwurt_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 0,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": null,
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 449
+  },
+  {
+    "id": "white_lily",
+    "type": "FLOWER",
+    "seed": "obj.white_lily_seed",
+    "produce": "obj.whitelilly",
+    "levelReq": 58,
+    "deferredPlantXp": 42.0,
+    "harvestXp": 250.0,
+    "growthCycles": 4,
+    "cycleMinutes": 5,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.lily_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.lily_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.lily_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.lily_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 0,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": null,
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 562
+  },
+  {
+    "id": "scarecrow",
+    "type": "FLOWER",
+    "seed": "obj.scarecrow_complete",
+    "produce": null,
+    "levelReq": 23,
+    "deferredPlantXp": 0.0,
+    "harvestXp": 0.0,
+    "growthCycles": 0,
+    "cycleMinutes": 5,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.farming_scarecrow",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": null,
+      "dead": null,
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 0,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 0,
+    "chanceToSave": null,
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": true,
+    "waterable": false,
+    "hesporiSeedDenominator": null
+  },
+  {
+    "id": "barley",
+    "type": "HOPS",
+    "seed": "obj.barley_seed",
+    "produce": "obj.barley",
+    "levelReq": 3,
+    "deferredPlantXp": 8.5,
+    "harvestXp": 9.5,
+    "growthCycles": 4,
+    "cycleMinutes": 10,
+    "seedsPerPatch": 4,
+    "visuals": {
+      "growing": {
+        "loc": "loc.barley_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.barley_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.barley_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.barley_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.bucket_compost",
+      "count": 3
+    },
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 244
+  },
+  {
+    "id": "hammerstone",
+    "type": "HOPS",
+    "seed": "obj.hammerstone_hop_seed",
+    "produce": "obj.hammerstone_hops",
+    "levelReq": 4,
+    "deferredPlantXp": 9.0,
+    "harvestXp": 10.0,
+    "growthCycles": 4,
+    "cycleMinutes": 10,
+    "seedsPerPatch": 4,
+    "visuals": {
+      "growing": {
+        "loc": "loc.hammer_hops_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.hammer_hops_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.hammer_hops_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.hammer_hops_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.marigold",
+      "count": 1
+    },
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 244
+  },
+  {
+    "id": "asgarnian",
+    "type": "HOPS",
+    "seed": "obj.asgarnian_hop_seed",
+    "produce": "obj.asgarnian_hops",
+    "levelReq": 8,
+    "deferredPlantXp": 10.9,
+    "harvestXp": 12.0,
+    "growthCycles": 5,
+    "cycleMinutes": 10,
+    "seedsPerPatch": 4,
+    "visuals": {
+      "growing": {
+        "loc": "loc.asgarnian_hops_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.asgarnian_hops_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.asgarnian_hops_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.asgarnian_hops_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.sack_onion_10",
+      "count": 1
+    },
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 179
+  },
+  {
+    "id": "jute",
+    "type": "HOPS",
+    "seed": "obj.jute_seed",
+    "produce": "obj.jute_fibre",
+    "levelReq": 13,
+    "deferredPlantXp": 13.0,
+    "harvestXp": 14.5,
+    "growthCycles": 5,
+    "cycleMinutes": 10,
+    "seedsPerPatch": 3,
+    "visuals": {
+      "growing": {
+        "loc": "loc.jute_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.jute_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.jute_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.jute_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.barley_malt",
+      "count": 6
+    },
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 179
+  },
+  {
+    "id": "yanillian",
+    "type": "HOPS",
+    "seed": "obj.yanillian_hop_seed",
+    "produce": "obj.yanillian_hops",
+    "levelReq": 16,
+    "deferredPlantXp": 14.5,
+    "harvestXp": 16.0,
+    "growthCycles": 6,
+    "cycleMinutes": 10,
+    "seedsPerPatch": 4,
+    "visuals": {
+      "growing": {
+        "loc": "loc.yanillian_hops_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.yanillian_hops_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.yanillian_hops_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.yanillian_hops_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.basket_tomato_5",
+      "count": 1
+    },
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 149
+  },
+  {
+    "id": "flax",
+    "type": "HOPS",
+    "seed": "obj.flax_seed",
+    "produce": "obj.flax",
+    "levelReq": 18,
+    "deferredPlantXp": 16.0,
+    "harvestXp": 17.5,
+    "growthCycles": 3,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 3,
+    "visuals": {
+      "growing": {
+        "loc": "loc.flax_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.flax_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.flax_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.flax_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.grain",
+      "count": 6
+    },
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": null
+  },
+  {
+    "id": "krandorian",
+    "type": "HOPS",
+    "seed": "obj.krandorian_hop_seed",
+    "produce": "obj.krandorian_hops",
+    "levelReq": 21,
+    "deferredPlantXp": 17.5,
+    "harvestXp": 19.5,
+    "growthCycles": 7,
+    "cycleMinutes": 10,
+    "seedsPerPatch": 4,
+    "visuals": {
+      "growing": {
+        "loc": "loc.krandorian_hops_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.krandorian_hops_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.krandorian_hops_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.krandorian_hops_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.sack_cabbage_10",
+      "count": 3
+    },
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 128
+  },
+  {
+    "id": "wildblood",
+    "type": "HOPS",
+    "seed": "obj.wildblood_hop_seed",
+    "produce": "obj.wildblood_hops",
+    "levelReq": 28,
+    "deferredPlantXp": 23.0,
+    "harvestXp": 26.0,
+    "growthCycles": 8,
+    "cycleMinutes": 10,
+    "seedsPerPatch": 4,
+    "visuals": {
+      "growing": {
+        "loc": "loc.wildblood_hops_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.wildblood_hops_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.wildblood_hops_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.wildblood_hops_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.nasturtium",
+      "count": 1
+    },
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 112
+  },
+  {
+    "id": "hemp",
+    "type": "HOPS",
+    "seed": "obj.hemp_seed",
+    "produce": "obj.hemp",
+    "levelReq": 37,
+    "deferredPlantXp": 33.0,
+    "harvestXp": 37.0,
+    "growthCycles": 4,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 3,
+    "visuals": {
+      "growing": {
+        "loc": "loc.hemp_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.hemp_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.hemp_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.hemp_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.flax",
+      "count": 6
+    },
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": null
+  },
+  {
+    "id": "cotton",
+    "type": "HOPS",
+    "seed": "obj.cotton_seed",
+    "produce": "obj.cotton_boll",
+    "levelReq": 71,
+    "deferredPlantXp": 72.0,
+    "harvestXp": 82.0,
+    "growthCycles": 5,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 3,
+    "visuals": {
+      "growing": {
+        "loc": "loc.cotton_seed",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": {
+        "loc": "loc.cotton_seed_watered",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "diseased": {
+        "loc": "loc.cotton_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.cotton_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": null,
+      "grownChecked": null,
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.hemp",
+      "count": 6
+    },
+    "checkHealthXp": 0.0,
+    "sapling": null,
+    "baseLives": 3,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": {
+      "low": 25,
+      "high": 80
+    },
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": null
+  },
+  {
+    "id": "redberry",
+    "type": "BUSH",
+    "seed": "obj.redberry_bush_seed",
+    "produce": "obj.redberries",
+    "levelReq": 10,
+    "deferredPlantXp": 11.5,
+    "harvestXp": 4.5,
+    "growthCycles": 5,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.redberry_bush_seedling",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.redberry_bush_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.redberry_bush_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": {
+        "loc": "loc.redberry_bush_claim_xp",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "grownChecked": {
+        "loc": "loc.redberry_bush_fullygrown",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.sack_cabbage_10",
+      "count": 4
+    },
+    "checkHealthXp": 64.0,
+    "sapling": null,
+    "baseLives": 0,
+    "produceCapacity": 4,
+    "produceRegrowMinutes": 80,
+    "diseaseChance": 18,
+    "chanceToSave": null,
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 89
+  },
+  {
+    "id": "cadavaberry",
+    "type": "BUSH",
+    "seed": "obj.cadavaberry_bush_seed",
+    "produce": "obj.cadavaberries",
+    "levelReq": 22,
+    "deferredPlantXp": 18.0,
+    "harvestXp": 7.0,
+    "growthCycles": 6,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.cadavaberry_bush_seedling",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.cadavaberry_bush_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.cadavaberry_bush_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": {
+        "loc": "loc.cadavaberry_bush_claim_xp",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "grownChecked": {
+        "loc": "loc.cadavaberry_bush_fullygrown",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.basket_tomato_5",
+      "count": 3
+    },
+    "checkHealthXp": 102.5,
+    "sapling": null,
+    "baseLives": 0,
+    "produceCapacity": 4,
+    "produceRegrowMinutes": 80,
+    "diseaseChance": 18,
+    "chanceToSave": null,
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 74
+  },
+  {
+    "id": "dwellberry",
+    "type": "BUSH",
+    "seed": "obj.dwellberry_bush_seed",
+    "produce": "obj.dwellberries",
+    "levelReq": 36,
+    "deferredPlantXp": 31.5,
+    "harvestXp": 12.0,
+    "growthCycles": 7,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.dwellberry_bush_seedling",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.dwellberry_bush_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.dwellberry_bush_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": {
+        "loc": "loc.dwellberry_bush_claim_xp",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "grownChecked": {
+        "loc": "loc.dwellberry_bush_fullygrown",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.basket_strawberry_5",
+      "count": 3
+    },
+    "checkHealthXp": 177.5,
+    "sapling": null,
+    "baseLives": 0,
+    "produceCapacity": 4,
+    "produceRegrowMinutes": 80,
+    "diseaseChance": 18,
+    "chanceToSave": null,
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 64
+  },
+  {
+    "id": "jangerberry",
+    "type": "BUSH",
+    "seed": "obj.jangerberry_bush_seed",
+    "produce": "obj.jangerberries",
+    "levelReq": 48,
+    "deferredPlantXp": 50.5,
+    "harvestXp": 19.0,
+    "growthCycles": 8,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.jangerberry_bush_seedling",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.jangerberry_bush_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.jangerberry_bush_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": {
+        "loc": "loc.jangerberry_bush_claim_xp",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "grownChecked": {
+        "loc": "loc.jangerberry_bush_fullygrown",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.watermelon",
+      "count": 6
+    },
+    "checkHealthXp": 284.5,
+    "sapling": null,
+    "baseLives": 0,
+    "produceCapacity": 4,
+    "produceRegrowMinutes": 80,
+    "diseaseChance": 18,
+    "chanceToSave": null,
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 56
+  },
+  {
+    "id": "whiteberry",
+    "type": "BUSH",
+    "seed": "obj.whiteberry_bush_seed",
+    "produce": "obj.white_berries",
+    "levelReq": 59,
+    "deferredPlantXp": 78.0,
+    "harvestXp": 29.0,
+    "growthCycles": 8,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.whiteberry_bush_seedling",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.whiteberry_bush_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.whiteberry_bush_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": {
+        "loc": "loc.whiteberry_bush_claim_xp",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "grownChecked": {
+        "loc": "loc.whiteberry_bush_fullygrown",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "stump": null
+    },
+    "protection": {
+      "obj": "obj.bittercap_mushroom",
+      "count": 8
+    },
+    "checkHealthXp": 437.5,
+    "sapling": null,
+    "baseLives": 0,
+    "produceCapacity": 4,
+    "produceRegrowMinutes": 80,
+    "diseaseChance": 18,
+    "chanceToSave": null,
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 56
+  },
+  {
+    "id": "poison_ivy",
+    "type": "BUSH",
+    "seed": "obj.poisonivy_bush_seed",
+    "produce": "obj.poisonivy_berries",
+    "levelReq": 70,
+    "deferredPlantXp": 120.0,
+    "harvestXp": 45.0,
+    "growthCycles": 8,
+    "cycleMinutes": 20,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.poisonivy_bush_seedling",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.poisonivy_bush_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.poisonivy_bush_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": {
+        "loc": "loc.poisonivy_bush_claim_xp",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "grownChecked": {
+        "loc": "loc.poisonivy_bush_fullygrown",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "stump": null
+    },
+    "protection": null,
+    "checkHealthXp": 675.0,
+    "sapling": null,
+    "baseLives": 0,
+    "produceCapacity": 4,
+    "produceRegrowMinutes": 80,
+    "diseaseChance": 0,
+    "chanceToSave": null,
+    "potSeed": null,
+    "potSeedWatered": null,
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 56
+  },
+  {
+    "id": "oak",
+    "type": "TREE",
+    "seed": "obj.acorn",
+    "produce": null,
+    "levelReq": 15,
+    "deferredPlantXp": 14.0,
+    "harvestXp": 0.0,
+    "growthCycles": 4,
+    "cycleMinutes": 40,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.oak_tree_seedling",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.oak_tree_diseased_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.oak_tree_dead_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": {
+        "loc": "loc.oak_tree_fullygrown_1",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "grownChecked": {
+        "loc": "loc.oak_tree_fullygrown_2",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "stump": {
+        "loc": "loc.oak_tree_stump",
+        "stage": 0,
+        "stageLocs": []
+      }
+    },
+    "protection": {
+      "obj": "obj.basket_tomato_5",
+      "count": 1
+    },
+    "checkHealthXp": 467.3,
+    "sapling": "obj.plantpot_oak_sapling",
+    "baseLives": 0,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": null,
+    "potSeed": "obj.plantpot_acorn",
+    "potSeedWatered": "obj.plantpot_acorn_watered",
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 44
+  },
+  {
+    "id": "willow",
+    "type": "TREE",
+    "seed": "obj.willow_seed",
+    "produce": null,
+    "levelReq": 30,
+    "deferredPlantXp": 25.0,
+    "harvestXp": 0.0,
+    "growthCycles": 6,
+    "cycleMinutes": 40,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.willow_tree_seedling",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.willow_tree_diseased_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.willow_tree_dead_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": {
+        "loc": "loc.willow_tree_fullygrown_1",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "grownChecked": {
+        "loc": "loc.willow_tree_fullygrown_2",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "stump": {
+        "loc": "loc.willow_tree_stump",
+        "stage": 0,
+        "stageLocs": []
+      }
+    },
+    "protection": {
+      "obj": "obj.basket_apple_5",
+      "count": 1
+    },
+    "checkHealthXp": 1456.5,
+    "sapling": "obj.plantpot_willow_sapling",
+    "baseLives": 0,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": null,
+    "potSeed": "obj.plantpot_willow_seed",
+    "potSeedWatered": "obj.plantpot_willow_seed_watered",
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 32
+  },
+  {
+    "id": "maple",
+    "type": "TREE",
+    "seed": "obj.maple_seed",
+    "produce": null,
+    "levelReq": 45,
+    "deferredPlantXp": 45.0,
+    "harvestXp": 0.0,
+    "growthCycles": 8,
+    "cycleMinutes": 40,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.maple_tree_seedling",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.maple_tree_diseased_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.maple_tree_dead_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": {
+        "loc": "loc.maple_tree_fullygrown_1",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "grownChecked": {
+        "loc": "loc.maple_tree_fullygrown_2",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "stump": {
+        "loc": "loc.maple_tree_stump",
+        "stage": 0,
+        "stageLocs": []
+      }
+    },
+    "protection": {
+      "obj": "obj.basket_orange_5",
+      "count": 1
+    },
+    "checkHealthXp": 3403.4,
+    "sapling": "obj.plantpot_maple_sapling",
+    "baseLives": 0,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 13,
+    "chanceToSave": null,
+    "potSeed": "obj.plantpot_maple_seed",
+    "potSeedWatered": "obj.plantpot_maple_seed_watered",
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 28
+  },
+  {
+    "id": "yew",
+    "type": "TREE",
+    "seed": "obj.yew_seed",
+    "produce": null,
+    "levelReq": 60,
+    "deferredPlantXp": 81.0,
+    "harvestXp": 0.0,
+    "growthCycles": 10,
+    "cycleMinutes": 40,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.yew_tree_seedling",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.yew_tree_diseased_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.yew_tree_dead_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": {
+        "loc": "loc.yew_tree_fullygrown_1",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "grownChecked": {
+        "loc": "loc.yew_tree_fullygrown_2",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "stump": {
+        "loc": "loc.yew_tree_stump",
+        "stage": 0,
+        "stageLocs": []
+      }
+    },
+    "protection": {
+      "obj": "obj.cactus_spine",
+      "count": 10
+    },
+    "checkHealthXp": 7069.9,
+    "sapling": "obj.plantpot_yew_sapling",
+    "baseLives": 0,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 18,
+    "chanceToSave": null,
+    "potSeed": "obj.plantpot_yew_seed",
+    "potSeedWatered": "obj.plantpot_yew_seed_watered",
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 22
+  },
+  {
+    "id": "magic",
+    "type": "TREE",
+    "seed": "obj.magic_tree_seed",
+    "produce": null,
+    "levelReq": 75,
+    "deferredPlantXp": 145.5,
+    "harvestXp": 0.0,
+    "growthCycles": 12,
+    "cycleMinutes": 40,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.magic_tree_seedling",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.magic_tree_diseased_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.magic_tree_dead_1",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": {
+        "loc": "loc.magic_tree_fullygrown_1",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "grownChecked": {
+        "loc": "loc.magic_tree_fullygrown_2",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "stump": {
+        "loc": "loc.magic_tree_stump",
+        "stage": 0,
+        "stageLocs": []
+      }
+    },
+    "protection": {
+      "obj": "obj.coconut",
+      "count": 25
+    },
+    "checkHealthXp": 13768.3,
+    "sapling": "obj.plantpot_magic_tree_sapling",
+    "baseLives": 0,
+    "produceCapacity": 0,
+    "produceRegrowMinutes": 0,
+    "diseaseChance": 9,
+    "chanceToSave": null,
+    "potSeed": "obj.plantpot_magic_tree_seed",
+    "potSeedWatered": "obj.plantpot_magic_tree_seed_watered",
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 18
+  },
+  {
+    "id": "apple",
+    "type": "FRUIT_TREE",
+    "seed": "obj.apple_tree_seed",
+    "produce": "obj.cooking_apple",
+    "levelReq": 27,
+    "deferredPlantXp": 22.0,
+    "harvestXp": 8.5,
+    "growthCycles": 6,
+    "cycleMinutes": 160,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.apple_tree_seedling",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.apple_tree_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.apple_tree_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": {
+        "loc": "loc.apple_tree_claim_xp",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "grownChecked": {
+        "loc": "loc.apple_tree_fullygrown",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "stump": {
+        "loc": "loc.apple_tree_stump",
+        "stage": 0,
+        "stageLocs": []
+      }
+    },
+    "protection": {
+      "obj": "obj.sweetcorn",
+      "count": 9
+    },
+    "checkHealthXp": 1199.5,
+    "sapling": "obj.plantpot_apple_sapling",
+    "baseLives": 0,
+    "produceCapacity": 6,
+    "produceRegrowMinutes": 40,
+    "diseaseChance": 18,
+    "chanceToSave": null,
+    "potSeed": "obj.plantpot_apple_seed",
+    "potSeedWatered": "obj.plantpot_apple_seed_watered",
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 18
+  },
+  {
+    "id": "banana",
+    "type": "FRUIT_TREE",
+    "seed": "obj.banana_tree_seed",
+    "produce": "obj.banana",
+    "levelReq": 33,
+    "deferredPlantXp": 28.0,
+    "harvestXp": 10.5,
+    "growthCycles": 6,
+    "cycleMinutes": 160,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.banana_tree_seedling",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.banana_tree_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.banana_tree_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": {
+        "loc": "loc.banana_tree_claim_xp",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "grownChecked": {
+        "loc": "loc.banana_tree_fullygrown",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "stump": {
+        "loc": "loc.banana_tree_stump",
+        "stage": 0,
+        "stageLocs": []
+      }
+    },
+    "protection": {
+      "obj": "obj.basket_apple_5",
+      "count": 4
+    },
+    "checkHealthXp": 1750.5,
+    "sapling": "obj.plantpot_banana_sapling",
+    "baseLives": 0,
+    "produceCapacity": 6,
+    "produceRegrowMinutes": 40,
+    "diseaseChance": 18,
+    "chanceToSave": null,
+    "potSeed": "obj.plantpot_banana_seed",
+    "potSeedWatered": "obj.plantpot_banana_seed_watered",
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 18
+  },
+  {
+    "id": "orange",
+    "type": "FRUIT_TREE",
+    "seed": "obj.orange_tree_seed",
+    "produce": "obj.orange",
+    "levelReq": 39,
+    "deferredPlantXp": 35.5,
+    "harvestXp": 13.5,
+    "growthCycles": 6,
+    "cycleMinutes": 160,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.orange_tree_seedling",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.orange_tree_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.orange_tree_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": {
+        "loc": "loc.orange_tree_claim_xp",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "grownChecked": {
+        "loc": "loc.orange_tree_fullygrown",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "stump": {
+        "loc": "loc.orange_tree_stump",
+        "stage": 0,
+        "stageLocs": []
+      }
+    },
+    "protection": {
+      "obj": "obj.basket_strawberry_5",
+      "count": 3
+    },
+    "checkHealthXp": 2470.2,
+    "sapling": "obj.plantpot_orange_sapling",
+    "baseLives": 0,
+    "produceCapacity": 6,
+    "produceRegrowMinutes": 40,
+    "diseaseChance": 18,
+    "chanceToSave": null,
+    "potSeed": "obj.plantpot_orange_seed",
+    "potSeedWatered": "obj.plantpot_orange_seed_watered",
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 18
+  },
+  {
+    "id": "curry",
+    "type": "FRUIT_TREE",
+    "seed": "obj.curry_tree_seed",
+    "produce": "obj.curry_leaf",
+    "levelReq": 42,
+    "deferredPlantXp": 40.0,
+    "harvestXp": 15.0,
+    "growthCycles": 6,
+    "cycleMinutes": 160,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.curry_tree_seedling",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.curry_tree_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.curry_tree_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": {
+        "loc": "loc.curry_tree_claim_xp",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "grownChecked": {
+        "loc": "loc.curry_tree_fullygrown",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "stump": {
+        "loc": "loc.curry_tree_stump",
+        "stage": 0,
+        "stageLocs": []
+      }
+    },
+    "protection": {
+      "obj": "obj.basket_banana_5",
+      "count": 5
+    },
+    "checkHealthXp": 2906.9,
+    "sapling": "obj.plantpot_curry_sapling",
+    "baseLives": 0,
+    "produceCapacity": 6,
+    "produceRegrowMinutes": 40,
+    "diseaseChance": 18,
+    "chanceToSave": null,
+    "potSeed": "obj.plantpot_curry_seed",
+    "potSeedWatered": "obj.plantpot_curry_seed_watered",
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 18
+  },
+  {
+    "id": "pineapple",
+    "type": "FRUIT_TREE",
+    "seed": "obj.pineapple_tree_seed",
+    "produce": "obj.pineapple",
+    "levelReq": 51,
+    "deferredPlantXp": 57.0,
+    "harvestXp": 21.5,
+    "growthCycles": 6,
+    "cycleMinutes": 160,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.pineapple_tree_seedling",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.pineapple_tree_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.pineapple_tree_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": {
+        "loc": "loc.pineapple_tree_claim_xp",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "grownChecked": {
+        "loc": "loc.pineapple_tree_fullygrown",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "stump": {
+        "loc": "loc.pineapple_tree_stump",
+        "stage": 0,
+        "stageLocs": []
+      }
+    },
+    "protection": {
+      "obj": "obj.watermelon",
+      "count": 10
+    },
+    "checkHealthXp": 4605.0,
+    "sapling": "obj.plantpot_pineapple_sapling",
+    "baseLives": 0,
+    "produceCapacity": 6,
+    "produceRegrowMinutes": 40,
+    "diseaseChance": 18,
+    "chanceToSave": null,
+    "potSeed": "obj.plantpot_pineapple_seed",
+    "potSeedWatered": "obj.plantpot_pineapple_seed_watered",
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 18
+  },
+  {
+    "id": "papaya",
+    "type": "FRUIT_TREE",
+    "seed": "obj.papaya_tree_seed",
+    "produce": "obj.papaya",
+    "levelReq": 57,
+    "deferredPlantXp": 72.0,
+    "harvestXp": 27.0,
+    "growthCycles": 6,
+    "cycleMinutes": 160,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.papaya_tree_seedling",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.papaya_tree_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.papaya_tree_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": {
+        "loc": "loc.papaya_tree_claim_xp",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "grownChecked": {
+        "loc": "loc.papaya_tree_fullygrown",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "stump": {
+        "loc": "loc.papaya_tree_stump",
+        "stage": 0,
+        "stageLocs": []
+      }
+    },
+    "protection": {
+      "obj": "obj.pineapple",
+      "count": 10
+    },
+    "checkHealthXp": 6146.6,
+    "sapling": "obj.plantpot_papaya_sapling",
+    "baseLives": 0,
+    "produceCapacity": 6,
+    "produceRegrowMinutes": 40,
+    "diseaseChance": 18,
+    "chanceToSave": null,
+    "potSeed": "obj.plantpot_papaya_seed",
+    "potSeedWatered": "obj.plantpot_papaya_seed_watered",
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 18
+  },
+  {
+    "id": "palm",
+    "type": "FRUIT_TREE",
+    "seed": "obj.palm_tree_seed",
+    "produce": "obj.coconut",
+    "levelReq": 68,
+    "deferredPlantXp": 110.5,
+    "harvestXp": 41.5,
+    "growthCycles": 6,
+    "cycleMinutes": 160,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.palm_tree_seedling",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.palm_tree_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.palm_tree_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": {
+        "loc": "loc.palm_tree_claim_xp",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "grownChecked": {
+        "loc": "loc.palm_tree_fullygrown",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "stump": {
+        "loc": "loc.palm_tree_stump",
+        "stage": 0,
+        "stageLocs": []
+      }
+    },
+    "protection": {
+      "obj": "obj.papaya",
+      "count": 15
+    },
+    "checkHealthXp": 10150.1,
+    "sapling": "obj.plantpot_palm_sapling",
+    "baseLives": 0,
+    "produceCapacity": 6,
+    "produceRegrowMinutes": 40,
+    "diseaseChance": 18,
+    "chanceToSave": null,
+    "potSeed": "obj.plantpot_palm_seed",
+    "potSeedWatered": "obj.plantpot_palm_seed_watered",
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 18
+  },
+  {
+    "id": "dragonfruit",
+    "type": "FRUIT_TREE",
+    "seed": "obj.dragonfruit_tree_seed",
+    "produce": "obj.dragonfruit",
+    "levelReq": 81,
+    "deferredPlantXp": 140.0,
+    "harvestXp": 70.0,
+    "growthCycles": 6,
+    "cycleMinutes": 160,
+    "seedsPerPatch": 1,
+    "visuals": {
+      "growing": {
+        "loc": "loc.dragonfruit_tree_seedling",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "watered": null,
+      "diseased": {
+        "loc": "loc.dragonfruit_tree_1_diseased",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "dead": {
+        "loc": "loc.dragonfruit_tree_1_dead",
+        "stage": 1,
+        "stageLocs": []
+      },
+      "unchecked": {
+        "loc": "loc.dragonfruit_tree_claim_xp",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "grownChecked": {
+        "loc": "loc.dragonfruit_tree_fullygrown",
+        "stage": 0,
+        "stageLocs": []
+      },
+      "stump": {
+        "loc": "loc.dragonfruit_tree_stump",
+        "stage": 0,
+        "stageLocs": []
+      }
+    },
+    "protection": {
+      "obj": "obj.coconut",
+      "count": 15
+    },
+    "checkHealthXp": 17335.0,
+    "sapling": "obj.plantpot_dragonfruit_sapling",
+    "baseLives": 0,
+    "produceCapacity": 6,
+    "produceRegrowMinutes": 40,
+    "diseaseChance": 18,
+    "chanceToSave": null,
+    "potSeed": "obj.plantpot_dragonfruit_seed",
+    "potSeedWatered": "obj.plantpot_dragonfruit_seed_watered",
+    "placedNotGrown": false,
+    "waterable": null,
+    "hesporiSeedDenominator": 18
+  }
+]

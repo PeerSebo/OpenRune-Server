@@ -24,11 +24,6 @@ public interface Totp {
     public fun generateSecret(): CharArray
 }
 
-/**
- * Uses the provided [secret] within the given [block], then wipes the secret after execution.
- *
- * This ensures that sensitive data is cleared from memory after use.
- */
 public inline fun <R> useSecret(secret: CharArray, block: (CharArray) -> R): R {
     return try {
         block(secret)
@@ -37,11 +32,6 @@ public inline fun <R> useSecret(secret: CharArray, block: (CharArray) -> R): R {
     }
 }
 
-/**
- * Generates a new TOTP secret, passes it to [block], then wipes the secret after execution.
- *
- * This is a convenience wrapper around [Totp.generateSecret] and [useSecret].
- */
 public inline fun <R> Totp.useGeneratedSecret(block: (CharArray) -> R): R {
     val secret = generateSecret()
     return useSecret(secret, block)

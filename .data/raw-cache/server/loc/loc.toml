@@ -1,4 +1,4 @@
-# TODO: This file is worth breaking down by area or type etc, gets packed into cache anyway so file count doesn't matter
+# TODO: Split generic loc configuration by feature; the packer supports multiple files.
 
 [[object]]
 id = "loc.crate3"
@@ -38,7 +38,7 @@ inherit = "loc.sacks"
 contentGroup = "content.empty_sacks"
 
 [object.params]
-"param.game_message" = "There is nothing interesting in these sacks."
+"param.game_message" = "There's nothing interesting in these sacks."
 
 [[object]]
 id = "loc.crate"
@@ -390,54 +390,6 @@ contentGroup = "content.tree"
 "param.next_loc_stage" = "loc.deadtree2_stump_dark"
 
 [[object]]
-id = "loc.castledoubledoorl"
-inherit = "loc.castledoubledoorl"
-contentGroup = "content.closed_left_door"
-
-[object.params]
-"param.next_loc_stage" = "loc.opencastledoubledoorl"
-
-[[object]]
-id = "loc.opencastledoubledoorl"
-inherit = "loc.opencastledoubledoorl"
-contentGroup = "content.opened_left_door"
-
-[object.params]
-"param.next_loc_stage" = "loc.castledoubledoorl"
-
-[[object]]
-id = "loc.castledoubledoorr"
-inherit = "loc.castledoubledoorr"
-contentGroup = "content.closed_right_door"
-
-[object.params]
-"param.next_loc_stage" = "loc.opencastledoubledoorr"
-
-[[object]]
-id = "loc.opencastledoubledoorr"
-inherit = "loc.opencastledoubledoorr"
-contentGroup = "content.opened_right_door"
-
-[object.params]
-"param.next_loc_stage" = "loc.castledoubledoorr"
-
-[[object]]
-id = "loc.poordoor"
-inherit = "loc.poordoor"
-contentGroup = "content.closed_single_door"
-
-[object.params]
-"param.next_loc_stage" = "loc.poordooropen"
-
-[[object]]
-id = "loc.poordooropen"
-inherit = "loc.poordooropen"
-contentGroup = "content.opened_single_door"
-
-[object.params]
-"param.next_loc_stage" = "loc.poordoor"
-
-[[object]]
 id = "loc.fai_wiztower_poor_door"
 inherit = "loc.fai_wiztower_poor_door"
 contentGroup = "content.closed_single_door"
@@ -454,24 +406,6 @@ contentGroup = "content.opened_single_door"
 "param.next_loc_stage" = "loc.fai_wiztower_poor_door"
 
 [[object]]
-id = "loc.poshdoor"
-inherit = "loc.poshdoor"
-contentGroup = "content.closed_single_door"
-
-[object.params]
-"param.next_loc_stage" = "loc.poshdooropen"
-"param.opensound" = "synth.nicedoor_open"
-
-[[object]]
-id = "loc.poshdooropen"
-inherit = "loc.poshdooropen"
-contentGroup = "content.opened_single_door"
-
-[object.params]
-"param.closesound" = "synth.nicedoor_close"
-"param.next_loc_stage" = "loc.poshdoor"
-
-[[object]]
 id = "loc.elfdoor"
 inherit = "loc.elfdoor"
 contentGroup = "content.closed_single_door"
@@ -486,42 +420,6 @@ contentGroup = "content.opened_single_door"
 
 [object.params]
 "param.next_loc_stage" = "loc.elfdoor"
-
-[[object]]
-id = "loc.fencegate_l"
-inherit = "loc.fencegate_l"
-contentGroup = "content.closed_left_picketgate"
-
-[object.params]
-"param.next_loc_stage" = "loc.openfencegate_l"
-"param.opensound" = "synth.picketgate_open"
-
-[[object]]
-id = "loc.openfencegate_l"
-inherit = "loc.openfencegate_l"
-contentGroup = "content.opened_left_picketgate"
-
-[object.params]
-"param.closesound" = "synth.picketgate_close"
-"param.next_loc_stage" = "loc.fencegate_l"
-
-[[object]]
-id = "loc.fencegate_r"
-inherit = "loc.fencegate_r"
-contentGroup = "content.closed_right_picketgate"
-
-[object.params]
-"param.next_loc_stage" = "loc.openfencegate_r"
-"param.opensound" = "synth.picketgate_open"
-
-[[object]]
-id = "loc.openfencegate_r"
-inherit = "loc.openfencegate_r"
-contentGroup = "content.opened_right_picketgate"
-
-[object.params]
-"param.closesound" = "synth.picketgate_close"
-"param.next_loc_stage" = "loc.fencegate_r"
 
 [[object]]
 id = "loc.achey_tree"
@@ -727,11 +625,6 @@ contentGroup = "content.tree"
 "param.skill_productitem" = "obj.logs"
 "param.skill_xp" = 250
 "param.next_loc_stage" = "loc.mdaughter_passable_tree_stump"
-
-[[object]]
-id = "loc.fai_varrock_posh_bookcase_short_east_offset"
-inherit = "loc.fai_varrock_posh_bookcase_short_east_offset"
-contentGroup = "content.bookcase"
 
 [[object]]
 id = "loc.fat_cow_fawest"
@@ -1040,11 +933,6 @@ inherit = "loc.laddermiddle"
 contentGroup = "content.ladder_option"
 
 [[object]]
-id = "loc.ladder_from_cellar"
-inherit = "loc.ladder_from_cellar"
-contentGroup = "content.dungeonladder_up"
-
-[[object]]
 id = "loc.fai_wiztower_spiralstairs"
 inherit = "loc.fai_wiztower_spiralstairs"
 contentGroup = "content.spiralstaircase_up"
@@ -1086,7 +974,8 @@ contentGroup = "content.tree"
 "param.levelrequire" = 42
 "param.woodcutting_axe_success_rates" = "enum.regular_tree_axes"
 "param.respawn_time" = 15
-"param.deplete_chance" = 16
+# deplete_chance is an inclusive 1..255 survival threshold; 239 approximates 1/16 depletion.
+"param.deplete_chance" = 239
 "param.skill_productitem" = "obj.juniper_logs"
 "param.skill_xp" = 350
 "param.next_loc_stage" = "loc.mature_juniper_tree_stump"
@@ -1213,7 +1102,7 @@ contentGroup = "content.tree"
 "param.deplete_chance" = 0
 "param.skill_productitem" = "obj.logs"
 "param.skill_xp" = 250
-"param.next_loc_stage" = "loc.prif_outside_tree_normal_1_stump"
+"param.next_loc_stage" = "loc.prif_outside_tree_normal_2_stump"
 
 [[object]]
 id = "loc.prif_mapletree"
@@ -1488,6 +1377,11 @@ inherit = "loc.lunar_pirate_cooking_range"
 contentGroup = "content.cooking_range_standard"
 
 [[object]]
+id = "loc.rimmington_poor_range"
+inherit = "loc.rimmington_poor_range"
+contentGroup = "content.cooking_range_standard"
+
+[[object]]
 id = "loc.dorgesh_cooking_range1"
 inherit = "loc.dorgesh_cooking_range1"
 contentGroup = "content.cooking_range_standard"
@@ -1522,7 +1416,52 @@ id = "loc.hos_cooking_range_02"
 inherit = "loc.hos_cooking_range_02"
 contentGroup = "content.cooking_range_hosidius"
 
-# Mining rocks (data in dbtable.mining_rocks; locs only keep content group)
+
+[[object]]
+id = "loc.egypt_range1"
+inherit = "loc.egypt_range1"
+contentGroup = "content.cooking_range_standard"
+
+[[object]]
+id = "loc.egypt_range2"
+inherit = "loc.egypt_range2"
+contentGroup = "content.cooking_range_standard"
+
+[[object]]
+id = "loc.egypt_range3"
+inherit = "loc.egypt_range3"
+contentGroup = "content.cooking_range_standard"
+
+[[object]]
+id = "loc.ahoy_range"
+inherit = "loc.ahoy_range"
+contentGroup = "content.cooking_range_standard"
+
+[[object]]
+id = "loc.carnilleanrange"
+inherit = "loc.carnilleanrange"
+contentGroup = "content.cooking_range_standard"
+
+[[object]]
+id = "loc.darkm_poor_range"
+inherit = "loc.darkm_poor_range"
+contentGroup = "content.cooking_range_standard"
+
+[[object]]
+id = "loc.darkm_middle_range"
+inherit = "loc.darkm_middle_range"
+contentGroup = "content.cooking_range_standard"
+
+[[object]]
+id = "loc.darkm_rich_range"
+inherit = "loc.darkm_rich_range"
+contentGroup = "content.cooking_range_standard"
+
+[[object]]
+id = "loc.range_lassar01_default01"
+inherit = "loc.range_lassar01_default01"
+contentGroup = "content.cooking_range_standard"
+
 
 [[object]]
 id = "loc.clayrock1"
@@ -1810,6 +1749,47 @@ inherit = "loc.varlamore_mining_rock04"
 contentGroup = "content.rock"
 
 [[object]]
+id = "loc.crimson_lovakite1"
+inherit = "loc.crimson_lovakite1"
+contentGroup = "content.rock"
+
+[[object]]
+id = "loc.crimson_lovakite2"
+inherit = "loc.crimson_lovakite2"
+contentGroup = "content.rock"
+
+# Mining owns the swing; GOTR adds yield, collection and pouch behavior.
+[[object]]
+id = "loc.gotr_essence_tier_1"
+inherit = "loc.gotr_essence_tier_1"
+contentGroup = "content.rock"
+
+[[object]]
+id = "loc.gotr_essence_tier_1b"
+inherit = "loc.gotr_essence_tier_1b"
+contentGroup = "content.rock"
+
+[[object]]
+id = "loc.gotr_essence_tier_1_large"
+inherit = "loc.gotr_essence_tier_1_large"
+contentGroup = "content.rock"
+
+[[object]]
+id = "loc.gotr_essence_tier_1_large_b"
+inherit = "loc.gotr_essence_tier_1_large_b"
+contentGroup = "content.rock"
+
+[[object]]
+id = "loc.gotr_essence_tier_2"
+inherit = "loc.gotr_essence_tier_2"
+contentGroup = "content.rock"
+
+[[object]]
+id = "loc.gotr_essence_tier_3"
+inherit = "loc.gotr_essence_tier_3"
+contentGroup = "content.rock"
+
+[[object]]
 id = "loc.star_landing_star"
 inherit = "loc.star_landing_star"
 
@@ -1857,6 +1837,7 @@ contentGroup = "content.shooting_star"
 id = "loc.star_size_one_star"
 inherit = "loc.star_size_one_star"
 contentGroup = "content.shooting_star"
+
 
 [[object]]
 id = "loc.ahoy_bankbooth"
@@ -2125,6 +2106,22 @@ contentGroup = "content.bank_booth"
 
 
 [[object]]
+id = "loc.exchange_bank_wall_bank"
+inherit = "loc.exchange_bank_wall_bank"
+contentGroup = "content.bank_booth"
+
+[[object]]
+id = "loc.exchange_bank_wall_bank_multi"
+inherit = "loc.exchange_bank_wall_bank_multi"
+contentGroup = "content.bank_booth"
+
+[[object]]
+id = "loc.exchange_bank_wall_bank_3ops"
+inherit = "loc.exchange_bank_wall_bank_3ops"
+contentGroup = "content.bank_booth"
+
+
+[[object]]
 id = "loc.minnow_rowboat_access"
 inherit = "loc.minnow_rowboat_access"
 contentGroup = "content.minnow_rowboat_to_island"
@@ -2137,163 +2134,12 @@ contentGroup = "content.minnow_rowboat_to_guild"
 # Dwarven Mine
 
 [[object]]
-id = "loc.crate2"
-inherit = "loc.crate2"
-contentGroup = "content.empty_crate"
-
-[object.params]
-"param.game_message" = "You search the crate but find nothing."
-
-[[object]]
-id = "loc.crate_old"
-inherit = "loc.crate_old"
-contentGroup = "content.empty_crate"
-
-[object.params]
-"param.game_message" = "You search the crate but find nothing."
-
-[[object]]
-id = "loc.boxes3"
-inherit = "loc.boxes3"
-contentGroup = "content.empty_boxes"
-
-[object.params]
-"param.game_message" = "There is nothing interesting in these boxes."
-
-[[object]]
 id = "loc.dwarfrock_book_cart"
 inherit = "loc.dwarfrock_book_cart"
 contentGroup = "content.empty_crate"
 
 [object.params]
 "param.game_message" = "You search the cart but find nothing."
-
-[[object]]
-id = "loc.fai_dwarf_trapdoor_down"
-inherit = "loc.fai_dwarf_trapdoor_down"
-contentGroup = "content.dungeonladder_down"
-
-[object.params]
-"param.climb_anim" = "seq.human_pickupfloor"
-
-[[object]]
-id = "loc.ladder_from_cellar_directional"
-inherit = "loc.ladder_from_cellar_directional"
-contentGroup = "content.dungeonladder_up"
-
-# Falador
-
-[[object]]
-id = "loc.fai_falador_poor_door"
-inherit = "loc.fai_falador_poor_door"
-contentGroup = "content.closed_single_door"
-
-[object.params]
-"param.next_loc_stage" = "loc.fai_falador_poor_door_open"
-
-[[object]]
-id = "loc.fai_falador_poor_door_open"
-inherit = "loc.fai_falador_poor_door_open"
-contentGroup = "content.opened_single_door"
-
-[object.params]
-"param.next_loc_stage" = "loc.fai_falador_poor_door"
-
-[[object]]
-id = "loc.fai_falador_poor_door_closed_m"
-inherit = "loc.fai_falador_poor_door_closed_m"
-contentGroup = "content.closed_single_door"
-
-[object.params]
-"param.next_loc_stage" = "loc.fai_falador_poor_door_open_m"
-
-[[object]]
-id = "loc.fai_falador_poor_door_open_m"
-inherit = "loc.fai_falador_poor_door_open_m"
-contentGroup = "content.opened_single_door"
-
-[object.params]
-"param.next_loc_stage" = "loc.fai_falador_poor_door_closed_m"
-
-[[object]]
-id = "loc.fai_falador_poor_door_taller"
-inherit = "loc.fai_falador_poor_door_taller"
-contentGroup = "content.closed_single_door"
-
-[object.params]
-"param.next_loc_stage" = "loc.fai_falador_poor_door_open_taller"
-
-[[object]]
-id = "loc.fai_falador_poor_door_open_taller"
-inherit = "loc.fai_falador_poor_door_open_taller"
-contentGroup = "content.opened_single_door"
-
-[object.params]
-"param.next_loc_stage" = "loc.fai_falador_poor_door_taller"
-
-[[object]]
-id = "loc.fai_falador_poor_castle_door"
-inherit = "loc.fai_falador_poor_castle_door"
-contentGroup = "content.closed_single_door"
-
-[object.params]
-"param.next_loc_stage" = "loc.fai_falador_poor_castle_door_open"
-
-[[object]]
-id = "loc.fai_falador_poor_castle_door_open"
-inherit = "loc.fai_falador_poor_castle_door_open"
-contentGroup = "content.opened_single_door"
-
-[object.params]
-"param.next_loc_stage" = "loc.fai_falador_poor_castle_door"
-
-[[object]]
-id = "loc.fai_falador_poor_door_flip"
-inherit = "loc.fai_falador_poor_door_flip"
-contentGroup = "content.closed_single_door"
-
-[object.params]
-"param.next_loc_stage" = "loc.fai_falador_poor_door_open_flip"
-
-[[object]]
-id = "loc.fai_falador_poor_door_open_flip"
-inherit = "loc.fai_falador_poor_door_open_flip"
-contentGroup = "content.opened_single_door"
-
-[object.params]
-"param.next_loc_stage" = "loc.fai_falador_poor_door_flip"
-
-[[object]]
-id = "loc.fai_falador_castledoubledoorl"
-inherit = "loc.fai_falador_castledoubledoorl"
-contentGroup = "content.closed_left_door"
-
-[object.params]
-"param.next_loc_stage" = "loc.fai_falador_opencastledoubledoorl"
-
-[[object]]
-id = "loc.fai_falador_opencastledoubledoorl"
-inherit = "loc.fai_falador_opencastledoubledoorl"
-contentGroup = "content.opened_left_door"
-
-[object.params]
-"param.next_loc_stage" = "loc.fai_falador_castledoubledoorl"
-
-[[object]]
-id = "loc.fai_falador_castledoubledoorr"
-inherit = "loc.fai_falador_castledoubledoorr"
-contentGroup = "content.closed_right_door"
-
-[object.params]
-"param.next_loc_stage" = "loc.fai_falador_opencastledoubledoorr"
-
-[[object]]
-id = "loc.fai_falador_opencastledoubledoorr"
-inherit = "loc.fai_falador_opencastledoubledoorr"
-contentGroup = "content.opened_right_door"
-
-[object.params]
-"param.next_loc_stage" = "loc.fai_falador_castledoubledoorr"
 
 [[object]]
 id = "loc.fai_falador_double_door_l"
@@ -2326,58 +2172,3 @@ contentGroup = "content.opened_right_door"
 
 [object.params]
 "param.next_loc_stage" = "loc.fai_falador_double_door_r"
-
-[[object]]
-id = "loc.fai_falador_spiralstairs"
-inherit = "loc.fai_falador_spiralstairs"
-contentGroup = "content.spiralstaircase_up"
-
-[[object]]
-id = "loc.fai_falador_castle_spiralstairs"
-inherit = "loc.fai_falador_castle_spiralstairs"
-contentGroup = "content.spiralstaircase_up"
-
-[[object]]
-id = "loc.fai_falador_spiralstairstop"
-inherit = "loc.fai_falador_spiralstairstop"
-contentGroup = "content.spiralstaircase_down"
-
-[[object]]
-id = "loc.fai_falador_castle_spiralstairstop"
-inherit = "loc.fai_falador_castle_spiralstairstop"
-contentGroup = "content.spiralstaircase_down"
-
-[[object]]
-id = "loc.fai_falador_ladder"
-inherit = "loc.fai_falador_ladder"
-contentGroup = "content.ladder_up"
-
-[[object]]
-id = "loc.fai_falador_ladder_taller"
-inherit = "loc.fai_falador_ladder_taller"
-contentGroup = "content.ladder_up"
-
-[[object]]
-id = "loc.fai_falador_castle_ladder_up"
-inherit = "loc.fai_falador_castle_ladder_up"
-contentGroup = "content.ladder_up"
-
-[[object]]
-id = "loc.fai_falador_ladder_top"
-inherit = "loc.fai_falador_ladder_top"
-contentGroup = "content.ladder_down"
-
-[[object]]
-id = "loc.fai_falador_ladder_top_forceapproach_north"
-inherit = "loc.fai_falador_ladder_top_forceapproach_north"
-contentGroup = "content.ladder_down"
-
-[[object]]
-id = "loc.fai_falador_castle_laddertop"
-inherit = "loc.fai_falador_castle_laddertop"
-contentGroup = "content.ladder_down"
-
-[[object]]
-id = "loc.duke_sucellus_salt"
-inherit = "loc.duke_sucellus_salt"
-contentGroup = "content.rock"

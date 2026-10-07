@@ -1,11 +1,12 @@
 package org.rsmod.content.drops
 
+import org.rsmod.api.death.NpcDeathDropHook
 import org.rsmod.api.death.NpcDeathKillHook
 import org.rsmod.api.droptable.DropRateBoosts
 import org.rsmod.api.droptable.KillRollContext
 import org.rsmod.api.droptable.toml.DropTableTomlResolver
 import org.rsmod.content.drops.toml.ContentDropTableTomlResolver
-import org.rsmod.content.slayer.core.MortimerAssignment
+import org.rsmod.content.skills.slayer.core.MortimerAssignment
 import org.rsmod.plugin.module.PluginModule
 
 public class DropsModule : PluginModule() {
@@ -15,5 +16,6 @@ public class DropsModule : PluginModule() {
         }
         bind(DropTableTomlResolver::class.java).to(ContentDropTableTomlResolver::class.java)
         addSetBinding<NpcDeathKillHook>(NpcDropTableKillHook::class.java)
+        addSetBinding<NpcDeathDropHook>(NoRemainsDeathDropHook::class.java)
     }
 }

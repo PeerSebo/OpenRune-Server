@@ -37,10 +37,6 @@ public class StepFactory @Inject constructor(flags: CollisionFlagMap) {
         return coords
     }
 
-    /**
-     * @return the next available step in between [source] and [destination] _without_ validating
-     *   that said step is not blocked by any possible collision flags.
-     */
     public fun unvalidated(source: CoordGrid, destination: CoordGrid): CoordGrid {
         require(source != destination) { "`source` must not be equal to `destination`." }
         val offX = (destination.x - source.x).sign
@@ -48,10 +44,6 @@ public class StepFactory @Inject constructor(flags: CollisionFlagMap) {
         return source.translate(offX, offZ)
     }
 
-    /**
-     * @return The next _validated_ step in between [source] and [dest]. [CoordGrid.NULL] if no tile
-     *   could be validated between the two given coordinates.
-     */
     public fun validated(
         source: CoordGrid,
         dest: CoordGrid,
@@ -63,6 +55,12 @@ public class StepFactory @Inject constructor(flags: CollisionFlagMap) {
         val level = source.level
         val signX = (dest.x - source.x).sign
         val signZ = (dest.z - source.z).sign
+
+        // Different packed coordinates can share x/z on different planes; reject cross-plane
+        // targets before planar stepping.
+        if (signX == 0 && signZ == 0) {
+            return CoordGrid.NULL
+        }
 
         val diagonal =
             validator.canTravel(
@@ -143,7 +141,9 @@ public class StepFactory @Inject constructor(flags: CollisionFlagMap) {
                 targetWidth = destination.size,
                 targetLength = destination.size,
             )
-        return CoordGrid(dest.packed)
+        // `naiveDestination` has no level parameter and always reports level 0, so the source's
+        // level has to be reapplied here. See `NpcMovementProcessor.toCoordGrid`.
+        return CoordGrid(dest.x, dest.z, source.level)
     }
 
     private fun RouteRequestLoc.instantDestination(source: PathingEntityAvatar): CoordGrid {
@@ -159,7 +159,7 @@ public class StepFactory @Inject constructor(flags: CollisionFlagMap) {
                 targetLength = length,
                 targetAngle = angle,
             )
-        return CoordGrid(dest.packed)
+        return CoordGrid(dest.x, dest.z, source.level)
     }
 
     private fun Npc.validatedCollisionFlag(collision: CollisionStrategy): Int =

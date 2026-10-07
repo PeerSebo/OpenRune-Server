@@ -1,0 +1,29 @@
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_prayer_regeneration_pulses"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_prayer_regeneration_next_pulse_at"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_prayer_regeneration_remaining_pulses"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_prayer_regeneration_remaining_delay"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_prayer_regeneration_migrated"
+scope = "Perm"
+transmit = "Never"

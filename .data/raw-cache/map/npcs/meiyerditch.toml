@@ -1,4 +1,3 @@
-## Meiyerditch Mines
 
 [[spawn]]
 npc = "npc.myreque_pt3_miner1"
@@ -40,7 +39,6 @@ coords = "2_37_72_23_11"
 npc = "npc.sang_myq3_mine_guard_juvinate_male"
 coords = "2_37_72_24_15"
 
-## Meiyerditch Myreque Hideout
 
 [[spawn]]
 npc = "npc.myq4_andiess"
@@ -101,6 +99,3 @@ coords = "0_56_150_43_18"
 [[spawn]]
 npc = "npc.sanguinesti_vertida_sefalatis"
 coords = "0_56_150_46_43"
-
-## Meiyerditch Myreque Hideout End
-

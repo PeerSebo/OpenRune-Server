@@ -1,0 +1,17 @@
+[[varp]]
+id = "varp.player_instance_id_low"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.player_instance_id_high"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.player_instance_id_present"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"

@@ -14,7 +14,9 @@ import org.rsmod.api.player.ui.ifCloseSub
 import org.rsmod.api.player.ui.ifOpenFullOverlay
 import org.rsmod.api.player.ui.ifSetEvents
 import org.rsmod.api.player.vars.VarPlayerIntMapSetter
+import org.rsmod.api.player.vars.intVarp
 import org.rsmod.api.script.onIfOverlayButton
+import org.rsmod.api.script.onPlayerLogout
 import org.rsmod.events.EventBus
 import org.rsmod.game.entity.Player
 import org.rsmod.game.hit.HitType
@@ -30,9 +32,8 @@ constructor(
     private val hitModifier: PlayerHitModifier,
 ) : PluginScript() {
 
-    private val sessions = IdentityHashMap<Player, Int>()
-
-    private val onResolve = IdentityHashMap<Player, () -> Unit>()
+    private val sessions = IdentityHashMap<Player, () -> Unit>()
+    private var Player.strangleSpores by intVarp("varp.vardorvis_strangle_spores")
 
     private lateinit var events: EventBus
 
@@ -42,15 +43,21 @@ constructor(
         for (n in 1..MAX_SPORES) {
             onIfOverlayButton("component.vardorvis_qte:qte_model_$n") { clearSpore(player, n) }
         }
+        onPlayerLogout {
+            sessions.remove(player)?.invoke()
+            player.strangleSpores = 0
+        }
     }
 
     fun beginStrangle(player: Player, spores: Int = DEFAULT_SPORES, resolved: () -> Unit = {}) {
+        require(spores in 1..MAX_SPORES)
         if (player in sessions) {
             player.mes("A Strangle QTE is already running.")
             return
         }
-        sessions[player] = spores
-        onResolve[player] = resolved
+        val session = { resolved() }
+        sessions[player] = session
+        player.strangleSpores = spores
 
         player.abortRoute()
         player.clearInteraction()
@@ -66,11 +73,14 @@ constructor(
         }
         player.runClientScript(qteSetupClientScript(), spores)
 
-        worldQueues.add(WINDOW_TICKS) { finishStrangle(player) }
+        worldQueues.add(WINDOW_TICKS) {
+            if (sessions[player] === session) finishStrangle(player)
+        }
     }
 
     private fun clearSpore(player: Player, n: Int) {
-        val spores = sessions[player] ?: return
+        if (player !in sessions) return
+        val spores = player.strangleSpores
         if (n > spores) return
         if (player.vars[qteVarbit(n)] == 0) return
         VarPlayerIntMapSetter.set(player, qteVarbit(n), 0)
@@ -82,15 +92,19 @@ constructor(
     }
 
     private fun finishStrangle(player: Player) {
-        val spores = sessions.remove(player) ?: return
-        onResolve.remove(player)?.invoke()
-        player.delay = player.currentMapClock // lift the QTE movement/interaction root
+        val resolved = sessions.remove(player) ?: return
+        val spores = player.strangleSpores
+        player.strangleSpores = 0
+        resolved()
+        player.delay = player.currentMapClock
         val survivors = (1..spores).count { player.vars[qteVarbit(it)] != 0 }
         for (n in 1..spores) VarPlayerIntMapSetter.set(player, qteVarbit(n), 0)
 
         player.spotanim(SPORE_DESPAWN_SPOTANIM, slot = 2)
         player.runClientScript(qteFadeClientScript())
-        worldQueues.add(1) { player.ifCloseSub(QTE_INTERFACE, events) }
+        worldQueues.add(1) {
+            if (player !in sessions && player.isSlotAssigned) player.ifCloseSub(QTE_INTERFACE, events)
+        }
 
         if (survivors == 0) {
             player.mes(ESCAPE_MESSAGE)

@@ -9,7 +9,7 @@ sellMultiplier = 1000
 buyMultiplier = 800
 delta = 0
 
-size = 5
+size = 4
 
 protect = false
 runWeight = false
@@ -35,9 +35,4 @@ restockCycles = 1
 [[inventory.stock]]
 obj = "obj.star_pack_softclay"
 count = 1000
-restockCycles = 1
-
-[[inventory.stock]]
-obj = "obj.poh_tablet_shootingstar"
-count = 100
 restockCycles = 1

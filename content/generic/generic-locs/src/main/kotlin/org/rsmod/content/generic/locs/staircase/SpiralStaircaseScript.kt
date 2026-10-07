@@ -5,9 +5,9 @@ import org.rsmod.api.script.onOpContentLoc1
 import org.rsmod.api.script.onOpContentLoc2
 import org.rsmod.api.script.onOpContentLoc3
 import org.rsmod.api.script.onOpLoc2
-import org.rsmod.api.script.onOpLoc3
 import org.rsmod.game.loc.BoundLocInfo
 import org.rsmod.game.loc.LocAngle
+import org.rsmod.map.CoordGrid
 import org.rsmod.map.util.Translation
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
@@ -30,8 +30,7 @@ class SpiralStaircaseScript : PluginScript() {
         onOpLoc2("loc.spiralstairstop_3") { climbLumbridgeBottom(it.loc) }
     }
 
-    private fun ProtectedAccess.climbDown(loc: BoundLocInfo) =
-        climb(loc, loc.climbDownTranslation())
+    private fun ProtectedAccess.climbDown(loc: BoundLocInfo) = telejump(loc.climbDownDest())
 
     private fun BoundLocInfo.climbDownTranslation(): Translation =
         when (angle) {
@@ -41,7 +40,13 @@ class SpiralStaircaseScript : PluginScript() {
             LocAngle.South -> Translation(x = adjustedWidth, z = adjustedLength - 1, level = -1)
         }
 
-    private fun ProtectedAccess.climbUp(loc: BoundLocInfo) = climb(loc, loc.climbUpTranslation())
+    private fun ProtectedAccess.climbUp(loc: BoundLocInfo) = telejump(loc.climbUpDest())
+
+    private fun BoundLocInfo.climbUpDest(): CoordGrid =
+        SpiralStaircaseDestinations.Up[coords] ?: coords.translate(climbUpTranslation())
+
+    private fun BoundLocInfo.climbDownDest(): CoordGrid =
+        SpiralStaircaseDestinations.Down[coords] ?: coords.translate(climbDownTranslation())
 
     private fun BoundLocInfo.climbUpTranslation(): Translation =
         when (angle) {
@@ -59,15 +64,16 @@ class SpiralStaircaseScript : PluginScript() {
 
     private suspend fun ProtectedAccess.climOption(loc: BoundLocInfo) {
         startDialogue {
-            val translation =
+            // The choice carries the resolved destination, not the translation, so the
+            // per-placement overrides apply to this path too.
+            val dest =
                 choice2(
                     "Climb up the stairs.",
-                    loc.climbUpTranslation(),
+                    loc.climbUpDest(),
                     "Climb down the stairs.",
-                    loc.climbDownTranslation(),
+                    loc.climbDownDest(),
                     title = "Climb up or down the stairs?",
                 )
-            val dest = loc.coords.translate(translation)
             telejump(dest)
         }
     }

@@ -1,8 +1,15 @@
+# The quest kill bypasses this table. NoRemainsDeathDropHook suppresses default bones.
+# TODO: Verify the coin weight and quantity range.
+
 id = "Brutus Drops"
 npcs = ["npc.cowboss", "npc.cowboss_routefind"]
 
 [[guaranteed]]
 obj = "obj.raw_tbone_steak"
+count = 1
+
+[[guaranteed]]
+obj = "obj.bull_bones"
 count = 1
 
 [[pre_roll]]
@@ -24,8 +31,13 @@ obj = "obj.cow_slippers"
 count = 1
 
 [main]
-total = 81
+total = 111
 name = "Brutus Drops"
+
+[[main.entries]]
+weight = 30
+obj = "obj.coins"
+count = "60..80"
 
 [[main.entries]]
 weight = 2

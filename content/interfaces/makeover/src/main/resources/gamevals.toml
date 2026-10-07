@@ -1,0 +1,4 @@
+# Use soft timers: soft queues close the modal they would decorate.
+
+[gamevals.timer]
+makeover_changing_booth = 118

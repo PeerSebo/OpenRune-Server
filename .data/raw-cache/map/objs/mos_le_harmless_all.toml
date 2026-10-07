@@ -1,4 +1,3 @@
-## Mos Le Harmless
 
 [[spawn]]
 obj = "obj.edible_seaweed"
@@ -59,4 +58,3 @@ coords = "0_59_47_39_56"
 [[spawn]]
 obj = "obj.seaweed"
 coords = "0_59_47_53_44"
-

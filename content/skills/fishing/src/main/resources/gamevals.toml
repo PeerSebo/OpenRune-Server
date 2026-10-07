@@ -1,86 +1,70 @@
-[gamevals.dbtable]
-fishing_spot =65477
-fishing_method =65476
-fishing_spot_def =65475
-
-[gamevals.queue]
-fishing_catch=65527
-
-[gamevals.enum]
-tackle_box_storable=65472
-
-[gamevals.dbrow]
-fishing_raw_shrimps =63220
-fishing_raw_anchovies =63219
-fishing_raw_sardine =63218
-fishing_raw_herring =63217
-fishing_raw_trout =63216
-fishing_raw_salmon =63215
-fishing_raw_pike =63214
-fishing_raw_lobster =63213
-fishing_raw_tuna =63212
-fishing_raw_swordfish =63211
-fishing_raw_mackerel =63210
-fishing_raw_cod =63209
-fishing_raw_bass =63208
-fishing_raw_shark =63207
-fishing_raw_monkfish =63206
-fishing_raw_slimy_eel =63205
-fishing_raw_cave_eel =63204
-fishing_raw_lava_eel =63203
-fishing_raw_anglerfish =63202
-fishing_raw_dark_crab =63201
-fishing_raw_infernal_eel =63200
-fishing_raw_karambwanji =63199
-fishing_leaping_trout =63198
-fishing_leaping_salmon =63197
-fishing_leaping_sturgeon =63196
-fishing_minnow =63195
-fishing_raw_rainbow_fish =63194
-fishing_barehand_tuna =63193
-fishing_barehand_swordfish =63192
-fishing_barehand_shark =63191
-fishing_method_net =63190
-fishing_method_bait =63189
-fishing_method_lure =63188
-fishing_method_cage =63187
-fishing_method_harpoon =63186
-fishing_method_big_net =63185
-fishing_method_oily_rod =63184
-fishing_method_sandworm =63183
-fishing_method_dark_crab_cage =63182
-fishing_method_barbarian =63181
-fishing_method_barehand =63180
-fishing_spot_net_bait =63179
-fishing_spot_lure_bait =63178
-fishing_spot_cage_harpoon =63177
-fishing_spot_big_net_harpoon =63176
-fishing_spot_monkfish =63175
-fishing_spot_slimy_eel =63174
-fishing_spot_cave_eel =63173
-fishing_spot_lava_eel =63172
-fishing_spot_anglerfish =63171
-fishing_spot_dark_crab =63170
-fishing_spot_infernal_eel =63169
-fishing_spot_karambwanji =63168
-fishing_spot_barbarian =63167
-fishing_spot_minnow =63166
 
 [gamevals.content]
-net_bait_fishing_spot =65533
-lure_bait_fishing_spot =65532
-cage_harpoon_fishing_spot =65531
-big_net_harpoon_fishing_spot =65530
-monkfish_fishing_spot =65529
-slimy_eel_fishing_spot =65528
-cave_eel_fishing_spot =65527
-lava_eel_fishing_spot =65526
-anglerfish_fishing_spot =65525
-dark_crab_fishing_spot =65524
-infernal_eel_fishing_spot =65523
-karambwanji_fishing_spot =65522
-barbarian_fishing_spot =65521
-karambwan_fishing_spot =65520
-minnow_fishing_spot =65519
-minnow_rowboat_to_island =65518
-minnow_rowboat_to_guild =65517
+fishing_spot_smallnet = 57
+fishing_spot_rod = 58
+fishing_spot_cage = 59
+fishing_spot_bignet = 60
+fishing_harpoon = 61
+fishing_spot_barbarian = 70
+fishing_spot_monkfish = 71
+fishing_spot_anglerfish = 72
+fishing_spot_slimy_eel = 73
+fishing_spot_cavefish = 74
+fishing_spot_lava_eel = 75
+fishing_spot_infernal_eel = 76
+fishing_spot_dark_crab = 77
+fishing_spot_karambwanji = 78
+fishing_spot_karambwan = 79
+fishing_spot_minnow = 80
+minnow_rowboat_to_island = 81
+minnow_rowboat_to_guild = 82
+
+[gamevals.queue]
+fishing_barbarian_cut = 117
+fishing_offcuts_cut = 121
+
+[gamevals.area]
+fishing_guild_minnow_platform = 32337
+
+[gamevals.dbtable]
+fishing_catches = 55560
+
+[gamevals.enum]
+tackle_box_storable = 65472
+heron_pet_chance = 65473
+
+[gamevals.dbrow]
+fishing_shrimps = 55900
+fishing_anchovies = 55901
+fishing_sardine = 55902
+fishing_herring = 55903
+fishing_trout = 55904
+fishing_salmon = 55905
+fishing_pike = 55906
+fishing_lobster = 55907
+fishing_tuna = 55908
+fishing_swordfish = 55909
+fishing_shark = 55910
+fishing_mackerel = 55911
+fishing_cod = 55912
+fishing_bass = 55913
+fishing_casket = 55914
+fishing_oyster = 55915
+fishing_leather_gloves = 55916
+fishing_seaweed = 55917
+fishing_leather_boots = 55918
+fishing_leaping_trout = 55919
+fishing_leaping_salmon = 55920
+fishing_leaping_sturgeon = 55921
+fishing_monkfish = 55922
+fishing_anglerfish = 55923
+fishing_slimy_eel = 55924
+fishing_cave_eel = 55925
+fishing_lava_eel = 55926
+fishing_infernal_eel = 55927
+fishing_dark_crab = 55928
+fishing_karambwanji = 55929
+fishing_minnow = 55930
+# 55931-55949 belong to fletching; do not reuse that formerly reserved band.
+fishing_karambwanji_shrimp = 55972
+fishing_cave_eel_slimy = 55973

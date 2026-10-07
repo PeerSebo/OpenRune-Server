@@ -133,7 +133,5 @@ weight = 1
 obj = "obj.dust_battlestaff"
 count = 1
 
-
 # Unknown wiki drop rate: Dragon chainbody [main/Weapons and armour/1/{{#expr:128*256}}]
 # Unknown wiki drop rate: Nothing [main/Other/255/{{#expr:128*256}}]
-# Main table pool padding uses a nothing roll (F2P drops removed and/or subtable access missing from wiki parse) (1 weight)

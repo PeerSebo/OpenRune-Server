@@ -10,7 +10,7 @@ import org.rsmod.game.inv.Inventory
 import org.rsmod.map.CoordGrid
 
 internal object TestCache {
-    private val loaded by lazy { ServerCacheManager.init(240).close() }
+    private val loaded by lazy { ServerCacheManager.init(241).close() }
 
     fun load() = loaded
 }

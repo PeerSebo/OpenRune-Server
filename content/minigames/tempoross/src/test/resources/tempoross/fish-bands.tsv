@@ -1,0 +1,7 @@
+35	obj.raw_herring	obj.raw_mackerel	obj.raw_pike	obj.raw_salmon	obj.raw_tuna
+40	obj.raw_mackerel	obj.raw_pike	obj.raw_salmon	obj.raw_tuna	obj.raw_lobster
+46	obj.raw_pike	obj.raw_salmon	obj.raw_tuna	obj.raw_lobster	obj.raw_bass
+50	obj.raw_salmon	obj.raw_tuna	obj.raw_lobster	obj.raw_bass	obj.raw_swordfish
+76	obj.raw_tuna	obj.raw_lobster	obj.raw_bass	obj.raw_swordfish	obj.raw_shark
+79	obj.raw_lobster	obj.raw_bass	obj.raw_swordfish	obj.raw_shark	obj.raw_seaturtle
+81	obj.raw_bass	obj.raw_swordfish	obj.raw_shark	obj.raw_seaturtle	obj.raw_mantaray

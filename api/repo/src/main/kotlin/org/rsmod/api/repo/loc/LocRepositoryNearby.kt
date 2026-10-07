@@ -6,10 +6,6 @@ import dev.openrune.rscm.RSCMType
 import org.rsmod.game.map.collision.tilesInChebyshevSquare
 import org.rsmod.map.CoordGrid
 
-/**
- * Returns whether any of [locTypeInternals] exists on the map within a Chebyshev [radius] square
- * around [origin], optionally skipping [exclude].
- */
 public fun LocRepository.locNearby(
     origin: CoordGrid,
     radius: Int,
@@ -17,9 +13,8 @@ public fun LocRepository.locNearby(
     locTypeInternals: Iterable<String>,
 ): Boolean {
 
-    val types = locTypeInternals.mapNotNull {
-        ServerCacheManager.getObject(it.asRSCM(RSCMType.LOC))
-    }
+    val types =
+        locTypeInternals.mapNotNull { ServerCacheManager.getObject(it.asRSCM(RSCMType.LOC)) }
 
     for (t in origin.tilesInChebyshevSquare(radius, exclude)) {
         for (type in types) {

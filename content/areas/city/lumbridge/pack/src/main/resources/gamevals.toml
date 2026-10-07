@@ -1,0 +1,8 @@
+[gamevals.varp]
+lumbridge_tutor_claim_ready_at = 64059
+lumbridge_tutor_claim_remaining_ticks = 64060
+lumbridge_tutor_claim_migrated = 64061
+
+[gamevals.timer]
+swamp_cave_insects = 2300
+swamp_cave_light_check = 2301

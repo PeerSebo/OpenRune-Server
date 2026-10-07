@@ -13,6 +13,9 @@ import org.rsmod.plugin.scripts.ScriptContext
 class GenericPerson : PluginScript() {
     override fun ScriptContext.startup() {
         onOpContentNpc1("content.person") { personDialogue(it.npc) }
+        for (npc in AdditionalCommonPeople) {
+            onOpNpc1(npc) { personDialogue(it.npc) }
+        }
     }
 
     private suspend fun ProtectedAccess.personDialogue(npc: Npc) =
@@ -114,18 +117,15 @@ class GenericPerson : PluginScript() {
     }
 
     private suspend fun Dialogue.randomGenericDialogue10() {
-        chatNpc(happy, "Hello, how's it going?")
         searchingEnemiesDialogue()
     }
 
     private suspend fun Dialogue.randomGenericDialogue11() {
-        chatNpc(happy, "Hello, how's it going?")
         chatPlayer(happy, "I'm in search of a quest.")
         chatNpc(neutral, "I'm sorry I can't help you there.")
     }
 
     private suspend fun Dialogue.randomGenericDialogue12() {
-        chatNpc(happy, "Hello, how's it going?")
         chatPlayer(neutral, "Do you wish to trade?")
         chatNpc(
             neutral,
@@ -200,6 +200,14 @@ class GenericPerson : PluginScript() {
         chatNpc(
             neutral,
             "I've heard there are many fearsome creatures that dwell under the ground...",
+        )
+    }
+
+    companion object {
+        internal val AdditionalCommonPeople = listOf(
+            "npc.man4",
+            "npc.zeah_man", "npc.zeah_man2", "npc.zeah_man3",
+            "npc.zeah_woman", "npc.zeah_woman2", "npc.zeah_woman3",
         )
     }
 }

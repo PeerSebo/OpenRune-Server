@@ -12,11 +12,7 @@ import org.rsmod.game.inv.InvObj
 /* Obj transaction system is not thread-safe. */
 @Execution(ExecutionMode.SAME_THREAD)
 @OptIn(UncheckedType::class)
-/*
- * It is important to note that the bank inv type automatically uncertifies banknotes, so you may
- * run into unexpected bank inv results after certain transactions if you are not aware of the
- * objs being used as input.
- */
+// Bank inventories automatically uncertify banknotes during transfers.
 class BankInvScriptTest {
     @Test
     fun GameTestState.`withdraw single obj`() =
@@ -34,11 +30,9 @@ class BankInvScriptTest {
             assertEquals(InvObj(3, 1), player.inv[0])
             assertEquals(InvObj(3, 4), bank[3])
 
-            // Withdrawing from first slot.
             player.ifButton(bank_components.main_inventory, comsub = 0, op = MAIN_INV_WITHDRAW_1)
             advance()
 
-            // Rest of objs should shift to occupy the empty slot.
             assertEquals(InvObj(1, 1), player.inv[1])
             assertEquals(InvObj(2, 1), bank[0])
             assertNull(bank[1])
@@ -64,7 +58,6 @@ class BankInvScriptTest {
             bank[4] = InvObj(stackable, 100)
             player.bankTabSizeMain = 5
 
-            // Withdraw stackable obj.
             player.ifButton(bank_components.main_inventory, comsub = 4, op = MAIN_INV_WITHDRAW_X)
             advance()
 
@@ -74,7 +67,6 @@ class BankInvScriptTest {
             assertEquals(InvObj(stackable, 100), player.inv[0])
             assertNull(bank[4])
 
-            // Withdraw non-stackable obj.
             val expectedWithdraw = player.inv.freeSpace()
             player.ifButton(bank_components.main_inventory, comsub = 3, op = MAIN_INV_WITHDRAW_X)
             advance()
@@ -316,9 +308,9 @@ class BankInvScriptTest {
 
             advance()
             assertNull(player.inv[4])
-            assertEquals(InvObj(2, 6), bank[0]) // Initial obj deposited in tab 1
-            assertEquals(InvObj(3, 1), bank[1]) // Obj deposited in main tab
-            assertEquals(InvObj(1, 1), bank[2]) // New obj deposited in tab 1
+            assertEquals(InvObj(2, 6), bank[0])
+            assertEquals(InvObj(3, 1), bank[1])
+            assertEquals(InvObj(1, 1), bank[2])
             assertEquals(3, bank.occupiedSpace())
             assertEquals(3, player.inv.occupiedSpace())
             assertEquals(2, BankTab.Tab1.occupiedSpace(player))
@@ -379,7 +371,6 @@ class BankInvScriptTest {
             player.bankTabSize2 = tab2.size
             player.bankTabSize3 = tab3.size
 
-            // Insert from slot 7 to slot 11 in tab 2.
             player.insertMode = true
             player.ifButtonD(bank_components.main_inventory, fromComsub = 7, intoComsub = 11)
 
@@ -391,7 +382,6 @@ class BankInvScriptTest {
             assertEquals(InvObj(6, 1), bank[11])
             assertEquals(tab2.size, player.bankTabSize2)
 
-            // Insert from slot 16 to slot 18 in tab 3.
             player.insertMode = true
             player.ifButtonD(bank_components.main_inventory, fromComsub = 16, intoComsub = 18)
 
@@ -405,7 +395,6 @@ class BankInvScriptTest {
             assertEquals(InvObj(12, 1), bank[18])
             assertEquals(tab3.size, player.bankTabSize3)
 
-            // Swap slot 0 obj with occupied slot 2.
             player.insertMode = false
             player.ifButtonD(bank_components.main_inventory, fromComsub = 0, intoComsub = 2)
 
@@ -413,7 +402,6 @@ class BankInvScriptTest {
             assertEquals(InvObj(3, 1), bank[0])
             assertEquals(InvObj(1, 1), bank[2])
 
-            // Swap slot 0 with empty slot 3. This should cause all items to shift to the left.
             player.insertMode = false
             player.ifButtonD(bank_components.main_inventory, fromComsub = 0, intoComsub = 3)
 
@@ -471,7 +459,6 @@ class BankInvScriptTest {
             assertEquals(tab1.size, player.bankTabSize1)
             assertEquals(tab2.size, player.bankTabSize2)
 
-            // Swap back to initial state.
             player.insertMode = false
             player.ifButtonD(bank_components.main_inventory, fromComsub = 9, intoComsub = 0)
 
@@ -489,7 +476,6 @@ class BankInvScriptTest {
             assertEquals(tab1.size, player.bankTabSize1)
             assertEquals(tab2.size, player.bankTabSize2)
 
-            // Insert from tab 2 into tab 1.
             player.insertMode = true
             player.ifButtonD(bank_components.main_inventory, fromComsub = 9, intoComsub = 0)
 
@@ -538,7 +524,6 @@ class BankInvScriptTest {
 
             val tab1Comsub = bank_comsubs.other_tabs.first
 
-            // Even with swap mode enabled, dragging into a new tab acts as a shift/insert.
             player.insertMode = false
             player.ifButtonD(
                 fromComponent = bank_components.main_inventory,
@@ -560,7 +545,6 @@ class BankInvScriptTest {
             assertNull(bank[16])
             assertEquals(InvObj(13, 1), bank[17])
             assertEquals(tab2.size - 1, player.bankTabSize2)
-            // Obj inserted into tab took a previously empty slot - size does not increase.
             assertEquals(tab3.size, player.bankTabSize3)
         }
 
@@ -601,7 +585,6 @@ class BankInvScriptTest {
                 assertEquals(initialSize, bank.occupiedSpace())
             }
 
-            // Shift from 1st tab index to 3rd tab index.
             player.ifButtonD(bank_components.tabs, tab1Comsub, tab1Comsub + 2)
 
             advance()
@@ -610,7 +593,6 @@ class BankInvScriptTest {
             assertEquals(tab1, bank.objs.copyOfRange(tab2.size + tab3.size, combined.size).toList())
             assertTabSizes(tab2.size, tab3.size, tab1.size)
 
-            // Shift from 1st tab index to 3rd tab index.
             player.ifButtonD(bank_components.tabs, tab1Comsub, tab1Comsub + 2)
 
             advance()
@@ -619,7 +601,6 @@ class BankInvScriptTest {
             assertEquals(tab2, bank.objs.copyOfRange(tab3.size + tab1.size, combined.size).toList())
             assertTabSizes(tab3.size, tab1.size, tab2.size)
 
-            // Shift from 2nd tab index to 1st tab index.
             player.ifButtonD(bank_components.tabs, tab1Comsub + 1, tab1Comsub)
 
             advance()
@@ -628,7 +609,6 @@ class BankInvScriptTest {
             assertEquals(tab2, bank.objs.copyOfRange(tab1.size + tab3.size, combined.size).toList())
             assertTabSizes(tab1.size, tab3.size, tab2.size)
 
-            // Shift from 2nd tab index to 3rd tab index.
             player.ifButtonD(bank_components.tabs, tab1Comsub + 1, tab1Comsub + 2)
 
             advance()
@@ -638,12 +618,6 @@ class BankInvScriptTest {
             assertTabSizes(tab1.size, tab2.size, tab3.size)
         }
 
-    /*
-     * It is important for bank to compress on if_close as there are certain mechanics that can
-     * deposit objs into banks without the player opening it. If it did not compress on close, these
-     * objs would take up "empty" slots instead of new slots. (We know this is how it is handled in
-     * the official game)
-     */
     @Test
     fun GameTestState.`compress bank on close`() =
         runGameTest(BankInvScript::class, BankOpenScript::class) {

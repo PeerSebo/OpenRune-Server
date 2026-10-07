@@ -29,6 +29,7 @@ import org.rsmod.game.damage.DamageContributions
 import org.rsmod.game.entity.player.Appearance
 import org.rsmod.game.entity.player.PlayerUid
 import org.rsmod.game.entity.player.PublicMessage
+import org.rsmod.game.entity.player.RunEnergy
 import org.rsmod.game.entity.util.EntityFaceAngle
 import org.rsmod.game.entity.util.EntityTinting
 import org.rsmod.game.entity.util.PathingEntityCommon
@@ -46,6 +47,7 @@ import org.rsmod.game.seq.EntitySeq
 import org.rsmod.game.shop.Shop
 import org.rsmod.game.spot.EntitySpotanim
 import org.rsmod.game.stat.PlayerStatMap
+import org.rsmod.game.stat.StatAdvance
 import org.rsmod.game.timer.PlayerTimerMap
 import org.rsmod.game.ui.UserInterfaceMap
 import org.rsmod.game.vars.VarPlayerIntMap
@@ -68,7 +70,11 @@ public class Player(
 
     override val collisionStrategy: CollisionStrategy = CollisionStrategy.Normal
 
-    override val blockWalkCollisionFlag: Int = CollisionFlag.BLOCK_NPCS
+    override val blockWalkCollisionFlag: Int?
+        get() = if (staffInvisible) null else CollisionFlag.BLOCK_NPCS
+
+    /** Session-only staff concealment; never persisted or encoded as an appearance flag. */
+    public var staffInvisible: Boolean = false
 
     override val heroPoints: HeroPoints = HeroPoints(size = 16)
 
@@ -93,10 +99,6 @@ public class Player(
      */
     public var openRuneCentralSessionToken: ByteArray? = null
 
-    /**
-     * A unique identifier that should be generated when the player's account is created and then
-     * remain persistent forever.
-     */
     public var uuid: Long? = null
 
     /**
@@ -138,30 +140,8 @@ public class Player(
      */
     public var userId: Long by Delegates.notNull()
 
-    /**
-     * A unique and persistent identifier for the player.
-     *
-     * Similar to [userId], but explicitly defined as a 32-bit integer and strictly used for
-     * server-side operations (i.e., not sent in the login block).
-     *
-     * For example, when loading from a database, this typically corresponds to the player's unique
-     * `account_id` row.
-     *
-     * _This value is **always** expected to be set on login._
-     */
     public var accountId: Int by Delegates.notNull()
 
-    /**
-     * A unique and persistent identifier for the player.
-     *
-     * Similar to [accountHash], but explicitly defined as a 32-bit integer and strictly used for
-     * server-side operations (i.e., not sent in the login block).
-     *
-     * For example, when loading from a database, this typically corresponds to the player's unique
-     * `character_id` row.
-     *
-     * _This value is **always** expected to be set on login._
-     */
     public var characterId: Int by Delegates.notNull()
 
     // Currently unsure of the exact requirements for this value's use case, however, it should
@@ -189,7 +169,7 @@ public class Player(
     public val pendingAreas: ShortArrayList = ShortArrayList()
     public var lastProcessedAreaCoord: CoordGrid = CoordGrid.NULL
 
-    public var runEnergy: Int = 1000
+    public var runEnergy: Int = RunEnergy.MAX
     public var runWeight: Int = 0
 
     public var modLevel: Rights = Rights.NONE
@@ -216,24 +196,13 @@ public class Player(
     public val transmittedInvAddQueue: IntArraySet = IntArraySet()
     public var openedShop: Shop? = null
 
-    // Cache for commonly accessed inventories
     public lateinit var inv: Inventory
     public lateinit var worn: Inventory
 
     public var lastLogin: LocalDateTime = LocalDateTime.now()
 
-    /*
-     * There are various ways a player can be removed from the game:
-     * - Client disconnection: when the player x-logs out of their client. This results in the
-     *   player not being immediately removed from the world, giving them a grace period to
-     *   reconnect.
-     * - Forced disconnect: when the player is forcefully disconnected due to an error during
-     *   processing in the game loop. This immediately attempts to log the player out.
-     * - Manual logout: when the player clicks the logout button. This checks for and sends the
-     *   `preventLogoutMessage`, when applicable.
-     * - Shutdown: when the server is shutting down. This bypasses busy and delay conditions
-     *   and will keep attempting to log the player out in a tight loop.
-     */
+    // Disconnects allow a reconnect grace period; manual logout checks prevention, forced
+    // logout tries immediately, and shutdown bypasses busy/delay gates.
     public val clientDisconnected: AtomicBoolean = AtomicBoolean(false)
     public var clientDisconnectedCycles: Int = 0
 
@@ -241,21 +210,16 @@ public class Player(
     public var manualLogout: Boolean = false
     public var pendingLogout: Boolean = false
     public var loggingOut: Boolean = false
+    public var pendingAccountCommit: PlayerAccountCommit? = null
+    public var tradeSocial: PlayerTradeSocial? = null
     public var pendingCloseClient: Boolean = false
     public var closeClient: Boolean = false
 
-    /** This flag should only be set when the game server is in the process of shutting down. */
     public var pendingShutdown: Boolean = false
 
     public var preventLogoutMessage: String? = null
     public var preventLogoutUntil: Int = Int.MIN_VALUE
 
-    /**
-     * Counts the number of consecutive attempts to log out while logout prevention is active. If
-     * this exceeds the configured hard cap, the player will be forcefully disconnected.
-     *
-     * This prevents players from being permanently stuck online during extended combat scenarios.
-     */
     public var preventLogoutCounter: Int = 0
 
     public var actionDelay: Int = -1
@@ -278,18 +242,8 @@ public class Player(
     public var combatLevelDecimal: Int = 0
 
     /**
-     * Drop triggers enable extensibility for inv obj drop prevention.
-     *
-     * They are best suited for controlled, enclosed environments such as minigames, raids,
-     * instances, or other scenarios tied to a specific area. The drop trigger is reset only when
-     * the player drops an inventory obj or when explicitly cleared via [clearDropTrigger] or
-     * [clearAnyDropTrigger].
-     *
-     * If there is no clear mechanism to reset the trigger - such as an `exit` function for a
-     * minigame - there is no guarantee that the drop trigger will not become "out-of-date" until
-     * the player drops an inventory object.
-     *
-     * _Note: Use the [Player.dropTrigger] function to set this value._
+     * Clear drop triggers when leaving their owning area; they otherwise persist until a drop
+     * or explicit reset.
      */
     public var dropTrigger: String? = null
         private set
@@ -301,7 +255,7 @@ public class Player(
      * their account has been fully saved.
      */
     public val canProcess: Boolean
-        get() = !loggingOut
+        get() = !loggingOut && pendingAccountCommit == null
 
     public val isDelayed: Boolean
         get() = delay > processedMapClock && !pendingShutdown
@@ -318,13 +272,16 @@ public class Player(
         get() = interaction != null || routeDestination.isNotEmpty()
 
     public val isAccessProtected: Boolean
-        get() = (isBusy || activeCoroutine?.isSuspended == true) && !pendingShutdown
+        get() = pendingAccountCommit != null ||
+            ((isBusy || activeCoroutine?.isSuspended == true) && !pendingShutdown)
 
     public val isModalButtonProtected: Boolean
         get() = isDelayed || activeCoroutine?.isSuspended == true
 
+    // Exclude engine queues: area events wait behind protected access and would freeze scripted
+    // movement under an open chatbox. Script queues still count.
     private val hasPendingQueue: Boolean
-        get() = queueList.isNotEmpty || weakQueueList.isNotEmpty || engineQueueList.isNotEmpty
+        get() = queueList.isNotEmpty || weakQueueList.isNotEmpty
 
     public val canProcessMovement: Boolean
         get() = !isHaltMovementRequired()
@@ -389,9 +346,17 @@ public class Player(
         weakQueueList.removeAll(queue)
     }
 
-    public fun softQueue(queue: String, cycles: Int, args: Any? = null) {
+    public fun softQueue(
+        queue: String,
+        cycles: Int,
+        args: Any? = null,
+        startNextCycle: Boolean = false,
+        closeModals: Boolean = true,
+    ) {
         require(cycles > 0) { "`cycles` must be greater than 0. (cycles=$cycles)" }
-        queueList.add(queue, QueueCategory.Soft, cycles, args)
+        queueList.add(queue, QueueCategory.Soft, cycles, args,
+            processedCycle = if (startNextCycle) currentMapClock else -1,
+            closeModals = closeModals)
     }
 
     public fun queue(queue: String, cycles: Int, args: Any? = null) {
@@ -424,8 +389,14 @@ public class Player(
     }
 
     @InternalApi
-    public fun engineQueueAdvanceStat(stat: StatType) {
-        engineQueueList.add(EngineQueueType.AdvanceStat, args = stat, label = stat.id)
+    public fun engineQueueAdvanceStat(stat: StatType, level: Int) {
+        // A stat advancing again while its celebration is still pending REPLACES the pending
+        // entry, so exactly one celebration fires and it reports the freshest level - OSRS's
+        // multi-level-at-once behaviour. (An earlier guard here skipped the add instead, which
+        // would have silently swallowed the newer level-up.) The level rides in the args because
+        // delivery can be deferred by access protection - see StatAdvance.
+        engineQueueList.removeAll(EngineQueueType.AdvanceStat, stat.id)
+        engineQueueList.add(EngineQueueType.AdvanceStat, args = StatAdvance(stat, level), label = stat.id)
     }
 
     @InternalApi
@@ -450,13 +421,11 @@ public class Player(
 
     @InternalApi
     public fun engineQueueArea(area: Short) {
-        // We do not support "default" area engine queues - `args` not required.
         engineQueueList.add(EngineQueueType.Area, args = null, label = area.toInt())
     }
 
     @InternalApi
     public fun engineQueueAreaExit(area: Short) {
-        // We do not support "default" area engine queues - `args` not required.
         engineQueueList.add(EngineQueueType.AreaExit, args = null, label = area.toInt())
     }
 
@@ -510,15 +479,6 @@ public class Player(
         appearance.rebuild = true
     }
 
-    /**
-     * @throws [IllegalStateException] if a [dropTrigger] is already set. This ensures that
-     *   previously set drop triggers cannot be replaced unexpectedly or removed without explicit
-     *   action.
-     *
-     * Features that set a drop trigger are responsible for clearing it using [clearDropTrigger] or
-     * [clearAnyDropTrigger]. If a [dropTrigger] is still set, it may indicate the player exited
-     * through unintended means, and an error will be thrown to prevent silent failures.
-     */
     public fun dropTrigger(trigger: String) {
         RSCM.requireRSCM(RSCMType.DROP_TRIGGER, trigger)
 
@@ -529,10 +489,6 @@ public class Player(
         dropTrigger = trigger
     }
 
-    /**
-     * Clears [dropTrigger] as long as it matches [trigger], otherwise throws
-     * [IllegalStateException].
-     */
     public fun clearDropTrigger(trigger: String) {
         RSCM.requireRSCM(RSCMType.DROP_TRIGGER, trigger)
 

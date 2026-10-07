@@ -4,31 +4,14 @@ import org.rsmod.api.combat.maxhit.safePercentScale
 import org.rsmod.api.combat.maxhit.scaleByPercent
 
 public object PlayerMeleeMaxHit {
-    /**
-     * @param effectiveStrength The effective strength level, as calculated by
-     *   [calculateEffectiveStrength].
-     * @see [calculateEffectiveStrength]
-     */
     public fun calculateBaseDamage(effectiveStrength: Int, strengthBonus: Int): Int {
         val effectiveBonus = strengthBonus + 64
         return (effectiveStrength * effectiveBonus + 320) / 640
     }
 
     /**
-     * This function accepts `Double` values for certain modifiers but internally scales them to
-     * integers for emulation accuracy.
-     *
-     * @param visibleStrengthLvl The visible strength level, including boosts (e.g., 118 if boosted
-     *   by a super strength potion).
-     * @param styleBonus The attack style bonus, including the base `+8` every style provides.
-     *   (e.g., `Aggressive` = `11`, `Controlled` = `9`, `Defensive` = `8`).
-     * @param prayerBonus The prayer multiplier as a decimal (e.g., `1.23` for a `+23%` bonus).
-     * @param weaponBonus A multiplier accounting for special weapon effects (e.g., `1.12` for two
-     *   Soulreaper soul stacks, where each stack adds `+6%`). _Currently, only the Soulreaper axe
-     *   should make use of this modifier._
-     * @param voidBonus A multiplier applied when using Void equipment. (e.g., `1.1` when wearing
-     *   full Melee void armour).
-     * @throws IllegalArgumentException if any multiplier is below `1.0`.
+     * Scale decimal modifiers to integers before arithmetic to preserve emulation rounding;
+     * styleBonus includes the base +8.
      */
     public fun calculateEffectiveStrength(
         visibleStrengthLvl: Int,

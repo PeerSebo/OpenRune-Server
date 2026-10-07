@@ -1,0 +1,2 @@
+[clientscript,command_browser_init](component $border)
+~stoneborder($border, "Server Commands", 0);

@@ -1,0 +1,251 @@
+[[varp]]
+isServerOnly = true
+id = "varp.theatre_dead"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.theatre_damage"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.theatre_deaths"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.theatre_rooms"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.theatre_supply_points"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.theatre_claim_ready"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.theatre_recovery_fee"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.theatre_disconnect"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.theatre_kc"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.theatre_recovery_pending"
+scope = "Perm"
+transmit = "Never"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_room"
+
+[[varp]]
+isServerOnly = true
+id = "varp.theatre_room_damage"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.theatre_reward_points"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.theatre_room_deaths"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.theatre_tornado_next"
+scope = "Temp"
+transmit = "Never"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_target_member"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_stage"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_tick"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_next_attack"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_phase"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_attacks"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_thresholds"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_wave"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_style"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_sleep_until"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_walk_until"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_pillar_hp"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_target_pillar"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_birth_tick"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_hp_boost"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_maze_step"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_nylo_wave"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_nylo_next_wave_tick"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_nylo_style"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_nylo_next_style_tick"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_nylo_born_tick"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_nylo_big"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_nylo_aggressive"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_nylo_spawn_row"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_nylo_locked_members"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_nylo_target_member"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_nylo_pillar_index"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_nylo_boss_active"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_nylo_boss_attack_tick"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_healer_destination"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_bloat_walk_end"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_bloat_move_change"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_bloat_running"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_bloat_run_toggle"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_bloat_down_attacked"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_bloat_turn_remaining"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_bloat_flesh_next"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_bloat_stomped"
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_nylo_dying"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_nylo_staging"
+
+[[varn]]
+isServerOnly = true
+id = "varn.theatre_nylo_boss_spawn_tick"
+

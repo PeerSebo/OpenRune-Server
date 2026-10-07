@@ -22,6 +22,9 @@ public class PlayerFaceSquareProcessor {
             if (lastFaceEntity != currentMapClock) {
                 val angle = calculateAngle(pendingFaceSquare, pendingFaceWidth, pendingFaceLength)
                 pendingFaceAngle = EntityFaceAngle.fromOrNull(angle)
+                if (angle != null) {
+                    faceAngle = angle
+                }
             }
             resetPendingFaceSquare()
         }

@@ -2,7 +2,6 @@ package org.rsmod.game.entity.util
 
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
-import dev.openrune.types.SequenceServerType
 import org.rsmod.game.entity.Npc
 import org.rsmod.game.entity.PathingEntity
 import org.rsmod.game.entity.Player
@@ -14,31 +13,8 @@ import org.rsmod.map.CoordGrid
 import org.rsmod.map.util.Translation
 import org.rsmod.routefinder.collision.CollisionFlagMap
 
-/**
- * This class serves as a shared namespace for functions and logic common to all
- * [org.rsmod.game.entity.PathingEntity] implementations. It allows for the reuse of code that
- * multiple entities need to share, while also accommodating the need for certain entities to handle
- * additional, specialized logic after invoking these common functions.
- *
- * For example, both [org.rsmod.game.entity.Npc] and [org.rsmod.game.entity.Player] can use the same
- * logic for facing another player. However, NPCs might require extra steps, such as updating
- * related state with extended info, whereas Players may only need to rely on the base
- * functionality.
- *
- * Additionally, concepts like "protected access" influence the exposure of these functions. For
- * instance, NPCs do not have the concept of protected access and can call methods like
- * [org.rsmod.game.entity.Npc.telejump] directly. Players, however, may require these functions to
- * be more restricted to ensure proper access control.
- *
- * By centralizing this logic here, we minimize code duplication and ensure consistent behavior
- * across different entities, while still allowing for the flexibility needed by specific
- * implementations.
- */
 public object PathingEntityCommon {
-    // We don't declare or use [org.rsmod.game.entity.NpcList]'s capacity because some
-    // developers will more than likely be tempted to fiddle with that npc list capacity
-    // at some point. In that case, we do not want the npc list capacity, whether lower
-    // or higher, to affect this value used for internal systems.
+    // Internal encoding limit; changing NpcList capacity must not change this value.
     internal const val INTERNAL_NPC_LIMIT = 65535
 
     public fun telejump(entity: PathingEntity, collision: CollisionFlagMap, dest: CoordGrid) {
@@ -62,12 +38,10 @@ public object PathingEntityCommon {
         val start = entity.coords
         entity.coords = dest
         entity.lastProcessedCoord = CoordGrid.NULL
-        // Reset any ongoing movement and/or interaction.
+
         entity.abortRoute()
         entity.clearInteraction()
-        // Instantly move collision flag from previous coords to new coords.
-        // This is important as it covers specific edge cases where processing order have differing
-        // outcomes if the collision flags have not been moved for other entities in the world.
+        // Move collision immediately so later entities in this cycle see the new position.
         collision.move(entity, start, dest)
     }
 
@@ -101,21 +75,37 @@ public object PathingEntityCommon {
                 direction = dir,
             )
         entity.pendingExactMove = exactMove
+        entity.faceAngle = dir
     }
 
     public fun facePlayer(entity: PathingEntity, target: Player) {
+        if (target.staffInvisible) {
+            resetFaceEntity(entity)
+            return
+        }
         entity.faceEntity = EntityFaceTarget(target)
+        entity.faceEntityFallbackAngle = entity.fallbackAngleTo(target)
         entity.lastFaceEntity = entity.currentMapClock
     }
 
     public fun faceNpc(entity: PathingEntity, target: Npc) {
         entity.faceEntity = EntityFaceTarget(target)
+        entity.faceEntityFallbackAngle = entity.fallbackAngleTo(target)
         entity.lastFaceEntity = entity.currentMapClock
     }
 
     public fun resetFaceEntity(entity: PathingEntity) {
         entity.faceEntity = EntityFaceTarget.NULL
+        entity.faceEntityFallbackAngle = 0
     }
+
+    /**
+     * Bearing from [this] to [target], for the client to fall back on while the target avatar is
+     * outside its high-resolution set. Falls back to the entity's current angle when the two share
+     * a tile, since there is no meaningful bearing to compute in that case.
+     */
+    private fun PathingEntity.fallbackAngleTo(target: PathingEntity): Int =
+        calculateAngle(target.coords, target.size, target.size) ?: faceAngle
 
     public fun anim(
         entity: PathingEntity,

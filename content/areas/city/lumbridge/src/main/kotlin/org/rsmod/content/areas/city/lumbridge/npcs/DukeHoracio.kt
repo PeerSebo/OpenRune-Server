@@ -1,19 +1,26 @@
 package org.rsmod.content.areas.city.lumbridge.npcs
 
+import dev.openrune.util.Wearpos
 import jakarta.inject.Inject
 import org.rsmod.api.config.Constants
 import org.rsmod.api.player.dialogue.Dialogue
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.player.vars.intVarp
 import org.rsmod.api.script.onOpNpc1
+import org.rsmod.content.quest.area.crandor.DragonSlayerStage
+import org.rsmod.content.quest.area.lumbridge.IdesOfMilk
 import org.rsmod.content.quest.area.lumbridge.RuneMysteriesQuest
 import org.rsmod.content.quest.area.lumbridge.rmTalisman
 import org.rsmod.game.entity.Npc
 import org.rsmod.game.entity.Player
+import org.rsmod.game.inv.isType
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
-class DukeHoracio @Inject constructor(private val runeMysteries: RuneMysteriesQuest) : PluginScript() {
+class DukeHoracio
+@Inject
+constructor(private val runeMysteries: RuneMysteriesQuest, private val idesOfMilk: IdesOfMilk) :
+    PluginScript() {
 
     private val quest
         get() = runeMysteries.quest
@@ -29,9 +36,14 @@ class DukeHoracio @Inject constructor(private val runeMysteries: RuneMysteriesQu
     }
 
     private suspend fun Dialogue.dukeDialogue(npc: Npc) {
-        chatNpc(happy, "Greetings. Welcome to my castle.")
+        chatNpc(neutral, "Greetings. Welcome to my castle.")
 
-        val hasShield = player.inv.contains(ANTI_DRAGON_SHIELD)
+        if (idesOfMilk.dukeIdesBranch(this)) {
+            return
+        }
+
+        // Count shields in inventory, equipment and bank before offering a replacement.
+        val hasShield = ownsAntiDragonShield()
         val showShieldOption = !hasShield && player.dragonQuest >= 1
         val stage = quest.getQuestStage(player)
         val questOption =
@@ -51,12 +63,7 @@ class DukeHoracio @Inject constructor(private val runeMysteries: RuneMysteriesQu
                     3,
                 )
             } else {
-                choice2(
-                    questOption,
-                    2,
-                    "Where can I find money?",
-                    3,
-                )
+                choice2(questOption, 2, "Where can I find money?", 3)
             }
 
         when (choice) {
@@ -88,9 +95,13 @@ class DukeHoracio @Inject constructor(private val runeMysteries: RuneMysteriesQu
                 )
                 chatPlayer(happy, "Okay, will do.")
             }
-            stage in RuneMysteriesQuest.STAGE_TALISMAN_GIVEN until RuneMysteriesQuest.STAGE_COMPLETE -> {
+            stage in
+                RuneMysteriesQuest.STAGE_TALISMAN_GIVEN until RuneMysteriesQuest.STAGE_COMPLETE -> {
                 chatPlayer(quiz, "Have you any quests for me?")
-                chatNpc(happy, "The only job I had was the delivery of that talisman, so I'm afraid not.")
+                chatNpc(
+                    happy,
+                    "The only job I had was the delivery of that talisman, so I'm afraid not.",
+                )
             }
             else -> {
                 chatPlayer(quiz, "Have you any quests for me?")
@@ -176,76 +187,83 @@ class DukeHoracio @Inject constructor(private val runeMysteries: RuneMysteriesQu
     }
 
     private suspend fun Dialogue.dukeDragonShield(npc: Npc) {
-        chatPlayer(quiz, "I seek a shield that will protect me from dragonbreath.")
+        chatPlayer(happy, "I seek a shield that will protect me from dragonbreath.")
         chatNpc(quiz, "A knight going on a dragon quest, hmm? What dragon do you intend to slay?")
 
+        if (player.dragonQuest >= DragonSlayerStage.Complete) {
+            noDragonInParticular()
+            return
+        }
+
         when (
-            choice2(
-                "Elvarg, the dragon of Crandor island!",
-                1,
-                "Oh, no dragon in particular.",
-                2,
-            )
+            choice2("Elvarg, the dragon of Crandor island!", 1, "Oh, no dragon in particular", 2)
         ) {
             1 -> {
                 chatPlayer(happy, "Elvarg, the dragon of Crandor island!")
-                chatNpc(shocked, "Elvarg? Are you sure?")
-                when (choice2("Yes.", 1, "I'd better leave that dragon alone.", 2, title = "Well, are you sure?")) {
+                chatNpc(worried, "Elvarg? Are you sure?")
+                when (
+                    choice2("Yes", 1, "No", 2, title = "Well, are you sure?")
+                ) {
                     1 -> {
-                        chatPlayer(happy, "Yes.")
-                        val gender =
-                            if (player.appearance.bodyType == Constants.bodytype_a) "man" else "woman"
-                        chatNpc(happy, "Well, you're a braver $gender than I!")
+                        chatPlayer(happy, "Yes!")
+                        chatNpc(neutral, "Well, you're braver than I!")
                         chatPlayer(quiz, "Why is everyone so scared of this dragon?")
                         chatNpc(
-                            sad,
+                            neutral,
                             "Back in my father's day, Crandor was an important city-state. " +
-                                "Politically it was as important as Falador and Varrock and its ships " +
-                                "traded with every port.",
+                                "Politically, it was as important as Falador or Varrock and its " +
+                                "ships traded with every port.",
                         )
                         chatNpc(
-                            sad,
-                            "But, one day, when I was little, all contact was lost. The trading ships " +
-                                "and the diplomatic envoys just stopped coming.",
+                            neutral,
+                            "But, one day when I was little, all contact was lost. The trading " +
+                                "ships and the diplomatic envoys just stopped coming.",
                         )
                         chatNpc(
-                            sad,
-                            "I remember my father being very scared. He posted lookouts on the roof " +
-                                "to warn if the dragon was approaching. All the city rulers worried " +
-                                "that Elvarg would devastate the whole continent.",
+                            neutral,
+                            "I remember my father being very scared. He posted lookouts on the " +
+                                "roof to warn if the dragon was approaching. All the city rulers " +
+                                "were worried that Elvarg would devastate the whole continent.",
                         )
                         when (
                             choice2(
-                                "So, are you going to give me the shield or not?",
-                                1,
                                 "I'd better leave that dragon alone.",
+                                1,
+                                "So, are you going to give me the shield or not?",
                                 2,
                             )
                         ) {
-                            1 -> giveAntiDragonShield(finishedDragonSlayer = false)
-                            2 -> leaveDragonAlone()
+                            1 -> leaveDragonAlone()
+                            2 -> giveAntiDragonShield(finishedDragonSlayer = false)
                         }
                     }
-                    2 -> leaveDragonAlone()
+                    2 -> {
+                        chatNpc(
+                            neutral,
+                            "Very wise. There are some monsters that are best left alone.",
+                        )
+                    }
                 }
             }
-            2 -> {
-                chatPlayer(quiz, "Oh, no dragon in particular. I just feel like killing a dragon.")
-                if (player.dragonQuest >= 2) {
-                    chatNpc(
-                        happy,
-                        "Of course. Now you've slain Elvarg, you've earned the right to call the " +
-                            "shield your own!",
-                    )
-                    giveAntiDragonShield(finishedDragonSlayer = true)
-                } else {
-                    chatNpc(
-                        angry,
-                        "I don't have an infinite supply of these shields, you know. I'll only give " +
-                            "one for a truly worthy cause.",
-                    )
-                }
-            }
+            2 -> noDragonInParticular()
+        }
+    }
+
+    private suspend fun Dialogue.noDragonInParticular() {
+        chatPlayer(quiz, "Oh, no dragon in particular. I just feel like killing a dragon.")
+        if (player.dragonQuest >= DragonSlayerStage.Complete) {
+            chatNpc(
+                happy,
+                "Of course. Now you've slain Elvarg, you've earned the right to call the " +
+                    "shield your own!",
+            )
+            giveAntiDragonShield(finishedDragonSlayer = true)
+        } else {
+            chatNpc(
+                angry,
+                "I don't have an infinite supply of these shields, you know. I'll only give " +
+                    "one for a truly worthy cause.",
+            )
         }
     }
 
@@ -262,22 +280,36 @@ class DukeHoracio @Inject constructor(private val runeMysteries: RuneMysteriesQu
         if (!finishedDragonSlayer) {
             chatPlayer(quiz, "So, are you going to give me the shield or not?")
             chatNpc(
-                happy,
+                neutral,
                 "If you really think you're up to it then perhaps you are the one who can kill this dragon.",
             )
         }
-        if (!player.inv.contains(ANTI_DRAGON_SHIELD)) {
-            if (access.invAdd(access.inv, ANTI_DRAGON_SHIELD).failure) {
-                chatNpc(sad, "You don't have enough inventory space for the shield.")
-                return
-            }
+        // Recheck ownership after dialogue suspension; the menu-time check is not enough.
+        if (ownsAntiDragonShield()) {
+            chatNpc(
+                angry,
+                "I don't have an infinite supply of these shields, you know. I'll only give " +
+                    "one for a truly worthy cause.",
+            )
+            return
         }
-        mesbox("The Duke hands you a heavy orange shield.")
-        if (!finishedDragonSlayer) {
-            chatNpc(worried, "Take care out there. If you kill it...")
-            chatNpc(angry, "If you kill it, for Saradomin's sake make sure it's really dead!")
+        if (access.invAdd(access.inv, ANTI_DRAGON_SHIELD).failure) {
+            chatNpc(sad, "You don't have enough inventory space for the shield.")
+            return
+        }
+        if (finishedDragonSlayer) {
+            mesbox("The Duke hands you the shield.")
+        } else {
+            mesbox("The Duke hands you a heavy orange shield.")
+            chatNpc(neutral, "Take care out there. If you kill it...")
+            chatNpc(worried, "If you kill it, for Saradomin's sake make sure it's really dead!")
         }
     }
+
+    private fun Dialogue.ownsAntiDragonShield(): Boolean =
+        player.inv.contains(ANTI_DRAGON_SHIELD) ||
+            player.worn[Wearpos.LeftHand.slot].isType(ANTI_DRAGON_SHIELD) ||
+            access.bank.contains(ANTI_DRAGON_SHIELD)
 
     private fun hasAirTalisman(player: Player): Boolean =
         player.inv.contains(RuneMysteriesQuest.AIR_TALISMAN)

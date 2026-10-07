@@ -1,0 +1,5 @@
+[[varp]]
+isServerOnly = true
+id = "varp.pandemonium_boat_slot"
+scope = "Perm"
+transmit = "Never"

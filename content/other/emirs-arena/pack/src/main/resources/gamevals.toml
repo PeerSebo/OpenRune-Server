@@ -1,0 +1,9 @@
+[gamevals.varp]
+emirs_arena_legacy_wins = 63730
+emirs_arena_legacy_losses = 63731
+emirs_arena_ranked_wins = 63732
+emirs_arena_ranked_losses = 63733
+emirs_arena_win_streak = 63734
+emirs_arena_duel_preset = 63735
+emirs_arena_last_rules = 63736
+emirs_arena_state_migrated = 63737

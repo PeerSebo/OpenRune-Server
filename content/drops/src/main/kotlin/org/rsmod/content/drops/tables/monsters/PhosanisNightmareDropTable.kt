@@ -2,13 +2,11 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.api.droptable.RegisterDropTable
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -57,7 +55,7 @@ public val phosanisNightmareDropTable: RSDropTable<Player, DropRollItem> = RSDro
         }
     },
     tertiaries = rsPlayerTertiaryTable {
-        // Drops Need Manual (rate): In addition to having a 1/25 chance to drop, players will '''always''' receive the tablet on their 25th kill. Players that already have more than 25 kill count, or have managed to lose their slepey tablet without using it, will receive it on their next kill.
+        // TODO: In addition to having a 1/25 chance to drop, players will '''always''' receive the tablet on their 25th kill. Players that already have more than 25 kill count, or have managed to lose their slepey tablet without using it, will receive it on their next kill.
         1 outOf 25 weight "obj.slepe_teleport_consumable" count 1
         1 outOf 200 weight "obj.nightmare_challenge_morph" count 1
         1 outOf 1400 weight "obj.nightmarepet" count 1

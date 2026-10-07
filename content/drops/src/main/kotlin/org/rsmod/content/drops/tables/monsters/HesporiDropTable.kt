@@ -2,14 +2,9 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
-import org.rsmod.api.droptable.rsPlayerTertiaryTable
-import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.api.droptable.rsPlayerPrerollTable
-import org.rsmod.api.droptable.dropRollable
 import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.api.droptable.rsPlayerWeightedTable
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -17,9 +12,6 @@ import org.rsmod.game.entity.Player
 public val hesporiDropTable: RSDropTable<Player, DropRollItem> = RSDropTable(
     tableIdentifier = "Hespori Drops",
     npcs = npcs("npc.hespori"),
-    preRoll = rsPlayerPrerollTable {
-        1 outOf 35 weight "obj.bottomless_compost_bucket" count 1
-    },
     mainTable = rsPlayerWeightedTable(total = 80) {
         name("Hespori Drops")
         2 weight "obj.watermelon_seed" count 10..20
@@ -54,16 +46,5 @@ public val hesporiDropTable: RSDropTable<Player, DropRollItem> = RSDropTable(
         2 weight "obj.celastrus_tree_seed" count 1
         1 weight "obj.spirit_tree_seed" count 1
         1 weight "obj.redwood_tree_seed" count 1
-        1 outOf 3 separate rsPlayerWeightedTable {
-            1 weight "obj.attas_seed" count 1..2
-            1 weight "obj.iasor_seed" count 1..2
-            1 weight "obj.kronos_seed" count 1..2
-        }
-    },
-    tertiaries = rsPlayerTertiaryTable {
-        1 outOf 5375 weight "obj.skillpetfarming" count 1 condition { player ->
-            // Drops Need Manual: Range is the chance from 65 to 99. The chance increases with the player's Farming level, and is calculated with the formula: \frac{1}{B - (Lvl * 25)} , where ''B'' is the base chance (7000 for Hespori) and ''Lvl'' is the player's Farming level. For more information, see Tangleroot.
-             true
-        }
     },
 )

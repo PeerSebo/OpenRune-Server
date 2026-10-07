@@ -2,33 +2,7 @@ package org.rsmod.map.square
 
 import org.rsmod.map.CoordGrid
 
-/**
- * [MapSquareKey] serves as a unique identifier for individual map squares within the game world.
- *
- * This class utilizes a compact integer representation [id] to encode the [x] and [z] coordinates
- * of a map square, based on the absolute game coordinates. The map square space is constrained by
- * the bounds defined in [CoordGrid], with [x] ranging from 0 to [CoordGrid.MAP_WIDTH] /
- * [MapSquareGrid.LENGTH] and [z] ranging from 0 to [CoordGrid.MAP_LENGTH] / [MapSquareGrid.LENGTH].
- *
- * ### Example Usage:
- * Given absolute coordinates (3220, 3205) within the game world, you can convert them to a
- * [MapSquareKey] by calculating their corresponding map square coordinates:
- * ```
- * - Absolute Coordinates: 3220, 3205
- * - MapSquareKey:           50,   50
- * ```
- *
- * The [MapSquareKey] allows for efficient indexing and retrieval of map squares, ensuring that
- * operations within the game map remain performant and scalable.
- *
- * @property id The packed integer representation of the map square coordinates.
- * @property x The X coordinate of the map square, ranging from 0 to [CoordGrid.MAP_WIDTH] /
- *   [MapSquareGrid.LENGTH].
- * @property z The Z coordinate of the map square, ranging from 0 to [CoordGrid.MAP_LENGTH] /
- *   [MapSquareGrid.LENGTH].
- * @constructor Creates a [MapSquareKey] instance using local [x] and [z] map square coordinates. To
- *   convert from absolute coordinates, use [fromAbsolute] or [from].
- */
+/** A map-square key identifies the 64x64-tile square, independently of local tile coordinates. */
 @JvmInline
 public value class MapSquareKey(public val id: Int) {
     public val x: Int

@@ -7918,3 +7918,15 @@
 [clientscript,script7919]=7919
 [clientscript,script7920]=7920
 quest_policy_complete_set=45553
+skill_guide_legacy_init=9340
+command_browser_init=45600
+spawn_menu_init=45500
+spawn_menu_buttons=45518
+spawn_menu_labels=45524
+sailing_port_task_board_init=8912
+sailing_port_task_info_init=8901
+omnishop_info_update=9772
+spawn_menu_search_stop=45533
+sailing_log_init=8658
+sailing_log_redraw=8663
+sailing_log_hide_popup=8709

@@ -17,16 +17,16 @@ import org.rsmod.routefinder.collision.CollisionFlagMap
 @Singleton
 class BossDeps @Inject constructor(
     val random: GameRandom,
+    val accuracy: AccuracyFormulae,
     val worldRepo: WorldRepository,
     val npcRepo: NpcRepository,
-    val locRepo: LocRepository,
     val playerList: PlayerList,
     val mapClock: MapClock,
     val worldQueues: WorldQueueList,
     val collision: CollisionFlagMap,
     val encounterRegistry: EncounterRegistry,
     val extensionRegistry: BossExtensionRegistry,
-    val accuracy: AccuracyFormulae,
-    val maxHit: MaxHitFormulae,
     val playerHitModifier: PlayerHitModifier,
+    val maxHit: MaxHitFormulae? = null,
+    val locRepo: LocRepository? = null,
 )

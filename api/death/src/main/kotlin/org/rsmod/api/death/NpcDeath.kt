@@ -42,8 +42,9 @@ constructor(
         access: StandardNpcAccess,
         dropCoords: CoordGrid = access.coords,
     ) {
-        access.death(npcRepo, players)
-        access.npc.spawnDeathDrops(dropCoords)
+        // One-life NPC removal clears its uid and ownership indexes. Deliver loot/kill hooks
+        // after the death animation but before that removal so instance rewards retain a hero.
+        access.death(npcRepo, players) { access.npc.spawnDeathDrops(dropCoords) }
     }
 
     private fun Npc.spawnDeathDrops(dropCoords: CoordGrid) {
@@ -53,19 +54,34 @@ constructor(
             val duration = hero.lootDropDuration ?: constants.lootdrop_duration
             val lootTrackerEventId = nextLootTrackerEventId()
 
-            val remainsParam = paramOrNull(params.dropped_remains)
-            val explicitlyNoRemains = remainsParam == null && type.hasParam(params.dropped_remains.raw)
-            if (!explicitlyNoRemains) {
-                val droppedRemains =
-                    remainsParam
-                        ?: ServerCacheManager.getItem("obj.bones".asRSCM())
-                        ?: error("No bones")
-                val ctx = NpcDeathDropContext(
-                    hero = hero,
-                    dropType = droppedRemains,
-                    dropCoords = dropCoords,
-                    duration = duration,
-                    objRepo = objRepo
+            val droppedRemains =
+                paramOrNull(params.dropped_remains)
+                    ?: ServerCacheManager.getItem("obj.bones".asRSCM())
+                    ?: error("No bones")
+            val ctx = NpcDeathDropContext(
+                hero = hero,
+                npc = this,
+                dropType = droppedRemains,
+                dropCoords = dropCoords,
+                duration = duration,
+                objRepo = objRepo
+            )
+
+            var dropConsumed = false
+            for (hook in deathDropHooks) {
+                if (hook.tryConsume(ctx)) {
+                    dropConsumed = true
+                    break
+                }
+            }
+            if (!dropConsumed) {
+                val spawned = objRepo.add(droppedRemains, dropCoords, duration, hero)
+                ClientScripts.lootTrackerAddLoot(
+                    hero,
+                    visType.id,
+                    lootTrackerEventId,
+                    spawned.type,
+                    spawned.count,
                 )
 
                 var dropConsumed = false
@@ -105,9 +121,6 @@ constructor(
         return lootTrackerEventId
     }
 
-    // Note: We may be able to have `Npc` as the arg instead of `StandardNpcAccess`, however we
-    // will need to wait and see how [spawnDeathDrops] ends up once it handles everything it needs
-    // to.
     public fun spawnDrops(access: StandardNpcAccess, dropCoords: CoordGrid = access.coords) {
         access.npc.spawnDeathDrops(dropCoords)
     }
@@ -118,21 +131,14 @@ private var Player.aggressiveNpc: NpcUid? by typeNpcUidVarp("varp.aggressive_npc
 private var Npc.aggressivePlayer by typePlayerUidVarn("varn.aggressive_player")
 
 /**
- * Handles the death sequence of this [StandardNpcAccess.npc], including clearing interactions and
- * removing (or hiding, if it respawns) the npc from the world.
- *
- * **Notes:**
- * - This is **not** the way to "kill" a npc. This "death sequence" occurs after the npc has already
- *   been deemed dead and its death queue is being processed.
- * - To queue a npc's death, use [StandardNpcAccess.queueDeath] or [org.rsmod.api.npc.queueDeath]
- *   instead.
- * - This function **does not** spawn any drop table objs for the npc.
- * - Drop table spawns are handled via [NpcDeath.deathWithDrops], which is **automatically called**
- *   for queued deaths by default. However, if you override death queues for specific npc types
- *   (`onNpcQueue(npc_type, queues.death)`), you must explicitly handle drop spawns in the script by
- *   injecting `NpcDeath` and calling either [NpcDeath.deathWithDrops] or [NpcDeath.spawnDrops].
+ * Runs after the NPC is already dead. Overrides must handle drops explicitly; this sequence
+ * does not spawn them.
  */
-public suspend fun StandardNpcAccess.death(npcRepo: NpcRepository, players: PlayerList) {
+public suspend fun StandardNpcAccess.death(
+    npcRepo: NpcRepository,
+    players: PlayerList,
+    beforeRemoval: (() -> Unit)? = null,
+) {
     walk(coords)
     noneMode()
     hideAllOps()
@@ -158,6 +164,8 @@ public suspend fun StandardNpcAccess.death(npcRepo: NpcRepository, players: Play
     val deathAnim = param(params.death_anim)
     anim(RSCM.getReverseMapping(RSCMType.SEQ, deathAnim.id))
     delay(deathAnim)
+
+    beforeRemoval?.invoke()
 
     if (npc.respawns) {
         npcRepo.despawn(npc, npc.type.respawnRate)

@@ -1,6 +1,5 @@
 package org.rsmod.content.skills.cooking
 
-import dev.openrune.types.NpcServerType
 import jakarta.inject.Inject
 import org.rsmod.api.player.dialogue.Dialogue
 import org.rsmod.api.player.protect.ProtectedAccess
@@ -13,7 +12,7 @@ import org.rsmod.plugin.scripts.ScriptContext
 class CookingGuildHeadChef @Inject constructor() : PluginScript() {
 
     override fun ScriptContext.startup() {
-        onOpNpc1(NpcServerType(id = HEAD_CHEF_NPC_ID)) { startDialogue(it.npc) }
+        onOpNpc1("npc.head_chef") { startDialogue(it.npc) }
     }
 
     private suspend fun ProtectedAccess.startDialogue(npc: Npc) {
@@ -175,7 +174,6 @@ class CookingGuildHeadChef @Inject constructor() : PluginScript() {
     }
 
     private companion object {
-        private const val HEAD_CHEF_NPC_ID = 2658
         private const val COOKING_CAPE_PRICE = 99_000
     }
 }

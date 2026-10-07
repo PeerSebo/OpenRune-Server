@@ -1,0 +1,11 @@
+[[npc]]
+isServerOnly = true
+id = "npc.amoxliatl"
+inherit = "npc.amoxliatl"
+huntMode = 8
+huntRange = 20
+wanderRange = 5
+maxRange = 20
+[npc.params]
+"param.killcount_varp" = "varp.kc_amoxliatl"
+"param.boss_hp_bar_mode" = 2

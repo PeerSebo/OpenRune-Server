@@ -178,7 +178,6 @@ coords = "0_59_44_41_8"
 npc = "npc.farming_tools_leprechaun"
 coords = "0_59_44_16_24"
 
-## Brother Tranquility
 
 [[spawn]]
 npc = "npc.brain_island_tranquility"
@@ -216,7 +215,6 @@ coords = "0_59_44_9_11"
 npc = "npc.brain_real_monk_4"
 coords = "0_59_44_8_8"
 
-## Harmony Island Underwater Tunnel
 
 [[spawn]]
 npc = "npc.brain_zombie_pirate_underwater_1"
@@ -261,6 +259,3 @@ coords = "1_59_144_47_38"
 [[spawn]]
 npc = "npc.brain_zombie_pirate_underwater_5"
 coords = "1_59_144_27_33"
-
-## Harmony Island Underwater Tunnel End
-

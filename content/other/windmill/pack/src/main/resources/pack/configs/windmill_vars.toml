@@ -1,0 +1,11 @@
+[[varp]]
+isServerOnly = true
+id = "varp.windmill_hopper_has_grain"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.windmill_hopper_grain_migrated"
+scope = "Perm"
+transmit = "Never"

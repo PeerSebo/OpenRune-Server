@@ -1,0 +1,26 @@
+[[varp]]
+isServerOnly = true
+id = "varp.dog_growth"
+scope = "Perm"
+transmit = "Never"
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.dog_growth_events"
+varp = "varp.dog_growth"
+startBit = 0
+endBit = 7
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.dog_growth_ticks"
+varp = "varp.dog_growth"
+startBit = 8
+endBit = 15
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.dog_fed_ticks"
+varp = "varp.dog_growth"
+startBit = 16
+endBit = 27

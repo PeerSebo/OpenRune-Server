@@ -12,10 +12,11 @@ class KingBlackDragon @Inject constructor(deps: BossDeps) : BossPluginScript(dep
 
         stats(attackRate = 4)
 
+        // Dragonfire rolls damage without an accuracy check.
         val melee = ability("melee") {
             anim("seq.dragon_attack")
             hit {
-                damage(0..25).roll()
+                damage(0..25).rollWithAccuracy()
                 type(Melee)
             }
         }

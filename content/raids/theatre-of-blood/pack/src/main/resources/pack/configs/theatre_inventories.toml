@@ -1,0 +1,15 @@
+[[inventory]]
+isServerOnly = true
+id = "inv.theatre_rewards"
+size = 28
+scope = "Perm"
+stack = "Normal"
+protect = true
+
+[[inventory]]
+isServerOnly = true
+id = "inv.theatre_recovery"
+size = 128
+scope = "Perm"
+stack = "Normal"
+protect = true

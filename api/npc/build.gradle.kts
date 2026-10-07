@@ -16,6 +16,7 @@ dependencies {
     implementation(projects.api.player)
     implementation(projects.api.playerOutput)
     implementation(projects.api.random)
+    implementation(projects.api.repo)
     implementation(projects.api.route)
     implementation(projects.engine.annotations)
     implementation(projects.engine.coroutine)

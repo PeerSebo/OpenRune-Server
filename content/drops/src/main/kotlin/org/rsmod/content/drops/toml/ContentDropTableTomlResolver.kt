@@ -16,7 +16,6 @@ import org.rsmod.content.drops.clueScrollTransformObj
 import org.rsmod.content.drops.shouldDropBrimstoneKey
 import org.rsmod.content.drops.shouldDropLootingBag
 import org.rsmod.content.drops.tables.shared.SharedDropTables
-import org.rsmod.content.quest.manager.QuestRequirement
 import org.rsmod.content.quest.manager.QuestRequirementResolver
 import org.rsmod.game.entity.Player
 
@@ -48,24 +47,7 @@ constructor(
         if (hooks.shouldDropLootingBag) {
             config.condition = andCondition(config.condition) { player -> player.shouldDropLootingBag() }
         } else if (hooks.quest != null) {
-            val quest = hooks.quest!!
-            val questCondition: (Player) -> Boolean =
-                when (hooks.questMode?.lowercase()) {
-                    "completed" -> { player ->
-                        questRequirements.satisfies(player, quest, QuestRequirement.Completed)
-                    }
-                    "not_completed" -> { player ->
-                        questRequirements.satisfies(player, quest, QuestRequirement.NotCompleted)
-                    }
-                    "during", null -> { player ->
-                        questRequirements.satisfies(player, quest, QuestRequirement.InProgress)
-                    }
-                    else ->
-                        error(
-                            "Invalid quest_mode '${hooks.questMode}' for quest '$quest'. " +
-                                "Use 'during', 'completed', or 'not_completed'.",
-                        )
-                }
+            val questCondition = questRequirements.dropCondition(hooks.quest!!, hooks.questMode)
             config.condition = andCondition(config.condition, questCondition)
         }
         if (hooks.requireRingOfWealth) {
@@ -107,3 +89,17 @@ constructor(
             )
     }
 }
+
+internal fun QuestRequirementResolver.dropCondition(
+    quest: String,
+    mode: String?,
+): (Player) -> Boolean =
+    when (mode?.lowercase()) {
+        "completed" -> { player -> hasCompleted(player, quest) }
+        "not_completed" -> { player -> !hasCompleted(player, quest) }
+        "during", null -> { player -> isOnQuest(player, quest) }
+        else -> error(
+            "Invalid quest_mode '$mode' for quest '$quest'. " +
+                "Use 'during', 'completed', or 'not_completed'.",
+        )
+    }

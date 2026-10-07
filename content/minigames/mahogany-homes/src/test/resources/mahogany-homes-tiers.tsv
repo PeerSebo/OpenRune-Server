@@ -1,0 +1,4 @@
+BEGINNER	1	obj.woodplank	22.5	127.5	500.0	2
+NOVICE	20	obj.plank_oak	48.0	160.0	1250.0	3
+ADEPT	50	obj.plank_teak	72.0	190.0	2250.0	4
+EXPERT	70	obj.plank_mahogany	112.0	240.0	2750.0	5

@@ -1,4 +1,3 @@
-## Burthorpe
 
 [[spawn]]
 obj = "obj.asgarnian_ale"
@@ -27,4 +26,3 @@ coords = "0_45_55_13_44"
 [[spawn]]
 obj = "obj.death_cannonball_red"
 coords = "0_45_55_13_45"
-

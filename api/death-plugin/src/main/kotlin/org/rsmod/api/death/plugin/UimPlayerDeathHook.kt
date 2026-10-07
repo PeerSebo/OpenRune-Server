@@ -17,6 +17,7 @@ public class UimPlayerDeathHook @Inject constructor() : PlayerDeathHook {
             revealDelay = 0,
             supplyPile = false,
             untradeableHandling = UntradeableHandling.DROP,
+            gravestone = false,
         )
     }
 }

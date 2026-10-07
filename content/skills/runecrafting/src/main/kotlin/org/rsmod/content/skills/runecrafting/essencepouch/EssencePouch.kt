@@ -21,13 +21,7 @@ object EssencePouch {
     const val GUARDIAN_ESSENCE = "obj.gotr_guardian_essence"
     const val DARK_ESSENCE_FRAGMENT = "obj.bigblankrune"
 
-    val fillableEssences = listOf(
-        PURE_ESSENCE,
-        DAEYALT_ESSENCE,
-        GUARDIAN_ESSENCE,
-        RUNE_ESSENCE,
-        DARK_ESSENCE_FRAGMENT
-    )
+    val fillableEssences = listOf(PURE_ESSENCE, DAEYALT_ESSENCE, GUARDIAN_ESSENCE, RUNE_ESSENCE)
 
     enum class Tier(
         val levelReq: Int,
@@ -72,13 +66,13 @@ object EssencePouch {
             degradedItem = "obj.rcu_pouch_colossal_degrade",
         );
 
-        val items: Array<String> = if (degradedItem != null) {
-            arrayOf(intactItem, degradedItem)
-        } else {
-            arrayOf(intactItem)
-        }
+        val items: Array<String> =
+            if (degradedItem != null) {
+                arrayOf(intactItem, degradedItem)
+            } else {
+                arrayOf(intactItem)
+            }
     }
-
 
     fun isEssence(itemInternal: String): Boolean = itemInternal in fillableEssences
 
@@ -87,7 +81,6 @@ object EssencePouch {
 
     fun hasPouchInInventory(player: Player): Boolean =
         player.inv.any { obj -> obj != null && tierForInvObj(obj) != null }
-
 
     fun shouldIntercept(player: Player, itemInternal: String): Boolean =
         isEssence(itemInternal) &&
@@ -152,8 +145,9 @@ object EssencePouch {
             else -> tier.maxCapacity
         }
 
+    // The cape prevents future degradation; it does not repair existing damage.
     fun capacity(player: Player, tier: Tier): Int {
-        if (!tier.degradable || playerHasDegradeProtection(player)) {
+        if (!tier.degradable) {
             return baseCapacity(player, tier)
         }
         return degradedCapacity(player, tier, tier.degradeThreshold(player))
@@ -162,7 +156,9 @@ object EssencePouch {
     fun storedAmount(player: Player, tier: Tier): Int = tier.storedAmount(player)
 
     fun preferredEssenceType(player: Player, tier: Tier): String {
-        storedEssenceTypeName(player, tier)?.let { return it }
+        storedEssenceTypeName(player, tier)?.let {
+            return it
+        }
         for (essence in fillableEssences) {
             if (player.inv.physicalCount(essence) > 0) {
                 return essence
@@ -219,7 +215,13 @@ object EssencePouch {
         return take
     }
 
-    fun applyDegradation(player: Player, tier: Tier, amountDeposited: Int, randomMultiplier: Int): Int {
+    // Roll degradation independently for each stored essence.
+    fun applyDegradation(
+        player: Player,
+        tier: Tier,
+        amountDeposited: Int,
+        rollRandom: () -> Int,
+    ): Int {
         if (!tier.degradable) {
             return baseCapacity(player, tier)
         }
@@ -227,7 +229,7 @@ object EssencePouch {
         val increment =
             when (tier) {
                 Tier.Colossal -> amountDeposited
-                else -> randomMultiplier * amountDeposited
+                else -> (1..amountDeposited).sumOf { rollRandom() }
             }
         val newThreshold = threshold + increment
         tier.setDegradeThreshold(player, newThreshold)
@@ -246,13 +248,7 @@ object EssencePouch {
         }
     }
 
-    val craftablePouchTiers =
-        listOf(
-            Tier.Small,
-            Tier.Medium,
-            Tier.Large,
-            Tier.Giant,
-        )
+    val craftablePouchTiers = listOf(Tier.Small, Tier.Medium, Tier.Large, Tier.Giant)
 
     fun hasColossalPouch(player: Player): Boolean =
         player.inv.contains(Tier.Colossal.intactItem) ||
@@ -284,12 +280,16 @@ object EssencePouch {
         return tiers.any { tier ->
             val degraded =
                 tier.degradedItem != null &&
-                    (player.inv.contains(tier.degradedItem) || access.bank.contains(tier.degradedItem))
+                    (player.inv.contains(tier.degradedItem) ||
+                        access.bank.contains(tier.degradedItem))
             degraded || tier.readDegradeThreshold(player) > 0
         }
     }
 
-    fun repairPouches(access: org.rsmod.api.player.protect.ProtectedAccess, includeColossal: Boolean) {
+    fun repairPouches(
+        access: org.rsmod.api.player.protect.ProtectedAccess,
+        includeColossal: Boolean,
+    ) {
         val player = access.player
         val tiers =
             if (includeColossal) {
@@ -319,7 +319,8 @@ object EssencePouch {
     fun playerHasDegradeProtection(player: Player): Boolean =
         "obj.skillcape_runecrafting" in player.worn ||
             "obj.skillcape_runecrafting_trimmed" in player.worn ||
-            "obj.skillcape_max" in player.worn
+            "obj.skillcape_max" in player.worn ||
+            "obj.abyssal_lantern_redwood" in player.worn
 
     private fun degradedCapacity(player: Player, tier: Tier, threshold: Int): Int {
         val base = baseCapacity(player, tier)
@@ -350,7 +351,7 @@ object EssencePouch {
                     else -> 0
                 }
             Tier.Colossal -> {
-                val firstDecay = colossalFirstDecayThreshold(base)
+                val firstDecay = colossalFirstDecayThreshold()
                 if (threshold < firstDecay) {
                     return base
                 }
@@ -371,7 +372,7 @@ object EssencePouch {
         }
     }
 
-    private fun colossalFirstDecayThreshold(baseCapacity: Int): Int = 8 * baseCapacity
+    private fun colossalFirstDecayThreshold(): Int = 320
 
     private var Player.smallEssencePouch by intVarBit("varbit.small_essence_pouch")
     private var Player.mediumEssencePouch by intVarBit("varbit.medium_essence_pouch")

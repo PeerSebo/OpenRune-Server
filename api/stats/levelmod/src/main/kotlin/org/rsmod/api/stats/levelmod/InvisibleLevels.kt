@@ -2,7 +2,6 @@ package org.rsmod.api.stats.levelmod
 
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
-import dev.openrune.types.StatType
 import jakarta.inject.Inject
 import org.rsmod.game.entity.Player
 

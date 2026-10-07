@@ -1,0 +1,29 @@
+[gamevals.varp]
+vengeance_armed = 63802
+vengeance_last_cast = 63803
+
+[gamevals.varn]
+freeze_end_clock = 63010
+freeze_immunity_end_clock = 63011
+freeze_guaranteed = 63012
+
+[gamevals.dbtable]
+ancient_spells = 63897
+
+[gamevals.dbrow]
+ancient_spell_smokerush = 62820
+ancient_spell_shadowrush = 62821
+ancient_spell_bloodrush = 62822
+ancient_spell_icerush = 62823
+ancient_spell_smokeburst = 62824
+ancient_spell_shadowburst = 62825
+ancient_spell_bloodburst = 62826
+ancient_spell_iceburst = 62827
+ancient_spell_smokeblitz = 62828
+ancient_spell_shadowblitz = 62829
+ancient_spell_bloodblitz = 62830
+ancient_spell_iceblitz = 62831
+ancient_spell_smokebarrage = 62832
+ancient_spell_shadowbarrage = 62833
+ancient_spell_bloodbarrage = 62834
+ancient_spell_icebarrage = 62835

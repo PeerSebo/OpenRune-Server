@@ -1,11 +1,8 @@
 package org.rsmod.api.controller.vars
 
-import dev.openrune.types.VarConBitType
-import dev.openrune.types.VarConType
 import kotlin.reflect.KProperty
 import org.rsmod.game.entity.Controller
 
-/* Varcon delegates */
 public fun intVarCon(varcon: String): ControllerVariableIntDelegate =
     ControllerVariableIntDelegate(varcon)
 
@@ -19,7 +16,6 @@ public fun <T> typeIntVarCon(
 ): ControllerVariableTypeIntDelegate<T> =
     ControllerVariableTypeIntDelegate(varcon, toType, fromType)
 
-/* Varconbit delegates */
 public fun intVarConBit(varconbit: String): ControllerVariableIntBitsDelegate =
     ControllerVariableIntBitsDelegate(varconbit)
 
@@ -33,7 +29,6 @@ public fun <T> typeIntVarConBit(
 ): ControllerVariableTypeIntBitsDelegate<T> =
     ControllerVariableTypeIntBitsDelegate(varconbit, toType, fromType)
 
-/* Delegate implementations */
 public class ControllerVariableIntDelegate(private val varcon: String) {
     public operator fun getValue(thisRef: Controller, property: KProperty<*>): Int {
         return thisRef.vars[varcon]
@@ -90,7 +85,6 @@ public class ControllerVariableTypeIntBitsDelegate<T>(
     }
 }
 
-/* Utility functions */
 private fun boolToInt(bool: Boolean): Int = if (bool) 1 else 0
 
 private fun boolFromInt(int: Int?): Boolean = int == 1

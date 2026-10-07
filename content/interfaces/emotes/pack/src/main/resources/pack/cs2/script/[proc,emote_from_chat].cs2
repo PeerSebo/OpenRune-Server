@@ -1,0 +1,131 @@
+// 7304
+[proc,emote_from_chat](string $string)(boolean)
+def_int $int = -1;
+if (string_indexof_string($string, "::", 0) = 0) {
+    $string = substring($string, 2, string_length($string));
+} else if (string_indexof_string($string, "!", 0) = 0) {
+    $string = substring($string, 1, string_length($string));
+} else {
+    return(false);
+}
+$string = lowercase($string);
+def_int $separator = string_indexof_string($string, " ", 0);
+if ($separator ! -1) {
+    $string = substring($string, 0, $separator);
+}
+if (compare($string, "yes") = 0 | compare($string, "nod") = 0) {
+    $int = 0;
+} else if (compare($string, "no") = 0 | compare($string, "shakehead") = 0) {
+    $int = 1;
+} else if (compare($string, "bow") = 0) {
+    $int = 2;
+} else if (compare($string, "angry") = 0) {
+    $int = 3;
+} else if (compare($string, "think") = 0) {
+    $int = 4;
+} else if (compare($string, "wave") = 0) {
+    $int = 5;
+} else if (compare($string, "shrug") = 0) {
+    $int = 6;
+} else if (compare($string, "cheer") = 0) {
+    $int = 7;
+} else if (compare($string, "beckon") = 0) {
+    $int = 8;
+} else if (compare($string, "laugh") = 0) {
+    $int = 9;
+} else if (compare($string, "jumpforjoy") = 0 | compare($string, "jump") = 0) {
+    $int = 10;
+} else if (compare($string, "yawn") = 0) {
+    $int = 11;
+} else if (compare($string, "dance") = 0) {
+    $int = 12;
+} else if (compare($string, "jig") = 0) {
+    $int = 13;
+} else if (compare($string, "spin") = 0) {
+    $int = 14;
+} else if (compare($string, "headbang") = 0) {
+    $int = 15;
+} else if (compare($string, "cry") = 0) {
+    $int = 16;
+} else if (compare($string, "blowkiss") = 0) {
+    $int = 17;
+} else if (compare($string, "panic") = 0) {
+    $int = 18;
+} else if (compare($string, "raspberry") = 0) {
+    $int = 19;
+} else if (compare($string, "clap") = 0) {
+    $int = 20;
+} else if (compare($string, "salute") = 0) {
+    $int = 21;
+} else if (compare($string, "goblinbow") = 0) {
+    $int = 22;
+} else if (compare($string, "goblinsalute") = 0) {
+    $int = 23;
+} else if (compare($string, "glassbox") = 0) {
+    $int = 24;
+} else if (compare($string, "climbrope") = 0) {
+    $int = 25;
+} else if (compare($string, "lean") = 0) {
+    $int = 26;
+} else if (compare($string, "glasswall") = 0) {
+    $int = 27;
+} else if (compare($string, "idea") = 0) {
+    $int = 28;
+} else if (compare($string, "stamp") = 0) {
+    $int = 29;
+} else if (compare($string, "flap") = 0) {
+    $int = 30;
+} else if (compare($string, "slaphead") = 0) {
+    $int = 31;
+} else if (compare($string, "zombiewalk") = 0) {
+    $int = 32;
+} else if (compare($string, "zombiedance") = 0) {
+    $int = 33;
+} else if (compare($string, "scared") = 0) {
+    $int = 34;
+} else if (compare($string, "rabbithop") = 0 | compare($string, "bunnyhop") = 0) {
+    $int = 35;
+} else if (compare($string, "skillcape") = 0) {
+    $int = 43;
+} else if (compare($string, "zombiehand") = 0) {
+    $int = 41;
+} else if (compare($string, "musiccape") = 0) {
+    $int = 44;
+} else if (compare($string, "situp") = 0) {
+    $int = 36;
+} else if (compare($string, "pushup") = 0 | compare($string, "pressup") = 0) {
+    $int = 37;
+} else if (compare($string, "starjump") = 0) {
+    $int = 38;
+} else if (compare($string, "jog") = 0 | compare($string, "run") = 0) {
+    $int = 39;
+} else if (compare($string, "flex") = 0) {
+    $int = 40;
+} else if (compare($string, "ash") = 0 | compare($string, "hypermobiledrinker") = 0) {
+    $int = 42;
+} else if (compare($string, "uritransform") = 0 | compare($string, "uri") = 0) {
+    $int = 45;
+} else if (compare($string, "smoothdance") = 0) {
+    $int = 46;
+} else if (compare($string, "crazydance") = 0) {
+    $int = 47;
+} else if (compare($string, "premiershield") = 0) {
+    $int = 48;
+} else if (compare($string, "explore") = 0) {
+    $int = 49;
+} else if (compare($string, "relicunlock") = 0 | compare($string, "relic") = 0) {
+    $int = 50;
+} else if (compare($string, "party") = 0) {
+    $int = 51;
+} else if (compare($string, "trick") = 0 | compare($string, "bats") = 0) {
+    $int = 52;
+} else if (compare($string, "sit") = 0) {
+    $int = 54;
+} else if (compare($string, "fortissalute") = 0 | compare($string, "fortis") = 0) {
+    $int = 53;
+}
+if (cc_find(emote:contents, $int) = true) {
+    cc_triggerop(1);
+    return(true);
+}
+return(false);

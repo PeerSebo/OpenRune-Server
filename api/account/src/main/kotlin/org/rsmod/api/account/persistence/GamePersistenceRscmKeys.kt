@@ -2,25 +2,22 @@ package org.rsmod.api.account.persistence
 
 import dev.openrune.ServerCacheManager
 import dev.openrune.rscm.RSCM
+import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
 
-/**
- * DB stores RSCM string keys (`varp.*`, `inv.*`, `obj.*`). Legacy rows may still have plain
- * integer strings from older schemas; those decode via [RSCM.getReverseMapping].
- *
- * Inventories are keyed in SQL by [`character_id`][org.rsmod.api.account.character.inv.CharacterInventoryData.Inventory.characterId]
- * + [`inv`][org.rsmod.api.account.character.inv.CharacterInventoryData.Inventory.invDbKey] (no composite `id` string).
- */
 internal object GamePersistenceRscmKeys {
     fun decodeVarpKey(db: String): Int? {
         val t = db.trim()
-        val varpId = if (isPlainIntKey(t)) t.toIntOrNull() else RSCM.getRSCMOrNull(t, RSCMType.VARP)
-        return varpId?.takeIf { it >= 0 && ServerCacheManager.getVarp(it) != null }
+        val id = if (isPlainIntKey(t)) t.toIntOrNull() else try {
+            t.asRSCM(RSCMType.VARP)
+        } catch (_: IllegalStateException) {
+            null
+        }
+        return id?.takeIf { it >= 0 && ServerCacheManager.getVarp(it) != null }
     }
 
     fun encodeVarpKey(varpId: Int): String = RSCM.getReverseMapping(RSCMType.VARP, varpId)
 
-    /** Returns the inv map key string (same as [org.rsmod.game.inv.Inventory.internalName]). */
     fun decodeInvTypeKey(db: String): String {
         val t = db.trim()
         if (t.isEmpty()) {
@@ -32,10 +29,8 @@ internal object GamePersistenceRscmKeys {
         return t
     }
 
-    /** RSCM key for [org.rsmod.game.inv.Inventory.internalName]. */
     fun encodeInvTypeKey(internalName: String): String = internalName
 
-    /** String suitable for [org.rsmod.game.inv.InvObj] string constructor. */
     fun decodeObjKey(db: String): String {
         val t = db.trim()
         if (t.isEmpty()) {

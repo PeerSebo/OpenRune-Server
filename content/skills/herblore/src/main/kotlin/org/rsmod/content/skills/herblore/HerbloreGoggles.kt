@@ -6,7 +6,6 @@ import org.rsmod.api.table.herblore.HerbloreFinishedRow
 import org.rsmod.game.entity.Player
 import org.rsmod.game.inv.isType
 
-
 object HerbloreGoggles {
 
     val GOGGLE_TYPES = listOf("obj.mm_alchemist_hat", "obj.mm_alchemist_hat_alt")

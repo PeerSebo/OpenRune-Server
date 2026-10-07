@@ -163,10 +163,8 @@ public class NormalRegionZoneMap(public val backing: Int2IntOpenHashMap = Int2In
             }
 
             private fun assertProperUniqueFlagBits() {
-                // We manually check this instead of simply assigning `UNIQUE_FLAG_BIT_COUNT` to
-                // `RegionZoneCopy.UNIQUE_FLAG_BIT_COUNT` as a way to ensure that when/if this
-                // value does change, the total bit count here does not go over the expected 32-bit
-                // bounds. And if it does, we should change the packed value to a `Long` instead.
+                // Keep this width independent so a RegionZoneCopy change requires checking the
+                // total 32-bit layout. Widen the packed value to Long if it no longer fits.
                 check(UNIQUE_FLAG_BIT_COUNT == RegionZoneCopy.UNIQUE_FLAG_BIT_COUNT) {
                     "Unexpected `UNIQUE_FLAGS_BIT_COUNT` value: " +
                         "value=${UNIQUE_FLAG_BIT_COUNT}, " +

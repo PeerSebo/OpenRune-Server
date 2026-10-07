@@ -35,6 +35,10 @@ npc = "npc.aide_tutor_woodsman"
 coords = "0_50_50_28_45"
 
 [[spawn]]
+npc = "npc.ap_guide_active"
+coords = "0_50_50_32_35"
+
+[[spawn]]
 npc = "npc.ap_guide_parent"
 coords = "0_50_50_32_35"
 
@@ -433,6 +437,8 @@ coords = "0_50_50_38_0"
 [[spawn]]
 npc = "npc.fred_the_farmer"
 coords = "0_49_51_53_9"
+
+# The coffin script spawns ghostx; a static spawn would bypass its lifetime and visibility rules.
 
 [[spawn]]
 npc = "npc.giantrat_grey"
@@ -1002,19 +1008,16 @@ coords = "0_50_50_35_6"
 npc = "npc.woman2"
 coords = "0_50_50_36_3"
 
-## Bob
 
 [[spawn]]
 npc = "npc.bob"
 coords = "0_50_50_32_3"
 
-## Donie
 
 [[spawn]]
 npc = "npc.lumbridge_guide2_woman"
 coords = "0_50_50_16_54"
 
-## Father Aereck
 
 [[spawn]]
 npc = "npc.aide_tutor_prayer"
@@ -1028,7 +1031,6 @@ coords = "0_50_50_44_6"
 npc = "npc.woman3"
 coords = "0_50_50_44_11"
 
-## Lumbridge Castle
 
 [[spawn]]
 npc = "npc.aide_tutor_crafting"
@@ -1062,7 +1064,6 @@ coords = "0_50_50_6_9"
 npc = "npc.woman"
 coords = "1_50_50_11_13"
 
-## Lumbridge Castle Dining Room
 
 [[spawn]]
 npc = "npc.aide_tutor_banker"
@@ -1084,13 +1085,11 @@ coords = "2_50_50_6_19"
 npc = "npc.man"
 coords = "1_50_50_6_19"
 
-## Lumbridge Castle Entryway
 
 [[spawn]]
 npc = "npc.man"
 coords = "0_50_50_16_19"
 
-## Lumbridge General Store
 
 [[spawn]]
 npc = "npc.generalassistant1"
@@ -1104,7 +1103,6 @@ coords = "0_50_50_9_47"
 npc = "npc.tob_spectator_misthalin"
 coords = "1_50_50_10_49"
 
-## Lumbridge Tower Floor Interior
 
 [[spawn]]
 npc = "npc.lost_property_merchant_standard"
@@ -1114,7 +1112,6 @@ coords = "0_50_50_30_15"
 npc = "npc.rat"
 coords = "0_50_50_29_23"
 
-## Lumbridge cow field
 
 [[spawn]]
 npc = "npc.cow"
@@ -1252,7 +1249,10 @@ coords = "0_50_51_54_8"
 npc = "npc.gillie_the_milkmaid"
 coords = "0_50_51_54_10"
 
-## Lumbridge pasture
+[[spawn]]
+npc = "npc.cowboss_mapped"
+coords = "0_50_51_60_32"
+
 
 [[spawn]]
 npc = "npc.cow"
@@ -1506,7 +1506,6 @@ coords = "0_49_52_26_10"
 npc = "npc.fat_cow_dumby_npc"
 coords = "0_49_51_36_53"
 
-## Sigmund
 
 [[spawn]]
 npc = "npc.duke_of_lumbridge"
@@ -1516,11 +1515,7 @@ coords = "1_50_50_10_24"
 npc = "npc.lost_tribe_sigmund"
 coords = "1_50_50_11_19"
 
-## Zeke
 
 [[spawn]]
 npc = "npc.hundred_aris2"
 coords = "0_50_50_11_25"
-
-## Zeke End
-

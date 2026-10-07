@@ -42,7 +42,7 @@ internal enum class OrbStyle(
         launchSpotanim = "spotanim.vfx_leviathan_01_projectile_spotanim_melee_02",
         followSpotanim = "spotanim.vfx_leviathan_01_projectile_spotanim_melee_01",
         impactSpotanim = "spotanim.vfx_leviathan_01_projectile_impact_melee_01",
-        synth = "synth.leviathan_orb_melee",
+        synth = "synth.DT2_LEVBOSS_MELEE_LAUNCH_SOUND_01",
         type = HitType.Melee,
         maxHit = 50,
     ),
@@ -51,7 +51,7 @@ internal enum class OrbStyle(
         launchSpotanim = "spotanim.vfx_leviathan_01_projectile_spotanim_ranged_02",
         followSpotanim = "spotanim.vfx_leviathan_01_projectile_spotanim_ranged_01",
         impactSpotanim = "spotanim.vfx_leviathan_01_projectile_impact_ranged_01",
-        synth = "synth.leviathan_orb_ranged",
+        synth = "synth.DT2_LEVBOSS_RANGE_LAUNCH_SOUND_01",
         type = HitType.Ranged,
         maxHit = 24,
     ),
@@ -60,7 +60,7 @@ internal enum class OrbStyle(
         launchSpotanim = "spotanim.vfx_leviathan_01_projectile_spotanim_magic_02",
         followSpotanim = "spotanim.vfx_leviathan_01_projectile_spotanim_magic_01",
         impactSpotanim = "spotanim.vfx_leviathan_01_projectile_impact_magic_01",
-        synth = "synth.leviathan_orb_magic",
+        synth = "synth.DT2_LEVBOSS_MAGIC_LAUNCH_SOUND_01",
         type = HitType.Magic,
         maxHit = 32,
     );
@@ -80,11 +80,19 @@ internal data class VolleyStage(
 )
 
 internal class LeviathanFight(val npc: Npc, val arena: Arena) {
-    var specialAngle: Int = 0
+    var specialAngle: Int
+        get() = npc.vars["varn.leviathan_special_angle"]
+        set(value) { npc.vars["varn.leviathan_special_angle"] = value }
 
-    var absentTicks: Int = 0
-    var ended: Boolean = false
+    var absentTicks: Int
+        get() = npc.vars["varn.leviathan_absent_ticks"]
+        set(value) { npc.vars["varn.leviathan_absent_ticks"] = value }
+    var ended: Boolean
+        get() = npc.vars["varn.leviathan_ended"] != 0
+        set(value) { npc.vars["varn.leviathan_ended"] = if (value) 1 else 0 }
 
     var pathfinder: Npc? = null
-    var pathfinderCorner: Int = 0
+    var pathfinderCorner: Int
+        get() = npc.vars["varn.leviathan_pathfinder_corner"]
+        set(value) { npc.vars["varn.leviathan_pathfinder_corner"] = value }
 }

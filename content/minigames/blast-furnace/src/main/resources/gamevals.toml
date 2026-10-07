@@ -1,0 +1,16 @@
+
+[gamevals.timer]
+blast_furnace_coffer_drain = 130
+blast_furnace_foreman_fee = 131
+blast_furnace_hot = 132
+
+[gamevals.queue]
+blast_furnace_smelt = 176
+blast_furnace_belt = 177
+
+[gamevals.varbit]
+# Do not allocate custom varbits in native bands 65475-65519, 65527 or 65530-65533.
+blast_furnace_foreman_permission = 65524
+
+[gamevals.area]
+blast_furnace = 32340

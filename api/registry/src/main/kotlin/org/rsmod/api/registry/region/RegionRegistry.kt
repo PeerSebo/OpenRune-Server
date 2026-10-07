@@ -35,13 +35,13 @@ public class RegionRegistry
 constructor(
     private val smallRegions: RegionListSmall,
     private val largeRegions: RegionListLarge,
-    private val worldEntityRegions: RegionListWorldEntity,
     private val normalLocReg: LocRegistryNormal,
     private val collision: CollisionFlagMap,
     private val locZones: LocZoneStorage,
     private val npcRegistry: NpcRegistry,
     private val conRegistry: ControllerRegistry,
     private val zoneActivity: ZonePlayerActivityBitSet,
+    private val worldEntityRegions: RegionListWorldEntity = RegionListWorldEntity(),
 ) {
     init {
         workingAreaSmall.assertValidBounds(smallRegions.capacity)
@@ -216,20 +216,12 @@ constructor(
 
     public operator fun get(zone: ZoneKey): RegionZoneCopy = zones[zone]
 
-    /**
-     * Constructs a [region] by registering and initializing its zones based on [copyZones].
-     *
-     * This function performs the following steps:
-     * - Registers all valid zones within the region using [registerZones].
-     * - Clears any collision flags from **unoccupied zones** within the region using
-     *   [clearNullRegionZones].
-     * - Removes any **bordering zones** that were allocated but are not part of the region's usable
-     *   area using [clearNullBorderZones].
-     */
     public fun build(region: Region, copyZones: RegionZoneCopyMap) {
         registerZones(region, copyZones)
         clearNullRegionZones(region)
-        clearNullBorderZones(region)
+        if (region.southWest !in workingAreaWorldEntity) {
+            clearNullBorderZones(region)
+        }
     }
 
     private fun registerZones(region: Region, copyZones: RegionZoneCopyMap) {
@@ -288,8 +280,6 @@ constructor(
             }
         }
 
-        // Copy and apply the respective collision flags based on the currently found locs within
-        // the normal zone.
         val normalLocs = normalLocReg.findAll(normalZone)
         for (normalLoc in normalLocs) {
             val locType = ServerCacheManager.getObject(normalLoc.id)!!
@@ -307,16 +297,8 @@ constructor(
 
             collision.addLoc(regionLoc, locType)
 
-            // Some locs may be translated **out** of the expected region zone given the right
-            // combination of their dimensions, angle, and region rotation. Normally, our region
-            // implementation looks up the "untranslated" normal loc based on the region zone it is
-            // currently in. However, in these cases, the translated loc now belongs to a different
-            // zone, which breaks this lookup.
-            //
-            // To fix this, we detect when a loc moves **out of its expected zone bounds** (e.g.,
-            // its translation moves it outside the region zone). When this happens, we store the
-            // loc's **original normal coordinates** alongside its **new region coordinates** so
-            // that future lookups still resolve correctly.
+            // Rotated multi-tile locs can leave their source zone; retain original coordinates
+            // so later instance lookups resolve them.
             val shiftedZones = translation.x < 0 || translation.z < 0
             if (shiftedZones) {
                 // We store these "remapped" loc coordinates within `region` rather than in this
@@ -330,20 +312,9 @@ constructor(
 
         zones[regionZone] = copyZone
 
-        // Trigger the region's zone registration.
         region.registerZone(copyZone, regionZone)
     }
 
-    /**
-     * Removes any collision flags from empty zones in [region].
-     *
-     * This includes any zones that have not been registered through [registerZone] or have a value
-     * of [RegionZoneCopy.NULL] in the [zones] map.
-     *
-     * This function runs for all four levels (0-3) to ensure consistency across all levels.
-     *
-     * @see [CollisionFlagMap.deallocateIfPresent]
-     */
     public fun clearNullRegionZones(region: Region) {
         clearNullRegionZones(region, level = 0)
         clearNullRegionZones(region, level = 1)
@@ -351,17 +322,6 @@ constructor(
         clearNullRegionZones(region, level = 3)
     }
 
-    /**
-     * Removes any collision flags from empty zones in [region] at the specified [level].
-     *
-     * This includes any zones that have not been registered through [registerZone] or have a value
-     * of [RegionZoneCopy.NULL] in the [zones] map.
-     *
-     * Unlike [clearNullRegionZones], which operates on all four levels (0-3), this function only
-     * clears zones at the given [level].
-     *
-     * @see [CollisionFlagMap.deallocateIfPresent]
-     */
     public fun clearNullRegionZones(region: Region, level: Int) {
         val southWest = region.southWest
         val zoneLength = (region.northEast.x - southWest.x) / ZoneGrid.LENGTH
@@ -380,18 +340,6 @@ constructor(
         }
     }
 
-    /**
-     * Removes any collision flags from **bordering zones** around [region] that were allocated but
-     * are not part of the region's usable area.
-     *
-     * These "buffer zones" exist adjacent to the region and may have been allocated due to region
-     * rotation transformations. This function ensures they do not retain unnecessary collision
-     * flags.
-     *
-     * This function runs for all four levels (0-3) to ensure consistency across all levels.
-     *
-     * @see [CollisionFlagMap.deallocateIfPresent]
-     */
     public fun clearNullBorderZones(region: Region) {
         clearNullBorderZones(region, level = 0)
         clearNullBorderZones(region, level = 1)
@@ -399,20 +347,9 @@ constructor(
         clearNullBorderZones(region, level = 3)
     }
 
-    /**
-     * Removes any collision flags from **bordering zones** around [region] at the specified [level]
-     * that were allocated but are not part of the region's usable area.
-     *
-     * These "buffer zones" exist adjacent to the region and may have been allocated due to region
-     * rotation transformations. This function ensures they do not retain unnecessary collision
-     * flags.
-     *
-     * Unlike [clearNullBorderZones], which operates on all four levels (0-3), this function only
-     * clears zones at the given [level].
-     *
-     * @see [CollisionFlagMap.deallocateIfPresent]
-     */
     public fun clearNullBorderZones(region: Region, level: Int) {
+        // World entity squares touch; their border belongs to the next deck.
+        if (region.southWest in workingAreaWorldEntity) return
         val southWest = region.southWest
         val zoneLength = (region.northEast.x - southWest.x) / ZoneGrid.LENGTH
 
@@ -449,10 +386,6 @@ constructor(
                 continue
             }
 
-            // No need to manually iterate over spawned locs; `clearZone(zone)` simply removes the
-            // entire zone key from the global `spawnedLocs` map. Any scheduled `LocRepository.add`
-            // or `LocRepository.del` operations automatically become stale, as `LocRepository`
-            // handles validation for locs in deleted regions.
             locZones.spawnedLocs.clearZone(zone)
 
             val controllers = conRegistry.findAll(zone).toList()
@@ -482,33 +415,15 @@ constructor(
         }
         val delete = npcRegistry.del(npc)
 
-        // This should _never_ happen (famous last words), but if a npc cannot be deleted, it's
-        // best to inform the server rather than silently failing. This could be changed to an
-        // assert if needed, but I personally advise keeping it as-is.
         check(delete.isSuccess()) { "Could not delete npc: $npc (result=$delete)" }
     }
 
     private fun deleteCon(controller: Controller) {
         val delete = conRegistry.del(controller)
 
-        // Similar to `deleteNpc`, this failure should not occur. While it could be suppressed,
-        // it's best to report the error to ensure the server remains aware of unexpected issues.
         check(delete.isSuccess()) { "Could not delete controller: $controller (result=$delete)" }
     }
 
-    /**
-     * Converts a coordinate in a region to its corresponding coordinate in the copied normal zone.
-     *
-     * If the provided [regionCoords] does not belong to a valid region zone, [CoordGrid.NULL] is
-     * returned.
-     *
-     * The mapping accounts for both the region's origin offset and any rotation applied to the
-     * copy.
-     *
-     * @param regionCoords the absolute coordinate within the copied region space.
-     * @return the equivalent coordinate in the normal zone, or [CoordGrid.NULL] if the region is
-     *   not a valid copy.
-     */
     public fun normalizeCoords(regionCoords: CoordGrid): CoordGrid {
         val key = ZoneKey.from(regionCoords)
         val zone = zones[key]

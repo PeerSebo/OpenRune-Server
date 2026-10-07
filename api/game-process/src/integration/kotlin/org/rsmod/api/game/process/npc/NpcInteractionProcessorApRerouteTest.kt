@@ -13,14 +13,8 @@ import org.rsmod.plugin.scripts.ScriptContext
 
 class NpcInteractionProcessorApRerouteTest {
     /**
-     * For interactions targeting pathing entities (`Player`s and `Npc`s), the interaction model is
-     * responsible for recalculating the route after the initial interaction step and before
-     * movement processing occurs each tick.
-     *
-     * This behavior is crucial for "persistent" ap interactions, such as ranged combat, where the
-     * npc needs to continuously adjust their position to remain within valid ap range. Without this
-     * rerouting, if the target moves away, the npc would not follow and would remain out of valid
-     * range, causing the interaction to misbehave.
+     * A reroute approach script may override AP range without discarding the active
+     * interaction.
      */
     @Test
     fun GameTestState.`continuously re-route towards pathing entity that leaves valid ap range`() =
@@ -39,16 +33,13 @@ class NpcInteractionProcessorApRerouteTest {
             advance(ticks = 1)
             assertMessageSent("Receive attack.")
 
-            // Move player out of the default max ap range from npc.
             player.walk(player.coords.translateX(3))
 
-            // Npc still within valid reroute script ap range.
             advance(ticks = 1)
             assertEquals(playerCoord.translateX(1), player.coords)
             assertEquals(npcCoord, npc.coords)
             assertMessageSent("Receive attack.")
 
-            // Npc still within valid reroute script ap range.
             advance(ticks = 1)
             assertEquals(playerCoord.translateX(2), player.coords)
             assertEquals(npcCoord, npc.coords)
@@ -61,17 +52,13 @@ class NpcInteractionProcessorApRerouteTest {
             assertEquals(npcCoord, npc.coords)
             assertMessageSent("Receive attack.")
 
-            // Npc no longer within valid ap range according to reroute script and should begin
-            // moving towards the new player coords.
             advance(ticks = 1)
             assertEquals(playerCoord.translateX(3), player.coords)
             assertEquals(npcCoord.translateX(1), npc.coords)
             assertMessageSent("Receive attack.")
 
-            // Move the player further away than max ap range.
             player.telejump(player.coords.translateX(5))
 
-            // Expecting player to be 12 tiles away from npc.
             check(player.coords.chebyshevDistance(npc.coords) == 12)
 
             advance(ticks = 1)
@@ -90,8 +77,6 @@ class NpcInteractionProcessorApRerouteTest {
             assertEquals(npcCoord.translateX(5), npc.coords)
             assertMessageNotSent("Receive attack.")
 
-            // After walking for 5 cycles, the npc should be within 7 tiles of the player.
-            // We should expect the ap script to execute.
             advance(ticks = 1)
             assertEquals(npcCoord.translateX(6), npc.coords)
             assertMessageSent("Receive attack.")
@@ -104,7 +89,6 @@ class NpcInteractionProcessorApRerouteTest {
 
         private fun StandardNpcAccess.combatAp(target: Player) {
             check(isWithinDistance(target, 7)) { "Expected ap distance to be 7." }
-            // Npc interactions automatically persist and repeat without `opX` calls.
             target.mes("Receive attack.")
         }
     }

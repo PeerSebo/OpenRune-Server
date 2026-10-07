@@ -184,6 +184,7 @@ class ForcedWalkTest {
                 getInstantHitProcessor = { error("Unexpected hit processing") },
                 getTeleportValidator = { error("Scripted landing must be teleport-exempt") },
                 getHitModifier = { error("Unexpected hit modification") },
+                getWorldRepo = { error("Unexpected world repository access") },
             )
 
         init {
@@ -234,7 +235,7 @@ class ForcedWalkTest {
         @JvmStatic
         @BeforeAll
         fun cache() {
-            ServerCacheManager.init(240).close()
+            ServerCacheManager.init(241).close()
         }
     }
 }

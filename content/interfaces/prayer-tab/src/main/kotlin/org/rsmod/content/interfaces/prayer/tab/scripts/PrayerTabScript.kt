@@ -3,6 +3,8 @@ package org.rsmod.content.interfaces.prayer.tab.scripts
 import dev.openrune.rscm.RSCM
 import dev.openrune.rscm.RSCMType
 import jakarta.inject.Inject
+import org.rsmod.api.player.hook.PlayerRestrictions
+import org.rsmod.api.player.hook.RestrictedAction
 import org.rsmod.api.player.output.ClientScripts
 import org.rsmod.api.player.output.mes
 import org.rsmod.api.player.output.soundSynth
@@ -32,6 +34,7 @@ private constructor(
     private val repo: PrayerRepository,
     private val eventBus: EventBus,
     private val protectedAccess: ProtectedAccessLauncher,
+    private val restrictions: PlayerRestrictions,
 ) : PluginScript() {
     override fun ScriptContext.startup() {
         for ((component, prayer) in repo.prayerComponents.map { RSCM.getReverseMapping(RSCMType.COMPONENT, it.key.packed) to it.value }) {
@@ -46,7 +49,7 @@ private constructor(
             val message = failedRequirementMessage(prayer).replace("<br>", " ")
             mes(message)
             resyncVar(prayer.enabled)
-            soundSynth("synth.prayer_disable")
+            soundSynth("synth.CANCEL_PRAYER")
             return
         }
         val toggled = protectedAccess.launch(this) { togglePrayer(prayer) }
@@ -67,12 +70,18 @@ private constructor(
         if (prayer.enabled in overheadProtectionPrayerVarbits && player.overheadsLocked) {
             player.resyncVar(prayer.enabled)
             mes("You've been injured and can't use protection prayers!")
-            soundSynth("synth.prayer_disable")
+            soundSynth("synth.CANCEL_PRAYER")
+            return
+        }
+        val restriction = restrictions.check(player, RestrictedAction.Prayer)
+        if (restriction != null) {
+            player.resyncVar(prayer.enabled)
+            mes(restriction)
             return
         }
         if (player.prayerLvl == 0) {
-            // Note: This is probably implicitly called by some other function, but as of now, we do
-            // not know what that is.
+            player.resyncVar(prayer.enabled)
+            mes("You have run out of prayer points, you can recharge at an altar.")
             ClientScripts.pvpIconsComLevelRange(player, player.combatLevel)
             return
         }
@@ -94,13 +103,12 @@ private constructor(
 
     private fun ProtectedAccess.disablePrayer(prayer: Prayer) {
         vars[prayer.enabled] = 0
-        soundSynth("synth.prayer_disable")
+        soundSynth("synth.CANCEL_PRAYER")
         disablePrayerStatRegen(prayer)
         if (prayer.overhead != null && player.overheadIcon == prayer.overhead) {
             player.overheadIcon = null
         }
 
-        // When all prayers are manually disabled, the quick prayer flag should also be disabled.
         if (vars["varbit.prayer_allactive"] == 0) {
             vars["varbit.quickprayer_active"] = 0
             disablePrayerDrain()

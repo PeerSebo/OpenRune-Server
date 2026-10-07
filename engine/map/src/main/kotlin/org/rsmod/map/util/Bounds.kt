@@ -5,45 +5,8 @@ import kotlin.math.min
 import org.rsmod.map.CoordGrid
 
 /**
- * [Bounds] represents a rectangular area within a 3D coordinate grid in the game world, defined by
- * its base coordinates (x, z, level), width, and length. This class allows for compact storage and
- * efficient calculations involving rectangular areas on a specific level of the game map.
- *
- * The coordinates and dimensions of the bounds are packed into a single [Long] value for
- * efficiency. The packed value encodes the base [x], [z], and [level] coordinates, as well as the
- * [width] and [length] of the rectangle.
- *
- * All operations in this class consider both the position and size of the [Bounds]. This means that
- * functions like [isWithinDistance] and [distanceTo] calculate distances based on the dimensions
- * and coordinates of both [Bounds] instances, accounting for their full area rather than just their
- * origin points.
- *
- * ### Example Usage:
- * ```
- * val bounds1 = Bounds(x = 3200, z = 3200, level = 0, width = 2, length = 3)
- * val bounds2 = Bounds(x = 3205, z = 3207, level = 0, width = 3, length = 1)
- *
- * // Check if `bounds1` is within a distance of 5 tiles from `bounds2`
- * val isWithin = bounds1.isWithinDistance(bounds2, 5)
- * println(isWithin)  // Output: true
- *
- * // Calculate the maximum distance, in tiles, between `bounds1` and `bounds2`
- * val distance = bounds1.distanceTo(bounds2)
- * println(distance)  // Output: 5
- * ```
- *
- * The [Bounds] class provides utility methods to calculate distances, check for containment, and
- * iterate over the area defined by the bounds.
- *
- * @property packed The packed long representation of the bounds' base coordinates and dimensions.
- * @property x The X coordinate of the lower-left corner of the bounds.
- * @property z The Z coordinate of the lower-left corner of the bounds.
- * @property level The level or height coordinate of the bounds.
- * @property width The inclusive width of the bounds, extending from the base [x] coordinate.
- * @property length The inclusive length of the bounds, extending from the base [z] coordinate.
- * @property coords The base [CoordGrid] of the bounds. (lower-left corner)
- * @constructor Creates a [Bounds] instance using base coordinates ([x], [z], [level]), [width], and
- *   [length].
+ * Distance checks include both footprints. Cross-plane pairs return false or Int.MAX_VALUE
+ * instead of throwing; check levels before arithmetic.
  */
 @JvmInline
 public value class Bounds(public val packed: Long) {
@@ -65,23 +28,9 @@ public value class Bounds(public val packed: Long) {
     public val coords: CoordGrid
         get() = CoordGrid(x, z, level)
 
-    /**
-     * The X coordinate of the centre of the bounds, as a double for precision.
-     *
-     * This is useful for angle calculations between two [Bounds] objects, particularly when the
-     * width of either bounds is an odd number, resulting in a non-integer centre that can't be
-     * accurately represented by a whole integer.
-     */
     public val fineCentreX: Double
         get() = x + (width / 2.0)
 
-    /**
-     * The Z coordinate of the centre of the bounds, as a double for precision.
-     *
-     * Like [fineCentreX], this is useful for accurate angle calculations when the length of either
-     * bounds is an odd number, providing a precise centre coordinate that cannot be represented by
-     * a whole integer.
-     */
     public val fineCentreZ: Double
         get() = z + (length / 2.0)
 
@@ -111,13 +60,21 @@ public value class Bounds(public val packed: Long) {
         size: Int = 1,
     ) : this(x = coords.x, z = coords.z, level = coords.level, width = size, length = size)
 
+    /**
+     * Cross-plane distance is Int.MAX_VALUE. Check levels before arithmetic; projectile timing
+     * uses planar maxDistanceBetween instead.
+     */
     public fun distanceTo(other: Bounds): Int {
-        require(level == other.level) { "Bounds must be on same level. (a=$this, b=$other)" }
+        if (level != other.level) {
+            return Int.MAX_VALUE
+        }
         return maxDistanceBetween(this, other)
     }
 
     public fun isWithinDistance(other: Bounds, distance: Int): Boolean {
-        require(level == other.level) { "Bounds must be on same level. (a=$this, b=$other)" }
+        if (level != other.level) {
+            return false
+        }
         return areWithinDistance(this, other, distance)
     }
 
@@ -131,9 +88,6 @@ public value class Bounds(public val packed: Long) {
 
     public companion object {
         public fun areWithinDistance(a: Bounds, b: Bounds, distance: Int): Boolean {
-            // As a free micro-optimization we can return early if distance is negative.
-            // Due to this, we don't include a range check at the bottom to check that
-            // the difference in coordinates is between 0 to distance.
             if (distance < 0) {
                 return false
             }
@@ -172,8 +126,6 @@ public value class Bounds(public val packed: Long) {
         public fun maxX(a: Bounds, b: Bounds): Bounds = if (a.x > b.x) a else b
 
         public fun maxZ(a: Bounds, b: Bounds): Bounds = if (a.z > b.z) a else b
-
-        /* Bit-packing section */
 
         private const val Z_BIT_COUNT: Int = 14
         private const val X_BIT_COUNT: Int = 14

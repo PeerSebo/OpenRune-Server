@@ -86,17 +86,12 @@ coords = "2_46_54_14_41"
 npc = "npc.goblin_red_soldier_8"
 coords = "0_46_54_15_43"
 
-## Goblin Village Cooks Chamber Post Rfd
 
 [[spawn]]
 npc = "npc.goblin_cook_charred"
 coords = "0_46_154_36_15"
 
-## Goblin Village Cooks Chamber Pre Rfd
 
 [[spawn]]
 npc = "npc.goblin_cook"
 coords = "0_46_154_38_53"
-
-## Goblin Village Cooks Chamber Pre Rfd End
-

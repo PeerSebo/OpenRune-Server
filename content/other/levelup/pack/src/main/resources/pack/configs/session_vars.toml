@@ -1,0 +1,11 @@
+[[varp]]
+isServerOnly = true
+id = "varp.levelup_last_combat_level"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.levelup_last_jingle_id"
+scope = "Temp"
+transmit = "Never"

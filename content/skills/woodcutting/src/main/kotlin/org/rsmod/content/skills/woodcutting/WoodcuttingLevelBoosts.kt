@@ -1,12 +1,18 @@
 package org.rsmod.content.skills.woodcutting
 
+import jakarta.inject.Inject
+import org.rsmod.api.area.checker.AreaChecker
 import org.rsmod.api.stats.levelmod.InvisibleLevelMod
 import org.rsmod.game.entity.Player
 
-class WoodcuttingLevelBoosts : InvisibleLevelMod("stat.woodcutting") {
+class WoodcuttingLevelBoosts @Inject constructor(private val areas: AreaChecker) :
+    InvisibleLevelMod("stat.woodcutting") {
     override fun Player.calculateBoost(): Int {
-        // TODO: Woodcutting guild area check for +7 boost.
-        // TODO: Each player chopping same tree provides +1 boost (capped at +10).
-        return 0
+        var boost = 0
+        if (areas.inArea("area.woodcutting_guild", coords)) {
+            boost += 7
+        }
+        // TODO: Add the nearby-chopper boost using tree identity; verify exclusions for normal, guild and Farming trees.
+        return boost
     }
 }

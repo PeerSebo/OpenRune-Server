@@ -68,6 +68,3 @@ numerator = 1
 denominator = 500
 obj = "obj.poh_trophydrop_crawlinghand"
 count = 1
-
-
-# Main table pool padding uses a nothing roll (F2P drops removed and/or subtable access missing from wiki parse) (46 weight)

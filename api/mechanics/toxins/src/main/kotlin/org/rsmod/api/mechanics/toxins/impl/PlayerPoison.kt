@@ -158,7 +158,9 @@ public object PlayerPoison {
             VarPlayerIntMapSetter.set(player, "varp.poison_severity", severity)
             player.timer("timer.player_poison", TICK_INTERVAL)
         }
-        player.mes("You have been poisoned!", ChatType.Spam)
+        if (current <= 0) {
+            player.mes("You have been poisoned!", ChatType.Spam)
+        }
         Toxin.syncStatusOrbs(player)
         return true
     }

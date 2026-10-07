@@ -1,5 +1,4 @@
-# https://oldschool.runescape.wiki/w/Slayer_task_tips
-# Task id -> tip (dialogue). Regenerate: SlayerTaskWikiDumper main.
+# Source: https://oldschool.runescape.wiki/w/Slayer_task_tips
 
 [[enum]]
 isServerOnly = true

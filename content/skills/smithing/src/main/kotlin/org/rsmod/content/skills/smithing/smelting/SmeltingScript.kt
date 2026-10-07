@@ -1,13 +1,13 @@
 package org.rsmod.content.skills.smithing.smelting
 
 import jakarta.inject.Inject
-import kotlin.random.Random
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.script.onOpLoc1
 import org.rsmod.api.script.onOpLocCategory2
+import org.rsmod.api.script.onOpLocCategoryU
+import org.rsmod.api.script.onOpLocU
 import org.rsmod.api.script.onPlayerQueueWithArgs
 import org.rsmod.api.stats.xpmod.XpModifiers
-import org.rsmod.api.table.smithing.SmithingBarsRow
 import org.rsmod.content.skills.Material
 import org.rsmod.content.skills.SkillMultiConfig
 import org.rsmod.content.skills.SkillMultiEntry
@@ -17,31 +17,38 @@ import org.rsmod.content.skills.crafting.interfaces.hasSilverCraftingBars
 import org.rsmod.content.skills.crafting.interfaces.openGoldCrafting
 import org.rsmod.content.skills.crafting.interfaces.openSilverCrafting
 import org.rsmod.content.skills.openSkillMulti
+import org.rsmod.content.skills.smithing.RingOfForging
+import org.rsmod.content.skills.smithing.configs.SmithingParams
 import org.rsmod.content.skills.smithing.hasCannonballFurnaceMould
 import org.rsmod.content.skills.smithing.openCannonballFurnaceMenu
+import org.rsmod.content.skills.smithing.smithQueue
+import org.rsmod.content.skills.smithing.table.SmithingBar
+import org.rsmod.content.skills.smithing.tryProduce
 import org.rsmod.content.skills.smithing.util.SmithingBonuses
 import org.rsmod.content.skills.smithing.util.SmithingBonuses.effectiveCoalAmount
 import org.rsmod.content.skills.smithing.util.SmithingBonuses.isBarEligibleForVarrockArmour
 import org.rsmod.content.skills.smithing.util.SmithingBonuses.isEdgevilleFurnace
 import org.rsmod.content.skills.smithing.util.SmithingBonuses.rollVarrockDoubleBar
-import org.rsmod.content.skills.smithing.util.SmithingBonuses.shouldConsumeSmithingCatalyst
 import org.rsmod.content.skills.smithing.util.SmithingBonuses.varrockArmourTier
 import org.rsmod.content.skills.smithing.util.SmithingUtils
-import org.rsmod.game.entity.Player
 import org.rsmod.game.inv.Inventory
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
 class SmeltingScript @Inject constructor(private val xpMods: XpModifiers) : PluginScript() {
 
-    private val allBars = SmithingBarsRow.Companion.all()
-    private val normalBars = allBars.filter { it.output.internalName != "obj.lovakite_bar" }
+    private val allBars = SmithingBar.all()
+
+    // Elemental Workshop smelting needs its quest-specific furnace flow.
+    private val standardExclusions = setOf("obj.lovakite_bar", "obj.elemental_workshop_bar")
+    private val normalBars = allBars.filter { it.output.internalName !in standardExclusions }
     private val barsByOutput = allBars.associateBy { it.output.internalName }
 
     override fun ScriptContext.startup() {
         onOpLocCategory2("category.furnace") {
             val locInternal = it.type.internalName
             val coords = it.loc.coords
+            // TODO: Verify menu priority when both bars and cannonballs are available.
             if (hasBarSmeltMaterials()) {
                 openStandardSmeltMenu(locInternal, coords)
             } else if (hasCannonballFurnaceMould()) {
@@ -53,11 +60,22 @@ class SmeltingScript @Inject constructor(private val xpMods: XpModifiers) : Plug
             }
         }
 
+        val standardInputs =
+            normalBars.flatMap { bar -> bar.input.map { it.internalName } }.distinct()
+        standardInputs.forEach { input ->
+            onOpLocCategoryU("category.furnace", input) {
+                openStandardSmeltMenu(it.type.internalName, it.loc.coords)
+            }
+        }
+
         onOpLoc1("loc.lovakengj_furnace_large_01") { openLovakiteSmeltMenu() }
 
-        onPlayerQueueWithArgs<SmeltTask>("queue.smithing_bar_smelt") {
-            processSmeltTask(it.args)
+        // The Lovakengj furnace lacks the generic furnace category and needs a direct binding.
+        listOf("obj.lovakite_ore", "obj.coal").forEach { input ->
+            onOpLocU("loc.lovakengj_furnace_large_01", input) { openLovakiteSmeltMenu() }
         }
+
+        onPlayerQueueWithArgs<SmeltTask>(SmithingParams.SMELT_QUEUE) { processSmeltTask(it.args) }
     }
 
     private fun ProtectedAccess.hasBarSmeltMaterials(): Boolean =
@@ -78,9 +96,9 @@ class SmeltingScript @Inject constructor(private val xpMods: XpModifiers) : Plug
                 actionType = SkillingActionType.SMELT,
                 entries = smeltable.map { smeltEntry(it) },
                 maxCountProvider = { inventory, entry ->
-                    barsByOutput[entry.internal]?.let { maxSmeltCount(inventory, player, it) } ?: 0
+                    barsByOutput[entry.internal]?.let { maxSmeltCount(inventory, it) } ?: 0
                 },
-            ),
+            )
         ) { selection ->
             val bar = barsByOutput[selection.entry.internal] ?: return@openSkillMulti
             startSmelting(bar, selection.amount, furnaceLocInternal, furnaceCoords)
@@ -89,7 +107,7 @@ class SmeltingScript @Inject constructor(private val xpMods: XpModifiers) : Plug
 
     private suspend fun ProtectedAccess.openLovakiteSmeltMenu() {
         val bar = barsByOutput["obj.lovakite_bar"] ?: return
-        if (!hasItemsForBar(bar, regularFurnace = false)) {
+        if (!hasItemsForBar(bar)) {
             return
         }
 
@@ -98,186 +116,200 @@ class SmeltingScript @Inject constructor(private val xpMods: XpModifiers) : Plug
                 verb = "smelt",
                 actionType = SkillingActionType.SMELT,
                 entries = listOf(smeltEntry(bar)),
-                maxCountProvider = { inventory, _ ->
-                    maxSmeltCount(inventory, player, bar, regularFurnace = false)
-                },
-            ),
+                maxCountProvider = { inventory, _ -> maxSmeltCount(inventory, bar) },
+            )
         ) { selection ->
             startSmelting(
                 bar,
                 selection.amount,
                 furnaceLocInternal = "",
                 furnaceCoords = player.coords,
-                regularFurnace = false,
             )
         }
     }
 
-    private fun ProtectedAccess.smeltEntry(bar: SmithingBarsRow): SkillMultiEntry {
+    private fun ProtectedAccess.smeltEntry(bar: SmithingBar): SkillMultiEntry {
         val materials = buildList {
             add(Material(bar.input.first().internalName, bar.inputAmount.first()))
             val secondary = bar.input.getOrNull(1)
             val secondaryAmt = bar.input.getOrNull(1)?.let { bar.inputAmount.getOrNull(1) }
             if (secondary != null && secondaryAmt != null && secondaryAmt > 0) {
-                add(Material(secondary.internalName, effectiveCoalAmount(player, inv, bar, regularFurnace = true)))
+                add(Material(secondary.internalName, effectiveCoalAmount(inv, bar)))
             }
         }
         return SkillMultiEntry(bar.output.internalName, materials)
     }
 
-    private fun ProtectedAccess.startSmelting(
-        bar: SmithingBarsRow,
+    private suspend fun ProtectedAccess.startSmelting(
+        bar: SmithingBar,
         requestedAmount: Int,
         furnaceLocInternal: String,
         furnaceCoords: org.rsmod.map.CoordGrid,
-        regularFurnace: Boolean = true,
     ) {
-        val amount = minOf(requestedAmount, maxSmeltCount(inv, player, bar, regularFurnace))
+        val amount = minOf(requestedAmount, maxSmeltCount(inv, bar))
         if (amount <= 0) {
             return
         }
 
-        queueNext(
-            bar,
-            amount,
-            completed = 0,
-            furnaceLocInternal = furnaceLocInternal,
-            furnaceCoords = furnaceCoords,
-            regularFurnace = regularFurnace,
+        if (!canSmelt(bar)) {
+            return
+        }
+
+        clearWeakQueue(SmithingParams.SMELT_QUEUE)
+        scheduleSmeltCycle(
+            SmeltTask(
+                bar,
+                amount,
+                completed = 0,
+                isSuperHeat = false,
+                furnaceLocInternal = furnaceLocInternal,
+                furnaceCoords = furnaceCoords,
+            )
         )
     }
 
+    private fun ProtectedAccess.scheduleSmeltCycle(task: SmeltTask) {
+        anim(SmithingParams.FURNACE_ANIM)
+        soundSynth(SmithingParams.FURNACE_SOUND)
+        smithQueue(SmithingParams.SMELT_QUEUE, SmithingParams.SMELT_TICKS, task)
+    }
+
     private suspend fun ProtectedAccess.processSmeltTask(task: SmeltTask) {
-        if (!canSmelt(task.bar, task.regularFurnace)) {
+        if (!canSmelt(task.bar)) {
             resetAnim()
             return
         }
 
-        performSmelt(
-            task.bar,
-            task.isSuperHeat,
-            task.furnaceLocInternal,
-            task.furnaceCoords,
-            task.regularFurnace,
-        )
-
-        val completed = task.completed + 1
-        if (completed >= task.amount || !canSmelt(task.bar, task.regularFurnace)) {
+        val processed = performSmelt(task)
+        if (processed <= 0) {
+            resetAnim()
             return
         }
 
-        queueNext(
-            task.bar,
-            task.amount,
-            completed,
-            task.isSuperHeat,
-            task.furnaceLocInternal,
-            task.furnaceCoords,
-            task.regularFurnace,
-        )
+        val completed = task.completed + processed
+        if (completed < task.amount && hasItemsForBar(task.bar)) {
+            scheduleSmeltCycle(task.copy(completed = completed))
+        } else {
+            resetAnim()
+        }
     }
 
-    private fun ProtectedAccess.queueNext(
-        bar: SmithingBarsRow,
-        amount: Int,
-        completed: Int,
-        isSuperHeat: Boolean = false,
-        furnaceLocInternal: String = "",
-        furnaceCoords: org.rsmod.map.CoordGrid = player.coords,
-        regularFurnace: Boolean = true,
-    ) {
-        weakQueue(
-            "queue.smithing_bar_smelt",
-            if (completed == 0) SMELT_INITIAL_DELAY else SMELT_CYCLE_DELAY,
-            SmeltTask(bar, amount, completed, isSuperHeat, furnaceLocInternal, furnaceCoords, regularFurnace),
-        )
-    }
-
-    private suspend fun ProtectedAccess.performSmelt(
-        bar: SmithingBarsRow,
-        isSuperHeat: Boolean,
-        furnaceLocInternal: String,
-        furnaceCoords: org.rsmod.map.CoordGrid,
-        regularFurnace: Boolean,
-    ) {
-        anim("seq.human_furnace")
-        soundSynth("synth.furnace")
-        delay(2)
-
+    private fun ProtectedAccess.performSmelt(task: SmeltTask): Int {
+        val bar = task.bar
+        val primary = bar.input.first()
         val primaryAmt = bar.inputAmount.first()
         val secondary = bar.input.getOrNull(1)
-        val requiresSecondary = secondary != null && (bar.input.getOrNull(1)?.let { bar.inputAmount.getOrNull(1) } ?: 0) > 0
-        val effectiveSecondaryAmt =
-            if (requiresSecondary) {
-                effectiveCoalAmount(player, inv, bar, regularFurnace)
-            } else {
-                0
-            }
+        val requiresSecondary = secondary != null && (bar.inputAmount.getOrNull(1) ?: 0) > 0
+        val fullCoalAmt = if (requiresSecondary) bar.inputAmount[1] else 0
+        val halfCoalAmt = SmithingBonuses.halfCoalAmount(bar)
+        val catalysts = if (requiresSecondary) inv.count(SmithingBonuses.SMITHING_CATALYST) else 0
 
-        val primaryRemoved = invDel(inv, bar.input.first().internalName, primaryAmt).success
-        val secondaryRemoved =
+        // Catalysts apply per bar; bars beyond the carried catalyst supply still cost full coal.
+        fun coalCost(sets: Int): Int {
             if (!requiresSecondary) {
-                true
-            } else {
-                invDel(inv, secondary.internalName, effectiveSecondaryAmt).success
+                return 0
             }
-
-        if (!primaryRemoved || !secondaryRemoved) {
-            return
+            val boosted = minOf(sets, catalysts)
+            return boosted * halfCoalAmt + (sets - boosted) * fullCoalAmt
         }
 
-        if (shouldConsumeSmithingCatalyst(player, inv, bar, regularFurnace)) {
-            invDel(inv, SmithingBonuses.SMITHING_CATALYST, 1)
-        }
+        // Varrock procs consume and reward two ore sets; they do not create a free bar.
+        val sets = if (canVarrockDoubleSmelt(task, coalCost(2))) 2 else 1
 
+        // Double-smelt iron rolls independently per ore; this interaction is unverified.
         val isIronBar = bar.output.internalName == "obj.iron_bar"
-        val hasRingOfForging = "obj.ring_of_forging" in player.worn
-        val success = if (isIronBar && !hasRingOfForging && !isSuperHeat) {
-            Random.nextBoolean()
-        } else {
-            true
+        val ringWorn = RingOfForging.isWearing(player)
+        val successes =
+            if (!isIronBar || ringWorn || task.isSuperHeat) {
+                sets
+            } else {
+                (0 until sets).count { random.randomBoolean(2) }
+            }
+
+        if (successes == 0) {
+            // A failed smelt still consumes the ore (iron only - it has no secondary input).
+            invDel(inv, primary.internalName, primaryAmt * sets)
+            mes("The ore is too impure and you fail to refine it.")
+            return sets
         }
 
-        if (success) {
-            val outputCount = outputBarCount(bar, furnaceLocInternal, furnaceCoords)
-            if (invAdd(inv, bar.output.internalName, outputCount).success) {
-                val xp = SmithingSmeltXp.resolve(player, inv, bar, isSuperHeat, xpMods, regularFurnace)
-                statAdvance("stat.smithing", xp)
-                val oreName = SmithingUtils.itemName(bar.input.first(), "ore")
-                mes("You smelt the $oreName in the furnace.")
-                if (outputCount > 1) {
-                    val barName = SmithingUtils.itemName(bar.output, "bar")
-                    mes("Your Varrock armour helps you smelt an extra $barName.")
-                }
+        val inputs = buildList {
+            add(primary.internalName to primaryAmt * sets)
+            if (requiresSecondary) {
+                add(secondary.internalName to coalCost(sets))
             }
-        } else {
+        }
+        if (!tryProduce(inputs, bar.output.internalName, successes)) {
+            return 0
+        }
+
+        val consumedCatalysts = minOf(sets, catalysts)
+        if (consumedCatalysts > 0) {
+            invDel(inv, SmithingBonuses.SMITHING_CATALYST, consumedCatalysts)
+        }
+
+        if (isIronBar && ringWorn) {
+            RingOfForging.consumeCharges(player, sets)
+        }
+
+        val xpPerBar = SmithingSmeltXp.resolve(player, bar, task.isSuperHeat, xpMods)
+        val boostedBars = minOf(successes, consumedCatalysts)
+        statAdvance("stat.smithing", xpPerBar * (successes + boostedBars))
+
+        mes("You retrieve a bar of ${metalName(bar)}.")
+        if (successes < sets) {
             mes("The ore is too impure and you fail to refine it.")
         }
+        if (sets > 1) {
+            val barName = SmithingUtils.itemName(bar.output, "bar").lowercase()
+            mes("Your Varrock armour helps you smelt an extra $barName.")
+        }
+        return sets
     }
 
-    private fun ProtectedAccess.outputBarCount(
-        bar: SmithingBarsRow,
-        furnaceLocInternal: String,
-        furnaceCoords: org.rsmod.map.CoordGrid,
-    ): Int {
-        if (!isEdgevilleFurnace(furnaceLocInternal, furnaceCoords)) {
-            return 1
+    private fun ProtectedAccess.canVarrockDoubleSmelt(
+        task: SmeltTask,
+        coalCostForTwo: Int,
+    ): Boolean {
+        val bar = task.bar
+        if (!isEdgevilleFurnace(task.furnaceLocInternal, task.furnaceCoords)) {
+            return false
         }
-        val tier = player.varrockArmourTier() ?: return 1
+        val tier = player.varrockArmourTier() ?: return false
         if (!isBarEligibleForVarrockArmour(bar, tier)) {
-            return 1
+            return false
         }
-        return if (rollVarrockDoubleBar()) 2 else 1
+        if (inv.count(bar.input.first().internalName) < bar.inputAmount.first() * 2) {
+            return false
+        }
+        val secondary = bar.input.getOrNull(1)
+        val requiresSecondary = secondary != null && (bar.inputAmount.getOrNull(1) ?: 0) > 0
+        if (requiresSecondary && inv.count(secondary.internalName) < coalCostForTwo) {
+            return false
+        }
+        return rollVarrockDoubleBar(random)
     }
 
-    private suspend fun ProtectedAccess.canSmelt(bar: SmithingBarsRow, regularFurnace: Boolean = true): Boolean {
+    private fun metalName(bar: SmithingBar): String =
+        SmithingUtils.itemName(bar.output, "metal").lowercase().removeSuffix(" bar")
+
+    // Read the quest varp directly to avoid a smithing-to-quest dependency cycle.
+    private fun ProtectedAccess.completedKnightsSword(): Boolean =
+        player.vars[KnightsSwordVarp] >= KnightsSwordComplete
+
+    private suspend fun ProtectedAccess.canSmelt(bar: SmithingBar): Boolean {
+        if (bar.output.internalName == "obj.blurite_bar" && !completedKnightsSword()) {
+            mesbox("You must complete The Knight's Sword before you can smelt blurite.")
+            return false
+        }
+
         val primaryAmt = bar.inputAmount.first()
         val secondary = bar.input.getOrNull(1)
-        val secondaryAmt = effectiveCoalAmount(player, inv, bar, regularFurnace)
+        val secondaryAmt = effectiveCoalAmount(inv, bar)
         val primaryName = SmithingUtils.itemName(bar.input.first(), "ore")
 
         val hasPrimary = inv.count(bar.input.first().internalName) >= primaryAmt
-        val requiresSecondary = secondary != null && (bar.input.getOrNull(1)?.let { bar.inputAmount.getOrNull(1) } ?: 0) > 0
+        val requiresSecondary = secondary != null && (bar.inputAmount.getOrNull(1) ?: 0) > 0
         val hasSecondary = !requiresSecondary || inv.count(secondary.internalName) >= secondaryAmt
 
         if (!hasPrimary || !hasSecondary) {
@@ -295,33 +327,24 @@ class SmeltingScript @Inject constructor(private val xpMods: XpModifiers) : Plug
             return false
         }
 
-        return SmithingUtils.requireSmithingLevel(
-            this,
-            bar.statReq.first().t1,
-            "smelt $primaryName",
-        )
+        return SmithingUtils.requireSmithingLevel(this, bar.levelReq, "smelt $primaryName")
     }
 
-    private fun ProtectedAccess.hasItemsForBar(bar: SmithingBarsRow, regularFurnace: Boolean = true): Boolean {
+    private fun ProtectedAccess.hasItemsForBar(bar: SmithingBar): Boolean {
         val primaryAmt = bar.inputAmount.first()
-        val secondaryAmt = effectiveCoalAmount(player, inv, bar, regularFurnace)
+        val secondaryAmt = effectiveCoalAmount(inv, bar)
         val secondary = bar.input.getOrNull(1)
         val hasPrimary = inv.count(bar.input.first().internalName) >= primaryAmt
-        val requiresSecondary = secondary != null && (bar.input.getOrNull(1)?.let { bar.inputAmount.getOrNull(1) } ?: 0) > 0
+        val requiresSecondary = secondary != null && (bar.inputAmount.getOrNull(1) ?: 0) > 0
         val hasSecondary = !requiresSecondary || inv.count(secondary.internalName) >= secondaryAmt
         return hasPrimary && hasSecondary
     }
 
-    private fun maxSmeltCount(
-        inventory: Inventory,
-        player: Player,
-        bar: SmithingBarsRow,
-        regularFurnace: Boolean = true,
-    ): Int {
+    private fun maxSmeltCount(inventory: Inventory, bar: SmithingBar): Int {
         val primaryAmt = bar.inputAmount.first()
-        val effectiveSecondaryAmt = effectiveCoalAmount(player, inventory, bar, regularFurnace)
+        val effectiveSecondaryAmt = effectiveCoalAmount(inventory, bar)
         val secondary = bar.input.getOrNull(1)
-        val requiresSecondary = secondary != null && (bar.input.getOrNull(1)?.let { bar.inputAmount.getOrNull(1) } ?: 0) > 0
+        val requiresSecondary = secondary != null && (bar.inputAmount.getOrNull(1) ?: 0) > 0
 
         val primaryCount = inventory.count(bar.input.first().internalName)
         val secondaryCount =
@@ -338,17 +361,17 @@ class SmeltingScript @Inject constructor(private val xpMods: XpModifiers) : Plug
     }
 
     private data class SmeltTask(
-        val bar: SmithingBarsRow,
+        val bar: SmithingBar,
         val amount: Int,
         val completed: Int,
         val isSuperHeat: Boolean,
         val furnaceLocInternal: String,
         val furnaceCoords: org.rsmod.map.CoordGrid,
-        val regularFurnace: Boolean,
     )
 
     private companion object {
-        private const val SMELT_INITIAL_DELAY = 1
-        private const val SMELT_CYCLE_DELAY = 5
+        private const val KnightsSwordVarp = "varp.squire"
+
+        private const val KnightsSwordComplete = 7
     }
 }

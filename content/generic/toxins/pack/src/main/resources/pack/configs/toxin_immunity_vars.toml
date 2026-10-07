@@ -1,0 +1,47 @@
+[[varp]]
+id = "varp.toxin_poison_immunity_until"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.toxin_venom_immunity_until"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.toxin_poison_immunity_warned_until"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.toxin_poison_immunity_display_until"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.toxin_poison_immunity_remaining"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.toxin_venom_immunity_remaining"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.toxin_poison_immunity_warned"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.toxin_immunity_migrated"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"

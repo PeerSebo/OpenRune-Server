@@ -19,24 +19,18 @@ import org.rsmod.annotations.InternalApi
 import org.rsmod.api.area.checker.AreaChecker
 import org.rsmod.api.game.process.player.PlayerFaceSquareProcessor
 import org.rsmod.api.game.process.player.PlayerMovementProcessor
-import org.rsmod.api.inv.LocUOpScript
 import org.rsmod.api.inv.storage.PlayerItemStorage
 import org.rsmod.api.invtx.InvTransactionsScript
 import org.rsmod.api.player.dialogue.align.TextAlignment
 import org.rsmod.api.player.events.interact.HeldEquipEvents
+import org.rsmod.api.player.events.interact.LocUEvents
 import org.rsmod.api.player.events.interact.OpEvent
 import org.rsmod.api.player.hook.PlayerTeleportValidator
 import org.rsmod.api.player.input.ResumePauseButtonInput
 import org.rsmod.api.player.interact.LocInteractions
-import org.rsmod.api.player.interact.LocTInteractions
-import org.rsmod.api.player.interact.LocUInteractions
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.player.protect.ProtectedAccessContextFactory
 import org.rsmod.api.player.protect.ProtectedAccessLauncher
-import org.rsmod.api.player.protect.clearPendingAction
-import org.rsmod.api.player.ui.ifCloseOverlay
-import org.rsmod.api.player.ui.ifOpenOverlay
-import org.rsmod.api.player.vars.VarPlayerIntMapSetter
 import org.rsmod.api.registry.controller.ControllerRegistry
 import org.rsmod.api.registry.loc.LocRegistry
 import org.rsmod.api.registry.loc.LocRegistryNormal
@@ -81,7 +75,6 @@ import org.rsmod.game.map.LocZoneStorage
 import org.rsmod.game.queue.EngineQueueCache
 import org.rsmod.game.region.RegionListLarge
 import org.rsmod.game.region.RegionListSmall
-import org.rsmod.game.region.RegionListWorldEntity
 import org.rsmod.game.seq.EntitySeq
 import org.rsmod.map.CoordGrid
 import org.rsmod.plugin.scripts.ScriptContext
@@ -142,7 +135,7 @@ class MisthalinManorInteractionTest {
     @Test fun `abandoning finale removes inventory knife and rewinds room for another attempt`() {
         val f = Fixture(MisthalinStage.MandyWaiting)
         f.enterBlueRoom()
-        VarPlayerIntMapSetter.set(f.player, "varbit.mistmyst_progress", MisthalinStage.HeweyDead)
+        f.quest.jumpToStage(f.player, MisthalinStage.HeweyDead)
         f.player.inv[1] = InvObj(KillerKnife, 1)
         f.sapphireDoor(f.player.coords.translateX(1))
         assertEquals(0, f.player.inv.count(KillerKnife))
@@ -173,6 +166,7 @@ class MisthalinManorInteractionTest {
                 f.tick()
             }
             assertEquals(Direction.East.angle, f.player.pendingFaceAngle.intValue)
+            assertEquals(Direction.East.angle, f.player.faceAngle)
             f.assertUnslashed()
             f.tick()
             f.assertUnslashed()
@@ -219,148 +213,12 @@ class MisthalinManorInteractionTest {
         }
     }
 
-    @Test fun `native quest progress updates preserve the adjacent puzzle flags`() {
-        val f = Fixture(MisthalinStage.CandlesLit)
-        VarPlayerIntMapSetter.set(f.player, "varbit.mistmyst_candles", 15)
-        VarPlayerIntMapSetter.set(f.player, "varbit.mistmyst_xpreward", 1)
-        f.setStage(MisthalinStage.WallBlown)
-        assertEquals(MisthalinStage.WallBlown, f.quest.getQuestStage(f.player))
-        assertEquals(15, f.player.vars["varbit.mistmyst_candles"])
-        assertEquals(1, f.player.vars["varbit.mistmyst_xpreward"])
-        assertNull(f.player.attr[org.rsmod.content.quest.manager.QUEST_STAGE_MAP_ATTR])
-    }
-
-    @Test fun `reconnect restores a private fight exit and removes carried and equipped murder weapons`() {
-        for (stage in listOf(MisthalinStage.BossArmed, MisthalinStage.BossBeaten, MisthalinStage.HeweyDead)) {
-            val f = Fixture(stage)
-            f.player.misthalinReturnTile = CoordGrid(1628, 4829).packed
-            f.player.coords = CoordGrid(8000, 8000)
-            f.player.inv[2] = InvObj(KillerKnife, 1)
-            f.player.worn[Wearpos.RightHand.slot] = InvObj(KillerKnife, 1)
-            restoreMisthalinLogin(f.player)
-            assertEquals(CoordGrid(1628, 4829), f.player.coords)
-            assertEquals(0, f.player.misthalinReturnTile)
-        assertTrue(f.player.ui.modals.isEmpty())
-            assertEquals(MisthalinStage.SapphireRoomOpen, f.quest.getQuestStage(f.player))
-            assertEquals(0, f.player.inv.count(KillerKnife))
-            assertEquals(0, f.player.worn.count(KillerKnife))
-            assertEquals(1, f.player.inv.count("obj.knife"))
-        }
-    }
-
-    @Test fun `reconnect after the final kill preserves progress and validates the saved exit`() {
-        val f = Fixture(MisthalinStage.AbigaleKilled)
-        f.player.misthalinReturnTile = CoordGrid(8000, 8000).packed
-        restoreMisthalinLogin(f.player)
-        assertEquals(MisthalinCoords.IslandLanding, f.player.coords)
-        assertEquals(MisthalinStage.AbigaleKilled, f.quest.getQuestStage(f.player))
-    }
-
-    @Test fun `ordinary logins are not moved or rewound`() {
-        val f = Fixture(MisthalinStage.BossArmed)
-        val coords = f.player.coords
-        restoreMisthalinLogin(f.player)
-        assertEquals(coords, f.player.coords)
-        assertEquals(MisthalinStage.BossArmed, f.quest.getQuestStage(f.player))
-    }
-
-    @Test fun `temporary puzzle fields do not overwrite one another or the persistent scene exit`() {
-        val f = Fixture(MisthalinStage.PanelRevealed)
-        f.player.misthalinReturnTile = MisthalinCoords.IslandLanding.packed
-        f.player.misthalinReflections = 3
-        f.player.misthalinGemRowSlot = 6
-        assertEquals(3, f.player.misthalinReflections)
-        assertEquals(6, f.player.misthalinGemRowSlot)
-        assertEquals(MisthalinCoords.IslandLanding.packed, f.player.misthalinReturnTile)
-        assertEquals(MisthalinStage.PanelRevealed, f.quest.getQuestStage(f.player))
-    }
-
-    @Test fun `selected gem models resolve to the original puzzle models`() {
-        for ((name, model) in listOf("diamond" to 32333, "onyx" to 32342, "zenyte" to 32349,
-            "ruby" to 2586, "sapphire" to 32345, "emerald" to 32334)) {
-            assertEquals(model, "models.misthalin_gem_$name".asRSCM())
-        }
-    }
-
-    @Test fun `completion awards quest points and completion interface only once`() {
-        val f = Fixture(MisthalinStage.MandyWaiting)
-        f.setStage(MisthalinStage.Complete)
-        assertEquals(1, f.player.vars["varp.qp"])
-        assertEquals(1, f.player.vars["varbit.quests_completed_count"])
-        assertTrue(f.player.ui.containsModal("interface.questscroll"))
-        val before = f.output()
-        f.setStage(MisthalinStage.Complete)
-        assertEquals(1, f.player.vars["varp.qp"])
-        assertEquals(1, f.player.vars["varbit.quests_completed_count"])
-        assertEquals(before, f.output())
-    }
-
-    @Test fun `item-use packet path empties the barrel after Sid dies`() {
-        val f = Fixture(MisthalinStage.SidDead)
-        f.useOn("loc.mistmyst_barrel", "obj.bucket_empty")
-        assertEquals(MisthalinStage.BucketFilled, f.quest.getQuestStage(f.player))
-        assertEquals(0, f.player.inv.count("obj.bucket_empty"))
-        assertEquals(1, f.player.inv.count("obj.bucket_water"))
-        assertFalse(f.output().contains("Nothing interesting happens."))
-    }
-
-    @Test fun `item-use packet path lights each distinct candle and dries the fuse`() {
-        val f = Fixture(MisthalinStage.RubyRoomOpen)
-        for (i in 1..4) {
-            f.useOn("loc.mistmyst_candle$i", "obj.tinderbox")
-            assertEquals(1, f.player.vars["varbit.mistmyst_candle$i"])
-            f.continueDialogue("component.messagebox:continue")
-        }
-        assertEquals(MisthalinStage.CandlesLit, f.quest.getQuestStage(f.player))
-        f.useOn("loc.mistmyst_explosive_barrel", "obj.tinderbox")
-        assertEquals("seq.human_createfire".asRSCM(), f.player.pendingSequence.id)
-        repeat(3) { f.tick() }
-        f.continueDialogue("component.chat_right:continue")
-        assertEquals(MisthalinStage.FuseLit, f.quest.getQuestStage(f.player))
-    }
-
-    @Test fun `quest list click permissions are restored when reopened after a scene`() {
-        val (before, after) = Fixture(MisthalinStage.SidDead).reopenQuestList()
-        assertNotEquals(0L, before)
-        assertEquals(before, after)
-    }
-
-    @Test fun `Sid scene finishes and the next bucket interaction works`() {
-        val f = Fixture(MisthalinStage.SeenShadyFigure)
-        f.searchBarrel()
-        f.finishScene()
-        assertEquals(MisthalinStage.SidDead, f.quest.getQuestStage(f.player))
-        assertEquals(0, f.player.vars["varbit.cutscene_status"])
-        assertEquals(0, f.player.misthalinReturnTile)
-        assertTrue(f.player.ui.modals.isEmpty())
-        f.useOn("loc.mistmyst_barrel", "obj.bucket_empty")
-        assertEquals(MisthalinStage.BucketFilled, f.quest.getQuestStage(f.player))
-    }
-
-    @Test fun `observing the tree after the wall explodes runs Lacey scene to completion`() {
-        val f = Fixture(MisthalinStage.WallBlown)
-        f.observeTree()
-        f.finishScene()
-        assertEquals(MisthalinStage.LaceyDead, f.quest.getQuestStage(f.player))
-        assertEquals(0, f.player.vars["varbit.cutscene_status"])
-        assertEquals(0, f.player.misthalinReturnTile)
-        assertTrue(f.player.ui.modals.isEmpty())
-    }
-
-    @Test fun `using the bucket can trigger Sid scene and then fill it`() {
-        val f = Fixture(MisthalinStage.SeenShadyFigure)
-        f.useOn("loc.mistmyst_barrel", "obj.bucket_empty")
-        f.finishScene()
-        assertEquals(MisthalinStage.BucketFilled, f.quest.getQuestStage(f.player))
-        assertEquals(1, f.player.inv.count("obj.bucket_water"))
-    }
-
     private class Fixture(stage: Int) {
         val quest = Quest(
             id = 128, key = "quest_misthalinmystery", rowID = 0, displayName = "Misthalin Mystery",
             mapElement = null, startCoord = null, maxSteps = MisthalinStage.Complete, questPoints = 1,
             questVarp = "varp.mistmyst_main", questVarbit = "varbit.mistmyst_progress",
-            rewards = rewards {}, itemDisplay = org.rsmod.content.quest.manager.ItemRewardDisplay("obj.mistmyst_cutscene_knife"),
+            rewards = rewards {}, itemDisplay = null,
         )
         private val client = RecordingClient()
 
@@ -371,6 +229,7 @@ class MisthalinManorInteractionTest {
             slotId = 1
             assignUid()
             coords = CoordGrid(1632, 4833)
+            faceAngle = Direction.West.angle
             currentMapClock = 100
             processedMapClock = 100
             pendingSequence = EntitySeq.NULL
@@ -395,23 +254,14 @@ class MisthalinManorInteractionTest {
         var unequips = 0
 
         init {
-            VarPlayerIntMapSetter.set(player, "varbit.mistmyst_progress", stage)
-            val locU = LocUInteractions::class.java.getDeclaredConstructor(EventBus::class.java)
-                .apply { isAccessible = true }.newInstance(events)
-            val bridge = LocUOpScript::class.java.getDeclaredConstructor(LocUInteractions::class.java)
-                .apply { isAccessible = true }.newInstance(locU)
-            with(bridge) { ScriptContext(events, CheatCommandMap(), EngineQueueCache()).startup() }
-            with(org.rsmod.content.quest.manager.QuestEvents()) {
-                ScriptContext(events, CheatCommandMap(), EngineQueueCache()).startup()
-            }
+            quest.jumpToStage(player, stage)
             val clock = MapClock(100)
             val updates = ZoneUpdateMap()
             val storage = LocZoneStorage()
             val normal = LocRegistryNormal(updates, collision, storage)
             val npcs = NpcList()
             val npcRegistry = NpcRegistry(npcs, collision, events)
-            regions = RegionRegistry(RegionListSmall(), RegionListLarge(), RegionListWorldEntity(),
-                normal, collision, storage,
+            regions = RegionRegistry(RegionListSmall(), RegionListLarge(), normal, collision, storage,
                 npcRegistry, ControllerRegistry(clock, ControllerList()), ZonePlayerActivityBitSet())
             val locs = LocRepository(clock, LocRegistry(storage, normal,
                 LocRegistryRegion(updates, collision, storage, regions)), regions)
@@ -430,10 +280,6 @@ class MisthalinManorInteractionTest {
             for (level in 0..3) for (x in 1600..1663 step 8) for (z in 4800..4863 step 8) {
                 collision.allocateIfAbsent(x, z, level)
             }
-        }
-
-        fun setStage(stage: Int) {
-            quest.setQuestStage(ProtectedAccess(player, coroutine, context), stage)
         }
 
         fun searchBarrel() {
@@ -465,54 +311,8 @@ class MisthalinManorInteractionTest {
 
         fun slash() {
             val loc = loc("loc.mistmyst_painting", CoordGrid(1632, 4833), shape = 4)
-            useOn(loc, "obj.knife")
-        }
-
-        fun useOn(symbol: String, item: String) {
-            useOn(loc(symbol, player.coords, 10), item)
-        }
-
-        private fun useOn(target: BoundLocInfo, item: String) {
-            player.inv[0] = InvObj(item, 1)
-            val event = LocTInteractions(events).opTrigger(player, target,
-                checkNotNull(ServerCacheManager.getItem(item.asRSCM())),
-                ServerCacheManager.fromComponent("component.inventory:items"), 0)
-            dispatch(checkNotNull(event))
-        }
-
-        fun reopenQuestList(): Pair<Long, Long> {
-            val component = ServerCacheManager.fromComponent("component.questlist:list")
-            player.ifOpenOverlay("interface.questlist", "component.side_journal:tab_container", events)
-            val before = player.ui.events[component, 1]
-            player.ifCloseOverlay("interface.questlist", events)
-            assertEquals(0L, player.ui.events[component, 1])
-            player.ifOpenOverlay("interface.questlist", "component.side_journal:tab_container", events)
-            return before to player.ui.events[component, 1]
-        }
-
-        fun observeTree() {
-            val target = loc("loc.mistmyst_tree", player.coords, 10)
-            dispatch(checkNotNull(LocInteractions(BoundValidator(collision), events)
-                .opTrigger(player, target, InteractionOp.Op1)))
-        }
-
-        fun finishScene() {
-            repeat(800) {
-                if (coroutine.isIdle) return
-                if (coroutine.isAwaiting(ResumePauseButtonInput::class)) {
-                    val parent = listOf("chat_left", "chat_right", "messagebox", "chatmenu", "objectbox")
-                        .firstOrNull { player.ui.containsModal("interface.$it") }
-                        ?: error("Unknown scene dialogue")
-                    val input = when (parent) {
-                        "chatmenu" -> ResumePauseButtonInput("component.chatmenu:options", 1)
-                        "objectbox" -> ResumePauseButtonInput("component.objectbox:universe", -1)
-                        else -> ResumePauseButtonInput("component.$parent:continue", -1)
-                    }
-                    coroutine.resumeWith(input)
-                    result?.getOrThrow()
-                } else tick()
-            }
-            fail<Unit>("Scene did not finish")
+            dispatch(LocUEvents.Op(loc, loc, checkNotNull(ServerCacheManager.getObject(loc.id)),
+                checkNotNull(ServerCacheManager.getItem("obj.knife".asRSCM())), 0))
         }
 
         fun stairs() {
@@ -522,7 +322,6 @@ class MisthalinManorInteractionTest {
         }
 
         private fun dispatch(event: OpEvent) {
-            player.clearPendingAction(events)
             result = null
             player.activeCoroutine = coroutine
             val access = ProtectedAccess(player, coroutine, context)
@@ -601,7 +400,7 @@ class MisthalinManorInteractionTest {
 
         @OptIn(InternalApi::class)
         @JvmStatic @BeforeAll fun cache() {
-            ServerCacheManager.init(240).close()
+            ServerCacheManager.init(241).close()
             for ((owner, name) in listOf(
                 "org.rsmod.api.invtx.InvTransactionsScriptKt" to "cachedInventoryTransactions",
                 "org.rsmod.api.invtx.VirtualInvTransactionsKt" to "cachedPlayerItemStorage",

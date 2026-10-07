@@ -1,0 +1,16 @@
+
+[gamevals.timer]
+ntk_run_timer = 128
+ntk_timer_sync = 129
+
+[gamevals.queue]
+ntk_urn_search = 153
+ntk_chest_open = 154
+ntk_sarcophagus_open = 155
+# Reserved unused queue ID; do not recycle without auditing persisted tasks.
+ntk_sarcophagus_loot = 156
+ntk_door_pick = 157
+ntk_trap_pass = 158
+ntk_outer_search = 159
+ntk_exit = 160
+ntk_run_expiry = 161

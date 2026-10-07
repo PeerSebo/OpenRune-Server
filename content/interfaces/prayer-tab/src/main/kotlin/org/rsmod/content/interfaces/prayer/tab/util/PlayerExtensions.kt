@@ -1,6 +1,5 @@
 package org.rsmod.content.interfaces.prayer.tab.util
 
-import dev.openrune.types.varp.isType
 import org.rsmod.api.config.constants
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.player.vars.intVarBit

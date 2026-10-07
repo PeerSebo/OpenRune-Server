@@ -1,3 +1,5 @@
+# TODO: Brimstone keys are dropped if killed on a Slayer task given by Konar quo Maten.
+
 id = "Bloodthirsty basilisk Drops"
 npcs = ["npc.league_superior_basilisk"]
 brimstone_key_roll = true
@@ -173,6 +175,3 @@ numerator = 1
 denominator = 2000
 obj = "obj.poh_trophydrop_basilisk"
 count = 1
-
-
-# Drops need manual (konar_key): Brimstone keys are dropped if killed on a Slayer task given by Konar quo Maten.

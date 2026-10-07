@@ -16,7 +16,6 @@ public object GemstoneCrabGems {
     private val table: RSDropTable<Player, DropRollItem> =
         RSDropTable(
             tableIdentifier = "Gemstone Crab Shell",
-            mainRolls = ROLLS_PER_MINE,
             mainTable =
                 rsPlayerWeightedTable(total = DRAGONSTONE_CHANCE_DENOMINATOR) {
                     name("Gemstone Crab Shell")
@@ -34,10 +33,13 @@ public object GemstoneCrabGems {
                 },
         )
 
-    public fun rollAll(player: Player): List<DropRollItem> =
-        when (val result = table.roll(player, ArgMap.Empty).flatten()) {
-            is RollResult.Nothing -> emptyList()
-            is RollResult.Single -> listOf(result.result)
-            is RollResult.ListOf -> result.results
+    public fun rollAll(player: Player): List<DropRollItem> = buildList {
+        repeat(ROLLS_PER_MINE) {
+            when (val result = table.roll(player, ArgMap.Empty).flatten()) {
+                is RollResult.Nothing -> Unit
+                is RollResult.Single -> add(result.result)
+                is RollResult.ListOf -> addAll(result.results)
+            }
         }
+    }
 }

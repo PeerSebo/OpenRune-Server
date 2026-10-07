@@ -322,7 +322,6 @@ coords = "2_45_83_47_33"
 npc = "npc.godwars_zamorak_avatar"
 coords = "2_45_83_45_10"
 
-## God Wars Dungeon Ancient Prison
 
 [[spawn]]
 npc = "npc.godwars_ancient_saradomin_wizard"
@@ -480,7 +479,6 @@ coords = "0_45_81_24_21"
 npc = "npc.nex_story_npc_outer"
 coords = "0_44_81_40_38"
 
-## God Wars Dungeon Wilderness
 
 [[spawn]]
 npc = "npc.godwars_ancient_imp"
@@ -789,6 +787,3 @@ coords = "0_47_158_45_10"
 [[spawn]]
 npc = "npc.wilderness_gwd_boulder"
 coords = "3_47_158_45_53"
-
-## God Wars Dungeon Wilderness End
-

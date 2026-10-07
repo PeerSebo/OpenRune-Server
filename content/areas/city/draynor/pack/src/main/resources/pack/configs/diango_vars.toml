@@ -1,0 +1,23 @@
+[[varp]]
+isServerOnly = true
+id = "varp.diango_claimed_banana_hat"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.diango_banana_hat_migrated"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.chronicle_charges"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.diango_oculus_reset"
+scope = "Temp"
+transmit = "Never"

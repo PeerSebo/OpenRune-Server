@@ -7,7 +7,6 @@ import org.rsmod.api.script.onOpLoc1
 import org.rsmod.api.script.onOpNpc1
 import org.rsmod.api.script.onOpNpc3
 import org.rsmod.api.script.onOpNpc4
-import org.rsmod.api.script.onOpNpc5
 import org.rsmod.api.shops.Shops
 import org.rsmod.game.entity.Player
 import org.rsmod.plugin.scripts.PluginScript
@@ -15,17 +14,7 @@ import org.rsmod.plugin.scripts.ScriptContext
 
 class PortSarimDocksScript @Inject constructor(private val shops: Shops) : PluginScript() {
     override fun ScriptContext.startup() {
-        onOpNpc1("npc.klarense") { startDialogue(it.npc) { klarense() } }
-        onOpNpc1("npc.port_task_master_port_sarim") { startDialogue(it.npc) { portMaster() } }
         onOpNpc1("npc.vc_face") { startDialogue(it.npc) { theFace() } }
-
-        onTalkAcross(SHIPWRIGHT) { startDialogue(it) { shipwrightSam() } }
-        onOpNpc3(SHIPWRIGHT) { startDialogue { mesbox(SAILING_LOCKED) } }
-        onOpNpc4(SHIPWRIGHT) { startDialogue { mesbox(SAILING_LOCKED) } }
-        onOpNpc5(SHIPWRIGHT) { startDialogue { mesbox(SAILING_LOCKED) } }
-
-        onOpNpc1("npc.sailing_intro_anne_sarim") { startDialogue(it.npc) { sailingRecruiters() } }
-        onOpNpc1("npc.sailing_intro_will_sarim") { startDialogue(it.npc) { sailingRecruiters() } }
 
         for (crew in TRADER_CREW + TRADER_STAN) {
             val isStan = crew == TRADER_STAN
@@ -39,53 +28,6 @@ class PortSarimDocksScript @Inject constructor(private val shops: Shops) : Plugi
         }
     }
 
-    private suspend fun Dialogue.klarense() {
-        chatPlayer(quiz, "Hey, that's my ship!")
-        chatNpc(
-            neutral,
-            "No, it's not. It may, to the untrained eye, at first appear to be the Lady Lumbridge, " +
-                "but it is definitely not. It's my new ship. It just happens to look slightly " +
-                "similar, is all.",
-        )
-        chatPlayer(
-            angry,
-            "It has Lady Lumbridge painted out and 'Klarense's Cruiser' painted over it!",
-        )
-        chatNpc(neutral, "Nope, you're mistaken. It's my new boat.")
-        chatPlayer(quiz, "Well will you at least take me to Crandor in it?")
-        chatNpc(neutral, "Nope. I don't take passengers on my ship.")
-        chatPlayer(angry, "Argh!")
-    }
-
-    private suspend fun Dialogue.portMaster() {
-        chatPlayer(neutral, "Hello.")
-        chatNpc(neutral, "Hi there. How can I help you?")
-        chatPlayer(quiz, "What do you do around here?")
-        chatNpc(
-            neutral,
-            "I'm the port master. It's my job to keep everything around here running nice and " +
-                "smoothly for all the vessels coming and going.",
-        )
-        val askAboutVessel =
-            choice2(
-                "So could you tell me how I could get my own vessel?",
-                true,
-                "Sounds like quite a challenging job. I'd best not distract you.",
-                false,
-            )
-        if (!askAboutVessel) {
-            chatPlayer(quiz, "Sounds like quite a challenging job. I'd best not distract you.")
-            return
-        }
-        chatPlayer(quiz, "So could you tell me how I could get my own vessel?")
-        chatNpc(
-            confused,
-            "I'm afraid not, but maybe someone else around here could help. I saw a couple of " +
-                "people further north on the docks. I think I heard them saying they were looking " +
-                "for help on their boat.",
-        )
-    }
-
     private suspend fun Dialogue.theFace() {
         chatPlayer(neutral, "Hello.")
         chatNpc(neutral, "Oh. It's you again.")
@@ -95,24 +37,6 @@ class PortSarimDocksScript @Inject constructor(private val shops: Shops) : Plugi
         )
         chatPlayer(happy, "Don't worry, Felkrash has no idea how I figured it out.")
         chatNpc(angry, "And it had better stay that way!")
-    }
-
-    private suspend fun Dialogue.shipwrightSam() {
-        chatNpc(happy, "Greetings! What can I do for you?")
-        chatPlayer(quiz, "Hello there. What do you do around here?")
-        chatNpc(
-            neutral,
-            "I'm a shipwright. I supply boats of all kinds to anyone with the money to afford " +
-                "them.",
-        )
-        chatPlayer(happy, "Interesting... Would I be able to buy one?")
-        chatNpc(
-            neutral,
-            "Sorry, but I don't have any ready for sale right now. I'm sure I will soon, so keep " +
-                "checking back.",
-        )
-        chatPlayer(happy, "Okay, fair enough.")
-        mesbox(SAILING_LOCKED)
     }
 
     private suspend fun Dialogue.sailingRecruiters() {

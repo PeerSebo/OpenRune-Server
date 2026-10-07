@@ -102,11 +102,7 @@ coords = "0_44_50_30_49"
 npc = "npc.skeleton_armed5"
 coords = "0_44_50_34_47"
 
-## Crandor Lab
 
 [[spawn]]
 npc = "npc.dallas_jones_crandor_lab"
 coords = "0_44_151_50_11"
-
-## Crandor Lab End
-

@@ -5,13 +5,13 @@ spawn_menu = 1099
 spawn_menu_init = 45500
 spawn_menu_buttons = 45518
 spawn_menu_labels = 45524
-spawn_menu_search_stop = 45530
+spawn_menu_search_stop = 45533
 
 [gamevals.inv]
 spawn_results = 1100
 
 [gamevals.varp]
-spawn_menu =65479
+spawn_menu = 65454
 
 [gamevals.varbit]
-spawn_include_nulls =65450
+spawn_include_nulls = 65525

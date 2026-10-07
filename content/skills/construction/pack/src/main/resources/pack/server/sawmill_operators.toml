@@ -1,0 +1,23 @@
+[[npc]]
+id = "npc.poh_sawmill_opp"
+inherit = "npc.poh_sawmill_opp"
+isServerOnly = true
+defaultMode = "None"
+moveRestrict = "NoMove"
+wanderRange = 0
+
+[[npc]]
+id = "npc.prif_sawmill_operator"
+inherit = "npc.prif_sawmill_operator"
+isServerOnly = true
+defaultMode = "None"
+moveRestrict = "NoMove"
+wanderRange = 0
+
+[[npc]]
+id = "npc.auburn_sawmill_operator"
+inherit = "npc.auburn_sawmill_operator"
+isServerOnly = true
+defaultMode = "None"
+moveRestrict = "NoMove"
+wanderRange = 0

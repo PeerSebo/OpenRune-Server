@@ -16,7 +16,6 @@ public object DemonbaneChecks {
             "obj.scorching_bow",
         )
 
-    /** Whether an attack of [type] is demonbane: by its spell for magic, else by its weapon. */
     public fun isDemonbane(
         type: HitType,
         righthand: ItemServerType?,

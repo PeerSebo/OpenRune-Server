@@ -7,18 +7,18 @@ import dtx.impl.weighted.*
 import kotlin.random.Random
 
 enum class OreModAmount(val modifyBy: Double) {
-    Miniscule(0.125), Slight(0.25), Small(0.5), Moderate(1.0), Medium(2.0), Large(4.0);
+    Miniscule(0.125), Slight(0.25), Small(0.5), Moderate(1.0), Medium(2.0), Large(4.0)
 }
 
 enum class MetaModDirection(val operation: (Double, Double) -> Double, val opChar: Char) {
-    Increase(Double::plus, '+'), Decrease(Double::minus, '-');
+    Increase(Double::plus, '+'), Decrease(Double::minus, '-')
 }
 
 data class OreFilter(
     val idEquals: String,
     val direction: MetaModDirection,
     val type: OreModAmount,
-): MetaEntryFilter<Player, Item> {
+) : MetaEntryFilter<Player, Item> {
 
     override fun filterEntry(modifier: String): Boolean {
         return modifier == idEquals
@@ -33,7 +33,6 @@ data class OreFilter(
         entry.increaseCurrentWeightBy(modBy)
     }
 }
-
 
 /**
  * Example of a """realistic""" mining node.

@@ -1,0 +1,24 @@
+[[varp]]
+id = "varp.sailing_helm_interaction_world"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.sailing_shipyard_return_coord"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.sailing_shipyard_return_saved"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+id = "varp.sailing_shipyard_return_migrated"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+

@@ -1,0 +1,17 @@
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_stamina_expires_at"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_stamina_remaining"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.consumables_stamina_migrated"
+scope = "Perm"
+transmit = "Never"

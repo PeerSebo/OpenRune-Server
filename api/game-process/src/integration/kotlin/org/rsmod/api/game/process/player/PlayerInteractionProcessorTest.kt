@@ -34,7 +34,6 @@ class PlayerInteractionProcessorTest {
         checkNotNull(dest)
         checkNotNull(player.interaction)
 
-        // Replace original loc.
         placeMapLoc(CoordGrid(0, 50, 50, 22, 43), locTypes.getValue(1274))
 
         advance(ticks = 1)
@@ -43,18 +42,7 @@ class PlayerInteractionProcessorTest {
         assertNotEquals(player.coords, dest)
     }
 
-    /**
-     * This test scenario occurs when a player clicks a npc that is actively moving, but the route
-     * waypoints were processed while the npc was within operable distance to the player.
-     *
-     * In this case, an empty route is detected during early [PlayerRouteRequestProcess] processing.
-     * If the recalc request is cleared and the npc moves later in the same game cycle (which it
-     * will, since it's actively moving), then the player will _not_ move, even though the npc is no
-     * longer within reach.
-     *
-     * This unintended behavior causes the interaction model to send the `I can't reach that!`
-     * message.
-     */
+    /** A moving NPC target can change position before its queued interaction route is consumed. */
     @Test
     fun GameTestState.`recalc request should not be cleared on empty route`() = runGameTest {
         val npc = spawnNpc(CoordGrid(0, 49, 50, 57, 62), sheep)
@@ -69,12 +57,8 @@ class PlayerInteractionProcessorTest {
     }
 
     /**
-     * Test that pathing-entity-target interactions recalculate their route based on the target's
-     * latest position, but only during the last waypoint before reaching the initial destination.
-     *
-     * Scenario in this test where blue tiles are blocked and red tiles are the source and target:
-     *
-     * @see <img width=240 height=239 src="https://i.imgur.com/iniC8VQ.png">
+     * Recalculate moving-target routes only during the last waypoint. Fixture layout:
+     * https://i.imgur.com/iniC8VQ.png
      */
     @Test
     fun GameTestState.`recalculate route during last waypoint stretch`() = runGameTest {
@@ -99,34 +83,24 @@ class PlayerInteractionProcessorTest {
         check(target.coords == targetStart)
         player.opNpc1(target)
 
-        // On the first process, our route request should have filled the player's route
-        // destination, and should contain a total of 3 waypoints to reach the target.
         advance(ticks = 1)
         checkNotNull(player.interaction)
         assertEquals(3, player.routeDestination.size)
 
-        // As the waypoints have been calculated, we can now move the target.
         target.coords = targetEnd
 
-        // Iterate over the next 5 steps, asserting the player's coords and current
-        // route destination waypoint count.
         repeat(4) { i ->
-            // We take into account the first step taken, and then the steps that will be
-            // taken after these process calls.
             val travelled = 1 + (i + 1)
             advance(ticks = 1)
             assertEquals(3, player.routeDestination.size)
             assertEquals(sourceStart.translateZ(-travelled), player.coords)
         }
 
-        // On the 7th step, the player will have reached the first waypoint.
         advance(ticks = 1)
         assertEquals(2, player.routeDestination.size)
         assertEquals(base.translate(0, 0), player.routeDestination.peekFirst())
         assertEquals(base.translate(7, 0), player.coords)
 
-        // Iterate over the next 6 steps, asserting the player's coords and current
-        // route destination waypoint count.
         repeat(6) { i ->
             val travelled = i + 1
             advance(ticks = 1)
@@ -134,38 +108,20 @@ class PlayerInteractionProcessorTest {
             assertEquals(sourceStart.translate(-travelled, -6), player.coords)
         }
 
-        // After 6 steps, the destination from the initial route should still be valid.
         assertEquals(base.translate(0, 0), player.routeDestination.peekFirst())
 
-        // Take the 7th step now, which should lead to the current waypoint being removed.
         advance(ticks = 1)
         assertEquals(1, player.routeDestination.size)
         assertEquals(base.translate(0, 0), player.coords)
 
-        // Process the next step, which should now insert all new waypoints to reach the
-        // updated target position.
         advance(ticks = 1)
         assertEquals(base.translate(7, 0), player.routeDestination.peekFirst())
         assertEquals(base.translate(7, 6), player.routeDestination.peekLast())
         assertEquals(2, player.routeDestination.size)
 
-        // At this point, we _could_ assert that the rest of steps are completed... but that
-        // is out of scope of this test. By now, we have made sure the path was recalculated
-        // and only done so during the final waypoint "line."
     }
 
-    /**
-     * This test ensures that interaction verification is skipped while the player is flagged as
-     * busy.
-     *
-     * Though this test focuses on interactions with locs, the scenario applies to all interaction
-     * types and their respective verification conditions. For example:
-     * - When a target npc becomes delayed as a player is moving toward it for interaction.
-     * - If the player is **not busy**, the interaction and movement will cancel.
-     * - If the player is **busy**, they will continue moving toward the target. If the npc is no
-     *   longer delayed by the time the player loses their delay, the interaction will proceed as
-     *   normal.
-     */
+    /** Protected access pauses interaction validation; it must resume when the modal closes. */
     @Test
     fun GameTestState.`skip interaction verification while player isBusy`() = runGameTest {
         val loc = placeMapLoc(CoordGrid(0, 50, 50, 22, 43), locTypes.getValue(1276))
@@ -180,19 +136,14 @@ class PlayerInteractionProcessorTest {
         checkNotNull(dest)
         checkNotNull(player.interaction)
 
-        // Open a modal for `player.isBusy` condition to return true.
         player.ifOpenMain(interfaces.hpbar_hud)
 
-        // Replace original loc. This would normally cancel the interaction and movement, however,
-        // this won't be the case while the player is busy.
         placeMapLoc(CoordGrid(0, 50, 50, 22, 43), locTypes.getValue(1274))
 
         advance(ticks = 1)
-        // Ensure route is still ongoing and interaction has not been cancelled.
         assertTrue(route.isNotEmpty())
         assertNotNull(player.interaction)
 
-        // Wait until the player's route has been fully consumed.
         advanceUntil(route::isEmpty) {
             "Could not reach destination: coords=${player.coords}, dest=$dest"
         }
@@ -202,7 +153,6 @@ class PlayerInteractionProcessorTest {
         assertTrue(route.isEmpty())
         assertNotNull(player.interaction)
 
-        // Close the previously opened modal so the interaction can process.
         player.ifClose(eventBus)
 
         advance(ticks = 1)
@@ -230,24 +180,15 @@ class PlayerInteractionProcessorTest {
                     CoordGrid(0, 50, 50, 34, 23),
                 )
 
-            // The player should continue moving toward the destination each cycle until the ap
-            // distance condition is met. Internally, the player's waypoints are cleared before
-            // the ap script runs, but they are restored because `apRangeCalled` is set to `true`
-            // during the script's distance verification.
             for (coord in expectedPath) {
                 advance(ticks = 1)
                 assertEquals(coord, player.coords)
             }
 
-            // Once the player has traversed through the expected path, the respective script
-            // should be invoked. In this test, it results in a game message being sent.
             assertMessageSent(ApTestScript.READ_MESSAGE)
 
-            // After a successful ap interaction, the player's route waypoints should _not_ be
-            // restored. This ensures they stop moving toward their previous destination.
             assertTrue(player.routeDestination.isEmpty())
 
-            // Verify that waypoints remain cleared after one more cycle.
             advance(ticks = 1)
             assertTrue(player.routeDestination.isEmpty())
         }
@@ -294,14 +235,8 @@ class PlayerInteractionProcessorTest {
     }
 
     /**
-     * For interactions targeting pathing entities (`Player`s and `Npc`s), the interaction model is
-     * responsible for recalculating the route after the initial interaction step and before
-     * movement processing occurs each tick.
-     *
-     * This behavior is crucial for "persistent" ap interactions, such as ranged combat, where the
-     * player needs to continuously adjust their position to remain within valid ap range. Without
-     * this rerouting, if the target moves away, the player would not follow and would remain out of
-     * range, causing the interaction to fail.
+     * A reroute approach script may override AP range without discarding the active
+     * interaction.
      */
     @Test
     fun GameTestState.`continuously re-route towards pathing entity that leaves valid ap range`() =
@@ -320,32 +255,25 @@ class PlayerInteractionProcessorTest {
             advance(ticks = 1)
             assertMessageSent("Attack target.")
 
-            // Move npc out of the default max ap range from player.
             npc.walk(npc.coords.translateX(3))
 
-            // Player still within valid reroute script ap range.
             advance(ticks = 1)
             assertEquals(npcCoord.translateX(1), npc.coords)
             assertEquals(playerCoord, player.coords)
             assertMessageSent("Attack target.")
 
-            // Player still within valid reroute script ap range.
             advance(ticks = 1)
             assertEquals(npcCoord.translateX(2), npc.coords)
             assertEquals(playerCoord, player.coords)
             assertMessageSent("Attack target.")
 
-            // Player no longer within valid ap range according to reroute script and should begin
-            // moving towards the new npc coords.
             advance(ticks = 1)
             assertEquals(npcCoord.translateX(3), npc.coords)
             assertEquals(playerCoord.translateX(1), player.coords)
             assertMessageSent("Attack target.")
 
-            // Move the npc further away than max ap range.
             npc.coords = npc.coords.translateX(5)
 
-            // Expecting npc to be 12 tiles away from player.
             check(npc.coords.chebyshevDistance(player.coords) == 12)
 
             advance(ticks = 1)
@@ -364,8 +292,6 @@ class PlayerInteractionProcessorTest {
             assertEquals(playerCoord.translateX(5), player.coords)
             assertMessageNotSent("Attack target.")
 
-            // After walking for 5 cycles, the player should be within 7 tiles of the npc.
-            // We should expect the ap script to execute.
             advance(ticks = 1)
             assertEquals(playerCoord.translateX(6), player.coords)
             assertMessageSent("Attack target.")

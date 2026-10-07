@@ -151,7 +151,10 @@ class EctoGhostDiscipleDialogue : PluginScript() {
     private companion object {
         val ITEM_GHOSTSPEAK_AMULET: List<Int> = listOf(
             "obj.amulet_of_ghostspeak".asRSCM(RSCMType.OBJ),
-            "obj.amulet_of_ghostspeak_enchanted".asRSCM(RSCMType.OBJ)
+            "obj.amulet_of_ghostspeak_enchanted".asRSCM(RSCMType.OBJ),
+            "obj.morytania_legs_medium".asRSCM(RSCMType.OBJ),
+            "obj.morytania_legs_hard".asRSCM(RSCMType.OBJ),
+            "obj.morytania_legs_elite".asRSCM(RSCMType.OBJ),
         )
     }
 }

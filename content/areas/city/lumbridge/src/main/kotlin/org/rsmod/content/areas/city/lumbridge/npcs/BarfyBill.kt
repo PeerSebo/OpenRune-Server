@@ -114,7 +114,7 @@ class BarfyBill : PluginScript() {
         )
     }
 
-    // TODO(content): Correct mesanims. The dialogue is from the wiki transcript.
+    // TODO: Correct dialogue animations.
     private suspend fun Dialogue.dugoutCanoeing() {
         chatNpc(
             happy,
@@ -126,7 +126,7 @@ class BarfyBill : PluginScript() {
         chatNpc(neutral, "You will be able to travel 2 stops on the river.")
     }
 
-    // TODO(content): Correct mesanims. The dialogue is from the wiki transcript.
+    // TODO: Correct dialogue animations.
     private suspend fun Dialogue.stableDugoutCanoeing() {
         chatNpc(
             happy,

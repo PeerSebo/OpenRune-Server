@@ -4,6 +4,7 @@ import dev.openrune.rscm.RSCM
 import dev.openrune.rscm.RSCMType
 import jakarta.inject.Inject
 import org.rsmod.api.combat.commons.CombatAttack
+import org.rsmod.api.combat.commons.hook.PvPAttackRestrictionHook
 import org.rsmod.api.combat.manager.PlayerAttackManager
 import org.rsmod.api.combat.manager.RangedAmmoManager
 import org.rsmod.api.combat.player.activateMagicSpecial
@@ -12,11 +13,11 @@ import org.rsmod.api.combat.player.activateRangedSpecial
 import org.rsmod.api.combat.player.activateShieldSpecial
 import org.rsmod.api.combat.player.setPkVars
 import org.rsmod.api.combat.player.specialAttackType
-import org.rsmod.api.death.PvPSkullHook
-import org.rsmod.api.death.PvPSpecialAttackHook
 import org.rsmod.api.combat.weapon.WeaponSpeeds
 import org.rsmod.api.config.constants
 import org.rsmod.api.config.refs.params
+import org.rsmod.api.death.PvPSkullHook
+import org.rsmod.api.death.PvPSpecialAttackHook
 import org.rsmod.api.player.isValidTarget
 import org.rsmod.api.player.lefthand
 import org.rsmod.api.player.protect.ProtectedAccess
@@ -45,6 +46,7 @@ constructor(
     private val spellsReg: SpellAttackRegistry,
     private val skullHooks: Set<PvPSkullHook>,
     private val specialAttackHooks: Set<PvPSpecialAttackHook>,
+    private val attackRestrictionHooks: Set<PvPAttackRestrictionHook>,
 ) {
     suspend fun attack(access: ProtectedAccess, target: Player, attack: CombatAttack.PlayerAttack) {
         when (attack) {
@@ -53,6 +55,23 @@ constructor(
             is CombatAttack.Spell -> access.attackMagicSpell(target, attack)
             is CombatAttack.Staff -> access.attackMagicStaff(target, attack)
         }
+    }
+
+    private fun ProtectedAccess.isAttackAllowed(
+        target: Player,
+        attack: CombatAttack.PlayerAttack,
+    ): Boolean {
+        val special = specialAttackType != SpecialAttackType.None
+        for (hook in attackRestrictionHooks) {
+            val message = hook.restriction(player, target, attack, special) ?: continue
+            if (special) {
+                specialAttackType = SpecialAttackType.None
+            }
+            manager.stopCombat(player)
+            mes(message)
+            return false
+        }
+        return true
     }
 
     private fun ProtectedAccess.applyPkVars(target: Player) {
@@ -72,6 +91,9 @@ constructor(
         if (!canAttack(target)) {
             return
         }
+        if (!isAttackAllowed(target, attack)) {
+            return
+        }
 
         if (manager.isAttackDelayed(player)) {
             manager.continueCombat(player, target)
@@ -81,14 +103,11 @@ constructor(
         // TODO(combat): Add support for and check a target death flag varbit. `stopAction` if true.
         //  Applies to other combat types.
 
-        // Set the next attack clock before executing any special attack, ensuring all attacks
-        // default to the weapon's standard attack delay.
+        // Arm the default weapon delay before invoking a special attack.
         val attackRate = speeds.actual(player)
         manager.setNextAttackDelay(player, attackRate)
 
-        // Important: Special attack handlers are responsible for explicitly calling `opplayer2`
-        // (or a helper function that does so) to re-engage in combat after performing the special
-        // attack.
+        // Special handlers must resume combat explicitly via `opplayer2` (or a helper).
         if (specialAttackType == SpecialAttackType.Weapon) {
             specialAttackType = SpecialAttackType.None
             val activatedSpec = activateMeleeSpecial(target, attack, specialsReg, specialEnergy)
@@ -109,8 +128,7 @@ constructor(
             }
         }
 
-        // Important: Weapon attack handlers are responsible for explicitly calling `opplayer2` (or
-        // a helper function that does so) to re-engage in combat after performing their attack.
+        // Weapon handlers must resume combat explicitly via `opplayer2` (or a helper).
         val specializedWeapon = weaponsReg.getMelee(attack.weapon)
         if (specializedWeapon != null) {
             val attackHandled = specializedWeapon.attack(this, target, attack)
@@ -133,20 +151,19 @@ constructor(
         if (!canAttack(target)) {
             return
         }
+        if (!isAttackAllowed(target, attack)) {
+            return
+        }
 
         if (manager.isAttackDelayed(player)) {
             manager.continueCombat(player, target)
             return
         }
 
-        // Set the next attack clock before executing any special attack, ensuring all attacks
-        // default to the weapon's standard attack delay.
         val attackRate = speeds.actual(player)
         manager.setNextAttackDelay(player, attackRate)
 
-        // Important: Special attack handlers are responsible for explicitly calling `opplayer2`
-        // (or a helper function that does so) to re-engage in combat after performing the special
-        // attack.
+        // Special handlers must resume combat explicitly via `opplayer2` (or a helper).
         if (specialAttackType == SpecialAttackType.Weapon) {
             specialAttackType = SpecialAttackType.None
             val activatedSpec = activateRangedSpecial(target, attack, specialsReg, specialEnergy)
@@ -169,8 +186,7 @@ constructor(
 
         val righthandType = getInvObj(attack.weapon)
 
-        // Important: Weapon attack handlers are responsible for explicitly calling `opplayer2` (or
-        // a helper function that does so) to re-engage in combat after performing their attack.
+        // Weapon handlers must resume combat explicitly via `opplayer2` (or a helper).
         val specializedWeapon = weaponsReg.getRanged(attack.weapon)
         if (specializedWeapon != null) {
             val attackHandled = specializedWeapon.attack(this, target, attack)
@@ -212,18 +228,14 @@ constructor(
 
         val projectileID = righthandType.paramOrNull(params.proj_type)?.id
         val travelSpotanim = weaponType.paramOrNull(params.proj_travel)
-        // All valid ammunition requires a `proj_travel` spotanim type and `proj_type` projanim type
-        // param so that the projectile can be created and referenced for its proper delays.
         if (projectileID == null || travelSpotanim == null) {
             manager.stopCombat(player)
             mes("You are unable to fire your ammunition.")
             return
         }
 
-        val projanimType = RSCM.getReverseMapping(RSCMType.PROJANIM,projectileID)
+        val projanimType = RSCM.getReverseMapping(RSCMType.PROJANIM, projectileID)
 
-        // All valid ranged weapons require an `attack_anim_stance1` seq type param to be used in
-        // combat.
         val playedAnim = manager.playWeaponFx(player, attack)
         if (!playedAnim) {
             manager.stopCombat(player)
@@ -237,7 +249,7 @@ constructor(
         // has no `proj_launch` param, a "null" (-1) spotanim will still be sent in the same slot
         // and height as usual.
         val launchSpotanim = weaponType.paramOrNull(params.proj_launch)?.id ?: NULL_SPOTANIM_ID
-        player.spotanim(RSCM.getReverseMapping(RSCMType.SPOTANIM,launchSpotanim), height = 96, slot = constants.spotanim_slot_combat)
+        player.spotanim(RSCM.getReverseMapping(RSCMType.SPOTANIM, launchSpotanim), height = 96, slot = constants.spotanim_slot_combat)
 
         val projanim = manager.spawnProjectile(player, target, travelSpotanim, projanimType)
         val (serverDelay, clientDelay) = projanim.durations
@@ -274,6 +286,9 @@ constructor(
         if (!canAttack(target)) {
             return
         }
+        if (!isAttackAllowed(target, attack)) {
+            return
+        }
 
         if (manager.isAttackDelayed(player)) {
             manager.continueCombat(player, target, attack.spell)
@@ -283,14 +298,13 @@ constructor(
         val attackRate = MAGIC_SPELL_ATTACK_RATE
         manager.setNextAttackDelay(player, attackRate)
 
-        val spell = spellsReg[RSCM.getReverseMapping(RSCMType.OBJ,attack.spell.obj.id)]
+        val spell = spellsReg[RSCM.getReverseMapping(RSCMType.OBJ, attack.spell.obj.id)]
         if (spell != null) {
             applyPkVars(target)
             spell.attack(this, target, attack)
             return
         }
 
-        // All magic spell attacks must be registered in `SpellAttackRegistry`.
         manager.stopCombat(player)
         mes("You attempt to cast the spell, but nothing happens.")
     }
@@ -302,20 +316,19 @@ constructor(
         if (!canAttack(target)) {
             return
         }
+        if (!isAttackAllowed(target, attack)) {
+            return
+        }
 
         if (manager.isAttackDelayed(player)) {
             manager.continueCombat(player, target)
             return
         }
 
-        // Set the next attack clock before executing any special attack, ensuring all attacks
-        // default to the weapon's standard attack delay.
         val attackRate = MAGIC_STAFF_ATTACK_RATE
         manager.setNextAttackDelay(player, attackRate)
 
-        // Important: Special attack handlers are responsible for explicitly calling `opplayer2`
-        // (or a helper function that does so) to re-engage in combat after performing the special
-        // attack.
+        // Special handlers must resume combat explicitly via `opplayer2` (or a helper).
         if (specialAttackType == SpecialAttackType.Weapon) {
             specialAttackType = SpecialAttackType.None
             val activatedSpec = activateMagicSpecial(target, attack, specialsReg, specialEnergy)
@@ -335,8 +348,7 @@ constructor(
             }
         }
 
-        // Important: Weapon attack handlers are responsible for explicitly calling `opplayer2` (or
-        // a helper function that does so) to re-engage in combat after performing their attack.
+        // Weapon handlers must resume combat explicitly via `opplayer2` (or a helper).
         val specializedWeapon = weaponsReg.getMagic(attack.weapon)
         if (specializedWeapon != null) {
             val attackHandled = specializedWeapon.attack(this, target, attack)
@@ -346,9 +358,6 @@ constructor(
             }
         }
 
-        // Since most (if not all) powered staves require specialized attack handling logic, they
-        // are expected to be registered as separate weapons in the `WeaponRegistry`. This ensures
-        // their unique behavior is handled explicitly rather than relying on fallback logic.
         manager.stopCombat(player)
         mes("Your staff fails to respond.")
     }

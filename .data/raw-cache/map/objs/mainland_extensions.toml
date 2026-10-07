@@ -1,4 +1,3 @@
-## Arandar Mainland
 
 [[spawn]]
 obj = "obj.red_spiders_eggs"
@@ -24,7 +23,6 @@ coords = "0_36_51_39_49"
 obj = "obj.red_spiders_eggs"
 coords = "0_36_51_42_46"
 
-## Fisher Kings Realm
 
 [[spawn]]
 obj = "obj.grail_bell"
@@ -46,7 +44,6 @@ coords = "0_41_73_2_50"
 obj = "obj.magic_whistle"
 coords = "0_41_73_3_56"
 
-## Gwenith
 
 [[spawn]]
 obj = "obj.bread"
@@ -56,7 +53,6 @@ coords = "0_34_53_33_22"
 obj = "obj.bucket_water"
 coords = "0_34_53_37_23"
 
-## Mynydd
 
 [[spawn]]
 obj = "obj.iron_bar"
@@ -74,7 +70,6 @@ coords = "0_33_53_58_38"
 obj = "obj.iron_knife"
 coords = "0_33_53_58_40"
 
-## Tirannwn Mainland
 
 [[spawn]]
 obj = "obj.plank_teak"
@@ -108,7 +103,6 @@ coords = "0_34_50_32_59"
 obj = "obj.white_berries"
 coords = "0_35_49_22_32"
 
-## Tree Gnome Stronghold
 
 [[spawn]]
 obj = "obj.bones_burnt"
@@ -133,6 +127,3 @@ coords = "0_31_87_41_40"
 [[spawn]]
 obj = "obj.burntfish5"
 coords = "0_31_87_42_53"
-
-## Tree Gnome Stronghold End
-

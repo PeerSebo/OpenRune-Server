@@ -48,26 +48,6 @@ constructor(
     private val pvnMultiAccuracy: PvNMultiStyleAccuracy,
     private val pvpMultiAccuracy: PvPMultiStyleAccuracy,
 ) {
-    /**
-     * Rolls for melee accuracy to determine if an attack from a [player] against a [target] npc is
-     * successful.
-     *
-     * This function calculates the hit chance based on the player's attack roll and the npc's
-     * defence roll, then uses a value from the random number generator ([random]) to determine if
-     * the attack hits.
-     *
-     * @param attackType The [MeleeAttackType] used for the attack roll, usually derived from the
-     *   player's current stance.
-     * @param attackStyle The [MeleeAttackStyle] used for the attack roll, usually derived from the
-     *   player's current stance.
-     * @param blockType The [MeleeAttackType] used for the defense roll. In most cases, this matches
-     *   [attackType], but certain special attacks may use a different type.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollMeleeAccuracy(
         player: Player,
         target: Npc,
@@ -82,23 +62,6 @@ constructor(
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the melee hit chance based on the [player]'s attack roll and the [target]'s
-     * defence roll.
-     *
-     * @param attackType The [MeleeAttackType] used for the attack roll, usually derived from the
-     *   [player]'s current stance.
-     * @param attackStyle The [MeleeAttackStyle] used for the attack roll, usually derived from the
-     *   [player]'s current stance.
-     * @param blockType The [MeleeAttackType] used for the defense roll. In most cases, this matches
-     *   [attackType], but certain special attacks may use a different type. For example, the Dragon
-     *   Longsword special attack applies the player's current attack type for the attack roll but
-     *   always uses `Slash` for the defense roll.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getMeleeHitChance(
         player: Player,
         target: Npc,
@@ -116,26 +79,6 @@ constructor(
             specialMultiplier = specMultiplier,
         )
 
-    /**
-     * Rolls for melee accuracy to determine if an attack from a [player] against a [target] player
-     * is successful.
-     *
-     * This function calculates the hit chance based on the player's attack roll and the target's
-     * defence roll, then uses a value from the random number generator ([random]) to determine if
-     * the attack hits.
-     *
-     * @param attackType The [MeleeAttackType] used for the attack roll, usually derived from the
-     *   player's current stance.
-     * @param attackStyle The [MeleeAttackStyle] used for the attack roll, usually derived from the
-     *   player's current stance.
-     * @param blockType The [MeleeAttackType] used for the defense roll. In most cases, this matches
-     *   [attackType], but certain special attacks may use a different type.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollMeleeAccuracy(
         player: Player,
         target: Player,
@@ -150,23 +93,6 @@ constructor(
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the melee hit chance based on the [player]'s attack roll and the [target]'s
-     * defence roll.
-     *
-     * @param attackType The [MeleeAttackType] used for the attack roll, usually derived from the
-     *   [player]'s current stance.
-     * @param attackStyle The [MeleeAttackStyle] used for the attack roll, usually derived from the
-     *   [player]'s current stance.
-     * @param blockType The [MeleeAttackType] used for the defense roll. In most cases, this matches
-     *   [attackType], but certain special attacks may use a different type. For example, the Dragon
-     *   Longsword special attack applies the player's current attack type for the attack roll but
-     *   always uses `Slash` for the defense roll.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getMeleeHitChance(
         player: Player,
         target: Player,
@@ -184,20 +110,6 @@ constructor(
             specialMultiplier = specMultiplier,
         )
 
-    /**
-     * Rolls for melee accuracy to determine if an attack from an [npc] against a [target] player is
-     * successful.
-     *
-     * This function calculates the hit chance based on the npc's attack roll and the player's
-     * defence roll, then uses a value from the random number generator ([random]) to determine if
-     * the attack hits.
-     *
-     * @param attackType The [MeleeAttackType] used for the attack roll, typically based on the
-     *   npc's current type of attack.
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollMeleeAccuracy(
         npc: Npc,
         target: Player,
@@ -208,32 +120,9 @@ constructor(
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the melee hit chance based on the [npc]'s attack roll and the [target]'s defence
-     * roll.
-     *
-     * @param attackType The [MeleeAttackType] used for the attack roll, typically based on the
-     *   [npc]'s current type of attack.
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getMeleeHitChance(npc: Npc, target: Player, attackType: MeleeAttackType?): Int =
         nvpMeleeAccuracy.getHitChance(npc, target, attackType)
 
-    /**
-     * Rolls for melee accuracy to determine if an attack from an [npc] against a [target] npc is
-     * successful.
-     *
-     * This function calculates the hit chance based on the npc's attack roll and the target npc's
-     * defence roll, then uses a value from the random number generator ([random]) to determine if
-     * the attack hits.
-     *
-     * @param attackType The [MeleeAttackType] used for the attack roll, typically based on the
-     *   npc's current type of attack.
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollMeleeAccuracy(
         npc: Npc,
         target: Npc,
@@ -244,38 +133,9 @@ constructor(
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the melee hit chance based on the [npc]'s attack roll and the [target]'s defence
-     * roll.
-     *
-     * @param attackType The [MeleeAttackType] used for the attack roll, typically based on the
-     *   [npc]'s current type of attack.
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getMeleeHitChance(npc: Npc, target: Npc, attackType: MeleeAttackType?): Int =
         nvnMeleeAccuracy.getHitChance(npc, target, attackType)
 
-    /**
-     * Rolls for ranged accuracy to determine if an attack from a [player] against a [target] npc is
-     * successful.
-     *
-     * This function calculates the hit chance based on the player's attack roll and the npc's
-     * defence roll, then uses a value from the random number generator ([random]) to determine if
-     * the attack hits.
-     *
-     * @param attackType The [RangedAttackType] used for the attack roll, usually derived from the
-     *   player's current stance.
-     * @param attackStyle The [RangedAttackStyle] used for the attack roll, usually derived from the
-     *   player's current stance.
-     * @param blockType The [RangedAttackType] used for the defence roll. In most cases, this
-     *   matches [attackType], but certain special attacks may use a different type.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollRangedAccuracy(
         player: Player,
         target: Npc,
@@ -290,21 +150,6 @@ constructor(
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the ranged hit chance based on the [player]'s attack roll and the [target]'s
-     * defence roll.
-     *
-     * @param attackType The [RangedAttackType] used for the attack roll, usually derived from the
-     *   [player]'s current stance.
-     * @param attackStyle The [RangedAttackStyle] used for the attack roll, usually derived from the
-     *   [player]'s current stance.
-     * @param blockType The [RangedAttackType] used for the defence roll. In most cases, this
-     *   matches [attackType], but certain special attacks may use a different type.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getRangedHitChance(
         player: Player,
         target: Npc,
@@ -322,24 +167,6 @@ constructor(
             specialMultiplier = specMultiplier,
         )
 
-    /**
-     * Rolls for ranged accuracy to determine if an attack from a [player] against a [target] player
-     * is successful.
-     *
-     * This function calculates the hit chance based on the player's attack roll and the player's
-     * defence roll, then uses a value from the random number generator ([random]) to determine if
-     * the attack hits.
-     *
-     * @param attackType The [RangedAttackType] used for the attack roll, usually derived from the
-     *   player's current stance.
-     * @param attackStyle The [RangedAttackStyle] used for the attack roll, usually derived from the
-     *   player's current stance.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollRangedAccuracy(
         player: Player,
         target: Player,
@@ -352,19 +179,6 @@ constructor(
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the ranged hit chance based on the [player]'s attack roll and the [target]'s
-     * defence roll.
-     *
-     * @param attackType The [RangedAttackType] used for the attack roll, usually derived from the
-     *   player's current stance.
-     * @param attackStyle The [RangedAttackStyle] used for the attack roll, usually derived from the
-     *   [player]'s current stance.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getRangedHitChance(
         player: Player,
         target: Player,
@@ -380,77 +194,22 @@ constructor(
             specialMultiplier = specMultiplier,
         )
 
-    /**
-     * Rolls for ranged accuracy to determine if an attack from an [npc] against a [target] player
-     * is successful.
-     *
-     * This function calculates the hit chance based on the npc's attack roll and the player's
-     * defence roll, then uses a value from the random number generator ([random]) to determine if
-     * the attack hits.
-     *
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollRangedAccuracy(npc: Npc, target: Player, random: GameRandom): Boolean {
         val hitChance = getRangedHitChance(npc, target)
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the ranged hit chance based on the [npc]'s attack roll and the [target]'s defence
-     * roll.
-     *
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getRangedHitChance(npc: Npc, target: Player): Int =
         nvpRangedAccuracy.getHitChance(npc, target)
 
-    /**
-     * Rolls for ranged accuracy to determine if an attack from an [npc] against a [target] npc is
-     * successful.
-     *
-     * This function calculates the hit chance based on the npc's attack roll and the player's
-     * defence roll, then uses a value from the random number generator ([random]) to determine if
-     * the attack hits.
-     *
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollRangedAccuracy(npc: Npc, target: Npc, random: GameRandom): Boolean {
         val hitChance = getRangedHitChance(npc, target)
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the ranged hit chance based on the [npc]'s attack roll and the [target]'s defence
-     * roll.
-     *
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getRangedHitChance(npc: Npc, target: Npc): Int =
         nvnRangedAccuracy.getHitChance(npc, target)
 
-    /**
-     * Rolls for magic spell accuracy to determine if a spell cast by a [player] against a [target]
-     * npc is successful.
-     *
-     * This function calculates the hit chance based on the player's magic accuracy and the target
-     * npc's magic defence, then uses a value from the random number generator ([random]) to
-     * determine if the spell hits.
-     *
-     * @param spell The [ItemServerType] representing the spell being cast (e.g.,
-     *   `"obj.01_wind_strike"` for the Wind strike spell).
-     * @param spellbook The [Spellbook] the spell belongs to (e.g., Standard or Ancients), usually
-     *   derived from the player's current spellbook.
-     * @param usedSunfireRune Whether the player used a Sunfire rune for the spell.
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollSpellAccuracy(
         player: Player,
         target: Npc,
@@ -463,18 +222,6 @@ constructor(
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the magic spell hit chance based on the [player]'s magic attack roll and the
-     * [target]'s magic defence roll.
-     *
-     * @param spell The [ItemServerType] representing the spell being cast (e.g.,
-     *   `"obj.01_wind_strike"` for the Wind strike spell).
-     * @param spellbook The [Spellbook] the spell belongs to (e.g., Standard or Ancients), usually
-     *   derived from the player's current spellbook.
-     * @param usedSunfireRune Whether the player used a Sunfire rune for the spell.
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getSpellHitChance(
         player: Player,
         target: Npc,
@@ -490,23 +237,6 @@ constructor(
             usedSunfireRune = usedSunfireRune,
         )
 
-    /**
-     * Rolls for magic spell accuracy to determine if a spell cast by a [player] against a [target]
-     * player is successful.
-     *
-     * This function calculates the hit chance based on the player's magic accuracy and the target
-     * player's magic defence, then uses a value from the random number generator ([random]) to
-     * determine if the spell hits.
-     *
-     * @param spell The [ItemServerType] representing the spell being cast (e.g.,
-     *   `"obj.01_wind_strike"` for the Wind strike spell).
-     * @param spellbook The [Spellbook] the spell belongs to (e.g., Standard or Ancients), usually
-     *   derived from the player's current spellbook.
-     * @param usedSunfireRune Whether the player used a Sunfire rune for the spell.
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollSpellAccuracy(
         player: Player,
         target: Player,
@@ -519,18 +249,6 @@ constructor(
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the magic spell hit chance based on the [player]'s magic attack roll and the
-     * [target]'s magic defence roll.
-     *
-     * @param spell The [ItemServerType] representing the spell being cast (e.g.,
-     *   `"obj.01_wind_strike"` for the Wind strike spell).
-     * @param spellbook The [Spellbook] the spell belongs to (e.g., Standard or Ancients), usually
-     *   derived from the player's current spellbook.
-     * @param usedSunfireRune Whether the player used a Sunfire rune for the spell.
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getSpellHitChance(
         player: Player,
         target: Player,
@@ -546,22 +264,6 @@ constructor(
             usedSunfireRune = usedSunfireRune,
         )
 
-    /**
-     * Rolls for powered magic staff accuracy to determine if the built-in spell used by a [player]
-     * against a [target] npc is successful.
-     *
-     * This function calculates the hit chance based on the player's magic accuracy and the target
-     * npc's magic defence, then uses a value from the random number generator ([random]) to
-     * determine whether the built-in spell hits.
-     *
-     * @param attackStyle The [MagicAttackStyle] used for the attack roll, usually derived from the
-     *   [player]'s current stance.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollStaffAccuracy(
         player: Player,
         target: Npc,
@@ -573,17 +275,6 @@ constructor(
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the powered magic staff hit chance based on the [player]'s magic attack roll and
-     * the [target]'s magic defence roll.
-     *
-     * @param attackStyle The [MagicAttackStyle] used for the attack roll, usually derived from the
-     *   [player]'s current stance.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getStaffHitChance(
         player: Player,
         target: Npc,
@@ -597,22 +288,6 @@ constructor(
             specialMultiplier = specMultiplier,
         )
 
-    /**
-     * Rolls for powered magic staff accuracy to determine if the built-in spell used by a [player]
-     * against a [target] player is successful.
-     *
-     * This function calculates the hit chance based on the player's magic accuracy and the target
-     * magic defence, then uses a value from the random number generator ([random]) to determine
-     * whether the built-in spell hits.
-     *
-     * @param attackStyle The [MagicAttackStyle] used for the attack roll, usually derived from the
-     *   [player]'s current stance.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollStaffAccuracy(
         player: Player,
         target: Player,
@@ -624,17 +299,6 @@ constructor(
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the powered magic staff hit chance based on the [player]'s magic attack roll and
-     * the [target]'s magic defence roll.
-     *
-     * @param attackStyle The [MagicAttackStyle] used for the attack roll, usually derived from the
-     *   [player]'s current stance.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getStaffHitChance(
         player: Player,
         target: Player,
@@ -648,76 +312,22 @@ constructor(
             specialMultiplier = specMultiplier,
         )
 
-    /**
-     * Rolls for magic accuracy to determine if an attack from an [npc] against a [target] player is
-     * successful.
-     *
-     * This function calculates the hit chance based on the npc's attack roll and the player's
-     * defence roll, then uses a value from the random number generator ([random]) to determine if
-     * the attack hits.
-     *
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollMagicAccuracy(npc: Npc, target: Player, random: GameRandom): Boolean {
         val hitChance = getMagicHitChance(npc, target)
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the magic hit chance based on the [npc]'s attack roll and the [target]'s defence
-     * roll.
-     *
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getMagicHitChance(npc: Npc, target: Player): Int =
         nvpMagicAccuracy.getHitChance(npc, target)
 
-    /**
-     * Rolls for magic accuracy to determine if an attack from an [npc] against a [target] npc is
-     * successful.
-     *
-     * This function calculates the hit chance based on the npc's attack roll and the target npc's
-     * defence roll, then uses a value from the random number generator ([random]) to determine if
-     * the attack hits.
-     *
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollMagicAccuracy(npc: Npc, target: Npc, random: GameRandom): Boolean {
         val hitChance = getMagicHitChance(npc, target)
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the magic hit chance based on the [npc]'s attack roll and the [target]'s defence
-     * roll.
-     *
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getMagicHitChance(npc: Npc, target: Npc): Int =
         nvnMagicAccuracy.getHitChance(npc, target)
 
-    /**
-     * Rolls for magical-melee accuracy to determine if an attack from a [player] against a [target]
-     * npc is successful.
-     *
-     * This function calculates the hit chance based on the player's melee attack roll and the npc's
-     * magic defence roll, then uses a value from the random number generator ([random]) to
-     * determine if the attack hits.
-     *
-     * @param attackType The [MeleeAttackType] used for the attack roll.
-     * @param attackStyle The [MeleeAttackStyle] used for the attack roll.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollMagicalMeleeAccuracy(
         player: Player,
         target: Npc,
@@ -731,17 +341,6 @@ constructor(
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the magical-melee hit chance based on the [player]'s melee attack roll and the
-     * [target]'s magic defence roll.
-     *
-     * @param attackType The [MeleeAttackType] used for the attack roll.
-     * @param attackStyle The [MeleeAttackStyle] used for the attack roll.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getMagicalMeleeHitChance(
         player: Player,
         target: Npc,
@@ -757,22 +356,6 @@ constructor(
             specialMultiplier = specMultiplier,
         )
 
-    /**
-     * Rolls for magical-melee accuracy to determine if an attack from a [player] against a [target]
-     * player is successful.
-     *
-     * This function calculates the hit chance based on the player's melee attack roll and the
-     * target's magic defence roll, then uses a value from the random number generator ([random]) to
-     * determine if the attack hits.
-     *
-     * @param attackType The [MeleeAttackType] used for the attack roll.
-     * @param attackStyle The [MeleeAttackStyle] used for the attack roll.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollMagicalMeleeAccuracy(
         player: Player,
         target: Player,
@@ -786,17 +369,6 @@ constructor(
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the magical-melee hit chance based on the [player]'s melee attack roll and the
-     * [target]'s magic defence roll.
-     *
-     * @param attackType The [MeleeAttackType] used for the attack roll.
-     * @param attackStyle The [MeleeAttackStyle] used for the attack roll.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getMagicalMeleeHitChance(
         player: Player,
         target: Player,
@@ -812,77 +384,22 @@ constructor(
             specialMultiplier = specMultiplier,
         )
 
-    /**
-     * Rolls for magical-melee accuracy to determine if an attack from an [npc] against a [target]
-     * player is successful.
-     *
-     * This function calculates the hit chance based on the npc's melee attack roll and the player's
-     * magic defence roll, then uses a value from the random number generator ([random]) to
-     * determine if the attack hits.
-     *
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollMagicalMeleeAccuracy(npc: Npc, target: Player, random: GameRandom): Boolean {
         val hitChance = getMagicalMeleeHitChance(npc, target)
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the magical-melee hit chance based on the [npc]'s melee attack roll and the
-     * [target]'s magic defence roll.
-     *
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getMagicalMeleeHitChance(npc: Npc, target: Player): Int =
         nvpMultiAccuracy.getMagicalMeleeHitChance(npc, target)
 
-    /**
-     * Rolls for magical-melee accuracy to determine if an attack from an [npc] against a [target]
-     * npc is successful.
-     *
-     * This function calculates the hit chance based on the npc's melee attack roll and the target
-     * npc's magic defence roll, then uses a value from the random number generator ([random]) to
-     * determine if the attack hits.
-     *
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollMagicalMeleeAccuracy(npc: Npc, target: Npc, random: GameRandom): Boolean {
         val hitChance = getMagicalMeleeHitChance(npc, target)
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the magical-melee hit chance based on the [npc]'s melee attack roll and the
-     * [target]'s magic defence roll.
-     *
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getMagicalMeleeHitChance(npc: Npc, target: Npc): Int =
         nvnMultiAccuracy.getMagicalMeleeHitChance(npc, target)
 
-    /**
-     * Rolls for ranged-melee accuracy to determine if an attack from a [player] against a [target]
-     * npc is successful.
-     *
-     * This function calculates the hit chance based on the player's melee attack roll and the npc's
-     * ranged defence roll, then uses a value from the random number generator ([random]) to
-     * determine if the attack hits.
-     *
-     * @param attackType The [MeleeAttackType] used for the attack roll.
-     * @param attackStyle The [MeleeAttackStyle] used for the attack roll.
-     * @param blockType The [RangedAttackType] used for the defence roll.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollRangedMeleeAccuracy(
         player: Player,
         target: Npc,
@@ -904,18 +421,6 @@ constructor(
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the ranged-melee hit chance based on the [player]'s melee attack roll and the
-     * [target]'s ranged defence roll.
-     *
-     * @param attackType The [MeleeAttackType] used for the attack roll.
-     * @param attackStyle The [MeleeAttackStyle] used for the attack roll.
-     * @param blockType The [RangedAttackType] used for the defence roll.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getRangedMeleeHitChance(
         player: Player,
         target: Npc,
@@ -933,22 +438,6 @@ constructor(
             specialMultiplier = specMultiplier,
         )
 
-    /**
-     * Rolls for ranged-melee accuracy to determine if an attack from a [player] against a [target]
-     * player is successful.
-     *
-     * This function calculates the hit chance based on the player's melee attack roll and the
-     * target's ranged defence roll, then uses a value from the random number generator ([random])
-     * to determine if the attack hits.
-     *
-     * @param attackType The [MeleeAttackType] used for the attack roll.
-     * @param attackStyle The [MeleeAttackStyle] used for the attack roll.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollRangedMeleeAccuracy(
         player: Player,
         target: Player,
@@ -968,17 +457,6 @@ constructor(
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the ranged-melee hit chance based on the [player]'s melee attack roll and the
-     * [target]'s ranged defence roll.
-     *
-     * @param attackType The [MeleeAttackType] used for the attack roll.
-     * @param attackStyle The [MeleeAttackStyle] used for the attack roll.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getRangedMeleeHitChance(
         player: Player,
         target: Player,
@@ -994,76 +472,22 @@ constructor(
             specialMultiplier = specMultiplier,
         )
 
-    /**
-     * Rolls for ranged-melee accuracy to determine if an attack from an [npc] against a [target]
-     * player is successful.
-     *
-     * This function calculates the hit chance based on the npc's melee attack roll and the player's
-     * ranged defence roll, then uses a value from the random number generator ([random]) to
-     * determine if the attack hits.
-     *
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollRangedMeleeAccuracy(npc: Npc, target: Player, random: GameRandom): Boolean {
         val hitChance = getRangedMeleeHitChance(npc, target)
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the ranged-melee hit chance based on the [npc]'s melee attack roll and the
-     * [target]'s ranged defence roll.
-     *
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getRangedMeleeHitChance(npc: Npc, target: Player): Int =
         nvpMultiAccuracy.getRangedMeleeHitChance(npc, target)
 
-    /**
-     * Rolls for ranged-melee accuracy to determine if an attack from an [npc] against a [target]
-     * npc is successful.
-     *
-     * This function calculates the hit chance based on the npc's melee attack roll and the target
-     * npc's ranged defence roll, then uses a value from the random number generator ([random]) to
-     * determine if the attack hits.
-     *
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollRangedMeleeAccuracy(npc: Npc, target: Npc, random: GameRandom): Boolean {
         val hitChance = getRangedMeleeHitChance(npc, target)
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the ranged-melee hit chance based on the [npc]'s melee attack roll and the
-     * [target]'s ranged defence roll.
-     *
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getRangedMeleeHitChance(npc: Npc, target: Npc): Int =
         nvnMultiAccuracy.getRangedMeleeHitChance(npc, target)
 
-    /**
-     * Rolls for ranged-magic accuracy to determine if an attack from a [player] against a [target]
-     * npc is successful.
-     *
-     * This function calculates the hit chance based on the player's magic attack roll and the npc's
-     * ranged defence roll, then uses a value from the random number generator ([random]) to
-     * determine if the attack hits.
-     *
-     * @param attackStyle The [MagicAttackStyle] used for the attack roll.
-     * @param blockType The [RangedAttackType] used for the defence roll.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollRangedMagicAccuracy(
         player: Player,
         target: Npc,
@@ -1077,17 +501,6 @@ constructor(
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the ranged-magic hit chance based on the [player]'s magic attack roll and the
-     * [target]'s ranged defence roll.
-     *
-     * @param attackStyle The [MagicAttackStyle] used for the attack roll.
-     * @param blockType The [RangedAttackType] used for the defence roll.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getRangedMagicHitChance(
         player: Player,
         target: Npc,
@@ -1103,21 +516,6 @@ constructor(
             specialMultiplier = specMultiplier,
         )
 
-    /**
-     * Rolls for ranged-magic accuracy to determine if an attack from a [player] against a [target]
-     * player is successful.
-     *
-     * This function calculates the hit chance based on the player's magic attack roll and the
-     * target's ranged defence roll, then uses a value from the random number generator ([random])
-     * to determine if the attack hits.
-     *
-     * @param attackStyle The [MagicAttackStyle] used for the attack roll.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollRangedMagicAccuracy(
         player: Player,
         target: Player,
@@ -1129,16 +527,6 @@ constructor(
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the ranged-magic hit chance based on the [player]'s magic attack roll and the
-     * [target]'s ranged defence roll.
-     *
-     * @param attackStyle The [MagicAttackStyle] used for the attack roll.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getRangedMagicHitChance(
         player: Player,
         target: Player,
@@ -1152,76 +540,22 @@ constructor(
             specialMultiplier = specMultiplier,
         )
 
-    /**
-     * Rolls for ranged-magic accuracy to determine if an attack from an [npc] against a [target]
-     * player is successful.
-     *
-     * This function calculates the hit chance based on the npc's magic attack roll and the player's
-     * ranged defence roll, then uses a value from the random number generator ([random]) to
-     * determine if the attack hits.
-     *
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollRangedMagicAccuracy(npc: Npc, target: Player, random: GameRandom): Boolean {
         val hitChance = getRangedMagicHitChance(npc, target)
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the ranged-magic hit chance based on the [npc]'s magic attack roll and the
-     * [target]'s ranged defence roll.
-     *
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getRangedMagicHitChance(npc: Npc, target: Player): Int =
         nvpMultiAccuracy.getRangedMagicHitChance(npc, target)
 
-    /**
-     * Rolls for ranged-magic accuracy to determine if an attack from an [npc] against a [target]
-     * npc is successful.
-     *
-     * This function calculates the hit chance based on the npc's magic attack roll and the target
-     * npc's ranged defence roll, then uses a value from the random number generator ([random]) to
-     * determine if the attack hits.
-     *
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollRangedMagicAccuracy(npc: Npc, target: Npc, random: GameRandom): Boolean {
         val hitChance = getRangedMagicHitChance(npc, target)
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the ranged-magic hit chance based on the [npc]'s magic attack roll and the
-     * [target]'s ranged defence roll.
-     *
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getRangedMagicHitChance(npc: Npc, target: Npc): Int =
         nvnMultiAccuracy.getRangedMagicHitChance(npc, target)
 
-    /**
-     * Rolls for magical-ranged accuracy to determine if an attack from a [player] against a
-     * [target] npc is successful.
-     *
-     * This function calculates the hit chance based on the player's ranged attack roll and the
-     * npc's magic defence roll, then uses a value from the random number generator ([random]) to
-     * determine if the attack hits.
-     *
-     * @param attackType The [RangedAttackType] used for the attack roll.
-     * @param attackStyle The [RangedAttackStyle] used for the attack roll.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollMagicalRangedAccuracy(
         player: Player,
         target: Npc,
@@ -1235,17 +569,6 @@ constructor(
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the magical-ranged hit chance based on the [player]'s ranged attack roll and the
-     * [target]'s magic defence roll.
-     *
-     * @param attackType The [RangedAttackType] used for the attack roll.
-     * @param attackStyle The [RangedAttackStyle] used for the attack roll.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getMagicalRangedHitChance(
         player: Player,
         target: Npc,
@@ -1261,22 +584,6 @@ constructor(
             specialMultiplier = specMultiplier,
         )
 
-    /**
-     * Rolls for magical-ranged accuracy to determine if an attack from a [player] against a
-     * [target] player is successful.
-     *
-     * This function calculates the hit chance based on the player's ranged attack roll and the
-     * target's magic defence roll, then uses a value from the random number generator ([random]) to
-     * determine if the attack hits.
-     *
-     * @param attackType The [RangedAttackType] used for the attack roll.
-     * @param attackStyle The [RangedAttackStyle] used for the attack roll.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollMagicalRangedAccuracy(
         player: Player,
         target: Player,
@@ -1290,17 +597,6 @@ constructor(
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the magical-ranged hit chance based on the [player]'s ranged attack roll and the
-     * [target]'s magic defence roll.
-     *
-     * @param attackType The [RangedAttackType] used for the attack roll.
-     * @param attackStyle The [RangedAttackStyle] used for the attack roll.
-     * @param specMultiplier A multiplier applied to the hit chance, typically used for special
-     *   attacks.
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getMagicalRangedHitChance(
         player: Player,
         target: Player,
@@ -1316,57 +612,19 @@ constructor(
             specialMultiplier = specMultiplier,
         )
 
-    /**
-     * Rolls for magical-ranged accuracy to determine if an attack from an [npc] against a [target]
-     * player is successful.
-     *
-     * This function calculates the hit chance based on the npc's ranged attack roll and the
-     * player's magic defence roll, then uses a value from the random number generator ([random]) to
-     * determine if the attack hits.
-     *
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollMagicalRangedAccuracy(npc: Npc, target: Player, random: GameRandom): Boolean {
         val hitChance = getMagicalRangedHitChance(npc, target)
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the magical-ranged hit chance based on the [npc]'s ranged attack roll and the
-     * [target]'s magic defence roll.
-     *
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getMagicalRangedHitChance(npc: Npc, target: Player): Int =
         nvpMultiAccuracy.getMagicalRangedHitChance(npc, target)
 
-    /**
-     * Rolls for magical-ranged accuracy to determine if an attack from an [npc] against a [target]
-     * npc is successful.
-     *
-     * This function calculates the hit chance based on the npc's ranged attack roll and the target
-     * npc's magic defence roll, then uses a value from the random number generator ([random]) to
-     * determine if the attack hits.
-     *
-     * @param random A [GameRandom] instance used to generate a random number for the hit roll.
-     * @return `true` if the attack is successful (i.e., the hit chance exceeds the random roll),
-     *   `false` otherwise.
-     */
     public fun rollMagicalRangedAccuracy(npc: Npc, target: Npc, random: GameRandom): Boolean {
         val hitChance = getMagicalRangedHitChance(npc, target)
         return isSuccessfulHit(hitChance, random)
     }
 
-    /**
-     * Calculates the magical-ranged hit chance based on the [npc]'s ranged attack roll and the
-     * [target]'s magic defence roll.
-     *
-     * @return An integer between `0` and `10,000`, where `0` represents a `0%` hit chance, `1`
-     *   represents a `0.01%` hit chance, and `10,000` represents a `100%` hit chance.
-     */
     public fun getMagicalRangedHitChance(npc: Npc, target: Npc): Int =
         nvnMultiAccuracy.getMagicalRangedHitChance(npc, target)
 

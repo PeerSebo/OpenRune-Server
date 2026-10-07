@@ -1,7 +1,7 @@
 package org.rsmod.content.skills.prayer.items.bonecrusher
 
-import dev.openrune.rscm.RSCMType
 import dev.openrune.rscm.RSCM.asRSCM
+import dev.openrune.rscm.RSCMType
 import jakarta.inject.Inject
 import org.rsmod.api.config.constants
 import org.rsmod.api.invtx.invTransaction

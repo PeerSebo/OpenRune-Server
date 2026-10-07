@@ -87,5 +87,4 @@ class Setting(struct: StructType) {
         SettingsConfigsRow.all().find { it.settingId == id }
     }
     val dropdownEntries = if (dropdownEntriesEnumId == -1) null else enum<Int, String>(dropdownEntriesEnumId)
-
 }

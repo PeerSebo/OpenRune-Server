@@ -2,7 +2,7 @@ package dtx.impl.exhaustive
 
 import dtx.table.AbstractTableHooksBuilder
 
-public open class ExhaustiveTableHooksBuilder<T, R>: AbstractTableHooksBuilder<T, R, ExhaustiveTableHooks<T, R>, ExhaustiveTableHooksBuilder<T, R>>() {
+public open class ExhaustiveTableHooksBuilder<T, R> : AbstractTableHooksBuilder<T, R, ExhaustiveTableHooks<T, R>, ExhaustiveTableHooksBuilder<T, R>>() {
 
     protected val internalHooks: ExhaustiveRollableHooksBuilder<T, R> = ExhaustiveRollableHooksBuilder<T, R>()
 

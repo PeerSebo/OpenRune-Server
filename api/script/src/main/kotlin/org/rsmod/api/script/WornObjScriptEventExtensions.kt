@@ -8,8 +8,6 @@ import org.rsmod.api.player.events.interact.WornObjEvents
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.plugin.scripts.ScriptContext
 
-/* Standard obj op functions */
-/** **Important Note:** This replaces the default unequip op handling for obj [type]. */
 public fun ScriptContext.onOpWorn1(
     type: String,
     action: suspend ProtectedAccess.(WornObjEvents.Op1) -> Unit,
@@ -55,10 +53,6 @@ public fun ScriptContext.onOpWorn9(
     action: suspend ProtectedAccess.(WornObjEvents.Op9) -> Unit,
 ): Unit = onProtectedEvent(type.id, action)
 
-/* Standard content op functions */
-/**
- * **Important Note:** This replaces the default unequip op handling for content group [content].
- */
 public fun ScriptContext.onOpContentWorn1(
     content: String,
     action: suspend ProtectedAccess.(WornObjContentEvents.Op1) -> Unit,

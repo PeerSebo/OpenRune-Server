@@ -1,0 +1,18 @@
+[gamevals.dbtable]
+ourania_rates = 63903
+
+[gamevals.dbrow]
+ourania_rates_1 = 63283
+ourania_rates_10 = 63284
+ourania_rates_20 = 63285
+ourania_rates_30 = 63286
+ourania_rates_40 = 63287
+ourania_rates_50 = 63288
+ourania_rates_60 = 63289
+ourania_rates_70 = 63290
+ourania_rates_80 = 63291
+ourania_rates_90 = 63292
+ourania_rates_99 = 63293
+
+[gamevals.varp]
+runecrafting_permanent_flags = 65453

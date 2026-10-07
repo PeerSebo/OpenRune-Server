@@ -32,7 +32,7 @@ class WoodcuttingScriptTest {
                 "You do not have an axe which you have the woodcutting level to use.",
             )
 
-            player.actionDelay = -1 // Reset action delay set by initial axe check.
+            player.actionDelay = -1
             player.stats[stats.woodcutting] = 100
             player.opLoc1(tree)
             advance(ticks = 2)
@@ -82,8 +82,8 @@ class WoodcuttingScriptTest {
             assertMessageNotSent("You get some logs.")
             assertDoesNotContain(player.inv, logs)
 
-            random.next = 0 // Set random roll to guarantee log success rate.
-            random.then = 0 // Set random roll to avoid tree turning into stump.
+            random.next = 0
+            random.then = 0
             advance(ticks = 1)
             assertMessageNotSent("You swing your axe at the tree.")
             assertMessageSent("You get some logs.")
@@ -107,8 +107,8 @@ class WoodcuttingScriptTest {
             assertMessageNotSent("You get some logs.")
             assertDoesNotContain(player.inv, logs)
 
-            random.next = 0 // Set random roll to guarantee log success rate.
-            random.then = 256 // Set random roll to guarantee tree turning into stump.
+            random.next = 0
+            random.then = 256
             advance(ticks = 1)
             assertMessageNotSent("You swing your axe at the tree.")
             assertMessageSent("You get some logs.")
@@ -133,20 +133,19 @@ class WoodcuttingScriptTest {
             player.opLoc1(tree)
             advance(ticks = 3)
 
-            random.next = 0 // Set random roll to guarantee log success rate.
+            random.next = 0
             advance(ticks = 1)
             assertContains(player.inv, logs)
             val controller = conRepo.findExact(tree.coords)
             assertNotNull(controller)
 
-            // Fast-forward until despawn controller has 1 tick duration left.
             advance(ticks = controller.durationStart - 1)
             assertExists(tree)
             assertDoesNotExist(tree.coords, type.treeStump)
             assertEquals(controller, conRepo.findExact(tree.coords))
 
-            random.next = 0 // Set random roll to guarantee log success rate.
-            player.actionDelay = mapClock.cycle // Set player action delay to force log cut.
+            random.next = 0
+            player.actionDelay = mapClock.cycle
             advance(ticks = 1)
             assertExists(tree.coords, type.treeStump)
             assertDoesNotExist(tree)
@@ -173,7 +172,7 @@ class WoodcuttingScriptTest {
             player.righthand = InvObj("obj.bronze_axe")
             player.stats[stats.woodcutting] = type.treeLevelReq
             player.opLoc1(tree)
-            advance(ticks = 1) // Initial attempt where player action delay is set.
+            advance(ticks = 1)
 
             player.opLoc1(tree)
             advance(ticks = 1)

@@ -47,14 +47,18 @@ public class Npc(
         this.spawnCoords = coords
     }
 
-    public constructor(type: String, coords: CoordGrid) : this(
+    public constructor(
+        type: String,
+        coords: CoordGrid,
+    ) : this(
         requireNotNull(ServerCacheManager.getNpc(type.asRSCM(RSCMType.NPC))) {
             "NPC type '$type' not found in cache"
-        },
+        }
     ) {
         this.coords = coords
         this.spawnCoords = coords
     }
+
     override val blockWalkCollisionFlag: Int?
         get() = blockWalk.collisionFlag
 
@@ -86,10 +90,6 @@ public class Npc(
 
     public var mode: NpcMode? = type.defaultMode
 
-    /**
-     * Whether or not the Npc should ignore all combat interactions, i.e. not respond in any way
-     * when attacked.
-     */
     public var ignoreCombatInteractions: Boolean = false
 
     /**
@@ -98,10 +98,6 @@ public class Npc(
      */
     public var movementLocked: Boolean = false
 
-    /**
-     * Used for temporarily overwriting a Npc's ap-range, i.e. the distance at which it can
-     * perform a ranged attack.
-     */
     public var apRangeOverride: Int? = null
 
     public val attackRange: Int
@@ -139,7 +135,6 @@ public class Npc(
 
     public var huntClock: Int = 0
 
-    // `Obj` and `LocInfo` are lightweight, otherwise we would wrap them in `WeakReference`.
     public var huntObj: Obj? = null
     public var huntLoc: LocInfo? = null
     public var huntNpc: NpcUid = NpcUid.NULL
@@ -173,9 +168,6 @@ public class Npc(
 
     public var actionDelay: Int = -1
 
-    /**
-     * A persistent idle/stand animation override.
-     */
     public var idleSequence: EntitySeq = EntitySeq.NULL
         private set
 
@@ -241,18 +233,14 @@ public class Npc(
     }
 
     /**
-     * Walks to [dest] and runs [onArrival] once the route completes (the npc reaches the destination
-     * or the route otherwise ends).
+     * Walks to [dest] and runs [onArrival] once the route completes (the npc reaches the
+     * destination or the route otherwise ends).
      */
     public fun walk(dest: CoordGrid, onArrival: () -> Unit) {
         walk(dest)
         arrivalAction = onArrival
     }
 
-    /**
-     * Walks the npc along a precomputed list of [waypoints] (e.g. the output of a pathfinder), running
-     * [onArrival] once the route completes.
-     */
     public fun walk(waypoints: List<CoordGrid>, onArrival: (() -> Unit)? = null) {
         abortRoute()
         moveSpeed = defaultMoveSpeed
@@ -386,15 +374,10 @@ public class Npc(
         infoProtocol.setSequence(-1, 0)
     }
 
-    /**
-     * Sets a persistent idle animation [seq] that the engine keeps displayed while the npc is
-     * stationary and not animating. See [idleSequence].
-     */
     public fun setIdleAnim(seq: String) {
         idleSequence = EntitySeq(seq.asRSCM(RSCMType.SEQ), delay = 0, priority = 0)
     }
 
-    /** Clears the persistent idle animation, reverting the npc to its cache `standAnim`. */
     public fun clearIdleAnim() {
         val wasSet = idleSequence != EntitySeq.NULL
         idleSequence = EntitySeq.NULL
@@ -410,6 +393,10 @@ public class Npc(
 
     public fun say(text: String) {
         infoProtocol.setSay(text)
+    }
+
+    public fun nameChange(name: String?) {
+        infoProtocol.setName(name)
     }
 
     public fun showHeadbar(headbar: Headbar) {
@@ -440,9 +427,6 @@ public class Npc(
         infoProtocol.toggleOps(OpVisibility.hideAll())
     }
 
-    /**
-     * The square this npc's facing is pinned to, or [CoordGrid.NULL] when facing is not locked.
-     */
     public var faceLockSquare: CoordGrid = CoordGrid.NULL
         private set
 
@@ -464,7 +448,6 @@ public class Npc(
         faceSquare(target, targetWidth, targetLength)
     }
 
-    /** Pins this npc's facing toward the tile one step in [direction]. @see [lockFacing] */
     public fun lockFacingDirection(direction: Direction) {
         lockFacing(coords.translate(direction.xOff, direction.zOff))
     }
@@ -481,7 +464,7 @@ public class Npc(
         }
         if (faceEntity.playerSlot != target.slotId) {
             PathingEntityCommon.facePlayer(this, target)
-            infoProtocol.setFacePathingEntity(faceEntity.entitySlot)
+            infoProtocol.setFacePathingEntity(faceEntity.entitySlot, faceEntityFallbackAngle)
         }
     }
 
@@ -491,7 +474,7 @@ public class Npc(
         }
         if (faceEntity.npcSlot != target.slotId) {
             PathingEntityCommon.faceNpc(this, target)
-            infoProtocol.setFacePathingEntity(faceEntity.entitySlot)
+            infoProtocol.setFacePathingEntity(faceEntity.entitySlot, faceEntityFallbackAngle)
         }
     }
 
@@ -500,12 +483,23 @@ public class Npc(
         // currently facing a pathing entity.
         if (faceEntity != EntityFaceTarget.NULL) {
             PathingEntityCommon.resetFaceEntity(this)
-            infoProtocol.setFacePathingEntity(faceEntity.entitySlot)
+            infoProtocol.setFacePathingEntity(faceEntity.entitySlot, faceEntityFallbackAngle)
         }
     }
 
     private fun clearFaceEntity() {
         PathingEntityCommon.resetFaceEntity(this)
+    }
+
+    /**
+     * Persistent respawn facing survives transient face-entity updates; changing a one-shot
+     * angle alone does not update future spawns.
+     */
+    public fun respawnDirection(direction: Direction) {
+        respawnDir = direction
+        if (isSlotAssigned) {
+            infoProtocol.setDirection(direction.id)
+        }
     }
 
     public fun transmog(type: NpcServerType, duration: Int) {
@@ -524,10 +518,6 @@ public class Npc(
 
     public fun setBodyModel(model: Int) {
         infoProtocol.setBodyModel(model)
-    }
-
-    public fun setBodyModels(models: List<Int>) {
-        infoProtocol.setBodyModels(models)
     }
 
     public fun setBodyRecolours(recolours: List<Int>) {
@@ -638,37 +628,15 @@ public class Npc(
 
     public fun isVisType(type: String): Boolean = this.visType.isType(type)
 
-    /**
-     * Returns the headbar associated with [headbar] param for the **current** npc [visType].
-     *
-     * @throws IllegalStateException if [visType] does not have a value associated with the headbar
-     *   [param] and [param] does not have a non-null `default` [HeadbarType] value.
-     */
     public fun visHeadbar(headbar: TypedParamType<HealthBarServerType>): HealthBarServerType =
         visType.param(headbar)
 
-    /**
-     * Returns the param value associated with [param] from the **base** npc [type], or `null` if
-     * the type does not have a value associated with [param] and [param] does not have a non-null
-     * `default` value.
-     *
-     * If you wish to retrieve the param value for the current (transmog) type, use [visType] to
-     * retrieve it.
-     */
     public fun <T : Any> paramOrNull(param: TypedParamType<T>): T? = type.paramOrNull(param)
 
-    /**
-     * Returns the param value associated with [param] from the **base** npc [type].
-     *
-     * If you wish to retrieve the param value for the current (transmog) type, use [visType] to
-     * retrieve it.
-     *
-     * @throws IllegalStateException if the type does not have a value associated with [param] and
-     *   [param] does not have a non-null `default` value.
-     */
     public fun <T : Any> param(param: TypedParamType<T>): T = type.param(param)
 
-    public fun isContentType(content: String): Boolean = type.contentGroup == content.asRSCM(RSCMType.CONTENT)
+    public fun isContentType(content: String): Boolean =
+        type.contentGroup == content.asRSCM(RSCMType.CONTENT)
 
     override fun toString(): String = "Npc(uid=$uid, slot=$slotId, coords=$coords, type=$type)"
 }

@@ -1,0 +1,14 @@
+
+[gamevals.queue]
+hunter_lay_trap = 73
+hunter_check_trap = 74
+hunter_birdhouse_build = 78
+hunter_birdhouse_seed = 79
+hunter_birdhouse_dismantle = 80
+hunter_net_catch = 81
+
+[gamevals.varp]
+hunter_birdhouse_seeded_1 = 65466
+hunter_birdhouse_seeded_2 = 65465
+hunter_birdhouse_seeded_3 = 65464
+hunter_birdhouse_seeded_4 = 65463

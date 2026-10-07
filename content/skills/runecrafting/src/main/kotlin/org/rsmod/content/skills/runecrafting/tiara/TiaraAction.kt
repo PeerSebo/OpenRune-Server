@@ -4,9 +4,10 @@ import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.stats.xpmod.XpModifiers
 import org.rsmod.api.table.runecrafting.RunecraftingTiaraRow
 import org.rsmod.content.skills.runecrafting.action.RunecraftAction.advanceRunecraftingXp
+import org.rsmod.content.skills.runecrafting.action.RunecraftAction.preCraft
 
 object TiaraAction {
-    fun ProtectedAccess.createTiara(
+    suspend fun ProtectedAccess.createTiara(
         talismanId: String,
         def: RunecraftingTiaraRow,
         xpMods: XpModifiers,
@@ -22,18 +23,20 @@ object TiaraAction {
             return
         }
 
+        preCraft()
+
         val removedTiara = invDel(inv, tiaraItem, 1).success
         val removedTalisman = invDel(inv, talismanId, 1).success
 
         if (removedTiara && removedTalisman) {
             if (invAdd(inv, def.item.internalName, 1).success) {
-                advanceRunecraftingXp(def.xp.toDouble(), xpMods)
+                advanceRunecraftingXp(def.xpTenths / 10.0, xpMods)
                 mes("You bind the power of the talisman into your tiara.")
             }
         }
     }
 
-    fun ProtectedAccess.createSpecialTiara(
+    suspend fun ProtectedAccess.createSpecialTiara(
         talismanId: String,
         outputTiara: String,
         xp: Int,
@@ -48,6 +51,8 @@ object TiaraAction {
             mes("You need a talisman to bind a tiara here.")
             return
         }
+
+        preCraft()
 
         if (invDel(inv, "obj.tiara_gold", 1).failure) {
             return

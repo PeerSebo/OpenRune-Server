@@ -1,12 +1,6 @@
 package org.rsmod.api.attr
 
-/**
- * A system responsible for storing and exposing [AttributeKey]s and their
- * associated values. The type of the key is inferred by the [AttributeKey]
- * used when putting or getting the value.
- *
- * @author Tom <rspsmods@gmail.com>
- */
+/** Original author: Tom <rspsmods@gmail.com>. */
 public class AttributeMap {
     private var attributes: MutableMap<AttributeKey<*>, Any> = HashMap(0)
 
@@ -144,13 +138,11 @@ public class AttributeMap {
         put(key, current + amount)
     }
 
-    /** Decrement an integer attribute by a value (default 1). */
     public fun decrement(key: AttributeKey<Int>, amount: Int = 1) {
         val current = getOrDefault(key, 0)
         put(key, (current - amount).coerceAtLeast(0))
     }
 
-    /** Add an element to a set attribute, initializing the set if needed. */
     public fun <T> addToSet(key: AttributeKey<MutableSet<T>>, element: T) {
         val set = getOrPut(key) { mutableSetOf() }
         if (set.add(element)) {
@@ -158,7 +150,6 @@ public class AttributeMap {
         }
     }
 
-    /** Remove an element from a set attribute. */
     public fun <T> removeFromSet(key: AttributeKey<MutableSet<T>>, element: T) {
         val set = get<MutableSet<T>>(key)
         if (set?.remove(element) == true) {
@@ -166,18 +157,15 @@ public class AttributeMap {
         }
     }
 
-    /** Check if a set attribute contains an element. */
     public fun <T> setContains(key: AttributeKey<MutableSet<T>>, element: T): Boolean {
         val set = get<MutableSet<T>>(key)
         return set?.contains(element) ?: false
     }
 
-    /** Get the size of a set attribute, 0 if not present. */
     public fun <T> setSize(key: AttributeKey<MutableSet<T>>): Int {
         return get<MutableSet<T>>(key)?.size ?: 0
     }
 
-    /** Get or put a default value */
     public fun <T> getOrPut(key: AttributeKey<T>, default: () -> T): T {
         return get(key) ?: default().also { put(key, it) }
     }

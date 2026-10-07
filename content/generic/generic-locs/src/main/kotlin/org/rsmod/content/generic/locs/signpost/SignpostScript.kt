@@ -17,6 +17,8 @@ class SignpostScript : PluginScript() {
     override fun ScriptContext.startup() {
         onApLoc1("loc.aide_signpost_1") { apReadSignpost(it.loc) }
         onOpLoc1("loc.aide_signpost_1") { readSignpost(it.loc) }
+        onApLoc1("loc.fai_varrock_signpost_1") { apReadSignpost(it.loc) }
+        onOpLoc1("loc.fai_varrock_signpost_1") { readSignpost(it.loc) }
         onIfClose("interface.aide_compass") { player.exitSignpost() }
     }
 
@@ -27,6 +29,12 @@ class SignpostScript : PluginScript() {
     }
 
     private fun ProtectedAccess.readSignpost(loc: BoundLocInfo) {
+        val directions = signpost_directions.getOrNull(loc.coords)?.split("|")
+        if (directions == null || directions.size != 4) {
+            mes("You can't make out the directions on this signpost.")
+            return
+        }
+
         camForceAngle(rate = 280, rate2 = 0)
 
         val camMoveTo = coords.translateZ(-6)
@@ -35,7 +43,6 @@ class SignpostScript : PluginScript() {
         val camLookAt = coords.translateZ(3)
         camLookAt(camLookAt, height = 450, rate = 2, rate2 = 10)
 
-        val directions = signpost_directions.getValue(loc.coords).split("|")
         val (west, south, north, east) = directions
         ifSetText("component.aide_compass:aide_west_text_2", west)
         ifSetText("component.aide_compass:aide_south_text_2", south)
@@ -47,8 +54,6 @@ class SignpostScript : PluginScript() {
     }
 
     private fun Player.exitSignpost() {
-        // TODO: Investigate when/how this gets sent sometimes.
-        // faceDirection(Direction.North)
         camReset(this)
     }
 }

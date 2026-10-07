@@ -19,6 +19,6 @@ class ChickenCoop : PluginScript() {
         }
         mes("You search the coop and find an egg.")
         anim("seq.human_pickuptable")
-        soundSynth("synth.pick")
+        soundSynth("synth.PICK")
     }
 }

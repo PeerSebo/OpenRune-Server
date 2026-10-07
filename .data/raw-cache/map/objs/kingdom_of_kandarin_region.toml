@@ -115,10 +115,6 @@ obj = "obj.bowl_empty"
 coords = "0_41_52_43_59"
 
 [[spawn]]
-obj = "obj.bronze_axe"
-coords = "0_42_54_41_23"
-
-[[spawn]]
 obj = "obj.bucket_empty"
 coords = "0_40_50_56_55"
 

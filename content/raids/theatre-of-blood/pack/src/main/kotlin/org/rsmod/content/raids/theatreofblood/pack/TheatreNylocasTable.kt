@@ -1,0 +1,157 @@
+package org.rsmod.content.raids.theatreofblood.pack
+
+import dev.openrune.definition.dbtables.dbTable
+import dev.openrune.definition.util.VarType
+
+internal fun theatreNylocasWaves() = dbTable("dbtable.theatre_nylocas_waves", serverOnly = true) {
+    column("wave", 0, VarType.INT)
+    column("lane", 1, VarType.STRING)
+    column("position", 2, VarType.INT)
+    column("big", 3, VarType.INT)
+    column("aggressive", 4, VarType.INT)
+    column("npc", 5, VarType.NPC)
+    column("styles", 6, VarType.STRING)
+    val spawns = listOf(
+        Spawn(1, "EAST", 0, false, false, "npc.tob_nylocas_incoming_melee", listOf("MELEE")),
+        Spawn(1, "SOUTH", 0, false, false, "npc.tob_nylocas_incoming_magic", listOf("MAGIC")),
+        Spawn(1, "WEST", 0, false, true, "npc.tob_nylocas_fighting_ranged", listOf("RANGED")),
+        Spawn(2, "EAST", 0, false, false, "npc.tob_nylocas_incoming_ranged", listOf("RANGED")),
+        Spawn(2, "SOUTH", 0, false, true, "npc.tob_nylocas_fighting_melee", listOf("MELEE")),
+        Spawn(2, "WEST", 0, false, false, "npc.tob_nylocas_incoming_magic", listOf("MAGIC")),
+        Spawn(3, "EAST", 0, false, true, "npc.tob_nylocas_fighting_magic", listOf("MAGIC")),
+        Spawn(3, "SOUTH", 0, false, false, "npc.tob_nylocas_incoming_ranged", listOf("RANGED")),
+        Spawn(3, "WEST", 0, false, false, "npc.tob_nylocas_incoming_melee", listOf("MELEE")),
+        Spawn(4, "EAST", 0, false, false, "npc.tob_nylocas_incoming_melee", listOf("MELEE")),
+        Spawn(4, "SOUTH", 0, true, false, "npc.tob_nylocas_big_incoming_magic", listOf("MAGIC")),
+        Spawn(4, "WEST", 0, false, false, "npc.tob_nylocas_incoming_ranged", listOf("RANGED")),
+        Spawn(5, "EAST", 0, false, false, "npc.tob_nylocas_incoming_magic", listOf("MAGIC")),
+        Spawn(5, "SOUTH", 0, false, false, "npc.tob_nylocas_incoming_melee", listOf("MELEE")),
+        Spawn(5, "WEST", 0, true, false, "npc.tob_nylocas_big_incoming_ranged", listOf("RANGED")),
+        Spawn(6, "EAST", 0, true, false, "npc.tob_nylocas_big_incoming_melee", listOf("MELEE")),
+        Spawn(6, "SOUTH", 0, false, false, "npc.tob_nylocas_incoming_ranged", listOf("RANGED")),
+        Spawn(6, "WEST", 0, false, false, "npc.tob_nylocas_incoming_magic", listOf("MAGIC")),
+        Spawn(7, "EAST", 0, true, false, "npc.tob_nylocas_big_incoming_melee", listOf("MELEE")),
+        Spawn(7, "SOUTH", 0, false, false, "npc.tob_nylocas_incoming_magic", listOf("MAGIC")),
+        Spawn(7, "SOUTH", 1, true, true, "npc.tob_nylocas_big_fighting_ranged", listOf("RANGED")),
+        Spawn(8, "EAST", 0, false, false, "npc.tob_nylocas_incoming_ranged", listOf("RANGED")),
+        Spawn(8, "SOUTH", 0, false, false, "npc.tob_nylocas_incoming_melee", listOf("MELEE")),
+        Spawn(8, "WEST", 0, true, true, "npc.tob_nylocas_big_fighting_magic", listOf("MAGIC")),
+        Spawn(9, "EAST", 0, false, false, "npc.tob_nylocas_incoming_magic", listOf("MAGIC")),
+        Spawn(9, "WEST", 0, true, true, "npc.tob_nylocas_big_fighting_ranged", listOf("RANGED")),
+        Spawn(9, "WEST", 1, false, false, "npc.tob_nylocas_incoming_melee", listOf("MELEE")),
+        Spawn(10, "EAST", 0, false, true, "npc.tob_nylocas_fighting_ranged", listOf("RANGED")),
+        Spawn(10, "EAST", 1, true, false, "npc.tob_nylocas_big_incoming_ranged", listOf("RANGED")),
+        Spawn(10, "SOUTH", 0, false, false, "npc.tob_nylocas_incoming_ranged", listOf("RANGED")),
+        Spawn(10, "SOUTH", 1, false, false, "npc.tob_nylocas_incoming_ranged", listOf("RANGED")),
+        Spawn(10, "WEST", 0, false, false, "npc.tob_nylocas_incoming_ranged", listOf("RANGED")),
+        Spawn(10, "WEST", 1, false, true, "npc.tob_nylocas_fighting_ranged", listOf("RANGED")),
+        Spawn(11, "EAST", 0, false, true, "npc.tob_nylocas_fighting_magic", listOf("MAGIC")),
+        Spawn(11, "EAST", 1, false, false, "npc.tob_nylocas_incoming_magic", listOf("MAGIC")),
+        Spawn(11, "SOUTH", 0, false, false, "npc.tob_nylocas_incoming_magic", listOf("MAGIC")),
+        Spawn(11, "SOUTH", 1, false, false, "npc.tob_nylocas_incoming_magic", listOf("MAGIC")),
+        Spawn(11, "WEST", 0, true, true, "npc.tob_nylocas_big_fighting_magic", listOf("MAGIC")),
+        Spawn(12, "EAST", 0, false, true, "npc.tob_nylocas_fighting_melee", listOf("MELEE")),
+        Spawn(12, "EAST", 1, false, false, "npc.tob_nylocas_incoming_melee", listOf("MELEE")),
+        Spawn(12, "SOUTH", 0, true, false, "npc.tob_nylocas_big_incoming_melee", listOf("MELEE")),
+        Spawn(12, "WEST", 0, false, false, "npc.tob_nylocas_incoming_melee", listOf("MELEE")),
+        Spawn(12, "WEST", 1, false, true, "npc.tob_nylocas_fighting_melee", listOf("MELEE")),
+        Spawn(13, "EAST", 0, true, true, "npc.tob_nylocas_big_fighting_melee", listOf("MELEE")),
+        Spawn(13, "SOUTH", 0, false, false, "npc.tob_nylocas_incoming_ranged", listOf("RANGED")),
+        Spawn(13, "SOUTH", 1, false, false, "npc.tob_nylocas_incoming_melee", listOf("MELEE")),
+        Spawn(13, "WEST", 0, false, false, "npc.tob_nylocas_incoming_ranged", listOf("RANGED")),
+        Spawn(13, "WEST", 1, false, true, "npc.tob_nylocas_fighting_magic", listOf("MAGIC")),
+        Spawn(14, "EAST", 0, true, true, "npc.tob_nylocas_big_fighting_ranged", listOf("RANGED")),
+        Spawn(14, "SOUTH", 0, false, false, "npc.tob_nylocas_incoming_magic", listOf("MAGIC")),
+        Spawn(14, "SOUTH", 1, false, false, "npc.tob_nylocas_incoming_ranged", listOf("RANGED")),
+        Spawn(14, "WEST", 0, false, false, "npc.tob_nylocas_incoming_magic", listOf("MAGIC")),
+        Spawn(14, "WEST", 1, false, true, "npc.tob_nylocas_fighting_melee", listOf("MELEE")),
+        Spawn(15, "EAST", 0, false, true, "npc.tob_nylocas_fighting_magic", listOf("MAGIC")),
+        Spawn(15, "EAST", 1, false, false, "npc.tob_nylocas_incoming_ranged", listOf("RANGED")),
+        Spawn(15, "SOUTH", 0, true, false, "npc.tob_nylocas_big_incoming_magic", listOf("MAGIC")),
+        Spawn(15, "WEST", 0, false, false, "npc.tob_nylocas_incoming_melee", listOf("MELEE")),
+        Spawn(15, "WEST", 1, false, true, "npc.tob_nylocas_fighting_ranged", listOf("RANGED")),
+        Spawn(16, "EAST", 0, false, false, "npc.tob_nylocas_incoming_magic", listOf("MAGIC", "MELEE", "RANGED")),
+        Spawn(16, "SOUTH", 0, false, false, "npc.tob_nylocas_incoming_melee", listOf("MELEE", "MAGIC", "RANGED")),
+        Spawn(16, "WEST", 0, false, false, "npc.tob_nylocas_incoming_ranged", listOf("RANGED", "MAGIC", "RANGED")),
+        Spawn(17, "EAST", 0, true, false, "npc.tob_nylocas_big_incoming_magic", listOf("MAGIC", "MELEE", "MAGIC")),
+        Spawn(17, "SOUTH", 0, true, false, "npc.tob_nylocas_big_incoming_magic", listOf("MAGIC", "MELEE", "MAGIC")),
+        Spawn(17, "WEST", 0, true, false, "npc.tob_nylocas_big_incoming_magic", listOf("MAGIC", "MELEE", "MAGIC")),
+        Spawn(18, "EAST", 0, true, false, "npc.tob_nylocas_big_incoming_ranged", listOf("RANGED", "MAGIC", "RANGED")),
+        Spawn(18, "SOUTH", 0, true, false, "npc.tob_nylocas_big_incoming_ranged", listOf("RANGED", "MAGIC", "RANGED")),
+        Spawn(18, "WEST", 0, true, true, "npc.tob_nylocas_big_fighting_ranged", listOf("RANGED", "MAGIC", "RANGED")),
+        Spawn(19, "EAST", 0, true, true, "npc.tob_nylocas_big_fighting_magic", listOf("MAGIC", "MELEE", "MAGIC")),
+        Spawn(19, "SOUTH", 0, true, false, "npc.tob_nylocas_big_incoming_magic", listOf("MAGIC", "MELEE", "MAGIC")),
+        Spawn(19, "WEST", 0, true, false, "npc.tob_nylocas_big_incoming_magic", listOf("MAGIC", "MELEE", "MAGIC")),
+        Spawn(20, "EAST", 0, true, false, "npc.tob_nylocas_big_incoming_melee", listOf("MELEE", "RANGED", "MELEE")),
+        Spawn(20, "SOUTH", 0, true, true, "npc.tob_nylocas_big_fighting_magic", listOf("MAGIC", "RANGED", "MELEE")),
+        Spawn(20, "WEST", 0, true, false, "npc.tob_nylocas_big_incoming_melee", listOf("MELEE", "RANGED", "MELEE")),
+        Spawn(21, "EAST", 0, false, false, "npc.tob_nylocas_incoming_ranged", listOf("RANGED", "MELEE", "RANGED")),
+        Spawn(21, "EAST", 1, false, true, "npc.tob_nylocas_fighting_ranged", listOf("RANGED", "MELEE", "RANGED")),
+        Spawn(21, "SOUTH", 0, false, false, "npc.tob_nylocas_incoming_melee", listOf("MELEE", "MAGIC", "MELEE")),
+        Spawn(21, "SOUTH", 1, false, true, "npc.tob_nylocas_fighting_melee", listOf("MELEE", "RANGED", "MELEE")),
+        Spawn(21, "WEST", 0, false, false, "npc.tob_nylocas_incoming_magic", listOf("MAGIC", "MELEE", "RANGED")),
+        Spawn(21, "WEST", 1, false, false, "npc.tob_nylocas_incoming_magic", listOf("MAGIC", "RANGED", "MAGIC")),
+        Spawn(22, "EAST", 0, true, true, "npc.tob_nylocas_big_fighting_magic", listOf("MAGIC", "RANGED", "MELEE")),
+        Spawn(22, "SOUTH", 0, false, false, "npc.tob_nylocas_incoming_ranged", listOf("RANGED", "MAGIC", "MELEE")),
+        Spawn(22, "SOUTH", 1, false, false, "npc.tob_nylocas_incoming_magic", listOf("MAGIC", "RANGED", "MELEE")),
+        Spawn(22, "WEST", 0, true, false, "npc.tob_nylocas_big_incoming_melee", listOf("MELEE", "RANGED", "MELEE")),
+        Spawn(23, "EAST", 0, true, false, "npc.tob_nylocas_big_incoming_magic", listOf("MAGIC", "RANGED", "MELEE")),
+        Spawn(23, "SOUTH", 0, true, true, "npc.tob_nylocas_big_fighting_ranged", listOf("RANGED", "MAGIC", "MELEE")),
+        Spawn(23, "WEST", 0, false, false, "npc.tob_nylocas_incoming_magic", listOf("MAGIC", "RANGED", "MELEE")),
+        Spawn(23, "WEST", 1, false, false, "npc.tob_nylocas_incoming_ranged", listOf("RANGED", "MAGIC", "RANGED")),
+        Spawn(24, "EAST", 0, true, true, "npc.tob_nylocas_big_fighting_melee", listOf("MELEE")),
+        Spawn(24, "SOUTH", 0, true, true, "npc.tob_nylocas_big_fighting_magic", listOf("MAGIC")),
+        Spawn(24, "WEST", 0, true, true, "npc.tob_nylocas_big_fighting_ranged", listOf("RANGED", "MAGIC", "MELEE")),
+        Spawn(25, "EAST", 0, true, false, "npc.tob_nylocas_big_incoming_magic", listOf("MAGIC", "MELEE", "MAGIC")),
+        Spawn(25, "SOUTH", 0, true, false, "npc.tob_nylocas_big_incoming_ranged", listOf("RANGED")),
+        Spawn(25, "WEST", 0, true, true, "npc.tob_nylocas_big_fighting_melee", listOf("MELEE")),
+        Spawn(26, "EAST", 0, true, false, "npc.tob_nylocas_big_incoming_magic", listOf("MAGIC")),
+        Spawn(26, "SOUTH", 0, true, false, "npc.tob_nylocas_big_incoming_melee", listOf("MELEE", "MAGIC", "MELEE")),
+        Spawn(26, "WEST", 0, true, true, "npc.tob_nylocas_big_fighting_magic", listOf("MAGIC")),
+        Spawn(27, "EAST", 0, true, false, "npc.tob_nylocas_big_incoming_magic", listOf("MAGIC", "MELEE", "MAGIC")),
+        Spawn(27, "SOUTH", 0, true, true, "npc.tob_nylocas_big_fighting_melee", listOf("MELEE", "MAGIC", "RANGED")),
+        Spawn(27, "WEST", 0, true, false, "npc.tob_nylocas_big_incoming_magic", listOf("MAGIC")),
+        Spawn(28, "EAST", 0, false, false, "npc.tob_nylocas_incoming_magic", listOf("MAGIC", "MELEE", "MAGIC")),
+        Spawn(28, "EAST", 1, false, false, "npc.tob_nylocas_incoming_ranged", listOf("RANGED", "MAGIC", "MELEE")),
+        Spawn(28, "SOUTH", 0, false, false, "npc.tob_nylocas_incoming_melee", listOf("MELEE", "RANGED", "MELEE")),
+        Spawn(28, "SOUTH", 1, false, false, "npc.tob_nylocas_incoming_magic", listOf("MAGIC", "MELEE", "RANGED")),
+        Spawn(28, "WEST", 0, false, false, "npc.tob_nylocas_incoming_melee", listOf("MELEE", "RANGED", "MELEE")),
+        Spawn(28, "WEST", 1, false, true, "npc.tob_nylocas_fighting_ranged", listOf("RANGED", "MELEE", "MAGIC")),
+        Spawn(29, "EAST", 0, false, false, "npc.tob_nylocas_incoming_magic", listOf("MAGIC", "RANGED", "MELEE")),
+        Spawn(29, "EAST", 1, false, true, "npc.tob_nylocas_fighting_ranged", listOf("RANGED", "MELEE", "MAGIC")),
+        Spawn(29, "SOUTH", 0, true, false, "npc.tob_nylocas_big_incoming_melee", listOf("MELEE")),
+        Spawn(29, "WEST", 0, false, true, "npc.tob_nylocas_fighting_melee", listOf("MELEE", "RANGED", "MAGIC")),
+        Spawn(29, "WEST", 1, false, false, "npc.tob_nylocas_incoming_ranged", listOf("RANGED", "MELEE", "RANGED")),
+        Spawn(30, "EAST", 0, true, true, "npc.tob_nylocas_big_fighting_magic", listOf("MAGIC")),
+        Spawn(30, "SOUTH", 0, false, false, "npc.tob_nylocas_incoming_melee", listOf("MELEE", "RANGED", "MELEE")),
+        Spawn(30, "SOUTH", 1, false, false, "npc.tob_nylocas_incoming_magic", listOf("MAGIC", "RANGED", "MELEE")),
+        Spawn(30, "WEST", 0, true, false, "npc.tob_nylocas_big_incoming_ranged", listOf("RANGED", "MELEE", "RANGED")),
+        Spawn(31, "EAST", 0, false, false, "npc.tob_nylocas_incoming_magic", listOf("MAGIC", "RANGED", "MAGIC")),
+        Spawn(31, "EAST", 1, false, false, "npc.tob_nylocas_incoming_ranged", listOf("RANGED", "MELEE", "RANGED")),
+        Spawn(31, "SOUTH", 0, false, false, "npc.tob_nylocas_incoming_melee", listOf("MELEE", "MAGIC", "RANGED")),
+        Spawn(31, "SOUTH", 1, false, false, "npc.tob_nylocas_incoming_magic", listOf("MAGIC", "MELEE", "RANGED")),
+        Spawn(31, "WEST", 0, false, false, "npc.tob_nylocas_incoming_melee", listOf("MELEE", "RANGED", "MAGIC")),
+        Spawn(31, "WEST", 1, false, false, "npc.tob_nylocas_incoming_ranged", listOf("RANGED", "MAGIC", "RANGED")),
+    )
+    spawns.forEachIndexed { index, spawn ->
+        row("dbrow.theatre_nylocas_spawn_$index") {
+            column(0, spawn.wave)
+            column(1, spawn.lane)
+            column(2, spawn.position)
+            column(3, if (spawn.big) 1 else 0)
+            column(4, if (spawn.aggressive) 1 else 0)
+            columnRSCM(5, spawn.npc)
+            column(6, *spawn.styles.toTypedArray())
+        }
+    }
+}
+
+private data class Spawn(
+    val wave: Int,
+    val lane: String,
+    val position: Int,
+    val big: Boolean,
+    val aggressive: Boolean,
+    val npc: String,
+    val styles: List<String>,
+)

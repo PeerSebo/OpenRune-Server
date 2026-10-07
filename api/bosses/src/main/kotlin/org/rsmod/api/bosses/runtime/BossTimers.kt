@@ -43,8 +43,8 @@ internal fun BossDeps.startTimers(encounter: BossEncounter, tick: Int) {
     if (!hasTimers) return
     val schedule = TimerSchedule(encounter, tick) { random.of(it) }
     fun step() {
-        worldQueues.add(1) {
-            if (!encounterRegistry.isActive(encounter)) return@add
+        worldQueues.addDeferred(1) {
+            if (!encounterRegistry.isActive(encounter)) return@addDeferred
             val effects = schedule.due(mapClock.cycle)
             val npc = encounter.npc
             val target = encounter.lastTarget?.takeIf { it.isValidTarget() }

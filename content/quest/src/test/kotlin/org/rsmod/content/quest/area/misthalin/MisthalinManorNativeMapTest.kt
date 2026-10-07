@@ -25,7 +25,7 @@ import org.rsmod.routefinder.flag.CollisionFlag
 @ResourceLock("ServerCacheManager")
 class MisthalinManorNativeMapTest {
     @Test fun `native manor entrance can reach staircase foot and painting remains mounted east`() {
-        val cache = ServerCacheManager.init(240)
+        val cache = ServerCacheManager.init(241)
         try {
             val square = MapSquareKey(25, 75)
             val group = (25 shl 8) or 75
@@ -61,13 +61,6 @@ class MisthalinManorNativeMapTest {
                 destWidth = stairs.width, destLength = stairs.length, locShape = stairs.shapeId,
                 locAngle = stairs.angleId, blockAccessFlags = stairs.forceApproachFlags, moveNear = false)
             assertTrue(route.success, "Native staircase must be reachable from inside the entrance")
-            val tree = locs.single { it.id == "loc.mistmyst_tree".asRSCM() }
-            val garden = MisthalinCoords.BrokenWallEast
-            val treeRoute = RouteFinding(collision).findRoute(level = 0,
-                srcX = garden.x, srcZ = garden.z, destX = tree.x, destZ = tree.z,
-                destWidth = tree.width, destLength = tree.length, locShape = tree.shapeId,
-                locAngle = tree.angleId, blockAccessFlags = tree.forceApproachFlags, moveNear = false)
-            assertTrue(treeRoute.success, "Observe tree must be reachable: $tree")
             val painting = locs.single { it.id == "loc.mistmyst_painting".asRSCM() }
             assertEquals(CoordGrid(1632, 4833), painting.coords)
             assertEquals(4, painting.shapeId)

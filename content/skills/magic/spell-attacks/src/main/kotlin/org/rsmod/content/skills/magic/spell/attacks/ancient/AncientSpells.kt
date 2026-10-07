@@ -72,7 +72,7 @@ constructor(
                 return
             }
 
-            player.anim(spell.tier.anim, priority = 6)
+            player.anim(spell.castAnim, priority = 6)
             spell.launch?.let { spotanim(it, height = 92) }
             soundSynth(spell.castSound)
 

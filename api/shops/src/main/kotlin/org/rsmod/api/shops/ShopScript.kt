@@ -35,7 +35,7 @@ constructor(
                 "dbtable.shop_currency is empty or missing; no shop currencies registered"
             }
         } else {
-            logger.info { "Registered $registered shop currencies from dbtable.shop_currency" }
+            logger.debug { "Registered $registered shop currencies from dbtable.shop_currency" }
         }
 
         onIfModalButton("component.shopmain:items") { shopInvButton(it.comsub, it.op, it.obj) }

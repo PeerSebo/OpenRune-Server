@@ -1,14 +1,13 @@
 package dtx.example.rs_tables
 
-import dtx.rs.*
 import dtx.core.ArgKey
-import dtx.core.ArgMap
 import dtx.core.RollResult
 import dtx.core.singleRollable
 import dtx.example.Item
 import dtx.example.Player
 import dtx.example.examplePlayer
 import dtx.example.randTo
+import dtx.rs.*
 import dtx.table.uniformTable
 import kotlin.random.Random
 
@@ -91,7 +90,7 @@ val moonsStandardTable = rsWeightedTable<Player, Item> {
 
 val moonsStandardDrop = singleRollable<Player, Item> {
 
-    vetoRoll {  player, otherArgs ->
+    vetoRoll { player, otherArgs ->
         val rolledUnique = otherArgs[ROLLED_MOON_UNIQUE]
         val howManyDefeated = player.moonsTempProgress.howManyDefeated()
         val defeatedNone = howManyDefeated == 0
@@ -166,7 +165,7 @@ fun Player.defeatedMoons(): Set<MoonBoss> = buildSet {
 
 fun main() {
     println(moonsUniques.tableEntries)
-    while(true) {
+    while (true) {
         println("uniques rolled: ${examplePlayer.moonsProtection.items.contentDeepToString()}")
         examplePlayer.randomizeMoons()
         println("Rolling moons for ${examplePlayer.username} ${examplePlayer.defeatedMoons()}")

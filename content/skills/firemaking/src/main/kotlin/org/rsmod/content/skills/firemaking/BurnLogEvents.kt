@@ -4,19 +4,25 @@ import dev.openrune.map.MapSingletons.collision
 import dev.openrune.rscm.RSCM
 import dev.openrune.rscm.RSCMType
 import jakarta.inject.Inject
+import org.rsmod.api.config.constants
 import org.rsmod.api.config.refs.params
+import org.rsmod.api.player.events.PlayerAction
+import org.rsmod.api.player.events.PlayerActionCompleteEvent
 import org.rsmod.api.player.output.mes
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.player.stat.firemakingLvl
+import org.rsmod.api.random.GameRandom
 import org.rsmod.api.registry.obj.ObjRegistry
 import org.rsmod.api.repo.loc.LocRepository
+import org.rsmod.api.repo.obj.ObjRepository
 import org.rsmod.api.script.onOpHeldU
 import org.rsmod.api.script.onOpObj4
+import org.rsmod.api.script.onOpObjU
 import org.rsmod.api.script.onPlayerQueueWithArgs
 import org.rsmod.api.stats.xpmod.XpModifiers
 import org.rsmod.api.table.FiremakingColoredLogsRow
 import org.rsmod.api.table.FiremakingLogsRow
-import org.rsmod.game.MapClock
+import org.rsmod.content.skills.skillSuccess
 import org.rsmod.game.loc.LocAngle
 import org.rsmod.game.loc.LocShape
 import org.rsmod.game.map.Direction
@@ -25,15 +31,13 @@ import org.rsmod.game.obj.Obj
 import org.rsmod.map.CoordGrid
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
-import skillSuccess
-
 
 public class BurnLogEvents @Inject constructor(
-    private val objRepo: ObjRegistry,
     private val objRegistry: ObjRegistry,
+    private val objRepo: ObjRepository,
     private val locRepo: LocRepository,
-    private val worldClock: MapClock,
     private val xpMods: XpModifiers,
+    private val random: GameRandom,
 ) : PluginScript() {
 
     private val walkDirections = listOf(
@@ -50,7 +54,10 @@ public class BurnLogEvents @Inject constructor(
 
     override fun ScriptContext.startup() {
         FiremakingLogsRow.all().forEach { log ->
-            onOpHeldU("obj.tinderbox", log.input) { startBurn(log, method = BurnMethod.Tinderbox) }
+            // Held-item ops run before queue processing; compensate initial scheduling with +1.
+            onOpHeldU("obj.tinderbox", log.input) {
+                startBurn(log, method = BurnMethod.Tinderbox, affectedEntry = true)
+            }
             onOpHeldU(log.input) {
                 val barbarianAnim = it.second.paramOrNull(params.barbarian_firemaking_anim)
                     ?: return@onOpHeldU
@@ -58,20 +65,39 @@ public class BurnLogEvents @Inject constructor(
                 if (animName.isBlank()) {
                     return@onOpHeldU
                 }
-                startBurn(log, method = BurnMethod.Bow, burnAnim = animName)
+                startBurn(log, method = BurnMethod.Bow, burnAnim = animName, affectedEntry = true)
             }
-            onOpObj4(log.input) { startBurn(log, it.obj, BurnMethod.Tinderbox) }
+            // Ground-object ops run after queue processing; their initial delay needs no +1.
+            onOpObj4(log.input) {
+                startBurn(log, it.obj, BurnMethod.Tinderbox, affectedEntry = false)
+            }
+            onOpObjU(log.input, "obj.tinderbox") {
+                startBurn(log, it.obj, BurnMethod.Tinderbox, affectedEntry = false)
+            }
         }
 
         onPlayerQueueWithArgs("queue.firemaking_light") { processBurnTick(it.args) }
     }
 
-    private fun ProtectedAccess.startBurn(
+    private fun ProtectedAccess.burnQueue(
+        queue: String,
+        cadenceTicks: Int,
+        task: BurnTask,
+        affectedContext: Boolean,
+    ) {
+        val n = if (affectedContext) cadenceTicks + 1 else cadenceTicks
+        weakQueue(queue, n, task)
+    }
+
+    private suspend fun ProtectedAccess.startBurn(
         log: FiremakingLogsRow,
         groundObj: Obj? = null,
         method: BurnMethod,
         burnAnim: String = "seq.human_createfire",
+        affectedEntry: Boolean,
     ) {
+        // Chain-lighting may begin during the previous fire's forced step.
+        arriveDelay()
         if (!canBurn(log, groundObj, method)) {
             resetAnim()
             return
@@ -81,20 +107,21 @@ public class BurnLogEvents @Inject constructor(
 
         if (obj == null) {
             invDel(player.inv, log.input.internalName)
-            obj = Obj.fromServer(worldClock, coords, log.input.internalName, 1)
-            objRegistry.add(obj)
+            val duration = player.lootDropDuration ?: constants.lootdrop_duration
+            obj = objRepo.add(log.input.internalName, coords, duration, receiver = player)
         }
 
         stopAction()
+        // Sequence 733 contains skeletal audio; do not duplicate its sound.
         anim(burnAnim)
-        player.mes(
+        spam(
             when (method) {
                 BurnMethod.Tinderbox -> "You attempt to light the logs."
                 BurnMethod.Bow -> "You attempt to light the logs with your bow."
             },
         )
 
-        weakQueue("queue.firemaking_light", 4, BurnTask(log, obj, method))
+        burnQueue("queue.firemaking_light", 4, BurnTask(log, obj, method, burnAnim), affectedEntry)
     }
 
     private fun ProtectedAccess.canBurn(
@@ -102,7 +129,7 @@ public class BurnLogEvents @Inject constructor(
         obj: Obj?,
         method: BurnMethod,
     ): Boolean {
-        if (obj != null && !objRepo.isValid(player, obj)) {
+        if (obj != null && !objRegistry.isValid(player, obj)) {
             return false
         }
 
@@ -143,7 +170,9 @@ public class BurnLogEvents @Inject constructor(
             skillSuccess(64, 512, player.firemakingLvl)
 
         if (!success) {
-            weakQueue("queue.firemaking_light", 4, task)
+            // Replay the lighting sequence for every retry.
+            anim(task.burnAnim)
+            burnQueue("queue.firemaking_light", 4, task, affectedContext = true)
             return
         }
 
@@ -156,23 +185,27 @@ public class BurnLogEvents @Inject constructor(
         val fireCoords = task.obj.coords
         val fireId = coloredFire[task.log.input.internalName] ?: "loc.fire"
 
+        spam("The fire catches and the logs begin to burn.")
+
         locRepo.add(
             fireCoords,
             fireId,
-            (100..200).random(),
-            LocAngle.West,
+            random.of(100..200),
+            LocAngle.North,
             LocShape.CentrepieceStraight,
             onDespawn = {
-                val ashes = Obj.fromServer(worldClock, fireCoords, "obj.ashes", 1)
-                objRegistry.add(ashes)
+                // Use repository lifetime tracking so ashes eventually despawn.
+                objRepo.add("obj.ashes", fireCoords, constants.lootdrop_duration)
             },
         )
+
+        soundSynth("synth.FIRE_LIT")
 
         resetAnim()
         val xpModifier = xpMods.get(player, "stat.firemaking")
         val xp = task.log.xp * task.method.xpMultiplier(task.log.input.internalName) * xpModifier
         statAdvance("stat.firemaking", xp)
-        mes("The fire catches and the logs begin to burn.")
+        publish(PlayerActionCompleteEvent(player, PlayerAction.BurnLog, task.log.input.internalName, fireCoords))
 
         moveAwayFromFire(fireCoords)
         faceSquare(fireCoords)
@@ -187,6 +220,7 @@ public class BurnLogEvents @Inject constructor(
         val log: FiremakingLogsRow,
         val obj: Obj,
         val method: BurnMethod,
+        val burnAnim: String,
     )
 
     enum class BurnMethod {
@@ -194,16 +228,12 @@ public class BurnLogEvents @Inject constructor(
         Bow,
         ;
 
-        fun xpMultiplier(logInternalName: String): Double {
-            if (this != Bow) {
-                return 1.0
-            }
-            return when (logInternalName) {
-                "obj.camphor_logs" -> 1.361
-                "obj.ironwood_logs" -> 1.451
-                "obj.rosewood_logs" -> 1.567
-                else -> 1.0
-            }
-        }
+        fun xpMultiplier(logInternalName: String): Double = 1.0
+    }
+
+    private object PyreShipXpMultipliers {
+        const val CAMPHOR = 1.361
+        const val IRONWOOD = 1.451
+        const val ROSEWOOD = 1.567
     }
 }

@@ -5,16 +5,13 @@ import dev.openrune.definition.opcode.OpcodeDefinitionCodec
 import dev.openrune.definition.opcode.OpcodeList
 import dev.openrune.definition.opcode.OpcodeType
 import dev.openrune.definition.opcode.impl.DefinitionOpcodeEntityOps
-import dev.openrune.definition.opcode.impl.DefinitionOpcodeParams
 import dev.openrune.definition.opcode.impl.DefinitionOpcodeTransforms
 import dev.openrune.definition.type.ObjectType
-import dev.openrune.revision
-import dev.openrune.types.NpcServerType
 import dev.openrune.types.ObjectServerType
 import dev.openrune.util.DefinitionOpcodeParamMap
 
 class ObjectServerCodec(
-    val rev : Int,
+    val rev: Int,
     val objects: Map<Int, ObjectType>? = null,
     val custom: Map<Int, ObjectServerType>? = emptyMap(),
     val examines: Map<Int, String> = emptyMap(),
@@ -43,7 +40,13 @@ class ObjectServerCodec(
                     ObjectServerType::multiDefault,
                 )
             )
-            add(DefinitionOpcodeParamMap(14, ObjectServerType::paramsRaw, ObjectServerType::paramMap))
+            add(
+                DefinitionOpcodeParamMap(
+                    14,
+                    ObjectServerType::paramsRaw,
+                    ObjectServerType::paramMap,
+                )
+            )
         }
 
     override fun ObjectServerType.createData() {
@@ -67,11 +70,20 @@ class ObjectServerCodec(
         paramsRaw = obj.params
         actions = obj.actions
 
+        // Loc examine text is server-side only in OSRS - it is never present in the loc cache
+        // config - so `.data/raw-cache/examines/locs.csv` is its only source. This assignment used
+        // to live inside the `customData != null` branch below, which meant the CSV reached only
+        // the ~800 locs that happen to carry a toml override for unrelated reasons; every other loc
+        // packed with `desc=""` and examining it printed an empty line. Measured before the fix:
+        // 793 of 62,431 packed locs had examine text while the CSV named 30,239 of them.
+        desc = examines[id] ?: ""
+
         val customData = custom?.get(id)
 
         if (customData != null) {
-            desc = customData.desc.takeIf { it.isNotEmpty() } ?: examines[obj.id] ?: ""
+            desc = customData.desc.takeIf { it.isNotEmpty() } ?: desc
             contentGroup = customData.contentGroup
+            paramsRaw = (paramsRaw.orEmpty() + customData.paramsRaw.orEmpty()).toMutableMap()
         }
     }
 

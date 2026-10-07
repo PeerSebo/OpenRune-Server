@@ -20,6 +20,10 @@ data class InventoryServerType(
             uimBlocked = false,
         ),
     var stock: List<InvStock> = emptyList(),
+    var name: String = "",
+    var buyMultiplier: Int = -1,
+    var sellMultiplier: Int = -1,
+    var delta: Int = -1,
 ) : Definition {
 
     public val restock: Boolean
@@ -98,10 +102,7 @@ public enum class InvStackType(public val id: Int) {
 }
 
 public enum class InvScope(public val id: Int) {
-    /** Temporary inventories that do not save. (e.g., clue scrolls) */
     Temp(0),
-    /** Persistent inventories that will save. (e.g., bank) */
     Perm(1),
-    /** Global Inventories that are shared. (e.g., shops) */
     Shared(2),
 }

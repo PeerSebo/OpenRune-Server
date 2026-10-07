@@ -23,7 +23,6 @@ import org.rsmod.api.player.interact.NpcInteractions
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.player.protect.ProtectedAccessContextFactory
 import org.rsmod.api.player.protect.clearPendingAction
-import org.rsmod.api.player.vars.VarPlayerIntMapSetter
 import org.rsmod.api.registry.zone.ZoneUpdateMap
 import org.rsmod.api.repo.world.WorldRepository
 import org.rsmod.coroutine.GameCoroutine
@@ -224,7 +223,7 @@ class ImpCatcherInteractionTest {
 
         init {
             with(script) { ScriptContext(events, CheatCommandMap(), EngineQueueCache()).startup() }
-            VarPlayerIntMapSetter.set(player, "varp.imp", stage)
+            script.quest.jumpToStage(player, stage)
         }
 
         fun access() = ProtectedAccess(player, coroutine, context)
@@ -323,7 +322,7 @@ class ImpCatcherInteractionTest {
 
         @OptIn(InternalApi::class)
         @JvmStatic @BeforeAll fun cache() {
-            ServerCacheManager.init(240).close()
+            ServerCacheManager.init(241).close()
             for ((owner, name) in listOf(
                 "org.rsmod.api.invtx.InvTransactionsScriptKt" to "cachedInventoryTransactions",
                 "org.rsmod.api.invtx.VirtualInvTransactionsKt" to "cachedPlayerItemStorage",

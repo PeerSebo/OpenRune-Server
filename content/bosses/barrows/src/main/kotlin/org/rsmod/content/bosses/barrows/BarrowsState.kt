@@ -4,7 +4,6 @@ import org.rsmod.api.player.vars.VarPlayerIntMapSetter
 import org.rsmod.api.player.vars.boolVarBit
 import org.rsmod.api.player.vars.intVarBit
 import org.rsmod.api.player.vars.intVarp
-import org.rsmod.content.drops.hasObjInInventoryOrBank
 import org.rsmod.game.entity.Player
 import org.rsmod.map.CoordGrid
 
@@ -20,7 +19,9 @@ internal var Player.hfsStage by intVarBit("varbit.hfs")
 internal val Player.cryptMapStudied by boolVarBit("varbit.barrows_map")
 
 internal val Player.needsHfsIcon: Boolean
-    get() = hfsStage in HFS_STARTED..HFS_ICON_LOOTED && !hasObjInInventoryOrBank("obj.barrows_icon")
+    get() = hfsStage in HFS_STARTED..HFS_ICON_LOOTED &&
+        inv.count("obj.barrows_icon") == 0 &&
+        (invMap["inv.bank"]?.count("obj.barrows_icon") ?: 0) == 0
 
 internal const val HFS_NOT_STARTED = 0
 internal const val HFS_STARTED = 2

@@ -2,14 +2,11 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
-import org.rsmod.api.droptable.rsPlayerTertiaryTable
-import org.rsmod.api.droptable.rsPlayerWeightedTable
 import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
 import org.rsmod.api.droptable.nothing
 import org.rsmod.api.droptable.ringNothing
-import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.api.droptable.rsPlayerWeightedTable
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -31,7 +28,6 @@ public val tzHaarXilDropTable: RSDropTable<Player, DropRollItem> = RSDropTable(
         }
         6 outOf 2048 separate "obj.tzhaar_cape_obsidian" count 1
         72 outOf 128 separate "obj.tzhaar_token" count 1..32
-        // Pool padding (F2P drops removed / subtable access missing from wiki parse)
         288 weight nothing()
     },
 )

@@ -12,10 +12,8 @@ class NpcCanRetaliateTest {
     fun `ignoreCombatInteractions forces canRetaliate to be false`() {
         val npc = newNpc()
 
-        // Baseline: a freshly spawned npc would retaliate when attacked.
         assertTrue(npc.canRetaliate())
 
-        // Handing control to a scripted sequence suppresses retaliation entirely.
         npc.ignoreCombatInteractions = true
         assertFalse(npc.canRetaliate())
     }
@@ -23,7 +21,6 @@ class NpcCanRetaliateTest {
     @Test
     fun `ignoreCombatInteractions overrides the active-combat-delay shortcut`() {
         val npc = newNpc()
-        // Force the `actionDelay + activecombat_delay < currentMapClock` branch to be true.
         npc.currentMapClock = 100
         npc.actionDelay = 0
 

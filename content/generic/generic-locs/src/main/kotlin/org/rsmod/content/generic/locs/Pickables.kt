@@ -16,10 +16,14 @@ import org.rsmod.game.loc.BoundLocInfo
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
-class Pickables @Inject constructor(
-    private val objRepo: ObjRepository,
-    private val locRepo: LocRepository,
-) : PluginScript() {
+class Pickables
+@Inject
+constructor(private val objRepo: ObjRepository, private val locRepo: LocRepository) :
+    PluginScript() {
+
+    private companion object {
+        const val BerryPickTicks = 3
+    }
 
     override fun ScriptContext.startup() {
         PickableObjectsRow.all().forEach { row ->
@@ -29,17 +33,18 @@ class Pickables @Inject constructor(
             }
         }
 
-        PickableObjectsRow.all().distinctBy { it.replacementloc }.forEach { row ->
-            row.replacementloc?.let { replacement ->
-                onOpLoc1(replacement) { emptyPickable(it.loc, row) }
-                onOpLoc2(replacement) { emptyPickable(it.loc, row) }
+        PickableObjectsRow.all()
+            .distinctBy { it.replacementloc }
+            .forEach { row ->
+                row.replacementloc?.let { replacement ->
+                    onOpLoc1(replacement) { emptyPickable(it.loc, row) }
+                    onOpLoc2(replacement) { emptyPickable(it.loc, row) }
+                }
             }
-        }
 
         onOpLoc2("loc.fai_varrock_cadavabush_tailored") {
             mes("There are no berries on this bush. Maybe you should try another bush.")
         }
-
     }
 
     private suspend fun ProtectedAccess.emptyPickable(loc: BoundLocInfo, row: PickableObjectsRow) {
@@ -54,6 +59,10 @@ class Pickables @Inject constructor(
     ) {
         arriveDelay()
 
+        if (row.isBerryBush && actionDelay >= mapClock && skillAnimDelay >= mapClock) {
+            return
+        }
+
         if (handleNettles(row)) {
             return
         }
@@ -66,7 +75,7 @@ class Pickables @Inject constructor(
             return
         }
 
-        anim("seq.human_pickupfloor")
+        anim(row.pickAnim)
 
         if (row.forceswalk) {
             playerWalkWithMinDelay(loc.coords)
@@ -74,9 +83,14 @@ class Pickables @Inject constructor(
 
         givePickables(row, rolledSeed, giveSeedOnly)
 
-        soundSynth("synth.pick")
+        soundSynth("synth.PICK")
 
         advanceLoc(loc, type, row)
+
+        if (row.isBerryBush) {
+            actionDelay = maxOf(actionDelay, mapClock + BerryPickTicks)
+            skillAnimDelay = mapClock + BerryPickTicks
+        }
     }
 
     private fun ProtectedAccess.handleNettles(row: PickableObjectsRow): Boolean {
@@ -166,13 +180,7 @@ class Pickables @Inject constructor(
         }
 
         replaceUntilRespawn(loc, replacement, respawnDuration) {
-            locRepo.add(
-                loc.coords,
-                respawnType.internalName,
-                Int.MAX_VALUE,
-                loc.angle,
-                loc.shape,
-            )
+            locRepo.add(loc.coords, respawnType.internalName, Int.MAX_VALUE, loc.angle, loc.shape)
         }
     }
 
@@ -189,10 +197,8 @@ class Pickables @Inject constructor(
         return rollChance(numerator, denominator)
     }
 
-    private fun ProtectedAccess.rollChance(
-        numerator: Int,
-        denominator: Int,
-    ): Boolean = random.of(1, denominator) <= numerator
+    private fun ProtectedAccess.rollChance(numerator: Int, denominator: Int): Boolean =
+        random.of(1, denominator) <= numerator
 
     private fun ProtectedAccess.replaceUntilRespawn(
         loc: BoundLocInfo,
@@ -212,17 +218,26 @@ class Pickables @Inject constructor(
         )
     }
 
-    private fun pickableRespawnDuration(ticks: Int): Int =
-        if (ticks == 0) Int.MAX_VALUE else ticks
+    private fun pickableRespawnDuration(ticks: Int): Int = if (ticks == 0) Int.MAX_VALUE else ticks
 
-    private fun Player.hasPickableGloves(): Boolean =
-        worn[Wearpos.Hands.slot] != null
+    private fun Player.hasPickableGloves(): Boolean = worn[Wearpos.Hands.slot] != null
 
     private val PickableObjectsRow.isNettles: Boolean
         get() = itemgiven.internalName == "obj.nettles_picked"
 
+    private val PickableObjectsRow.isBerryBush: Boolean
+        get() =
+            itemgiven.internalName == "obj.cadavaberries" ||
+                itemgiven.internalName == "obj.redberries"
+
+    private val PickableObjectsRow.pickAnim: String
+        get() = if (isBerryBush) "seq.picking_low" else "seq.human_pickupfloor"
+
     private fun pickMessage(item: ItemServerType): String =
-        "You pick some ${item.name.lowercase()}."
+        when (item.internalName) {
+            "obj.banana" -> "You pick a banana."
+            else -> "You pick some ${item.name.lowercase()}."
+        }
 
     private fun invFullMessage(item: ItemServerType): String =
         "You can't carry any more ${item.name.lowercase()}."
@@ -230,9 +245,9 @@ class Pickables @Inject constructor(
     private fun emptyPickableMessage(row: PickableObjectsRow): String =
         when (row.itemgiven.internalName) {
             "obj.cadavaberries",
-            "obj.redberries",
-            -> "There are no berries on this bush at the moment."
+            "obj.redberries" -> "There are no berries on this bush at the moment."
             "obj.pineapple" -> "There are no pineapples left on this plant."
+            "obj.banana" -> "There are no bananas left on the tree."
             else -> "There is nothing to pick here at the moment."
         }
 }

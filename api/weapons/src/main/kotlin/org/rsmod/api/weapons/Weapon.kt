@@ -19,17 +19,6 @@ public interface Weapon<T : CombatAttack> {
      */
     public suspend fun ProtectedAccess.attack(target: Npc, attack: T): Boolean
 
-    /**
-     * Executes this weapon's attack against a [Player] target.
-     *
-     * **Note:** If you intend to cancel the combat interaction, you **must** do so explicitly -
-     * call [WeaponAttackManager.stopCombat]. Likewise, to continue the interaction, call
-     * [WeaponAttackManager.continueCombat].
-     *
-     * @return `true` if this weapon handled the attack and the default combat flow should stop;
-     *   `false` to resume the previously interrupted default combat attack. This should usually
-     *   return `true`.
-     */
     public suspend fun ProtectedAccess.attack(target: Player, attack: T): Boolean
 }
 

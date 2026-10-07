@@ -1,0 +1,5 @@
+[[varp]]
+id = "varp.home_teleport_cast_coords"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"

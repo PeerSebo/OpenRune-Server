@@ -67,12 +67,15 @@ data class NpcServerType(
     var respawnRate: Int = 100,
     var examine: String = "",
     var maxRange: Int = 7,
-    var wanderRange: Int = 5,
+    // User-requested default: wander one tile less than OSRS (5). Define it here so
+    // NPCs without TOML entries also inherit it; mergeDefinitions drops default-valued
+    // overrides. Existing explicit 4s may be omitted during merge without changing behavior.
+    var wanderRange: Int = 4,
     var attackRange: Int = 1,
     var huntRange: Int = 5,
     var huntMode: Int? = null,
     var giveChase: Boolean = true,
-    @param:TomlField(["params"],serializer = ParamSerializer::class)
+    @param:TomlField(["params"], serializer = ParamSerializer::class)
     var paramsRaw: MutableMap<Int, Any>? = null,
 ) : Definition {
 

@@ -10,20 +10,27 @@ import org.rsmod.content.skills.SkillMultiConfig
 import org.rsmod.content.skills.SkillMultiEntry
 import org.rsmod.content.skills.SkillingActionType
 import org.rsmod.content.skills.openSkillMulti
+import org.rsmod.content.skills.smithing.configs.SmithingParams
 import org.rsmod.content.skills.smithing.util.SmithingUtils
+import org.rsmod.content.skills.smithing.util.SmithingUtils.hasHammer
 import org.rsmod.game.inv.Inventory
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
 class DragonForgeScript : PluginScript() {
 
-    private val forgeRecipes = SmithingDragonForgeRow.all()
+    private val sailingEraOutputs =
+        setOf("obj.sailing_boat_keel_part_dragon", "obj.sailing_boat_large_keel_part_dragon")
+
+    private val forgeRecipes =
+        SmithingDragonForgeRow.all().filterNot { it.output.internalName in sailingEraOutputs }
+
     private val recipesByOutput = forgeRecipes.associateBy { it.output.internalName }
 
     override fun ScriptContext.startup() {
         onOpLoc1("loc.ds2_ac_forge_anvil") { openDragonForge() }
 
-        onPlayerQueueWithArgs<DragonForgeTask>("queue.smithing_dragon_forge") {
+        onPlayerQueueWithArgs<DragonForgeTask>(SmithingParams.DRAGON_FORGE_QUEUE) {
             processForgeTask(it.args)
         }
     }
@@ -40,11 +47,9 @@ class DragonForgeScript : PluginScript() {
                 actionType = SkillingActionType.SMELT,
                 entries = available.map(::toEntry),
                 maxCountProvider = { inventory, entry ->
-                    recipesByOutput[entry.internal]
-                        ?.let { maxSmeltCount(inventory, it) }
-                        ?: 0
+                    recipesByOutput[entry.internal]?.let { maxSmeltCount(inventory, it) } ?: 0
                 },
-            ),
+            )
         ) { selection ->
             val recipe = recipesByOutput[selection.entry.internal] ?: return@openSkillMulti
             startSmelting(recipe, selection.amount)
@@ -54,7 +59,9 @@ class DragonForgeScript : PluginScript() {
     private fun toEntry(recipe: SmithingDragonForgeRow): SkillMultiEntry =
         SkillMultiEntry(
             recipe.output.internalName,
-            recipe.input.map { Material(it.internalName, recipe.inputAmount.first()) },
+            recipe.input.mapIndexed { index, item ->
+                Material(item.internalName, recipe.inputAmount.getOrElse(index) { 1 })
+            },
         )
 
     private suspend fun ProtectedAccess.startSmelting(
@@ -66,7 +73,18 @@ class DragonForgeScript : PluginScript() {
             return
         }
 
-        queueNext(recipe, amount, completed = 0)
+        if (!canSmelt(recipe)) {
+            return
+        }
+
+        clearWeakQueue(SmithingParams.DRAGON_FORGE_QUEUE)
+        scheduleForgeCycle(DragonForgeTask(recipe, amount, completed = 0))
+    }
+
+    private fun ProtectedAccess.scheduleForgeCycle(task: DragonForgeTask) {
+        anim(SmithingParams.FURNACE_ANIM)
+        soundSynth(SmithingParams.FURNACE_SOUND)
+        smithQueue(SmithingParams.DRAGON_FORGE_QUEUE, SmithingParams.DRAGON_FORGE_TICKS, task)
     }
 
     private suspend fun ProtectedAccess.processForgeTask(task: DragonForgeTask) {
@@ -75,54 +93,43 @@ class DragonForgeScript : PluginScript() {
             return
         }
 
-        performSmelt(task.recipe)
+        if (!performSmelt(task.recipe)) {
+            resetAnim()
+            return
+        }
 
         val completed = task.completed + 1
-        if (completed >= task.amount || !canSmelt(task.recipe)) {
-            return
+        if (completed < task.amount && canSmelt(task.recipe)) {
+            scheduleForgeCycle(task.copy(completed = completed))
+        } else {
+            resetAnim()
         }
-
-
-        queueNext(task.recipe, task.amount, completed)
     }
 
-    private fun ProtectedAccess.queueNext(
-        recipe: SmithingDragonForgeRow,
-        amount: Int,
-        completed: Int,
-    ) {
-        weakQueue(
-            "queue.smithing_dragon_forge",
-            if (completed == 0) 1 else 5,
-            DragonForgeTask(recipe, amount, completed),
-        )
-    }
-
-    private suspend fun ProtectedAccess.performSmelt(recipe: SmithingDragonForgeRow) {
-        anim("seq.human_furnace")
-        soundSynth("synth.furnace")
-        delay(2)
-
-        val removed =
-            recipe.input.all { input ->
-                invDel(inv, input.internalName, recipe.inputAmount.first()).success
+    private fun ProtectedAccess.performSmelt(recipe: SmithingDragonForgeRow): Boolean {
+        val inputs =
+            recipe.input.mapIndexed { index, item ->
+                item.internalName to recipe.inputAmount.getOrElse(index) { 1 }
             }
-
-        if (!removed) {
-            return
+        if (!tryProduce(inputs, recipe.output.internalName, recipe.outputAmount)) {
+            return false
         }
-
-        if (invAdd(inv, recipe.output.internalName, recipe.outputAmount).success) {
-            statAdvance("stat.smithing", recipe.xp.toDouble())
-            val inputName = SmithingUtils.itemName(recipe.input.first(), "ore")
-            mes("You smelt the $inputName in the furnace.")
-        }
+        statAdvance("stat.smithing", recipe.xp.toDouble())
+        val inputName = SmithingUtils.itemName(recipe.input.first(), "ore")
+        mes("You smelt the $inputName in the furnace.")
+        return true
     }
 
     private suspend fun ProtectedAccess.canSmelt(recipe: SmithingDragonForgeRow): Boolean {
+        if (!hasHammer()) {
+            mes("You need a hammer to work metal with an anvil.")
+            return false
+        }
+
         val missing =
-            recipe.input.mapNotNull { input ->
-                val need = recipe.inputAmount.first() - inv.count(input.internalName)
+            recipe.input.mapIndexedNotNull { index, input ->
+                val amount = recipe.inputAmount.getOrElse(index) { 1 }
+                val need = amount - inv.count(input.internalName)
                 if (need > 0) {
                     SmithingUtils.itemName(input) to need
                 } else {
@@ -148,14 +155,16 @@ class DragonForgeScript : PluginScript() {
     }
 
     private fun maxSmeltCount(inventory: Inventory, recipe: SmithingDragonForgeRow): Int =
-        recipe.input.minOfOrNull { input ->
-            inventory.count(input.internalName) / recipe.inputAmount.first()
-        } ?: 0
+        recipe.input
+            .mapIndexed { index, input ->
+                val amount = recipe.inputAmount.getOrElse(index) { 1 }
+                inventory.count(input.internalName) / amount
+            }
+            .minOrNull() ?: 0
 
     private data class DragonForgeTask(
         val recipe: SmithingDragonForgeRow,
         val amount: Int,
         val completed: Int,
     )
-
 }

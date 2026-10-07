@@ -2,17 +2,18 @@ package org.rsmod.content.other.pets
 
 import dev.or2.central.account.Rights
 import jakarta.inject.Inject
-import org.rsmod.api.player.hook.PlayerPostTickHook
+import org.rsmod.api.game.process.GameLifecycle
 import org.rsmod.api.player.output.mes
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.player.protect.ProtectedAccessLauncher
 import org.rsmod.api.script.onCommand
+import org.rsmod.api.script.onEvent
 import org.rsmod.api.script.onIfOverlayButton
 import org.rsmod.api.script.onOpHeld5
 import org.rsmod.api.script.onPlayerLogout
 import org.rsmod.game.cheat.Cheat
 import org.rsmod.game.entity.Npc
-import org.rsmod.game.entity.Player
+import org.rsmod.game.entity.PlayerList
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
@@ -22,8 +23,13 @@ constructor(
     private val followers: PetFollowers,
     private val rewards: PetRewards,
     private val protectedAccess: ProtectedAccessLauncher,
-) : PluginScript(), PlayerPostTickHook {
+    private val players: PlayerList,
+) : PluginScript() {
     override fun ScriptContext.startup() {
+        // Teleports must precede NPC zone/protocol updates, otherwise clients retain the old tile.
+        onEvent<GameLifecycle.LateCycle> {
+            for (player in players) followers.tick(player)
+        }
         for (pet in Pets.all) {
             for (form in pet.forms) {
                 onOpHeld5(form.obj) { dropPet(it.slot, form) }
@@ -42,10 +48,6 @@ constructor(
             invalidArgs = "Use as ::pet to pick from a list, or ::pet objDebugName (ex: ::pet hell_pet)"
             cheat { givePet() }
         }
-    }
-
-    override fun onPostTick(player: Player) {
-        followers.onPostTick(player)
     }
 
     private fun ProtectedAccess.dropPet(slot: Int, form: PetForm) {

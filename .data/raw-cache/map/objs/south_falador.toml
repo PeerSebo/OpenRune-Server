@@ -6,7 +6,6 @@ coords = "0_45_51_26_33"
 obj = "obj.snape_grass"
 coords = "0_45_51_27_31"
 
-## Crafting Guild
 
 [[spawn]]
 obj = "obj.amulet_mould"
@@ -52,7 +51,6 @@ coords = "0_45_51_37_10"
 obj = "obj.tiara_mould"
 coords = "1_45_51_55_18"
 
-## Mudskipper Point
 
 [[spawn]]
 obj = "obj.broken_rod"
@@ -62,7 +60,6 @@ coords = "0_46_48_40_40"
 obj = "obj.forlorn_boot"
 coords = "0_46_48_40_42"
 
-## Port Sarim
 
 [[spawn]]
 obj = "obj.banana"
@@ -76,9 +73,6 @@ coords = "1_47_50_20_59"
 obj = "obj.bolt"
 coords = "1_47_50_8_44"
 
-[[spawn]]
-obj = "obj.cheese"
-coords = "0_47_50_10_32"
 
 [[spawn]]
 obj = "obj.port_sarim_beer"
@@ -88,11 +82,11 @@ coords = "0_47_50_41_57"
 obj = "obj.white_apron"
 coords = "0_47_50_1_4"
 
+# The ground apron is a decoy; PiratesTreasureFoodStore exchanges it for obj.white_apron on take.
 [[spawn]]
-obj = "obj.white_apron"
+obj = "obj.piratetreasure_apron"
 coords = "0_47_50_8_29"
 
-## Rimmington
 
 [[spawn]]
 obj = "obj.bones"
@@ -118,7 +112,6 @@ coords = "0_46_50_14_5"
 obj = "obj.logs"
 coords = "0_46_50_15_5"
 
-## South Falador Farm
 
 [[spawn]]
 obj = "obj.bucket_empty"
@@ -135,6 +128,3 @@ coords = "0_47_51_8_31"
 [[spawn]]
 obj = "obj.egg"
 coords = "0_47_51_9_31"
-
-## South Falador Farm End
-

@@ -1,0 +1,44 @@
+[[npc]]
+isServerOnly = true
+id = "npc.vardorvis"
+inherit = "npc.vardorvis"
+defaultMode = "None"
+maxRange = 40
+respawnRate = 30
+[npc.params]
+"param.elemental_weakness_type"=3
+"param.elemental_weakness_percent"=35
+"param.killcount_varp"="varp.total_vardorvis_kills"
+"param.killcount_varp_awakened"="varp.total_vardorvis_awakened_kills"
+"param.boss_hp_bar_mode"=2
+"param.death_anim"="seq.npc_vardorvis_01_death_01"
+"param.melee_strength"=9
+
+[[npc]]
+isServerOnly = true
+id = "npc.vardorvis_head_tentacle"
+inherit = "npc.vardorvis_head_tentacle"
+defaultMode = "None"
+
+[[npc]]
+isServerOnly = true
+id = "npc.vardorvis_big_tentacle"
+inherit = "npc.vardorvis_big_tentacle"
+moveRestrict = "NoMove"
+wanderRange = 0
+defaultMode = "None"
+blockWalk = "None"
+
+[[npc]]
+isServerOnly = true
+id = "npc.vardorvis_axe"
+inherit = "npc.vardorvis_axe"
+defaultMode = "None"
+blockWalk = "None"
+
+[[npc]]
+isServerOnly = true
+id = "npc.vardorvis_axe_static"
+inherit = "npc.vardorvis_axe_static"
+defaultMode = "None"
+blockWalk = "None"

@@ -1,0 +1,35 @@
+[gamevals.dbtable]
+garden_seasons = 63910
+garden_patrols = 63911
+
+[gamevals.dbrow]
+garden_season_winter = 63340
+garden_season_spring = 63341
+garden_season_autumn = 63342
+garden_season_summer = 63343
+garden_patrol_1 = 63344
+garden_patrol_2 = 63345
+garden_patrol_3 = 63346
+garden_patrol_4 = 63347
+garden_patrol_5 = 63348
+garden_patrol_6 = 63349
+garden_patrol_7 = 63350
+garden_patrol_8 = 63351
+garden_patrol_9 = 63352
+garden_patrol_10 = 63353
+garden_patrol_11 = 63354
+garden_patrol_12 = 63355
+garden_patrol_13 = 63356
+garden_patrol_14 = 63357
+garden_patrol_15 = 63358
+garden_patrol_16 = 63359
+garden_patrol_17 = 63360
+garden_patrol_18 = 63361
+garden_patrol_19 = 63362
+garden_patrol_20 = 63363
+garden_patrol_21 = 63364
+garden_patrol_22 = 63365
+garden_patrol_23 = 63366
+garden_patrol_24 = 63367
+garden_patrol_25 = 63368
+garden_patrol_26 = 63369

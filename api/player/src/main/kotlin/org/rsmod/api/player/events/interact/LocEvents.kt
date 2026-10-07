@@ -35,13 +35,6 @@ public sealed class LocEvents {
     public class Op5(loc: BoundLocInfo, vis: BoundLocInfo, type: ObjectServerType) :
         Op(loc, vis, type)
 
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public sealed class Ap(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -65,13 +58,6 @@ public sealed class LocEvents {
 }
 
 public sealed class LocContentEvents {
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public sealed class Op(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -94,13 +80,6 @@ public sealed class LocContentEvents {
     public class Op5(loc: BoundLocInfo, vis: BoundLocInfo, type: ObjectServerType, content: Int) :
         Op(loc, vis, type, content)
 
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public sealed class Ap(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -125,13 +104,6 @@ public sealed class LocContentEvents {
 }
 
 public sealed class LocCategoryEvents {
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public sealed class Op(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -139,28 +111,41 @@ public sealed class LocCategoryEvents {
         category: Int,
     ) : OpEvent(category.toLong())
 
-    public class Op1(loc: BoundLocInfo, vis: BoundLocInfo, type: ObjectServerType, category: Int = type.category) :
-        Op(loc, vis, type, category)
+    public class Op1(
+        loc: BoundLocInfo,
+        vis: BoundLocInfo,
+        type: ObjectServerType,
+        category: Int = type.category,
+    ) : Op(loc, vis, type, category)
 
-    public class Op2(loc: BoundLocInfo, vis: BoundLocInfo, type: ObjectServerType, category: Int = type.category) :
-        Op(loc, vis, type, category)
+    public class Op2(
+        loc: BoundLocInfo,
+        vis: BoundLocInfo,
+        type: ObjectServerType,
+        category: Int = type.category,
+    ) : Op(loc, vis, type, category)
 
-    public class Op3(loc: BoundLocInfo, vis: BoundLocInfo, type: ObjectServerType, category: Int = type.category) :
-        Op(loc, vis, type, category)
+    public class Op3(
+        loc: BoundLocInfo,
+        vis: BoundLocInfo,
+        type: ObjectServerType,
+        category: Int = type.category,
+    ) : Op(loc, vis, type, category)
 
-    public class Op4(loc: BoundLocInfo, vis: BoundLocInfo, type: ObjectServerType, category: Int = type.category) :
-        Op(loc, vis, type, category)
+    public class Op4(
+        loc: BoundLocInfo,
+        vis: BoundLocInfo,
+        type: ObjectServerType,
+        category: Int = type.category,
+    ) : Op(loc, vis, type, category)
 
-    public class Op5(loc: BoundLocInfo, vis: BoundLocInfo, type: ObjectServerType, category: Int = type.category) :
-        Op(loc, vis, type, category)
+    public class Op5(
+        loc: BoundLocInfo,
+        vis: BoundLocInfo,
+        type: ObjectServerType,
+        category: Int = type.category,
+    ) : Op(loc, vis, type, category)
 
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public sealed class Ap(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -168,30 +153,43 @@ public sealed class LocCategoryEvents {
         category: Int,
     ) : ApEvent(category.toLong())
 
-    public class Ap1(loc: BoundLocInfo, vis: BoundLocInfo, type: ObjectServerType, category: Int = type.category) :
-        Ap(loc, vis, type, category)
+    public class Ap1(
+        loc: BoundLocInfo,
+        vis: BoundLocInfo,
+        type: ObjectServerType,
+        category: Int = type.category,
+    ) : Ap(loc, vis, type, category)
 
-    public class Ap2(loc: BoundLocInfo, vis: BoundLocInfo, type: ObjectServerType, category: Int = type.category) :
-        Ap(loc, vis, type, category)
+    public class Ap2(
+        loc: BoundLocInfo,
+        vis: BoundLocInfo,
+        type: ObjectServerType,
+        category: Int = type.category,
+    ) : Ap(loc, vis, type, category)
 
-    public class Ap3(loc: BoundLocInfo, vis: BoundLocInfo, type: ObjectServerType, category: Int = type.category) :
-        Ap(loc, vis, type, category)
+    public class Ap3(
+        loc: BoundLocInfo,
+        vis: BoundLocInfo,
+        type: ObjectServerType,
+        category: Int = type.category,
+    ) : Ap(loc, vis, type, category)
 
-    public class Ap4(loc: BoundLocInfo, vis: BoundLocInfo, type: ObjectServerType, category: Int = type.category) :
-        Ap(loc, vis, type, category)
+    public class Ap4(
+        loc: BoundLocInfo,
+        vis: BoundLocInfo,
+        type: ObjectServerType,
+        category: Int = type.category,
+    ) : Ap(loc, vis, type, category)
 
-    public class Ap5(loc: BoundLocInfo, vis: BoundLocInfo, type: ObjectServerType, category: Int = type.category) :
-        Ap(loc, vis, type, category)
+    public class Ap5(
+        loc: BoundLocInfo,
+        vis: BoundLocInfo,
+        type: ObjectServerType,
+        category: Int = type.category,
+    ) : Ap(loc, vis, type, category)
 }
 
 public sealed class LocDefaultEvents {
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public sealed class Op(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -213,13 +211,6 @@ public sealed class LocDefaultEvents {
     public class Op5(loc: BoundLocInfo, vis: BoundLocInfo, type: ObjectServerType) :
         Op(loc, vis, type)
 
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public sealed class Ap(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -243,13 +234,6 @@ public sealed class LocDefaultEvents {
 }
 
 public sealed class LocUnimplementedEvents {
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public sealed class Op(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -273,13 +257,6 @@ public sealed class LocUnimplementedEvents {
 }
 
 public class LocTEvents {
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public class Op(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -289,13 +266,6 @@ public class LocTEvents {
         component: ComponentType,
     ) : OpEvent(EventBus.composeLongKey(type.id, component.packed))
 
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public class Ap(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -307,13 +277,6 @@ public class LocTEvents {
 }
 
 public class LocTContentEvents {
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public class Op(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -324,13 +287,6 @@ public class LocTContentEvents {
         locContent: Int = type.contentGroup,
     ) : OpEvent(EventBus.composeLongKey(locContent, component.packed))
 
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public class Ap(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -343,13 +299,6 @@ public class LocTContentEvents {
 }
 
 public class LocTDefaultEvents {
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public class Op(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -359,13 +308,6 @@ public class LocTDefaultEvents {
         component: ComponentType,
     ) : OpEvent(component.packed.toLong())
 
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public class Ap(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -377,13 +319,6 @@ public class LocTDefaultEvents {
 }
 
 public class LocUEvents {
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public class Op(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -392,13 +327,6 @@ public class LocUEvents {
         public val invSlot: Int,
     ) : OpEvent(EventBus.composeLongKey(type.id, objType.id))
 
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public class Ap(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -409,13 +337,6 @@ public class LocUEvents {
 }
 
 public class LocUContentEvents {
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public class OpType(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -425,13 +346,6 @@ public class LocUContentEvents {
         locContent: Int = type.contentGroup,
     ) : OpEvent(EventBus.composeLongKey(locContent, objType.id))
 
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public class ApType(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -441,13 +355,6 @@ public class LocUContentEvents {
         locContent: Int = type.contentGroup,
     ) : ApEvent(EventBus.composeLongKey(locContent, objType.id))
 
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public class OpContent(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -458,13 +365,6 @@ public class LocUContentEvents {
         locContent: Int = type.contentGroup,
     ) : OpEvent(EventBus.composeLongKey(locContent, objContent))
 
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public class ApContent(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -477,13 +377,6 @@ public class LocUContentEvents {
 }
 
 public class LocUDefaultEvents {
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public class OpType(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -492,13 +385,6 @@ public class LocUDefaultEvents {
         public val invSlot: Int,
     ) : OpEvent(type.id.toLong())
 
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public class ApType(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -507,13 +393,6 @@ public class LocUDefaultEvents {
         public val invSlot: Int,
     ) : ApEvent(type.id.toLong())
 
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public class OpContent(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -523,13 +402,6 @@ public class LocUDefaultEvents {
         locContent: Int = type.contentGroup,
     ) : OpEvent(locContent.toLong())
 
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public class ApContent(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -539,15 +411,6 @@ public class LocUDefaultEvents {
         locContent: Int = type.contentGroup,
     ) : ApEvent(locContent.toLong())
 
-    /**
-     * Fired when _any_ item is used on a loc whose [ObjectServerType.category] matches the
-     * registered category.
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public class OpCategory(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -557,14 +420,6 @@ public class LocUDefaultEvents {
         category: Int = type.category,
     ) : OpEvent(category.toLong())
 
-    /**
-     * The approach (`ap`) counterpart to [OpCategory].
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public class ApCategory(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -576,13 +431,6 @@ public class LocUDefaultEvents {
 }
 
 public class LocUCategoryEvents {
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public class Op(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,
@@ -592,13 +440,6 @@ public class LocUCategoryEvents {
         category: Int = type.category,
     ) : OpEvent(EventBus.composeLongKey(category, objType.id))
 
-    /**
-     * @param loc The _base_ loc target of the event.
-     * @param vis The current _visual_ representation of [loc], based on the player's varps. If
-     *   [loc] has a [ObjectServerType.multiLoc], [vis] reflects the resolved variant. Otherwise,
-     *   [vis] is equal to [loc].
-     * @param type The [ObjectServerType] of the [vis] loc.
-     */
     public class Ap(
         public val loc: BoundLocInfo,
         public val vis: BoundLocInfo,

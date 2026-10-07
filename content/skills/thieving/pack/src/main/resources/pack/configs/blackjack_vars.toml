@@ -1,0 +1,17 @@
+[[varp]]
+id = "varp.blackjack_pickpockets_remaining"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.blackjack_target_uid"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+id = "varp.blackjack_expires_at"
+isServerOnly = true
+scope = "Temp"
+transmit = "Never"

@@ -10,7 +10,6 @@ import org.rsmod.api.controller.events.ControllerTimerEvents
 import org.rsmod.events.EventBus
 import org.rsmod.plugin.scripts.ScriptContext
 
-/* Timer functions */
 public fun ScriptContext.onAiConTimer(
     type: String,
     action: ControllerAIEvents.Timer.() -> Unit,
@@ -25,9 +24,12 @@ public fun ScriptContext.onConTimer(
     type: String,
     timer: String,
     action: suspend StandardConAccess.(ControllerTimerEvents.Type) -> Unit,
-): Unit = onConAccessEvent(EventBus.composeLongKey(type.asRSCM(RSCMType.CONTROLLER), timer.asRSCM(RSCMType.TIMER)), action)
+): Unit =
+    onConAccessEvent(
+        EventBus.composeLongKey(type.asRSCM(RSCMType.CONTROLLER), timer.asRSCM(RSCMType.TIMER)),
+        action,
+    )
 
-/* Queue functions */
 public fun ScriptContext.onAiConQueue(
     type: String,
     action: ControllerAIEvents.Queue<Nothing>.() -> Unit,

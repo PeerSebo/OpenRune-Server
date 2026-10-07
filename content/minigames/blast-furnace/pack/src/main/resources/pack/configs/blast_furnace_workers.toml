@@ -1,0 +1,47 @@
+[[npc]]
+isServerOnly = true
+id = "npc.blast_furnace_automaton_pedaller"
+inherit = "npc.blast_furnace_automaton_pedaller"
+moveRestrict = "NoMove"
+wanderRange = 0
+defaultMode = "None"
+
+[[npc]]
+isServerOnly = true
+id = "npc.blast_furnace_automaton_pumper"
+inherit = "npc.blast_furnace_automaton_pumper"
+moveRestrict = "NoMove"
+wanderRange = 0
+defaultMode = "None"
+
+[[npc]]
+isServerOnly = true
+id = "npc.blast_furnace_automaton_stoker_empty"
+inherit = "npc.blast_furnace_automaton_stoker_empty"
+moveRestrict = "NoMove"
+wanderRange = 0
+defaultMode = "None"
+
+[[npc]]
+isServerOnly = true
+id = "npc.blast_furnace_automaton_stoker_coke"
+inherit = "npc.blast_furnace_automaton_stoker_coke"
+moveRestrict = "NoMove"
+wanderRange = 0
+defaultMode = "None"
+
+[[npc]]
+isServerOnly = true
+id = "npc.blast_furnace_automaton_cog_repairer"
+inherit = "npc.blast_furnace_automaton_cog_repairer"
+moveRestrict = "NoMove"
+wanderRange = 0
+defaultMode = "None"
+
+[[npc]]
+isServerOnly = true
+id = "npc.blast_furnace_automaton_pipe_repairer"
+inherit = "npc.blast_furnace_automaton_pipe_repairer"
+moveRestrict = "NoMove"
+wanderRange = 0
+defaultMode = "None"

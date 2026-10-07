@@ -144,7 +144,7 @@ class SpecValidatorTest {
         val errors = SpecValidator.validate(spec(mapOf("a" to resetAnim()), reactions, rules)).map { it.message }
         assertHasError(errors, "rule has no actions")
         assertHasError(errors, "only supports Ranged and Melee")
-        assertHasError(errors, "Run 'missing' does not exist")
+        assertHasError(errors, "Run references ability 'missing' which does not exist")
     }
 
     @Test
@@ -319,7 +319,7 @@ class SpecValidatorTest {
         assertHasError(
             SpecValidator.validate(spec(mapOf("a" to resetAnim())).copy(phases = mapOf("main" to phaseTimer)))
                 .map { it.message },
-            "phase 'main' timer: Run 'missing' does not exist",
+            "phase 'main' timer: Run references ability 'missing' which does not exist",
         )
     }
 

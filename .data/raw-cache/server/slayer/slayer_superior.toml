@@ -1,5 +1,4 @@
-# https://oldschool.runescape.wiki/w/Superior_slayer_monster
-# Normal NPC death on task can spawn superiorNpc (requires Bigger and Badder unlock).
+# Source: https://oldschool.runescape.wiki/w/Superior_slayer_monster
 
 [[slayer_superior]]
 superiorNpc = "npc.superior_crawling_hand"
@@ -164,7 +163,7 @@ wildernessAvailable = false
 [[slayer_superior]]
 superiorNpc = "npc.superior_nechryael"
 normalNpcs = ["npc.kourend_nechryael", "npc.wild_cave_nechryael"]
-wildernessAvailable = false
+wildernessAvailable = true
 
 [[slayer_superior]]
 superiorNpc = "npc.superior_drake"
@@ -196,3 +195,7 @@ superiorNpc = "npc.superior_hydra"
 normalNpcs = ["npc.hydra"]
 wildernessAvailable = false
 
+[[slayer_superior]]
+superiorNpc = "npc.superior_venator"
+normalNpcs = ["npc.venator", "npc.venator_2", "npc.venator_3", "npc.venator_4", "npc.venator_5"]
+wildernessAvailable = false

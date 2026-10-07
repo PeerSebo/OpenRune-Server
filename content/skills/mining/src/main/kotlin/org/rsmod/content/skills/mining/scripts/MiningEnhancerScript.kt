@@ -10,6 +10,7 @@ import org.rsmod.api.random.GameRandom
 import org.rsmod.api.script.onEvent
 import org.rsmod.content.skills.mining.MiningEquipment.wearingVarrockArmourAtLeast
 import org.rsmod.content.skills.mining.configs.isGemRock
+import org.rsmod.content.skills.mining.preSmeltOre
 import org.rsmod.events.EventBus
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
@@ -25,7 +26,9 @@ constructor(private val random: GameRandom, private val eventBus: EventBus) : Pl
             }
             val source = product.source as? SkillingProductSource.Mining ?: return@onEvent
             val data = source.rockData
-            val ore = product.item
+            val storedOre = player.preSmeltOre
+            player.preSmeltOre = null
+            val ore = storedOre ?: product.item
             if (data.isGemRock || ore.startsWith("obj.uncut_")) {
                 return@onEvent
             }

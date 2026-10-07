@@ -1,0 +1,7 @@
+[gamevals.varp]
+player_admin_god_mode = 63784
+player_admin_max_hit = 63785
+player_admin_one_hit_kill = 63786
+player_admin_infinite_runes = 63787
+player_admin_no_clip = 63788
+player_component_click_debug = 63789

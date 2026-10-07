@@ -7,4 +7,4 @@ falador_makeover_original_kit = 64851
 falador_makeover_original_colour = 64852
 
 [gamevals.synth]
-varrock_fence_jump = 2461
+JUMP = 2461

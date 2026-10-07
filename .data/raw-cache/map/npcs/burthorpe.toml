@@ -226,11 +226,7 @@ coords = "0_45_55_43_46"
 npc = "npc.twocats_unferth"
 coords = "0_45_55_38_38"
 
-## Heroes Guild
 
 [[spawn]]
 npc = "npc.helemos"
 coords = "1_45_54_14_54"
-
-## Heroes Guild End
-

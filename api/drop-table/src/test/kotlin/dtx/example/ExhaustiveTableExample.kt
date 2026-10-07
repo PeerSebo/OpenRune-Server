@@ -3,7 +3,6 @@ package dtx.example
 import dtx.impl.exhaustive.uniformExhaustiveTable
 import dtx.impl.exhaustive.weightedExhaustiveTable
 
-
 /**
  * Good for simple raffles or encounter table draws or something like that
  */
@@ -55,7 +54,6 @@ val uniformExhaustiveTableExample = uniformExhaustiveTable<Player, Item> {
         println("Yikes, out of encounters to roll! Reset the table!")
     }
 }
-
 
 /**
  * Very good for spicy raffles tbh, weights are based on how many rolls each item has

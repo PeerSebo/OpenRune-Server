@@ -43,13 +43,6 @@ public abstract class ExtendedModule : AbstractModule() {
         bind(base).to(impl)
     }
 
-    /**
-     * Declares a set binding for implementations of [P].
-     *
-     * While not strictly required, calling this function makes it explicit that this module
-     * supports multiple bindings for [P]. It signals to consumers that they can contribute
-     * additional implementations via [addSetBinding] in their own modules.
-     */
     protected inline fun <reified P> newSetBinding() {
         Multibinder.newSetBinder(binder(), P::class.java)
     }

@@ -56,7 +56,6 @@ public object MapTileDecoder {
         return def
     }
 
-    // This provides a more detailed view of all the configs per tile.
     public fun decode(buf: ByteBuf): MapTileDefinition {
         val tileHeights = hashMapOf<MapSquareGrid, Int>()
         val overlays = hashMapOf<MapSquareGrid, TileOverlay>()

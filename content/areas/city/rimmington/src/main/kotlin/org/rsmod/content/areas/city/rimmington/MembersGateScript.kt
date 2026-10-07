@@ -38,7 +38,7 @@ class MembersGateScript @Inject constructor(private val locRepo: LocRepository) 
         }
         locRepo.add(rightCoords + swing, Half.Right.open, DURATION, closedAngle.turn(1), clicked.shape)
         locRepo.add(leftCoords + swing, Half.Left.open, DURATION, closedAngle.turn(3), clicked.shape)
-        soundSynth("synth.iron_door_open")
+        soundSynth("synth.IRON_DOOR_OPEN")
     }
 
     private fun ProtectedAccess.close(clicked: BoundLocInfo, half: Half) {
@@ -52,7 +52,7 @@ class MembersGateScript @Inject constructor(private val locRepo: LocRepository) 
         }
         locRepo.add(openRight - swing, Half.Right.closed.last(), DURATION, closedAngle, clicked.shape)
         locRepo.add(openLeft - swing, Half.Left.closed.last(), DURATION, closedAngle, clicked.shape)
-        soundSynth("synth.iron_door_close")
+        soundSynth("synth.GRATE_CLOSE")
     }
 
     /**

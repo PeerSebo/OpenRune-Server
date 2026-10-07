@@ -3,21 +3,17 @@ package org.rsmod.content.skills.runecrafting.items
 import org.rsmod.api.invtx.invAdd
 import org.rsmod.api.invtx.invDel
 import org.rsmod.api.player.protect.ProtectedAccess
-import org.rsmod.content.skills.runecrafting.bloodEssenceCharges
 import org.rsmod.api.script.onOpHeld1
+import org.rsmod.content.skills.runecrafting.bloodEssenceCharges
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
 class BloodEssenceEvents : PluginScript() {
 
     override fun ScriptContext.startup() {
-        onOpHeld1(BloodEssence.INACTIVE) {
-            activateBloodEssence()
-        }
+        onOpHeld1(BloodEssence.INACTIVE) { activateBloodEssence() }
 
-        onOpHeld1(BloodEssence.ACTIVE) {
-            checkBloodEssence()
-        }
+        onOpHeld1(BloodEssence.ACTIVE) { checkBloodEssence() }
     }
 
     private fun ProtectedAccess.activateBloodEssence() {

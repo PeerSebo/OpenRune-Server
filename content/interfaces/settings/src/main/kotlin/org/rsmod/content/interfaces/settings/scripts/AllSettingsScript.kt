@@ -6,24 +6,20 @@ import dev.openrune.rscm.RSCM
 import dev.openrune.rscm.RSCM.asRSCM
 import dev.openrune.rscm.RSCMType
 import jakarta.inject.Inject
-import org.rsmod.api.attr.AttributeKey
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.player.protect.ProtectedAccessLauncher
 import org.rsmod.api.player.ui.ifCloseOverlay
 import org.rsmod.api.player.ui.ifSetEvents
 import org.rsmod.api.player.vars.VarPlayerIntMapSetter
-import org.rsmod.api.player.vars.boolVarBit
 import org.rsmod.api.player.vars.intVarBit
+import org.rsmod.api.player.vars.nullableIntVarp
 import org.rsmod.api.script.onDialogInput
-import org.rsmod.api.script.onIfClose
 import org.rsmod.api.script.onIfOpen
 import org.rsmod.api.script.onIfOverlayButton
-import org.rsmod.api.script.onPlayerLogin
 import org.rsmod.api.table.SettingsConfigsRow
 import org.rsmod.game.entity.Player
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
-
 
 val SettingsConfigsRow.varValue: String? get() = varbit?.let {
     RSCM.getReverseMapping(RSCMType.VARBIT, it)
@@ -60,23 +56,10 @@ class AllSettingsScript @Inject constructor(private val protectedAccess: Protect
     private var Player.searchListenForKeyboard by intVarBit("varbit.floater_search_listen_for_keyboard")
     private var Player.chatboxOpened by intVarBit("varbit.floater_chatbox_opened")
     private var Player.settingsColourModalOpened by intVarBit("varbit.settings_colour_modal_opened")
-    private val Player.newAccount by boolVarBit("varbit.new_player_account")
 
-    private var Player.selectedCategory: Int?
-        get() = attr[SELECTED_CATEGORY]
-        set(value) {
-            if (value == null) {
-                attr.remove(SELECTED_CATEGORY)
-            } else {
-                attr.put(SELECTED_CATEGORY, value)
-            }
-        }
+    private var Player.selectedCategory by nullableIntVarp("varp.settings_selected_category")
 
     override fun ScriptContext.startup() {
-
-        onPlayerLogin {
-            player.setDefaultOptions()
-        }
 
         onDialogInput {
             if (player.settingsColourModalOpened == 1) {
@@ -98,7 +81,7 @@ class AllSettingsScript @Inject constructor(private val protectedAccess: Protect
 
         onIfOverlayButton("component.settings:close") {
             player.ifCloseOverlay("interface.settings", eventBus)
-            runClientScript(2158)
+            runClientScript("clientscript.[clientscript,chatdefault_restoreinput]")
             player.settingsColourModalOpened = 0
         }
 
@@ -111,7 +94,7 @@ class AllSettingsScript @Inject constructor(private val protectedAccess: Protect
             player.selectCategory(it.comsub)
             player.settingsCategory = it.comsub
             player.endSearch()
-            runClientScript(2158)
+            runClientScript("clientscript.[clientscript,chatdefault_restoreinput]")
         }
 
         onIfOverlayButton("component.settings:tooltip_inside_if_clickzone") {
@@ -206,7 +189,6 @@ class AllSettingsScript @Inject constructor(private val protectedAccess: Protect
             SettingType.COLOUR_PICKER -> setColourSetting(setting)
             SettingType.BUTTON -> confirmSetting(setting)
 
-            // Handled elsewhere.
             SettingType.DROPDOWN, SettingType.KEYBIND -> {}
 
             else -> println("$type not implemented for setting id=$settingId")
@@ -245,7 +227,7 @@ class AllSettingsScript @Inject constructor(private val protectedAccess: Protect
             defaultColour,
         )
 
-        runClientScript(4020)
+        runClientScript("clientscript.[clientscript,chatdefault_stopinput]")
     }
 
     private suspend fun ProtectedAccess.confirmSetting(info: Setting) {
@@ -272,6 +254,9 @@ class AllSettingsScript @Inject constructor(private val protectedAccess: Protect
             }
             ConfirmationAction.ResetVolumeSliders -> {
                 player.resetVolumeSliders()
+                // The reset can unmute music; the resume timer is one-shot, so arm it here the
+                // same way the audio-settings sliders do.
+                player.softTimer("timer.music_resume", cycles = 1)
                 mes("Your volume sliders have been reset to their default values.")
             }
             ConfirmationAction.ResetKeybinds -> player.resetDefaultKeybinds()
@@ -316,26 +301,6 @@ class AllSettingsScript @Inject constructor(private val protectedAccess: Protect
             "varbit.option_areasounds_saved",
             "varbit.option_areasounds_saved_desktop",
         )
-    }
-
-
-    private fun Player.setDefaultOptions() {
-        if (!newAccount) return
-
-        resetDefaultKeybinds()
-        resetVolumeSliders()
-
-        VarPlayerIntMapSetter.set(this, "varbit.keybinding_esc_to_close", 1)
-        VarPlayerIntMapSetter.set(this, "varbit.option_collection_new_item", 3)
-        VarPlayerIntMapSetter.set(this, "varp.option_attackpriority", 2)
-        VarPlayerIntMapSetter.set(this, "varp.option_attackpriority_npc", 2)
-        VarPlayerIntMapSetter.set(this, "varbit.bank_hidedepositinv", 1)
-
-        VarPlayerIntMapSetter.set(this, "varbit.bounty_teleport_warning", 1)
-        VarPlayerIntMapSetter.set(this, "varbit.dareeyak_teleport_warning", 1)
-        VarPlayerIntMapSetter.set(this, "varbit.carrallagar_teleport_warning", 1)
-        VarPlayerIntMapSetter.set(this, "varbit.annakarl_teleport_warning", 1)
-        VarPlayerIntMapSetter.set(this, "varbit.ghorrock_teleport_warning", 1)
     }
 
     private fun Player.setVolume(legacy: String, desktop: String, value: Int) {
@@ -413,8 +378,7 @@ class AllSettingsScript @Inject constructor(private val protectedAccess: Protect
     }
 
     private companion object {
-        private val SELECTED_CATEGORY = AttributeKey<Int>()
-        private const val COLOUR_PALLET_OPEN_CLIENTSCRIPT = 4185
+        private const val COLOUR_PALLET_OPEN_CLIENTSCRIPT = "clientscript.[clientscript,colour_pallet]"
         val opaqueChatColourSettingIds = listOf(87, 89, 92, 94, 97, 99, 101, 103, 105, 196, 434)
         val splitChatColourSettingIds = listOf(96)
         val questListColourSettingIds = listOf(224, 225, 226, 227)

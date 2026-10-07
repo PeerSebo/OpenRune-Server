@@ -3,37 +3,8 @@ package org.rsmod.map.square
 import org.rsmod.map.CoordGrid
 
 /**
- * [MapSquareGrid] represents a localized 64x64 grid within a single map square, using a compact
- * integer representation. This class is useful for operations within the limited coordinate space
- * of a map square.
- *
- * The grid is defined by three coordinates:
- * - `x`: The X coordinate, ranging from 0 to 63.
- * - `z`: The Z coordinate, ranging from 0 to 63.
- * - `level`: The level or height coordinate, ranging from 0 to 3.
- *
- * Each [MapSquareGrid] instance packs these coordinates into a single integer value [packed],
- * optimizing memory usage and simplifying coordinate calculations within the map square's 64x64
- * area.
- *
- * ### Example Usage:
- * Consider the absolute coordinates (3220, 3205, 0) within the game world. These can be converted
- * into a [MapSquareGrid] by calculating their local position within a 64x64 map square:
- * ```
- * - Absolute Coordinates: 3220, 3205, 0
- * - MapSquareGrid:          20,    5, 0
- * ```
- *
- * The limits of this grid are defined by constants [X_BIT_COUNT], [Z_BIT_COUNT], and
- * [LEVEL_BIT_COUNT], ensuring that [x], [z], and [level] are always within their respective bounds
- * (0-63 for x and z, 0-3 for level).
- *
- * This class provides several utility methods for translating grid positions and performing
- * arithmetic operations between grids.
- *
- * @property packed The integer representation of the grid coordinates and level.
- * @constructor Creates a [MapSquareGrid] instance using local [x], [z], and [level] coordinates. To
- *   convert from absolute coordinates, use [fromAbsolute] or [from].
+ * Map-square-local coordinates: x/z each occupy six bits (0..63); convert from absolute
+ * coordinates before packing.
  */
 @JvmInline
 public value class MapSquareGrid(public val packed: Int) {
@@ -82,10 +53,6 @@ public value class MapSquareGrid(public val packed: Int) {
         public val ZERO: MapSquareGrid = MapSquareGrid(0)
         public val NULL: MapSquareGrid = MapSquareGrid(-1)
 
-        /**
-         * This value represents the length of one side of a map square. Therefore, a map square
-         * covers a total area of 64x64 tiles in the x and z directions.
-         */
         public const val LENGTH: Int = 64
 
         public const val Z_BIT_COUNT: Int = 6
@@ -100,12 +67,6 @@ public value class MapSquareGrid(public val packed: Int) {
         public const val X_BIT_MASK: Int = (1 shl X_BIT_COUNT) - 1
         public const val LEVEL_BIT_MASK: Int = (1 shl LEVEL_BIT_COUNT) - 1
 
-        /**
-         * Converts the absolute coordinates ([x], [z], [level]) to [MapSquareGrid].
-         *
-         * In other words, this function will trim down the given coordinates in order to fit the
-         * respective amount of bits in [MapSquareGrid].
-         */
         public fun fromAbsolute(x: Int, z: Int, level: Int): MapSquareGrid =
             MapSquareGrid(
                 x = x and X_BIT_MASK,

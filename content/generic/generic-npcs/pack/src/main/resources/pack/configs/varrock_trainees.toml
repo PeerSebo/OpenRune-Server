@@ -1,0 +1,19 @@
+[[npc]]
+id = "npc.fai_varrock_guard_training02_f"
+inherit = "npc.fai_varrock_guard_training02_f"
+standAnim = "seq.varrock_female_trainee_ready"
+respawnDir = "South"
+timer = 9
+defaultMode = "None"
+moveRestrict = "NoMove"
+wanderRange = 0
+
+[[npc]]
+id = "npc.fai_varrock_guard_training02_f_variant01"
+inherit = "npc.fai_varrock_guard_training02_f_variant01"
+standAnim = "seq.varrock_female_trainee_ready"
+respawnDir = "South"
+timer = 9
+defaultMode = "None"
+moveRestrict = "NoMove"
+wanderRange = 0

@@ -11,12 +11,14 @@ import org.rsmod.game.ui.UserInterface
 public class ComponentEventMap(
     private val interfaces: Int2ObjectMap<MutableList<Event>> = Int2ObjectOpenHashMap()
 ) {
-    public operator fun get(type: ComponentType, slot: Int): Long {
+    public operator fun get(type: ComponentType, slot: Int): Long = getOrNull(type, slot) ?: 0L
+
+    public fun getOrNull(type: ComponentType, slot: Int): Long? {
         val eventList = interfaces[type.interfaceId]
         if (eventList == interfaces.defaultReturnValue()) {
-            return 0L
+            return null
         }
-        var events = 0L
+        var events: Long? = null
         for (i in 0 until eventList.size) {
             val event = eventList[i]
             if (event.component == type.component && slot >= event.start && slot <= event.end) {
@@ -42,9 +44,7 @@ public class ComponentEventMap(
     public data class Event(val component: Int, val start: Int, val end: Int, val events: Long) {
         public companion object {
             public fun from(component: Int, start: Int, end: Int, events: Long): Event {
-                val clampedStart = if (start == -1) 0 else start
-                val clampedEnd = if (end == -1) Int.MAX_VALUE else end
-                return Event(component, clampedStart, clampedEnd, events)
+                return Event(component, start, end, events)
             }
         }
     }

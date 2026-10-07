@@ -7,7 +7,6 @@ import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.script.onProtectedEvent
 import org.rsmod.plugin.scripts.ScriptContext
 
-/* Op functions */
 public fun ScriptContext.onOpPlayer1(
     action: suspend ProtectedAccess.(PlayerEvents.Op1) -> Unit
 ): Unit = onProtectedEvent<PlayerEvents.Op1>(OpDefaultEvent.ID, action)
@@ -28,7 +27,6 @@ public fun ScriptContext.onOpPlayer5(
     action: suspend ProtectedAccess.(PlayerEvents.Op5) -> Unit
 ): Unit = onProtectedEvent<PlayerEvents.Op5>(OpDefaultEvent.ID, action)
 
-/* Ap functions */
 public fun ScriptContext.onApPlayer1(
     action: suspend ProtectedAccess.(PlayerEvents.Ap1) -> Unit
 ): Unit = onProtectedEvent<PlayerEvents.Ap1>(ApDefaultEvent.ID, action)

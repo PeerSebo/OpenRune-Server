@@ -6,6 +6,7 @@ import kotlin.math.min
 import org.rsmod.api.config.constants
 import org.rsmod.api.config.refs.params
 import org.rsmod.api.inv.weight.InvWeight
+import org.rsmod.api.player.isRunEnergyRestoreBlocked
 import org.rsmod.api.player.output.UpdateRun
 import org.rsmod.api.player.stat.agilityLvl
 import org.rsmod.api.player.vars.setActiveMoveSpeed
@@ -20,18 +21,17 @@ public class PlayerRunUpdateProcessor {
         player.updateRunEnergy()
     }
 
-    /*
-     * Note: Ideally, we would handle special cases (e.g., restoration rate mod) in plugins.
-     * However, since this runs frequently for all players and is closely tied to the engine
-     * loop, we have opted to handle it here for now. This decision may be revisited later.
-     */
-
     private fun Player.updateRunEnergy() {
         val startRunEnergy = runEnergy
 
+        // Wiki (Energy): "Run energy will not regenerate while the player is running, crossing an
+        // agility obstacle, or flying on a Magic carpet."
+        // Running takes the drain branch, but agility can use telejumps or one walking step per
+        // tick. Those scripts must suppress restoration explicitly through the map-clock deadline
+        // in api/player RunEnergyRestore.kt; the gate does not alter running's drain formula.
         if (pendingStepCount > 1) {
             decreaseRunEnergy()
-        } else {
+        } else if (!isRunEnergyRestoreBlocked) {
             restoreRunEnergy()
         }
 
@@ -41,10 +41,12 @@ public class PlayerRunUpdateProcessor {
     }
 
     private fun Player.decreaseRunEnergy() {
-        val weightKg = (runWeight / 1000).coerceIn(0, 64)
-        val baseLoss = 60 + (67 * weightKg) / 64
-
-        var loss = baseLoss * (300 - agilityLvl) / 300
+        // Retain fractional kilograms until the drain calculation; rounding weight first
+        // changes energy loss. Cap effective weight at 64 kg.
+        val grams = runWeight.coerceIn(0, MAX_RUN_WEIGHT_GRAMS).toLong()
+        val agilityFactor = (300 - agilityLvl).toLong()
+        val numerator = (60L * MAX_RUN_WEIGHT_GRAMS + 67L * grams) * agilityFactor
+        var loss = (numerator / (MAX_RUN_WEIGHT_GRAMS.toLong() * 300L)).toInt()
         if (hasImprovedStaminaEffect()) {
             loss = (loss * 85) / 100
         } else if (hasStaminaEffect()) {
@@ -116,6 +118,9 @@ public class PlayerRunUpdateProcessor {
     }
 
     private companion object {
+        /** Weight above 64 kg does not drain any faster; live caps the drain at 126/tick. */
+        private const val MAX_RUN_WEIGHT_GRAMS = 64_000
+
         private const val FULL_GRACEFUL_RESTORE_RATE = 3000
 
         private val gracefulWearpos =

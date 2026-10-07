@@ -1,0 +1,9 @@
+[gamevals.dbtable]
+fletching_cape_rewards = 64400
+[gamevals.dbrow]
+fletching_cape_rewards = 63059
+[gamevals.varp]
+fletching_cape_state = 64400
+[gamevals.varbit]
+fletching_cape_uses = 64400
+fletching_cape_day = 64401

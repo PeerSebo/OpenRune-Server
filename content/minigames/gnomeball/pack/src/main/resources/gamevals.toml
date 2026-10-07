@@ -1,0 +1,26 @@
+[gamevals.dbtable]
+gnomeball_rules = 63961
+gnomeball_players = 63962
+
+[gamevals.dbrow]
+gnomeball_rules = 62991
+gnomeball_red = 62992
+gnomeball_orange = 62993
+gnomeball_yellow = 62994
+gnomeball_green = 62995
+
+[gamevals.varp]
+gnomeball_session = 63960
+gnomeball_phase = 63961
+gnomeball_cooldown = 63962
+gnomeball_brought_ball = 63963
+
+[gamevals.varn]
+gnomeball_cooldown = 63960
+gnomeball_ball_deadline = 63961
+
+[gamevals.varobj]
+gnomeball_loan = 63960
+
+[gamevals.inv]
+gnomeball_deposit = 63960

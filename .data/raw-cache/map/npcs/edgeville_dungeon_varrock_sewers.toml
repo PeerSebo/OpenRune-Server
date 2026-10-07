@@ -466,7 +466,6 @@ coords = "0_48_154_54_9"
 npc = "npc.zombie_armed_sewer4"
 coords = "0_48_154_58_4"
 
-## Varrock Sewers
 
 [[spawn]]
 npc = "npc.deadly_red_spider"
@@ -827,6 +826,3 @@ coords = "0_50_154_59_35"
 [[spawn]]
 npc = "npc.zombie_unarmed_sewer4"
 coords = "0_50_154_43_37"
-
-## Varrock Sewers End
-

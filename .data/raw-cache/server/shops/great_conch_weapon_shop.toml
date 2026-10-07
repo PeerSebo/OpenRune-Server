@@ -31,17 +31,17 @@ restockCycles = 200
 [[inventory.stock]]
 obj = "obj.steel_spear"
 count = 8
-restockCycles = -1
+restockCycles = 100
 
 [[inventory.stock]]
 obj = "obj.mithril_spear"
 count = 6
-restockCycles = -1
+restockCycles = 100
 
 [[inventory.stock]]
 obj = "obj.adamant_spear"
 count = 4
-restockCycles = -1
+restockCycles = 100
 
 [[inventory.stock]]
 obj = "obj.bronze_kiteshield"
@@ -56,17 +56,17 @@ restockCycles = 200
 [[inventory.stock]]
 obj = "obj.steel_kiteshield"
 count = 4
-restockCycles = -1
+restockCycles = 100
 
 [[inventory.stock]]
 obj = "obj.mithril_kiteshield"
 count = 3
-restockCycles = -1
+restockCycles = 100
 
 [[inventory.stock]]
 obj = "obj.adamant_kiteshield"
 count = 2
-restockCycles = -1
+restockCycles = 100
 
 [[inventory.stock]]
 obj = "obj.tortugan_shield"

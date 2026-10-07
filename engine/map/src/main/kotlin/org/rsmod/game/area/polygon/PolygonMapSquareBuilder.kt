@@ -18,32 +18,9 @@ import org.rsmod.map.zone.ZoneGrid
 @DslMarker private annotation class PolygonAreaBuilderDsl
 
 /**
- * Builder for registering polygon-based area data within a single 64x64 map square.
- *
- * ## Usage
- * Call [polygon] to define the corners of an area. Vertices do not need to be adjacent; edge lines
- * are automatically interpolated.
- *
- * For example, `vertex(0, 0)` followed by `vertex(3, 0)` is valid and preferred. By contrast,
- * `vertex(0, 0)`, `vertex(1, 0)`, and `vertex(3, 0)` will result in redundant workload.
- *
- * _Successive calls to [polygon] with the same `area` id on a single builder will be `OR`'d
- * together, forming a union of all the sub-polygons._
- *
- * ## Guarantees
- * - Implicitly closes the polygon if not already closed.
- * - Fills the interior using a scanline fill algorithm.
- * - Promotes area coverage to:
- *     - Zone-level if an entire 8x8 zone is covered.
- *     - Map-square-level if all 64x64 tiles across all four levels are covered.
- * - To benefit from map square optimization, all four levels should be specified when defining a
- *   full 64x64 polygon - assuming the area applies to all levels.
- *
- * ## Limitations
- * This builder only handles one map square. If a polygon spans multiple map squares, the caller
- * must split the polygon, create a builder per map square, and aggregate the results.
+ * Union polygons with the same area id; split cross-square polygons before rasterizing.
+ * Vertices need only mark corners, not every edge tile.
  */
-// TODO: Add benchmarks so future optimizations can be compared properly.
 @PolygonAreaBuilderDsl
 public class PolygonMapSquareBuilder {
     private val coordAreas = Short2ObjectOpenHashMap<BitSet>()
@@ -197,7 +174,6 @@ public class PolygonMapSquareBuilder {
                 return
             }
 
-            // Optimizes cases where the area covers the full map square (64x64x4 tiles).
             if (isFullMapSquare()) {
                 replaceWithFullMapSquare()
                 return
@@ -207,7 +183,7 @@ public class PolygonMapSquareBuilder {
         }
 
         private fun closeSingleTilePolygon(tile: MapSquareGrid) {
-            vertices.add(tile.packed) // Not required, but maintains logical consistency.
+            vertices.add(tile.packed)
             val bitSet = coordAreas.getOrPut(area) { BitSet() }
             for (level in levelList) {
                 val grid = MapSquareGrid(tile.x, tile.z, level)
@@ -436,7 +412,6 @@ public class PolygonMapSquareBuilder {
     }
 
     private companion object {
-        /** `64 * 64 * 4 = 16,384` */
         const val TOTAL_MAP_SQUARE_TILE_COUNT =
             MapSquareGrid.LENGTH * MapSquareGrid.LENGTH * CoordGrid.LEVEL_COUNT
 

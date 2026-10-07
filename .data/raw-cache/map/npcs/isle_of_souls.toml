@@ -1,4 +1,3 @@
-## Isle Of Souls Dungeon
 
 [[spawn]]
 npc = "npc.babybluedragon"
@@ -132,7 +131,6 @@ coords = "0_33_145_39_36"
 npc = "npc.skeleton_armed4"
 coords = "0_33_145_19_42"
 
-## Isle Of Souls Hot Zones
 
 [[spawn]]
 npc = "npc.slayer_pyrebeast_1"
@@ -190,7 +188,6 @@ coords = "0_35_46_12_16"
 npc = "npc.soul_wars_avatar_red"
 coords = "0_35_45_47_54"
 
-## Isle Of Souls Mainland
 
 [[spawn]]
 npc = "npc.0_33_43_saltfish"
@@ -900,7 +897,6 @@ coords = "0_35_43_46_40"
 npc = "npc.zeah_sandcrab_small_inactive"
 coords = "0_35_43_57_33"
 
-## Soul Wars Arena
 
 [[spawn]]
 npc = "npc.rat"
@@ -909,6 +905,3 @@ coords = "0_35_45_22_4"
 [[spawn]]
 npc = "npc.sw_adventurer"
 coords = "0_35_45_24_8"
-
-## Soul Wars Arena End
-

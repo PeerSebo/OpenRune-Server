@@ -2,15 +2,13 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.api.droptable.nothing
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.content.drops.tables.shared.SharedDropTables
-import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.api.droptable.nothing
-import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.content.drops.tables.shared.SharedDropTables
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -47,7 +45,7 @@ public val undeadDruidDropTable: RSDropTable<Player, DropRollItem> = RSDropTable
         12 weight nothing()
     },
     tertiaries = rsPlayerTertiaryTable {
-        // Drops Need Manual (rate): The drop rate to receive any page is 1/20. When rolled, the player will receive the page they have the fewest of.
+        // TODO: The drop rate to receive any page is 1/20. When rolled, the player will receive the page they have the fewest of.
         1 outOf 20 weight "obj.hosdun_moon_page" count 1
         1 outOf 20 weight "obj.hosdun_sun_page" count 1
         1 outOf 20 weight "obj.hosdun_temple_page" count 1

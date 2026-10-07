@@ -7,10 +7,6 @@ import org.rsmod.map.CoordGrid
 
 public val DEATH_KILLER_ATTR: AttributeKey<Player> = AttributeKey()
 
-public val LAST_PVP_HIT_TICK_ATTR: AttributeKey<Int> = AttributeKey()
-
-public val DEATH_DROPS_BYPASS_ADMIN_ATTR: AttributeKey<Boolean> = AttributeKey()
-
 public data class PlayerDeathContext(
     val player: Player,
     val coords: CoordGrid,
@@ -37,6 +33,11 @@ public data class PlayerDeathHandling(
     val revealDelay: Int,
     val supplyPile: Boolean,
     val untradeableHandling: UntradeableHandling,
+    /**
+     * Graves exclude food/potion supply piles. Other death modes keep ground drops pending
+     * clarification of Wilderness/PvP rules.
+     */
+    val gravestone: Boolean,
 )
 
 public enum class UntradeableHandling {

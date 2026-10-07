@@ -2,52 +2,89 @@ package org.rsmod.api.net.central.embed
 
 import java.net.BindException
 import java.sql.SQLException
-import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 
-/**
- * Verifies [CentralStartupFailure.indicatesUninitializedSchema] only recognizes SQL errors that
- * mean Central's schema hasn't been created yet, not unrelated startup failures such as a port
- * already being bound - the bug the real fix in [CentralEmbeddedLifecycle] addresses (the
- * embedded database used to get wiped on any startup exception whatsoever).
- */
 class CentralStartupFailureTest {
     @Test
-    fun `port bind conflict does not indicate an uninitialized schema`() {
-        val bindFailure = IllegalStateException("boom", BindException("Address already in use"))
-        assertFalse(CentralStartupFailure.indicatesUninitializedSchema(bindFailure))
+    fun `successful startup leaves central running`() {
+        val calls = mutableListOf<String>()
+
+        startCentralPreservingDatabase(start = { calls += "start" }, stop = { calls += "stop" })
+
+        assertEquals(listOf("start"), calls)
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = ["42P01", "42703", "3F000", "08001"])
+    fun `schema and connection failures stop central without reset or retry`(sqlState: String) {
+        val sqlFailure = SQLException("Existing database needs repair", sqlState)
+        val failure = RuntimeException("Central initialization failed", sqlFailure)
+        val calls = mutableListOf<String>()
+
+        val result = assertThrows<IllegalStateException> {
+            startCentralPreservingDatabase(
+                start = {
+                    calls += "start"
+                    throw failure
+                },
+                stop = { calls += "stop" },
+            )
+        }
+
+        assertEquals(listOf("start", "stop"), calls)
+        assertSame(failure, result.cause)
+        assertSame(sqlFailure, result.cause?.cause)
+        assertTrue(result.message.orEmpty().contains("No automatic database reset was attempted"))
+        assertTrue(result.message.orEmpty().contains("back up the existing database"))
     }
 
     @Test
-    fun `unrelated runtime exception does not indicate an uninitialized schema`() {
-        assertFalse(
-            CentralStartupFailure.indicatesUninitializedSchema(RuntimeException("something else broke")),
-        )
+    fun `port bind failure stops central and preserves the cause`() {
+        val failure = BindException("Address already in use")
+        var stops = 0
+
+        val result = assertThrows<IllegalStateException> {
+            startCentralPreservingDatabase(start = { throw failure }, stop = { stops++ })
+        }
+
+        assertEquals(1, stops)
+        assertSame(failure, result.cause)
     }
 
     @Test
-    fun `undefined table sql error indicates an uninitialized schema`() {
-        val sqlEx = SQLException("relation \"world\" does not exist", "42P01")
-        val wrapped = RuntimeException("startup failed", sqlEx)
-        assertTrue(CentralStartupFailure.indicatesUninitializedSchema(wrapped))
+    fun `cleanup failure does not hide the startup failure`() {
+        val failure = SQLException("Missing column in an existing table", "42703")
+        val cleanupFailure = IllegalStateException("Unable to stop listener")
+
+        val result = assertThrows<IllegalStateException> {
+            startCentralPreservingDatabase(
+                start = { throw failure },
+                stop = { throw cleanupFailure },
+            )
+        }
+
+        assertSame(failure, result.cause)
+        assertEquals(listOf(cleanupFailure), result.suppressed.toList())
     }
 
     @Test
-    fun `undefined column sql error indicates an uninitialized schema`() {
-        val sqlEx = SQLException("column \"foo\" does not exist", "42703")
-        assertTrue(CentralStartupFailure.indicatesUninitializedSchema(sqlEx))
-    }
+    fun `cyclic exception causes do not prevent failed startup cleanup`() {
+        val first = RuntimeException("First cause")
+        val second = RuntimeException("Second cause", first)
+        first.initCause(second)
+        var stops = 0
 
-    @Test
-    fun `invalid schema name sql error indicates an uninitialized schema`() {
-        val sqlEx = SQLException("schema \"public\" does not exist", "3F000")
-        assertTrue(CentralStartupFailure.indicatesUninitializedSchema(sqlEx))
-    }
+        val result = assertThrows<IllegalStateException> {
+            startCentralPreservingDatabase(start = { throw first }, stop = { stops++ })
+        }
 
-    @Test
-    fun `unrelated sql error does not indicate an uninitialized schema`() {
-        val sqlEx = SQLException("connection refused", "08001")
-        assertFalse(CentralStartupFailure.indicatesUninitializedSchema(sqlEx))
+        assertEquals(1, stops)
+        assertSame(first, result.cause)
     }
 }

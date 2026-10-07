@@ -61,13 +61,6 @@ private constructor(
         interact(access, inventory, invSlot, obj, getInvObj(obj), op)
     }
 
-    /**
-     * Directly drops the obj in [invSlot], bypassing the normal `Op5` scripted logic.
-     *
-     * Use this when an obj requires custom or additional logic (before dropping) that isn't part of
-     * the usual event flow. After that custom logic, call `drop(...)` to finalize the drop as if
-     * `Op5` had been invoked, but without re-triggering any event-based scripts.
-     */
     public suspend fun drop(access: ProtectedAccess, inventory: Inventory, invSlot: Int) {
         val obj = inventory[invSlot]
         if (obj == null) {
@@ -83,18 +76,6 @@ private constructor(
         dropOp.attemptDrop(access, inventory, invSlot, obj, type)
     }
 
-    /**
-     * Directly equips the obj in [invSlot], bypassing the normal `Op2` scripted logic.
-     *
-     * Use this when an obj requires custom or additional logic (before equipping) that isn't part
-     * of the usual event flow. After that custom logic, call `equip(...)` to finalize the equip as
-     * if `Op2` had been invoked, but without re-triggering any event-based scripts.
-     *
-     * _Note that this function may not actually equip the obj if the player is prohibited from
-     * doing so. In those cases, the reason is returned in the form of [HeldEquipResult]._
-     *
-     * @return the outcome of the equip attempt, represented as [HeldEquipResult].
-     */
     public fun equip(access: ProtectedAccess, inventory: Inventory, invSlot: Int): HeldEquipResult {
         val obj = inventory[invSlot]
         if (obj == null) {
@@ -265,7 +246,6 @@ private constructor(
         type: ItemServerType,
         op: HeldOp,
     ): Boolean {
-        // Op5 (`Drop`) always exists as a fallback.
         if (!type.hasInvOp(op) && op != HeldOp.Op5) {
             logger.debug { "OpHeld invalid op blocked: op=$op, obj=$obj, type=$type" }
             resendSlot(inventory, 0)
@@ -333,6 +313,7 @@ constructor(
     ) {
         val result = player.invDel(inventory, type, count = obj.count, slot = dropSlot)
         if (result.success) {
+            player.soundSynth("synth.DESTROY_OBJECT")
             val event = HeldDropEvents.Destroy(player, dropSlot, obj, type)
             eventBus.publish(event)
         }
@@ -382,7 +363,7 @@ constructor(
             val event = HeldDropEvents.Release(player, dropSlot, obj, internal)
             eventBus.publish(event)
 
-            val type = ServerCacheManager.getItem(internal.asRSCM(RSCMType.OBJ))?: return
+            val type = ServerCacheManager.getItem(internal.asRSCM(RSCMType.OBJ)) ?: return
 
             val message = type.paramOrNull(params.release_note_message)
             message?.let(player::mes)
@@ -404,7 +385,6 @@ constructor(
             eventBus.publish(event)
         }
 
-        // If drop trigger was reset it means the inv obj cannot be dropped.
         if (player.dropTrigger != null) {
             return
         }
@@ -432,7 +412,7 @@ constructor(
         if (!dropped) {
             return
         }
-        soundSynth("synth.put_down")
+        soundSynth("synth.PUT_DOWN")
 
         val event = HeldDropEvents.Drop(this, dropSlot, obj, type)
         eventBus.publish(event)
@@ -509,7 +489,7 @@ constructor(
         val observer = observerUUID ?: error("`observerUUID` not set for player: $this")
         val entity =
             ObjEntity(id = invObj.id, count = transaction.completed(), scope = ObjScope.Private.id)
-        val obj = Obj(coords, entity, currentMapClock, observer, ownerId = observer)
+        val obj = Obj(coords, entity, currentMapClock, observer, ownerId = observer, vars = invObj.vars)
         val dropped = repo.add(obj, dropParams.duration, dropParams.reveal)
         if (!dropped) {
             return false

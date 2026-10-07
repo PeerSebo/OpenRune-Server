@@ -35,15 +35,10 @@ import dev.openrune.types.dbcol.DbColumnCodec.StringCodec
 import kotlin.reflect.KClass
 import org.rsmod.map.CoordGrid
 
-/**
- * Typed column accessors for [DbHelper], mirroring [DbColumnReferences] (`boolean`, `int`, `list`,
- * …).
- */
 public fun DbHelper.area(internal: String): AreaType = column(internal, AreaTypeCodec)
 
-public fun DbHelper.boolean(internal: String): Boolean = column(internal,
-    DbColumnCodec.BooleanCodec
-)
+public fun DbHelper.boolean(internal: String): Boolean =
+    column(internal, DbColumnCodec.BooleanCodec)
 
 public fun DbHelper.component(internal: String): ComponentType =
     column(internal, ComponentTypeCodec)
@@ -51,7 +46,9 @@ public fun DbHelper.component(internal: String): ComponentType =
 public fun DbHelper.coord(internal: String): CoordGrid = column(internal, CoordGridCodec)
 
 public fun DbHelper.spot(internal: String): SpotAnimType = column(internal, DbColumnCodec.SpotCodec)
-public fun DbHelper.seq(internal: String): SequenceServerType = column(internal, DbColumnCodec.SeqCodec)
+
+public fun DbHelper.seq(internal: String): SequenceServerType =
+    column(internal, DbColumnCodec.SeqCodec)
 
 public fun DbHelper.dbRow(internal: String): DBRowType = column(internal, DbRowTypeCodec)
 
@@ -69,7 +66,6 @@ public fun <K : Any, V : Any> DbHelper.dbEnumOptional(
 
 public fun DbHelper.int(internal: String): Int = column(internal, IntCodec)
 
-/** INTEGER column interpreted as [Long] (narrowing is not checked). */
 public fun DbHelper.long(internal: String): Long = int(internal).toLong()
 
 public fun DbHelper.longOptional(internal: String): Long? = intOptional(internal)?.toLong()
@@ -92,12 +88,6 @@ public fun DbHelper.string(internal: String): String = column(internal, StringCo
 
 public fun DbHelper.enumTypeId(internal: String): Int = column(internal, EnumTypeIdCodec)
 
-/**
- * Reads an ENUM column as an enum type id, loads that enum from cache, decodes entries with
- * [keyCodec] / [valueCodec], and checks [org.rsmod.api.type.refs.aconverted.EnumHelper.keyType] /
- * [valueType] match the codecs (same as top-level [org.rsmod.api.type.refs.aconverted.enum] /
- * [org.rsmod.api.type.refs.aconverted.EnumHelper.getEnum]).
- */
 public fun <V1, V2> DbHelper.enum(
     internal: String,
     keyCodec: DbColumnCodec<*, V1>,
@@ -107,7 +97,6 @@ public fun <V1, V2> DbHelper.enum(
     return enumPairsFromId(internal, id, keyCodec, valueCodec)
 }
 
-/** Same as [enum] but returns null when the column is absent / has no enum id. */
 public fun <V1, V2> DbHelper.enumOptional(
     internal: String,
     keyCodec: DbColumnCodec<*, V1>,
@@ -128,10 +117,6 @@ private fun <V1, V2> enumPairsFromId(
     return helper.getEnum(keyCodec, valueCodec)
 }
 
-/**
- * Decodes a column into a list: the column values are read in consecutive chunks of
- * [DbColumnCodec.types].size, each chunk decoded with [decoder].
- */
 public fun <T, R> DbHelper.list(internal: String, decoder: DbColumnCodec<T, R>): List<R> {
     val col = getColumn(internal)
     val values = col.column.values ?: return emptyList()
@@ -170,10 +155,6 @@ public fun DbHelper.npcOptional(internal: String): NpcServerType? =
 public fun DbHelper.objOptional(internal: String): ItemServerType? =
     columnOptional(internal, ItemServerTypeCodec)
 
-/**
- * Each value in the column is decoded with [codecs] cycled by index (same rules as
- * [multiColumnOptional]); failed slots are omitted instead of appearing as `null`.
- */
 public fun <T, R> DbHelper.slotsOptional(
     internal: String,
     vararg codecs: DbColumnCodec<T, R>,

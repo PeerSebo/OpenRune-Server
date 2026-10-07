@@ -1,8 +1,8 @@
 package dtx.example.rs_tables
 
-import dtx.rs.*
 import dtx.core.*
 import dtx.example.*
+import dtx.rs.*
 import dtx.table.uniformTable
 import kotlin.random.Random
 
@@ -10,7 +10,7 @@ data class RandomItem(
     val item1: Item,
     val item2: Item,
     val item1Chance: Int = 50,
-): Rollable<Player, Item>, RollableHooks<Player, Item> by RollableHooks.Default() {
+) : Rollable<Player, Item>, RollableHooks<Player, Item> by RollableHooks.Default() {
 
     override fun selectResult(
         target: Player,
@@ -20,7 +20,6 @@ data class RandomItem(
         val roll = rollResult < item1Chance
         return RollResult.Single(if (roll) item1 else item2)
     }
-
 }
 
 val yamaUnique = rsWeightedTable<Player, Item> {
@@ -66,28 +65,28 @@ val yamaStandardConsumable = rsPrerollTable<Player, Item> {
  */
 val yamaStandardOther = rsWeightedTable<Player, Item> {
 
-    81 weight Item("noted_rune_chainbody", 8)            // 1/19.02
-    65 weight Item("noted_battlestaff", 40)              // 1/23.78
-    49 weight Item("noted_rune_platebody", 8)            // 1/31.7
-    32 weight Item("dragon_plateskirt", 1)               // 1/47.56
-    32 weight Item("dragon_platelegs", 1)                // 1/47.56
+    81 weight Item("noted_rune_chainbody", 8) // 1/19.02
+    65 weight Item("noted_battlestaff", 40) // 1/23.78
+    49 weight Item("noted_rune_platebody", 8) // 1/31.7
+    32 weight Item("dragon_plateskirt", 1) // 1/47.56
+    32 weight Item("dragon_platelegs", 1) // 1/47.56
 
-    49 weight Item("blood_rune", 400)                    // 1/31.7
-    49 weight Item("law_rune", 150)                      // 1/31.7
-    32 weight Item("smoke_rune", 350)                    // 1/47.56
-    32 weight Item("soul_rune", 500)                     // 1/47.56
-    32 weight Item("soul_rune", 1_000)                   // 1/47.56
-    16 weight Item("fire_rune", 40_000)                  // 1/95.11
-    16 weight Item("wrath_rune", 800)                    // 1/95.11
+    49 weight Item("blood_rune", 400) // 1/31.7
+    49 weight Item("law_rune", 150) // 1/31.7
+    32 weight Item("smoke_rune", 350) // 1/47.56
+    32 weight Item("soul_rune", 500) // 1/47.56
+    32 weight Item("soul_rune", 1_000) // 1/47.56
+    16 weight Item("fire_rune", 40_000) // 1/95.11
+    16 weight Item("wrath_rune", 800) // 1/95.11
 
-    114 weight Item("aether_catalyst", 850)              // 1/13.59
-    114 weight Item("diabolic_worms", 90)                // 1/13.59
-    81 weight Item("barrel_of_demonic_tallow_full", 1)   // 1/19.02
-    65 weight Item("chasm_teleport_scroll", 6)           // 1/23.78
-    49 weight Item("noted_emerald", 40)                  // 1/31.7
-    49 weight Item("noted_ruby", 40)                     // 1/31.7
-    49 weight Item("noted_diamond", 40)                  // 1/31.7
-    16 weight Item("onyx_bolt_tips", 150)                // 1/95.11
+    114 weight Item("aether_catalyst", 850) // 1/13.59
+    114 weight Item("diabolic_worms", 90) // 1/13.59
+    81 weight Item("barrel_of_demonic_tallow_full", 1) // 1/19.02
+    65 weight Item("chasm_teleport_scroll", 6) // 1/23.78
+    49 weight Item("noted_emerald", 40) // 1/31.7
+    49 weight Item("noted_ruby", 40) // 1/31.7
+    49 weight Item("noted_diamond", 40) // 1/31.7
+    16 weight Item("onyx_bolt_tips", 150) // 1/95.11
 }
 
 val yamaStandard = RSDropTable(
@@ -116,11 +115,10 @@ val yamaDropTable = RSDropTable(
 )
 
 fun main() {
-    while(true) {
+    while (true) {
         val roll = yamaDropTable.roll(examplePlayer)
         val flattened = roll.flatten()
         println(flattened)
         readlnOrNull() ?: break
     }
 }
-

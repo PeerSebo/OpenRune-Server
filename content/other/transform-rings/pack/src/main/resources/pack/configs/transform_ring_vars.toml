@@ -1,0 +1,11 @@
+[[varp]]
+isServerOnly = true
+id = "varp.transform_ring_active"
+scope = "Temp"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.transform_ring_origin"
+scope = "Temp"
+transmit = "Never"

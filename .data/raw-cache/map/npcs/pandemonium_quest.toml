@@ -1,0 +1,19 @@
+[[spawn]]
+npc = "npc.sailing_intro_will_sarim"
+coords = "0_47_50_16_8"
+
+[[spawn]]
+npc = "npc.sailing_intro_anne_sarim"
+coords = "0_47_50_17_9"
+
+[[spawn]]
+npc = "npc.steve_beanie"
+coords = "0_47_46_42_22"
+
+[[spawn]]
+npc = "npc.junior_jim"
+coords = "0_47_46_51_35"
+
+[[spawn]]
+npc = "npc.junior_jim_shipyard"
+coords = "0_32_42_36_37"

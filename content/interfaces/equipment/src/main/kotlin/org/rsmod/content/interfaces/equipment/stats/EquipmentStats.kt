@@ -39,7 +39,7 @@ constructor(
     override fun ScriptContext.startup() {
         onIfOverlayButton("component.wornitems:equipment") { player.selectStats() }
 
-        val componentWornSlots = equipment_stats_to_slots_map.filterValuesNotNull().map { it.key to RSCM.getReverseMapping(RSCMType.COMPONENT,it.value.packed) }
+        val componentWornSlots = equipment_stats_to_slots_map.filterValuesNotNull().map { it.key to RSCM.getReverseMapping(RSCMType.COMPONENT, it.value.packed) }
         for ((slot, component) in componentWornSlots) {
             onIfModalButton(component) { opWornMain(slot, it.op) }
         }
@@ -128,7 +128,6 @@ constructor(
         wornInteractions.interact(this, worn, wornSlot, op)
 
         if (op == IfButtonOp.Op1) {
-            // Cheap way of checking if obj was unequipped.
             val unequipped = obj != worn[wornSlot]
             if (unequipped) {
                 updateBonuses()
@@ -153,7 +152,6 @@ constructor(
 
             opHeld2(invSlot)
 
-            // Cheap way of checking if obj was equipped.
             val equipped = obj != inv[invSlot]
             if (equipped) {
                 updateBonuses()
@@ -189,7 +187,6 @@ private val WornBonuses.Bonuses.finalMagicDmg: String
 private val WornBonuses.Bonuses.magicDmgSuffix: String
     get() = if (magicDmgAdditive == 0) "" else "<col=be66f4> ($magicDmgAdditive%)</col>"
 
-// Undead bonus has a trailing whitespace when bonus is at 0.
 private val WornBonuses.Bonuses.undeadSuffix: String
     get() = if (undead == 0) " " else if (undeadMeleeOnly) " (melee)" else " (all styles)"
 

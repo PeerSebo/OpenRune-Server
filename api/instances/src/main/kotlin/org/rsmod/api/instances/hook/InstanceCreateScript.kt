@@ -125,6 +125,7 @@ internal class InstanceCreateScript @Inject constructor(
         val currentLabel = when (val a = session.access) {
             InstanceAccess.Private -> "Private"
             InstanceAccess.Friends -> "Friends"
+            InstanceAccess.Public -> "Public"
             is InstanceAccess.Code -> "Code (${a.value})"
         }
         mes("Current access: $currentLabel")

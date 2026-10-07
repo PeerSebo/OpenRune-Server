@@ -24,23 +24,7 @@ constructor(
 ) {
     private var Player.maxHit by intVarp("varp.com_maxhit")
 
-    /**
-     * Computes the maximum magic hit for a normal spell cast by [player] against [target].
-     *
-     * **Notes:**
-     * - This function should be used instead of [computeSpellMaxHit] in most cases to ensure
-     *   consistency in spell hit calculations. Future optimizations may depend on this function as
-     *   the main entry point.
-     * - The `com_maxhit` varp for [player] is updated with the computed max hit.
-     *
-     * @param spell The [ItemServerType] representing the spell being cast (e.g.,
-     *   `"obj.01_wind_strike"` for the Wind Strike spell).
-     * @param spellbook The [Spellbook] the spell belongs to (e.g., Standard or Ancients), usually
-     *   derived from the player's current spellbook.
-     * @param baseMaxHit The spell's base max hit, used as a baseline for calculating the maximum
-     *   (and minimum, when applicable) hit.
-     * @param usedSunfireRune Whether the player used a Sunfire rune for this cast.
-     */
+    /** Also updates the player's com_maxhit varp. */
     public fun getSpellMaxHit(
         player: Player,
         target: Player,
@@ -80,11 +64,6 @@ constructor(
         val defenceBonus = bonuses.defensiveMagicBonus(target)
         val reductionAttributes = reductions.collectPvP(target, random)
 
-        // We could add a fast-path here and return early if `reductionAttributes` is empty.
-        // However, avoiding branching can sometimes be preferable, as it may prevent subtle,
-        // hard-to-detect bugs. Since `applyDamageReductions` is (currently) cheap, this is
-        // one of those cases.
-
         val reducedMinHit =
             MaxHitOperations.applyDamageReductions(
                 startDamage = modifiedDamageRange.first,
@@ -119,17 +98,8 @@ constructor(
     }
 
     /**
-     * Computes the maximum magic hit for a powered staff's built-in spell used by [player] against
-     * [target].
-     *
-     * **Notes:**
-     * - This function should be used instead of [computeStaffMaxHit] in most cases to ensure
-     *   consistency in staff hit calculations. Future optimizations may depend on this function as
-     *   the main entry point.
-     * - The `com_maxhit` varp for [player] is updated with the computed max hit.
-     *
-     * @param baseMaxHit The base max hit for the powered staff's built-in spell before any
-     *   modifiers are applied.
+     * Updates `com_maxhit`; [computeStaffMaxHit] alone does not.
+     * @param baseMaxHit Staff spell max hit before modifiers.
      */
     public fun getStaffMaxHit(
         player: Player,

@@ -2,16 +2,13 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.content.drops.tables.shared.SharedDropTables
-import org.rsmod.api.droptable.DropRollItem
-import org.rsmod.content.drops.hasCompletedQuest
-import org.rsmod.content.drops.isOnQuest
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.content.drops.isOnQuest
+import org.rsmod.content.drops.tables.shared.SharedDropTables
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -39,11 +36,11 @@ public val goblinGoblinVillageDropTable: RSDropTable<Player, DropRollItem> = RSD
         9 weight "obj.hammer" count 1
         2 weight "obj.slice_goblin_history_book" count 1
         10 weight "obj.goblin_armour_red" count 1 condition { player ->
-            // Drops Need Manual: Only dropped by goblins wearing red goblin mail.
+            // TODO: Only dropped by goblins wearing red goblin mail.
              true
         }
         10 weight "obj.goblin_armour_green" count 1 condition { player ->
-            // Drops Need Manual: Only dropped by goblins wearing green goblin mail.
+            // TODO: Only dropped by goblins wearing green goblin mail.
              true
         }
         1 weight "obj.grapes" count 1

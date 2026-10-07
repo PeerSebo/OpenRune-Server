@@ -1,0 +1,47 @@
+[[varp]]
+isServerOnly = true
+id = "varp.cooks_assistant_deliveries"
+scope = "Perm"
+transmit = "Never"
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.cooks_assistant_given_egg"
+varp = "varp.cooks_assistant_deliveries"
+startBit = 0
+endBit = 0
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.cooks_assistant_given_milk"
+varp = "varp.cooks_assistant_deliveries"
+startBit = 1
+endBit = 1
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.cooks_assistant_given_flour"
+varp = "varp.cooks_assistant_deliveries"
+startBit = 2
+endBit = 2
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.cooks_assistant_egg_migrated"
+varp = "varp.cooks_assistant_deliveries"
+startBit = 3
+endBit = 3
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.cooks_assistant_milk_migrated"
+varp = "varp.cooks_assistant_deliveries"
+startBit = 4
+endBit = 4
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.cooks_assistant_flour_migrated"
+varp = "varp.cooks_assistant_deliveries"
+startBit = 5
+endBit = 5

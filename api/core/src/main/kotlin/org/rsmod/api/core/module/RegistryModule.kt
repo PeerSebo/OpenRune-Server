@@ -9,6 +9,7 @@ import org.rsmod.api.registry.npc.NpcRegistry
 import org.rsmod.api.registry.obj.ObjRegistry
 import org.rsmod.api.registry.player.PlayerRegistry
 import org.rsmod.api.registry.region.RegionRegistry
+import org.rsmod.api.registry.worldentity.WorldEntityRegistry
 import org.rsmod.api.repo.EntityDelayedProcess
 import org.rsmod.api.repo.EntityLifecycleProcess
 import org.rsmod.api.repo.controller.ControllerRepository
@@ -18,6 +19,7 @@ import org.rsmod.api.repo.obj.ObjRepository
 import org.rsmod.api.repo.player.PlayerRepository
 import org.rsmod.api.repo.region.RegionRepository
 import org.rsmod.api.repo.world.WorldRepository
+import org.rsmod.api.repo.worldentity.WorldEntityRepository
 import org.rsmod.module.ExtendedModule
 
 public object RegistryModule : ExtendedModule() {
@@ -43,6 +45,11 @@ public object RegistryModule : ExtendedModule() {
 
         bindInstance<RegionRegistry>()
         bindInstance<RegionRepository>()
+
+        // Both require singleton bindings: neither class carries `@Singleton`. Content and
+        // NetworkScript must share the same registry or registered boats will have no visible hull.
+        bindInstance<WorldEntityRegistry>()
+        bindInstance<WorldEntityRepository>()
 
         bindInstance<WorldRepository>()
         bindInstance<EntityDelayedProcess>()

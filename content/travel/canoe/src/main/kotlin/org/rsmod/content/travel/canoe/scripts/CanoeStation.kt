@@ -44,13 +44,11 @@ constructor(private val invisibleLvls: InvisibleLevels, private val worldRepo: W
 
         assertState(station, StationState.StationFullyGrown)
 
-        // Reset any previously set-up canoe station in other locations.
         val previousStation = canoeStation
         if (previousStation != null && previousStation != station) {
             clearStation(previousStation)
         }
 
-        // Reset the "canoe shape" confirmation flag. (only when necessary)
         if (confirmedCanoeType) {
             confirmedCanoeType = false
         }
@@ -140,7 +138,7 @@ constructor(private val invisibleLvls: InvisibleLevels, private val worldRepo: W
         val station = path.station
         this[station] = StationState.StationFalling
         resetAnim()
-        soundSynth("synth.tree_fall_sound")
+        soundSynth("synth.TREE_FALL")
         worldRepo.locAnim(loc, "seq.canoeing_station_animations")
         delay(1)
         this[station] = StationState.StationReadyToShape

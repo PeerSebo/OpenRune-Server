@@ -4,18 +4,15 @@ import dev.openrune.types.ItemServerType
 import jakarta.inject.Inject
 import org.rsmod.api.player.dialogue.Dialogue
 import org.rsmod.api.player.protect.ProtectedAccess
-import org.rsmod.api.player.vars.boolVarBit
 import org.rsmod.api.script.onOpNpc1
 import org.rsmod.api.script.onOpNpcU
-import org.rsmod.content.other.pets.cats.CatCare
-import org.rsmod.content.other.pets.cats.Cats
-import org.rsmod.content.other.pets.storesAnyObj
+import org.rsmod.content.other.pets.cats.CatPet
 import org.rsmod.game.entity.Npc
 import org.rsmod.game.entity.Player
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
-class Civilian @Inject constructor(private val care: CatCare) : PluginScript() {
+class Civilian @Inject constructor(private val exchange: CatExchange) : PluginScript() {
     override fun ScriptContext.startup() {
         onOpNpc1(BLONDE) { talk(it.npc) { blonde() } }
         onOpNpc1(BROWN) { talk(it.npc) { brown() } }
@@ -78,16 +75,21 @@ class Civilian @Inject constructor(private val care: CatCare) : PluginScript() {
         chatNpc(
             happy,
             "The dwarves bring them from the mine for us. Tell you what, I'll give you ${runes(player)} " +
-                "Death Runes for the cat.",
+            "Death Runes for the cat.",
         )
         val deal = choice2("Nope, I'm not parting for that.", false, "Ok then, you've got a deal.", true)
         if (!deal) {
             chatPlayer(neutral, "Nope, I'm not parting for that.")
-            chatNpc(angry, "Well, I'm not giving you anymore!")
+            chatNpc(angry, "Well, I'm not giving you any more!")
             return
         }
         chatPlayer(happy, "Ok then, you've got a deal.")
-        chatNpc(happy, "Great! Hand over the cat and I'll give you the runes.")
+        if (exchange.sellFirstAvailable(player)) {
+            mesbox("You hand over the cat. You are given ${runes(player)} Death Runes.")
+            chatNpc(happy, "Great, thanks for that!")
+        } else {
+            chatNpc(neutral, "You need a grown cat and enough room for the runes.")
+        }
     }
 
     private suspend fun Dialogue.witchsCat() {
@@ -100,16 +102,20 @@ class Civilian @Inject constructor(private val care: CatCare) : PluginScript() {
             startDialogue(npc) { witchsCat() }
             return
         }
-        val cat = Cats.forObj(obj.id) ?: return
+        val cat = CatPet.fromObj(obj.id)
+        if (cat == null) {
+            mes("Nothing interesting happens.")
+            return
+        }
         if (cat.isKitten) {
             mes("Nothing interesting happens.")
             return
         }
         val runes = runes(player)
-        if (!invDel(inv, cat.obj, 1).success) {
+        if (!exchange.sellHeld(player, cat)) {
+            mes("You need a grown cat and enough room for the runes.")
             return
         }
-        invAdd(inv, DEATH_RUNE, runes)
         startDialogue(npc) {
             mesbox("You hand over the cat. You are given $runes Death Runes.")
             chatNpc(happy, "Great, thanks for that!")
@@ -118,21 +124,16 @@ class Civilian @Inject constructor(private val care: CatCare) : PluginScript() {
     }
 
     private fun hasAdultCat(player: Player): Boolean {
-        val following = care.following(player)
-        return following?.isKitten == false || player.storesAnyObj(Cats.adultObjs())
+        val following = exchange.following(player)
+        return following?.isKitten == false || CatPet.all.any { !it.isKitten && it.obj in player.inv }
     }
 
-    private fun runes(player: Player): Int = if (player.ardougneEasyDiary) DIARY_RUNES else RUNES
+    private fun runes(player: Player): Int = exchange.runes(player)
 
     private companion object {
         const val BLONDE = "npc.wantcat1"
         const val BROWN = "npc.wantcat2"
         const val BALD = "npc.wantcat3"
-        const val DEATH_RUNE = "obj.deathrune"
         const val WITCHS_CAT = "obj.cavewitchcat"
-        const val RUNES = 100
-        const val DIARY_RUNES = 200
-
-        val Player.ardougneEasyDiary: Boolean by boolVarBit("varbit.ardougne_diary_easy_complete")
     }
 }

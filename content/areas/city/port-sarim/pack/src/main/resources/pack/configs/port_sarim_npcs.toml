@@ -4,11 +4,6 @@ inherit = "npc.gerrant"
 moveRestrict = "Indoors"
 
 [[npc]]
-id = "npc.wydin"
-inherit = "npc.wydin"
-moveRestrict = "Indoors"
-
-[[npc]]
 id = "npc.grum"
 inherit = "npc.grum"
 moveRestrict = "Indoors"
@@ -37,34 +32,6 @@ moveRestrict = "Indoors"
 id = "npc.sarim_pub_drinker_2"
 inherit = "npc.sarim_pub_drinker_2"
 moveRestrict = "Indoors"
-
-[[npc]]
-id = "npc.sarim_pub_sitting_patron"
-inherit = "npc.sarim_pub_sitting_patron"
-moveRestrict = "NoMove"
-wanderRange = 0
-respawnDir = "South"
-
-[[npc]]
-id = "npc.jail_guard_sleeping"
-inherit = "npc.jail_guard_sleeping"
-moveRestrict = "NoMove"
-wanderRange = 0
-respawnDir = "SouthWest"
-
-[[npc]]
-id = "npc.sailing_intro_anne_sarim"
-inherit = "npc.sailing_intro_anne_sarim"
-moveRestrict = "NoMove"
-wanderRange = 0
-respawnDir = "South"
-
-[[npc]]
-id = "npc.sailing_intro_will_sarim"
-inherit = "npc.sailing_intro_will_sarim"
-moveRestrict = "NoMove"
-wanderRange = 0
-respawnDir = "East"
 
 [[npc]]
 id = "npc.port_task_master_port_sarim"

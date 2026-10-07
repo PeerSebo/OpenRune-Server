@@ -26,6 +26,3 @@ denominator = 10
 weight = 1
 obj = "obj.tol_tea"
 count = 1
-
-
-# Main table pool padding uses a nothing roll (F2P drops removed and/or subtable access missing from wiki parse) (17 weight)

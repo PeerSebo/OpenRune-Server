@@ -1,0 +1,4 @@
+0	COMPOST	obj.bucket_compost	45	180
+1	SUPERCOMPOST	obj.bucket_supercompost	85	260
+2	ULTRACOMPOST	obj.bucket_ultracompost	100	360
+3	ROTTEN_TOMATOES	obj.rotten_tomato	45	

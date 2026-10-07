@@ -5,24 +5,9 @@ import org.rsmod.api.script.onOpLoc1
 import org.rsmod.api.script.onOpLoc2
 import org.rsmod.api.script.onOpLoc3
 import org.rsmod.game.loc.BoundLocInfo
-import org.rsmod.game.loc.LocAngle
 import org.rsmod.map.CoordGrid
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
-
-/**
- * Falador's straight staircases put the player down on the tile the *other* end of the flight is
- * approached from, so each model has one fixed offset that only needs rotating to match the
- * instance. [FaladorStairs] holds those offsets as measured on an unrotated instance.
- */
-private enum class FaladorStairs(val loc: String, val dx: Int, val dz: Int, val dLevel: Int) {
-    StairsUp("loc.fai_falador_stairs", 1, 3, 1),
-    StairsDown("loc.fai_falador_stairstop", 1, -2, -1),
-    CastleStairsUp("loc.fai_falador_castle_stairs", 1, 3, 1),
-    CastleStairsDown("loc.fai_falador_castle_stairstop", 1, -2, -1),
-    OutdoorStairsUp("loc.fai_falador_outdoorstairs_bottom", -1, 0, 1),
-    OutdoorStairsDown("loc.fai_falador_outdoorstairs_top", 0, 3, -1),
-}
 
 /**
  * The party room stairwells are mirrored rather than rotated, so each one carries its own
@@ -77,10 +62,6 @@ private enum class PartyRoomStairs(
 
 class FaladorStairScript : PluginScript() {
     override fun ScriptContext.startup() {
-        for (stairs in FaladorStairs.entries) {
-            onOpLoc1(stairs.loc) { climb(it.loc, stairs) }
-        }
-
         for (stairs in PartyRoomStairs.entries) {
             val up = stairs.up
             val down = stairs.down
@@ -95,11 +76,6 @@ class FaladorStairScript : PluginScript() {
         }
 
         onOpLoc1("loc.osb5_passageway_leave") { leavePassageway(it.loc) }
-    }
-
-    private suspend fun ProtectedAccess.climb(loc: BoundLocInfo, stairs: FaladorStairs) {
-        arriveDelay()
-        telejump(loc.rotate(stairs.dx, stairs.dz).translateLevel(stairs.dLevel))
     }
 
     private suspend fun ProtectedAccess.useStairs(dest: CoordGrid) {
@@ -119,14 +95,6 @@ class FaladorStairScript : PluginScript() {
         arriveDelay()
         telejump(if (loc.coords.x < PASSAGEWAY_SPLIT_X) WEST_PASSAGEWAY_EXIT else EAST_PASSAGEWAY_EXIT)
     }
-
-    private fun BoundLocInfo.rotate(dx: Int, dz: Int): CoordGrid =
-        when (angle) {
-            LocAngle.West -> coords.translate(dx, dz)
-            LocAngle.North -> coords.translate(dz, width - 1 - dx)
-            LocAngle.East -> coords.translate(width - 1 - dx, length - 1 - dz)
-            LocAngle.South -> coords.translate(length - 1 - dz, dx)
-        }
 
     private companion object {
         const val PASSAGEWAY_SPLIT_X = 3040

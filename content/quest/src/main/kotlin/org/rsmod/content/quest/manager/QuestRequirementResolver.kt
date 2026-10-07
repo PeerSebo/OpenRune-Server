@@ -6,9 +6,7 @@ import org.rsmod.api.server.config.ServerConfig
 import org.rsmod.game.entity.Player
 
 @Singleton
-public class QuestRequirementResolver
-@Inject
-constructor(config: ServerConfig) {
+public class QuestRequirementResolver @Inject constructor(config: ServerConfig) {
     public val policy: QuestRequirementPolicy = QuestRequirementPolicy.from(config)
 
     init {
@@ -26,5 +24,10 @@ constructor(config: ServerConfig) {
 
     public fun satisfies(player: Player, quest: String, requirement: QuestRequirement): Boolean =
         QuestRequirements.satisfies(player, quest, requirement)
-}
 
+    public fun canStart(player: Player, quest: String): Boolean =
+        QuestRequirements.canStart(player, quest)
+
+    public fun hasQuestPoints(player: Player, required: Int): Boolean =
+        QuestRequirements.hasQuestPoints(player, required)
+}

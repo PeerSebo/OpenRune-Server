@@ -1,9 +1,9 @@
 package dtx.example.rs_tables
 
-import dtx.rs.*
 import dtx.example.Item
 import dtx.example.Player
 import dtx.example.examplePlayer
+import dtx.rs.*
 
 val ringOfWealth = Item("ring_of_wealth")
 
@@ -61,7 +61,7 @@ val rareDropTable = rsWeightedTable<Player, Item> {
 }
 
 fun rollRdt(player: Player, rollAmount: Int) {
-    val fullResults = rareDropTable.countRoll(rollAmount, player, { it.itemId } )
+    val fullResults = rareDropTable.countRoll(rollAmount, player, { it.itemId })
     fullResults.forEach { (itemId) ->
         print("$itemId - got[")
         val gotDropRate = fullResults[itemId]!!.toDouble() / rollAmount * 100

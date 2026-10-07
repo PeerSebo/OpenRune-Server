@@ -6,7 +6,6 @@ coords = "1_22_150_36_26"
 npc = "npc.moth_sunlight"
 coords = "1_22_150_37_33"
 
-## Perilous Moons Antechamber Tiles
 
 [[spawn]]
 npc = "npc.moth_sunlight"
@@ -15,6 +14,3 @@ coords = "1_22_150_26_32"
 [[spawn]]
 npc = "npc.moth_sunlight"
 coords = "1_22_150_29_37"
-
-## Perilous Moons Antechamber Tiles End
-

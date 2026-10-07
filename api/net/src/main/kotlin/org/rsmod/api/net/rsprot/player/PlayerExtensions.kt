@@ -9,13 +9,18 @@ import org.rsmod.game.movement.MoveSpeed
 import org.rsmod.map.CoordGrid
 import org.rsmod.routefinder.collision.CollisionFlagMap
 
-internal fun Player.protectedTelejump(collision: CollisionFlagMap, dest: CoordGrid): Boolean {
+internal fun Player.protectedTelejump(
+    contextFactory: ProtectedAccessContextFactory,
+    collision: CollisionFlagMap,
+    dest: CoordGrid,
+): Boolean {
     if (isAccessProtected) {
         return false
     }
     launch {
-        val context = ProtectedAccessContextFactory.empty()
-        val access = ProtectedAccess(this@protectedTelejump, this, context)
+        // A full context is required as `telejump` closes any open interfaces, which relies on the
+        // context's event bus.
+        val access = ProtectedAccess(this@protectedTelejump, this, contextFactory.create())
         access.telejump(dest, collision, TeleportType.Exempt)
     }
     return true

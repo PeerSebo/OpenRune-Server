@@ -19,8 +19,6 @@ import org.rsmod.game.type.getOrNull
 public class DamageReductionAttributeCollector
 @Inject
 constructor(private val attackStyles: AttackStyles) {
-    // `random` is an explicit parameter to indicate that this function relies on randomness
-    // for certain effects, such as the Elysian spirit shield proc.
     public fun collectNvP(player: Player, random: GameRandom): EnumSet<DamageReductionAttributes> {
         val attributes = EnumSet.noneOf(DamageReductionAttributes::class.java)
 
@@ -46,8 +44,6 @@ constructor(private val attackStyles: AttackStyles) {
         return attributes
     }
 
-    // `random` is an explicit parameter to indicate that this function relies on randomness
-    // for certain effects, such as the Elysian spirit shield proc.
     public fun collectPvP(player: Player, random: GameRandom): EnumSet<DamageReductionAttributes> {
         val attributes = EnumSet.noneOf(DamageReductionAttributes::class.java)
 

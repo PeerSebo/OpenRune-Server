@@ -101,8 +101,6 @@ private constructor(
         auth: AuthenticationType.PasswordAuthentication,
         password: CharArray,
     ) {
-        // This may be filtered earlier at the protocol layer (e.g., rsprot), but we defensively
-        // check again to ensure the password is not empty.
         if (password.isEmpty()) {
             responseHandler.writeFailedResponse(LoginResponse.InvalidUsernameOrPassword)
             return
@@ -140,7 +138,8 @@ private constructor(
                 characterRepository = characterAccountRepository,
             )
 
-        // Central auth runs after the account row exists (see AccountLoadResponseHook) so character id
+        // Central auth runs after the account row exists (see AccountLoadResponseHook) so character
+        // id
         // and password are available; do not kick off here with a null character id.
         val passwordForLocalCreate = password.copyOf()
         val requestSubmitted =
@@ -151,9 +150,14 @@ private constructor(
                     try {
                         val hashStart = System.nanoTime()
                         val hash = computePasswordHash(passwordForLocalCreate)
-                        val hashMs = java.util.concurrent.TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - hashStart)
+                        val hashMs =
+                            java.util.concurrent.TimeUnit.NANOSECONDS.toMillis(
+                                System.nanoTime() - hashStart
+                            )
                         if (config.loginTimingLogs && hashMs >= PASSWORD_HASH_TIMING_INFO_MS) {
-                            logger.info { "Login password hash (new local account) user='$username' elapsed=${hashMs}ms" }
+                            logger.info {
+                                "Login password hash (new local account) user='$username' elapsed=${hashMs}ms"
+                            }
                         }
                         hash ?: error("Password hash failed")
                     } finally {

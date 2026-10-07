@@ -1,9 +1,5 @@
 package dev.openrune.codegen
 
-/**
- * VarType → KotlinPoet [TypeName], DB column codec class, and scalar reader names for generated
- * row wrappers.
- */
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.INT
 import com.squareup.kotlinpoet.LONG
@@ -12,6 +8,7 @@ import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
 import dev.openrune.cache.filestore.definition.InterfaceType
 import dev.openrune.definition.type.DBRowType
+import dev.openrune.definition.type.SpotAnimType
 import dev.openrune.definition.type.widget.ComponentType
 import dev.openrune.definition.util.BaseVarType
 import dev.openrune.definition.util.VarType
@@ -22,15 +19,12 @@ import dev.openrune.types.SequenceServerType
 import dev.openrune.types.StatType
 import dev.openrune.types.aconverted.AreaType
 import dev.openrune.types.aconverted.MidiType
-import dev.openrune.types.aconverted.SpotanimType
 
 private const val PKG_DB_COL = "dev.openrune.types.dbcol"
 
-/** Nested under [dev.openrune.types.dbcol.DbColumnCodec] (e.g. `IntCodec`). */
 internal fun codecNested(simple: String): ClassName =
     ClassName(PKG_DB_COL, "DbColumnCodec").nestedClass(simple)
 
-/** Top-level codec in `types.dbcol` (e.g. `SeqIdCodec`). */
 internal fun codecTopLevel(simple: String): ClassName = ClassName(PKG_DB_COL, simple)
 
 private enum class CodecPlacement {
@@ -38,12 +32,7 @@ private enum class CodecPlacement {
     TopLevel,
 }
 
-/**
- * Maps a [VarType] to Kotlin property type, DB column codec(s), and optional scalar reader names on
- * [dev.openrune.types.dbcol.DbColHelper] / `DbHelper` (runtime).
- */
 private data class VarTypeCodegen(
-    /** `null` → use [VarType.baseType] in [kotlinTypeForVarType]. */
     val kotlin: TypeName? = null,
     val codec: Pair<CodecPlacement, String>? = null,
     val scalarReader: String? = null,
@@ -62,7 +51,7 @@ private val typeNpc = NpcServerType::class.asTypeName()
 private val typeObj = ItemServerType::class.asTypeName()
 private val typeStat = StatType::class.asTypeName()
 private val typeSeq = SequenceServerType::class.asTypeName()
-private val typeSpot = SpotanimType::class.asTypeName()
+private val typeSpot = SpotAnimType::class.asTypeName()
 
 private fun varTypeCodegen(vt: VarType): VarTypeCodegen =
     when (vt) {
@@ -81,12 +70,7 @@ private fun varTypeCodegen(vt: VarType): VarTypeCodegen =
                 scalarOptionalReader = "intOptional",
             )
         VarType.LONG ->
-            VarTypeCodegen(
-                LONG,
-                CodecPlacement.Nested to "IntCodec",
-                "long",
-                "longOptional",
-            )
+            VarTypeCodegen(LONG, CodecPlacement.Nested to "IntCodec", "long", "longOptional")
         VarType.STRING ->
             VarTypeCodegen(
                 STRING,
@@ -95,30 +79,13 @@ private fun varTypeCodegen(vt: VarType): VarTypeCodegen =
                 "stringOptional",
             )
         VarType.SEQ ->
-            VarTypeCodegen(
-                typeSeq,
-                CodecPlacement.Nested to "SeqCodec",
-                scalarReader = "seq",
-            )
+            VarTypeCodegen(typeSeq, CodecPlacement.Nested to "SeqCodec", scalarReader = "seq")
         VarType.SPOTANIM ->
-            VarTypeCodegen(
-                typeSpot,
-                CodecPlacement.Nested to "SpotCodec",
-                scalarReader = "spot",
-            )
+            VarTypeCodegen(typeSpot, CodecPlacement.Nested to "SpotCodec", scalarReader = "spot")
         VarType.NPC ->
-            VarTypeCodegen(
-                typeNpc,
-                CodecPlacement.Nested to "NpcTypeCodec",
-                "npc",
-                "npcOptional",
-            )
+            VarTypeCodegen(typeNpc, CodecPlacement.Nested to "NpcTypeCodec", "npc", "npcOptional")
         VarType.LOC ->
-            VarTypeCodegen(
-                typeLoc,
-                CodecPlacement.Nested to "LocTypeCodec",
-                scalarReader = "loc",
-            )
+            VarTypeCodegen(typeLoc, CodecPlacement.Nested to "LocTypeCodec", scalarReader = "loc")
         VarType.OBJ ->
             VarTypeCodegen(
                 typeObj,
@@ -183,21 +150,17 @@ private fun varTypeCodegen(vt: VarType): VarTypeCodegen =
                 "obj",
                 "objOptional",
             )
-        VarType.GRAPHIC ->
-            VarTypeCodegen(codec = CodecPlacement.TopLevel to "GraphicIdCodec")
+        VarType.GRAPHIC -> VarTypeCodegen(codec = CodecPlacement.TopLevel to "GraphicIdCodec")
         VarType.SEQ -> VarTypeCodegen(codec = CodecPlacement.TopLevel to "SeqIdCodec")
         VarType.MODEL -> VarTypeCodegen(codec = CodecPlacement.TopLevel to "ModelIdCodec")
-        VarType.CATEGORY ->
-            VarTypeCodegen(codec = CodecPlacement.TopLevel to "CategoryIdCodec")
+        VarType.CATEGORY -> VarTypeCodegen(codec = CodecPlacement.TopLevel to "CategoryIdCodec")
         VarType.INV -> VarTypeCodegen(codec = CodecPlacement.TopLevel to "InvIdCodec")
         VarType.IDKIT -> VarTypeCodegen(codec = CodecPlacement.TopLevel to "IdkIdCodec")
         VarType.VARP -> VarTypeCodegen(codec = CodecPlacement.TopLevel to "VarpIdCodec")
         VarType.STRUCT -> VarTypeCodegen(codec = CodecPlacement.TopLevel to "StructIdCodec")
-        VarType.DBTABLE ->
-            VarTypeCodegen(codec = CodecPlacement.TopLevel to "DbtableIdCodec")
+        VarType.DBTABLE -> VarTypeCodegen(codec = CodecPlacement.TopLevel to "DbtableIdCodec")
         VarType.SYNTH -> VarTypeCodegen(codec = CodecPlacement.TopLevel to "SynthIdCodec")
-        VarType.LOCSHAPE ->
-            VarTypeCodegen(codec = CodecPlacement.TopLevel to "LocShapeIdCodec")
+        VarType.LOCSHAPE -> VarTypeCodegen(codec = CodecPlacement.TopLevel to "LocShapeIdCodec")
         else -> VarTypeCodegen()
     }
 
@@ -222,7 +185,6 @@ internal fun kotlinTypeForVarType(vt: VarType, nullable: Boolean): TypeName {
     return if (nullable) base.copy(nullable = true) else base
 }
 
-/** Exposed for row wrappers that special-case scalar coord (no codec in init). */
 internal val tableCodegenCoordGridType: TypeName = typeCoordGrid
 
 internal fun scalarDbHelperReaders(vt: VarType): Pair<String?, String?> =

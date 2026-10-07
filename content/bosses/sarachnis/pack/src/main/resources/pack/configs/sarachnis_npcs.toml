@@ -1,0 +1,76 @@
+[[npc]]
+isServerOnly = true
+id = "npc.sarachnis"
+inherit = "npc.sarachnis"
+size = 5
+hitpoints = 400
+attack = 200
+strength = 240
+defence = 150
+ranged = 300
+magic = 150
+huntMode = 8
+huntRange = 16
+attackRange = 16
+maxRange = 20
+respawnRate = 17
+[npc.params]
+"param.boss_hp_bar_mode" = 1
+"param.killcount_varp" = "varp.total_sarachnis_kills"
+"param.npc_com_xp_multiplier" = 1075
+"param.slayer_experience" = 430
+"param.attackrate" = 4
+"param.attack_anim" = "seq.hosdun_spider_boss_attack_melee"
+"param.defend_anim" = "seq.spider_update_defend_large"
+"param.death_anim" = "seq.hosdun_spider_boss_death"
+"param.attack_melee" = 30
+"param.attack_ranged" = 15
+"param.ranged_strength" = 15
+"param.defence_stab" = 60
+"param.defence_slash" = 40
+"param.defence_crush" = 10
+"param.defence_magic" = 150
+"param.defence_light" = 300
+"param.defence_standard" = 300
+"param.defence_heavy" = 300
+"param.elemental_weakness_percent"=40
+"param.elemental_weakness_type"=3
+
+[[npc]]
+isServerOnly = true
+id = "npc.sarachnis_melee_spawn"
+inherit = "npc.sarachnis_melee_spawn"
+size = 2
+hitpoints = 30
+attack = 150
+strength = 120
+defence = 50
+ranged = 1
+magic = 1
+maxRange = 25
+attackRange = 1
+[npc.params]
+"param.attackrate" = 4
+"param.attack_anim" = "seq.spider_update_attack_large"
+"param.defend_anim" = "seq.spider_update_defend_large"
+"param.death_anim" = "seq.spider_update_death_large"
+
+[[npc]]
+isServerOnly = true
+id = "npc.sarachnis_mage_spawn"
+inherit = "npc.sarachnis_mage_spawn"
+size = 2
+hitpoints = 30
+attack = 10
+strength = 10
+defence = 50
+ranged = 1
+magic = 100
+maxRange = 25
+attackRange = 7
+[npc.params]
+"param.attackrate" = 4
+"param.attack_anim" = "seq.spider_update_attack_large"
+"param.defend_anim" = "seq.spider_update_defend_large"
+"param.death_anim" = "seq.spider_update_death_large"
+

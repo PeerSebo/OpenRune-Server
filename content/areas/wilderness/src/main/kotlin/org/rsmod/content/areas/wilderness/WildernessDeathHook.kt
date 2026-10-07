@@ -30,6 +30,7 @@ public class WildernessDeathHook @Inject constructor() : PlayerDeathHook {
             revealDelay = if (context.killer != null) PVP_REVEAL_DELAY else 0,
             supplyPile = false,
             untradeableHandling = if (above20) UntradeableHandling.COINS else UntradeableHandling.DROP,
+            gravestone = false,
         )
     }
 
@@ -41,6 +42,7 @@ public class WildernessDeathHook @Inject constructor() : PlayerDeathHook {
             revealDelay = PVP_REVEAL_DELAY,
             supplyPile = true,
             untradeableHandling = UntradeableHandling.DROP,
+            gravestone = false,
         )
 
     private fun revenantCaves(context: PlayerDeathContext): PlayerDeathHandling =
@@ -51,6 +53,7 @@ public class WildernessDeathHook @Inject constructor() : PlayerDeathHook {
             revealDelay = 0,
             supplyPile = false,
             untradeableHandling = UntradeableHandling.COINS,
+            gravestone = false,
         )
 
     private fun wildernessInstance(context: PlayerDeathContext): PlayerDeathHandling =
@@ -61,6 +64,7 @@ public class WildernessDeathHook @Inject constructor() : PlayerDeathHook {
             revealDelay = PVP_REVEAL_DELAY,
             supplyPile = false,
             untradeableHandling = UntradeableHandling.KEEP,
+            gravestone = false,
         )
 
     private companion object {

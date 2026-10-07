@@ -157,7 +157,7 @@ constructor(
     override fun ScriptContext.startup() {
         BossCombat.register(this, spec, deps)
         deps.extensionRegistry.register("venenatis.post_attack") { access, npc, target, _ ->
-            onStyleAttackResolved(access, npc, target)
+            onStyleAttackResolved(checkNotNull(access), npc, target)
         }
         for (typeId in lairsById.keys) {
             onEvent<NpcStateEvents.Spawn>(typeId) { resetFightState(npc) }
@@ -169,7 +169,7 @@ constructor(
         npc.vars["varn.venenatis_attacks"] = 0
     }
 
-    private fun onStyleAttackResolved(access: StandardNpcAccess?, npc: Npc, target: Player) {
+    private fun onStyleAttackResolved(access: StandardNpcAccess, npc: Npc, target: Player) {
         val encounter = deps.encounter(npc)
         val style = encounter.currentPhaseName
         val attacksBefore = npc.vars["varn.venenatis_attacks"]
@@ -195,7 +195,7 @@ constructor(
         }
     }
 
-    private fun summonSpiderlings(access: StandardNpcAccess?, npc: Npc, target: Player) {
+    private fun summonSpiderlings(access: StandardNpcAccess, npc: Npc, target: Player) {
         val encounter = deps.encounter(npc)
         val interpreter = EffectInterpreter(npc, target, spec, encounter, deps)
         val effect =

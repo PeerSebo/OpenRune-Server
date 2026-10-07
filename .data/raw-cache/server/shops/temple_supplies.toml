@@ -1,0 +1,119 @@
+[[inventory]]
+isServerOnly = true
+id = "inv.gotr_reward_shop_all"
+name = "Temple Supplies"
+
+scope = "Shared"
+stack = "Always"
+
+sellMultiplier = 1000
+buyMultiplier = 0
+delta = 0
+
+size = 20
+
+protect = false
+runWeight = false
+restock = false
+allStock = false
+placeholders = false
+
+[[inventory.stock]]
+obj = "obj.hat_of_the_eye"
+count = 10
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.robe_top_of_the_eye"
+count = 10
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.robe_bottom_of_the_eye"
+count = 10
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.boots_of_the_eye"
+count = 10
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.ring_of_elements"
+count = 10
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.guardians_eye"
+count = 5
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.abyssal_lantern"
+count = 10
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.abyssal_needle"
+count = 5
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.air_talisman"
+count = 50
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.water_talisman"
+count = 50
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.earth_talisman"
+count = 50
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.fire_talisman"
+count = 50
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.mind_talisman"
+count = 50
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.body_talisman"
+count = 50
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.chaos_talisman"
+count = 50
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.cosmic_talisman"
+count = 50
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.nature_talisman"
+count = 50
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.law_talisman"
+count = 50
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.death_talisman"
+count = 50
+restockCycles = 0
+
+[[inventory.stock]]
+obj = "obj.blood_talisman"
+count = 50
+restockCycles = 0

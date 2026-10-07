@@ -238,7 +238,6 @@ coords = "1_40_48_60_5"
 npc = "npc.yanille_soldier"
 coords = "1_40_48_7_37"
 
-## Wizards' Guild
 
 [[spawn]]
 npc = "npc.aluft_gnome_mage_2"
@@ -292,7 +291,6 @@ coords = "2_40_48_33_18"
 npc = "npc.zogre_human_zavistic_rarve"
 coords = "0_40_48_28_15"
 
-## Yanille Bank
 
 [[spawn]]
 npc = "npc.banker1"
@@ -310,7 +308,6 @@ coords = "0_40_48_55_22"
 npc = "npc.deadman_guard_yanille"
 coords = "0_40_48_52_20"
 
-## Yanille Dungeon
 
 [[spawn]]
 npc = "npc.bat"
@@ -492,7 +489,6 @@ coords = "0_40_148_27_20"
 npc = "npc.zombie_armed3"
 coords = "0_40_148_30_19"
 
-## Yanille Watchtower Bottom
 
 [[spawn]]
 npc = "npc.tower_guard"
@@ -506,7 +502,6 @@ coords = "0_39_48_50_44"
 npc = "npc.tower_guard"
 coords = "0_39_48_53_40"
 
-## Yanille Watchtower Middle
 
 [[spawn]]
 npc = "npc.yanille_watchman"
@@ -523,6 +518,3 @@ coords = "1_39_48_53_40"
 [[spawn]]
 npc = "npc.yanille_watchman"
 coords = "1_39_48_53_44"
-
-## Yanille Watchtower Middle End
-

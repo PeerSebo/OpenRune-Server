@@ -1,5 +1,6 @@
 package org.rsmod.api.game.process.npc
 
+import com.github.michaelbull.logging.InlineLogger
 import jakarta.inject.Inject
 import org.rsmod.api.npc.events.NpcMovementEvent
 import org.rsmod.api.route.StepFactory
@@ -23,8 +24,11 @@ constructor(
     private val stepFactory: StepFactory,
     private val eventBus: EventBus,
 ) {
+    private var lastCrossLevelWarnCycle: Int? = null
+
     public fun process(npc: Npc) {
-        if (npc.movementLocked || npc.isFrozen()) {
+        val freezeEnd = npc.vars["varn.freeze_end_clock"]
+        if (npc.movementLocked || (freezeEnd > 0 && freezeEnd > npc.currentMapClock)) {
             npc.routeRequest = null
             npc.routeDestination.clear()
             return
@@ -72,6 +76,9 @@ constructor(
     private fun Npc.move(steps: Int, collision: CollisionStrategy) {
         val destination = routeDestination
         val waypoint = destination.peekFirst() ?: return
+        if (waypoint.level != coords.level) {
+            warnCrossLevelWaypoint(waypoint)
+        }
         val start = coords
         var current = start
         var target = waypoint
@@ -96,13 +103,30 @@ constructor(
             stepCount++
         }
         if (current == target) {
-            // If last step in on waypoint destination, remove it from the queue.
             destination.pollFirst()
         }
         addBlockWalkCollision(current)
         updateMovementClock(current, start)
         pendingStepCount = stepCount
         coords = current
+    }
+
+    /**
+     * A cross-plane waypoint cannot be reached and would stall the NPC forever; discard it
+     * before planar stepping.
+     */
+    private fun Npc.warnCrossLevelWaypoint(waypoint: CoordGrid) {
+        val cycle = currentMapClock
+        val last = lastCrossLevelWarnCycle
+        if (last != null && cycle - last < CROSS_LEVEL_WARN_INTERVAL) {
+            return
+        }
+        lastCrossLevelWarnCycle = cycle
+        logger.warn {
+            "Npc route waypoint is on another level and can never be reached; npc is stuck " +
+                "(further warnings suppressed for $CROSS_LEVEL_WARN_INTERVAL cycles): " +
+                "npc=$this, waypoint=$waypoint."
+        }
     }
 
     private fun Npc.addBlockWalkCollision(coords: CoordGrid) {
@@ -139,8 +163,7 @@ constructor(
                         targetWidth = destination.size,
                         targetLength = destination.size,
                     )
-                    .toCoordGrid()
-                    .copy(level = source.coords.level)
+                    .toCoordGrid(source.coords.level)
             is RouteRequestLoc -> destination
         }
 
@@ -152,6 +175,14 @@ constructor(
     }
 
     private companion object {
-        private fun RouteCoordinates.toCoordGrid() = CoordGrid(x, z, level)
+        private val logger = InlineLogger()
+
+        private const val CROSS_LEVEL_WARN_INTERVAL: Int = 100
+
+        /**
+         * naiveDestination returns plane 0 because it takes no level; restore the source plane
+         * before enqueuing.
+         */
+        private fun RouteCoordinates.toCoordGrid(level: Int) = CoordGrid(x, z, level)
     }
 }

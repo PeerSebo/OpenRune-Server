@@ -2,17 +2,15 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
 import org.rsmod.api.droptable.rsPlayerGuaranteedTable
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.content.drops.tables.shared.SharedDropTables
-import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.content.drops.brimstoneKeyRoll
-import org.rsmod.content.drops.hasCompletedQuest
-import org.rsmod.content.drops.isOnQuest
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.content.drops.hasCompletedQuest
+import org.rsmod.content.drops.tables.shared.SharedDropTables
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -22,7 +20,7 @@ public val mithrilDragonDropTable: RSDropTable<Player, DropRollItem> = RSDropTab
     npcs = npcs("npc.brut_mithril_dragon", "npc.ds2_mithril_dragon", "npc.ds2_mithril_dragon_cutscene"),
     guaranteed = rsPlayerGuaranteedTable {
         "obj.mithril_bar" count 3 condition { player ->
-            // Drops Need Manual: Mithril bars are dropped in banknote form if players have purchased the ''Duly noted'' unlock for 200 slayer reward points and are on an active Slayer task of metal dragons.
+            // TODO: Mithril bars are dropped in banknote form if players have purchased the ''Duly noted'' unlock for 200 slayer reward points and are on an active Slayer task of metal dragons.
              true
         }
     },

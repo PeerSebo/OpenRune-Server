@@ -9,33 +9,13 @@ import org.rsmod.game.entity.Player
 import org.rsmod.game.inv.InvObj
 import org.rsmod.map.CoordGrid
 
-/**
- * Represents an obj that exists on the game map at specific coordinates.
- *
- * Objs have different visibility scopes and ownership properties that determine which players can
- * see and interact with them.
- *
- * **Creation**: The primary constructor is reserved for **internal engine usage**. Instead, use the
- * appropriate companion object helper functions depending on your scenario:
- * - [fromPvp] - For objs dropped from player vs. player combat.
- * - [fromPvn] - For objs dropped from player vs. npc combat.
- * - [fromOwner] - For objs dropped by or for a specific player.
- * - [fromServer] - For server-spawned objs that should be instantly visible to everyone.
- *
- * **Visibility and Ownership**:
- * - [receiverId] determines who can currently see the obj.
- * - [ownerId] tracks the original owner (important for ironman restrictions).
- * - Objs can be private (visible to specific players) or public (visible to all)
- *
- * _Note: The aforementioned ids make use of [Player.observerUUID], which takes group game modes
- * into account._
- */
 public class Obj(
     public val coords: CoordGrid,
     public var entity: ObjEntity,
     public val creationCycle: Int,
     public val receiverId: Long,
     public val ownerId: Long = NULL_OBSERVER_ID,
+    public val vars: Int = 0,
 ) {
     public val x: Int
         get() = coords.x
@@ -62,40 +42,15 @@ public class Obj(
         get() = !isPrivate
 
     /**
-     * Provides a nullable representation of the [receiverId] to distinguish between an owned obj
-     * and a non-owned obj.
-     *
-     * The `receiverId` field is non-nullable for performance reasons, and it defaults to
-     * [NULL_OBSERVER_ID] to indicate an obj not owned by any specific player. In most cases, this
-     * default value will not match a real observer's UUID. However, in the unlikely event that an
-     * observer's UUID does match [NULL_OBSERVER_ID], this property helps identify the obj as
-     * non-owned by returning `null`.
-     *
-     * This property can be used for safer checks when determining the ownership of an obj, avoiding
-     * potential confusion with the reserved value: [NULL_OBSERVER_ID].
-     *
-     * @return `null` if the [receiverId] is equal to [NULL_OBSERVER_ID], otherwise the actual
-     *   [receiverId].
+     * The reserved receiver sentinel maps to null, even if a real observer UUID happens to
+     * equal it.
      */
     public val nullableReceiverId: Long?
         get() = if (receiverId == NULL_OBSERVER_ID) null else receiverId
 
     /**
-     * Provides a nullable representation of the [ownerId] to distinguish between the original owner
-     * of the obj as opposed to the [receiverId].
-     *
-     * The `ownerId` field is non-nullable for performance reasons, and it defaults to
-     * [NULL_OBSERVER_ID] to indicate an obj that did not originally belong to any specific player.
-     * In most cases, this default value will not match a real observer's UUID. However, in the
-     * unlikely event that an observer's UUID does match [NULL_OBSERVER_ID], this property helps
-     * identify the obj as having no original owner by returning `null`.
-     *
-     * This property is particularly important for ironman game mode restrictions, where players can
-     * only pick up objs that originally belonged to them. It can be used for safer ownership
-     * checks, avoiding potential confusion with the reserved value: [NULL_OBSERVER_ID].
-     *
-     * @return `null` if the [ownerId] is equal to [NULL_OBSERVER_ID], otherwise the actual
-     *   [ownerId] representing the original owner.
+     * The reserved original-owner sentinel maps to null; ironman ownership checks must
+     * distinguish it from a real player.
      */
     public val nullableOwnerId: Long?
         get() = if (ownerId == NULL_OBSERVER_ID) null else ownerId
@@ -141,10 +96,10 @@ public class Obj(
         }
 
         public fun fromPvp(killer: Player, target: Player, obj: InvObj): Obj {
-            return fromPvp(killer, target, obj.id, obj.count)
+            return fromPvp(killer, target, obj.id, obj.count, obj.vars)
         }
 
-        private fun fromPvp(killer: Player, target: Player, obj: Int, count: Int): Obj {
+        private fun fromPvp(killer: Player, target: Player, obj: Int, count: Int, vars: Int = 0): Obj {
             val entity = ObjEntity(obj, count, ObjScope.Private.id)
             return Obj(
                 coords = target.coords,
@@ -152,6 +107,7 @@ public class Obj(
                 creationCycle = killer.currentMapClock,
                 receiverId = killer.observerId(),
                 ownerId = target.observerId(),
+                vars = vars,
             )
         }
 
@@ -160,10 +116,10 @@ public class Obj(
         }
 
         public fun fromPvn(killer: Player, target: Npc, obj: InvObj): Obj {
-            return fromPvn(killer, target.coords, obj.id, obj.count)
+            return fromPvn(killer, target.coords, obj.id, obj.count, obj.vars)
         }
 
-        private fun fromPvn(killer: Player, coords: CoordGrid, obj: Int, count: Int): Obj {
+        private fun fromPvn(killer: Player, coords: CoordGrid, obj: Int, count: Int, vars: Int = 0): Obj {
             val entity = ObjEntity(obj, count, ObjScope.Private.id)
             return Obj(
                 coords = coords,
@@ -171,6 +127,7 @@ public class Obj(
                 creationCycle = killer.currentMapClock,
                 receiverId = killer.observerId(),
                 ownerId = killer.observerId(),
+                vars = vars,
             )
         }
 
@@ -183,7 +140,6 @@ public class Obj(
             return fromOwner(player, coords, obj.id, count)
         }
 
-
         public fun fromOwner(
             player: Player,
             coords: CoordGrid,
@@ -194,10 +150,10 @@ public class Obj(
         }
 
         public fun fromOwner(player: Player, coords: CoordGrid, obj: InvObj): Obj {
-            return fromOwner(player, coords, obj.id, obj.count)
+            return fromOwner(player, coords, obj.id, obj.count, obj.vars)
         }
 
-        private fun fromOwner(player: Player, coords: CoordGrid, obj: Int, count: Int): Obj {
+        private fun fromOwner(player: Player, coords: CoordGrid, obj: Int, count: Int, vars: Int = 0): Obj {
             val entity = ObjEntity(obj, count, ObjScope.Private.id)
             return Obj(
                 coords = coords,
@@ -205,6 +161,7 @@ public class Obj(
                 creationCycle = player.currentMapClock,
                 receiverId = player.observerId(),
                 ownerId = player.observerId(),
+                vars = vars,
             )
         }
 
@@ -218,12 +175,12 @@ public class Obj(
         }
 
         public fun fromServer(clock: MapClock, coords: CoordGrid, obj: InvObj): Obj {
-            return fromServer(clock, coords, obj.id, obj.count)
+            return fromServer(clock, coords, obj.id, obj.count, obj.vars)
         }
 
-        private fun fromServer(clock: MapClock, coords: CoordGrid, obj: Int, count: Int): Obj {
+        private fun fromServer(clock: MapClock, coords: CoordGrid, obj: Int, count: Int, vars: Int = 0): Obj {
             val entity = ObjEntity(obj, count, ObjScope.Temp.id)
-            return Obj(coords, entity, clock.cycle, NULL_OBSERVER_ID)
+            return Obj(coords, entity, clock.cycle, NULL_OBSERVER_ID, vars = vars)
         }
 
         private fun Player.observerId(): Long {

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.parallel.ResourceLock
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import org.rsmod.api.combat.commons.magic.MagicSpellType
@@ -17,6 +18,7 @@ import org.rsmod.api.config.refs.params
 import org.rsmod.api.enums.SpellbookEnums
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ResourceLock("ServerCacheManager")
 internal class AncientSpellDataTest {
     @BeforeAll
     fun loadCache() {
@@ -78,7 +80,7 @@ internal class AncientSpellDataTest {
     @ParameterizedTest
     @EnumSource(AncientSpell::class)
     fun `all fx symbols resolve`(spell: AncientSpell) {
-        assertResolves(spell.tier.anim, RSCMType.SEQ)
+        assertResolves(spell.castAnim, RSCMType.SEQ)
         assertResolves(spell.impact, RSCMType.SPOTANIM)
         assertResolves(spell.hitSound, RSCMType.SYNTH)
         assertResolves(spell.castSound, RSCMType.SYNTH)

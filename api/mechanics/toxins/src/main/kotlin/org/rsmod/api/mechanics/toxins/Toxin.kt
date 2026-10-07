@@ -106,8 +106,7 @@ public object Toxin {
     private const val DISEASE_VARP: String =
         "varp.disease"
 
-    private const val BUFF_BAR_START_CLIENTSCRIPT: Int =
-        5931
+    private const val BUFF_BAR_START_CLIENTSCRIPT = "clientscript.[clientscript,buff_bar_start]"
 
     private const val ANTIPOISON_BUFF_STRUCT: Int =
         3105

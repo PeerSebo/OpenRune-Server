@@ -23,7 +23,7 @@ constructor(
 ) : MessageHandler<OpPlayer> {
     private val logger = InlineLogger()
 
-    private val OpPlayer.interactionOp: InteractionOp
+    private val OpPlayer.interactionOp: InteractionOp?
         get() =
             when (op) {
                 1 -> InteractionOp.Op1
@@ -31,7 +31,7 @@ constructor(
                 3 -> InteractionOp.Op3
                 4 -> InteractionOp.Op4
                 5 -> InteractionOp.Op5
-                else -> throw NotImplementedError("Unhandled `op` conversion: $this")
+                else -> null
             }
 
     override fun handle(player: Player, message: OpPlayer) {
@@ -40,20 +40,28 @@ constructor(
             return
         }
 
+        val op = message.interactionOp
+        if (op == null) {
+            player.clearMapFlag()
+            player.clearPendingAction(eventBus)
+            logger.debug { "Ignored unsupported OpPlayer: op=${message.op}, index=${message.index}" }
+            return
+        }
+
         val target = playerList[message.index]
-        if (target == null) {
+        if (target == null || target.staffInvisible || player.staffInvisible) {
             player.clearMapFlag()
             player.clearPendingAction(eventBus)
             return
         }
 
         val speed = if (message.controlKey) player.ctrlMoveSpeed() else null
-        val opTrigger = playerInteractions.hasOpTrigger(target, message.interactionOp)
-        val apTrigger = playerInteractions.hasApTrigger(target, message.interactionOp)
+        val opTrigger = playerInteractions.hasOpTrigger(target, op)
+        val apTrigger = playerInteractions.hasApTrigger(target, op)
         val interaction =
             InteractionPlayerOp(
                 target = target,
-                op = message.interactionOp,
+                op = op,
                 hasOpTrigger = opTrigger,
                 hasApTrigger = apTrigger,
             )

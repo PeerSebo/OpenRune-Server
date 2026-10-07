@@ -26,8 +26,9 @@ constructor(
         }
     }
 
+    /** Cross-plane follow targets are out of range; routefinding cannot connect floors. */
     private fun Npc.inValidDistance(target: Player): Boolean =
-        isWithinDistance(target, VALID_DISTANCE)
+        level == target.level && isWithinDistance(target, VALID_DISTANCE)
 
     private fun Npc.teleportTo(target: Player): Unit = teleport(collision, target.coords)
 

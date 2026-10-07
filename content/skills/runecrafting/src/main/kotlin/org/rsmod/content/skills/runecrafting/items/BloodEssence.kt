@@ -10,7 +10,7 @@ object BloodEssence {
     const val ACTIVE = "obj.blood_essence_active"
     const val BLOOD_RUNE = "obj.bloodrune"
     const val MAX_CHARGES = 1000
-    const val ACTIVATE_SOUND = "synth.enchant_ruby_ring"
+    const val ACTIVATE_SOUND = "synth.ENCHANT_RUBY_RING"
     private const val PROC_ROLL = 2
 
     fun hasActive(player: Player): Boolean = player.inv.contains(ACTIVE)
@@ -45,7 +45,7 @@ object BloodEssence {
         } else {
             mes(
                 "You manage to extract power from the Blood Essence and craft " +
-                    "$granted extra rune${if (granted != 1) "s" else ""}.",
+                    "$granted extra rune${if (granted != 1) "s" else ""}."
             )
         }
 

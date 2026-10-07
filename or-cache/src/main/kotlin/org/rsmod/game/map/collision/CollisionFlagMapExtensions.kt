@@ -22,11 +22,6 @@ public fun CollisionFlagMap.isZoneValid(coords: CoordGrid): Boolean =
 public fun CollisionFlagMap.isWalkBlocked(coords: CoordGrid): Boolean =
     this[coords] and CollisionFlag.BLOCK_WALK != 0
 
-/**
- * Returns whether an entity of [size] at [origin] may take a single step in [direction], using
- * the same rules as route-finding ([StepValidator.canTravel]) rather than only
- * [isWalkBlocked] on the destination tile.
- */
 public fun CollisionFlagMap.canStep(
     origin: CoordGrid,
     direction: Direction,
@@ -34,21 +29,18 @@ public fun CollisionFlagMap.canStep(
     extraFlag: Int = 0,
     strategy: CollisionStrategy = CollisionStrategy.Normal,
 ): Boolean =
-    StepValidator(this).canTravel(
-        origin.level,
-        origin.x,
-        origin.z,
-        direction.xOff,
-        direction.zOff,
-        size,
-        extraFlag,
-        strategy,
-    )
+    StepValidator(this)
+        .canTravel(
+            origin.level,
+            origin.x,
+            origin.z,
+            direction.xOff,
+            direction.zOff,
+            size,
+            extraFlag,
+            strategy,
+        )
 
-/**
- * Returns `origin.translate(direction)` for the first [direction] in [directions] where [canStep]
- * is true, or `null` if none apply.
- */
 public fun CollisionFlagMap.firstStepDestination(
     origin: CoordGrid,
     directions: Iterable<Direction>,

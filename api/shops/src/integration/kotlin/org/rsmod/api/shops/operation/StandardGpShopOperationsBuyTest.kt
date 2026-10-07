@@ -149,7 +149,6 @@ class StandardGpShopOperationsBuyTest {
             subtext = "",
         )
 
-        // Clear out the player's outgoing messages from opening shop.
         client.clearOutgoing()
 
         check(player.ui.containsModal(ShopInterfaces.shop_main))

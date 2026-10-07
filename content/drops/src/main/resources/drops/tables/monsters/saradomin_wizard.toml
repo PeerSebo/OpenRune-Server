@@ -123,6 +123,3 @@ count = 240
 [[main.entries]]
 weight = 16
 nothing = true
-
-
-# Main table pool padding uses a nothing roll (F2P drops removed and/or subtable access missing from wiki parse) (16 weight)

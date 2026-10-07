@@ -9,13 +9,13 @@ import dev.openrune.cache.tools.cacheTool
 import dev.openrune.cache.tools.cs2.PackCs2
 import dev.openrune.cache.tools.cs2.UnpackDefaultCs2
 import dev.openrune.cache.tools.iftype.PackIfType
-import dev.openrune.cache.tools.tasks.impl.PackModels
-import dev.openrune.cache.tools.tasks.impl.PackSprites
-import dev.openrune.cache.tools.tasks.impl.PackWorldMap
 import dev.openrune.cache.tools.incremental.CacheVerification
 import dev.openrune.cache.tools.incremental.IncrementalSession
 import dev.openrune.cache.tools.tasks.CacheTask
 import dev.openrune.cache.tools.tasks.TaskType
+import dev.openrune.cache.tools.tasks.impl.PackModels
+import dev.openrune.cache.tools.tasks.impl.PackSprites
+import dev.openrune.cache.tools.tasks.impl.PackWorldMap
 import dev.openrune.codegen.startEnumGeneration
 import dev.openrune.codegen.startGeneration
 import dev.openrune.definition.GameValGroupTypes
@@ -31,6 +31,7 @@ import dev.openrune.gamevals.GamevalDumper
 import dev.openrune.impl.GameframeTable
 import dev.openrune.impl.Music
 import dev.openrune.map.packing.MapPackers
+import dev.openrune.pack.ClientCacheTask
 import dev.openrune.pack.PluginPacks
 import dev.openrune.tables.CollectionLogCategoriesTable
 import dev.openrune.tables.DidYouKnow
@@ -42,11 +43,13 @@ import dev.openrune.tables.StatComponents
 import dev.openrune.tables.consumables.food.FoodTable
 import dev.openrune.tables.consumables.potion.PotionEffectTable
 import dev.openrune.tables.consumables.potion.PotionTable
+import dev.openrune.tables.skills.Construction
 import dev.openrune.tables.skills.Cooking
 import dev.openrune.tables.skills.Firemaking
+import dev.openrune.tables.skills.Fishing
+import dev.openrune.tables.skills.Fletching
 import dev.openrune.tables.skills.Herblore
 import dev.openrune.tables.skills.Mining
-import dev.openrune.tables.skills.Motherlode
 import dev.openrune.tables.skills.Runecrafting
 import dev.openrune.tables.skills.Slayer
 import dev.openrune.tables.skills.Smithing
@@ -133,6 +136,11 @@ fun buildCache(type: TaskType, force: Boolean = false) {
 
     val packs = PluginPacks.discover(projectRoot)
     packs.validate()
+    PackServerConfig(
+        revision.first,
+        File("../.data/raw-cache/server"),
+        extraDirectories = packs.serverConfigDirectories(),
+    ).apply { revision = dev.openrune.revision.first }.validateSources()
 
     val cs2Overrides = packs.cs2Overrides(
         DirectoryConstants.CS2_PATH.toFile(),
@@ -152,13 +160,14 @@ fun buildCache(type: TaskType, force: Boolean = false) {
 private fun buildServerCache(packTasks: List<CacheTask>, packs: PluginPacks) {
     val serverTasks = packTasks.filterNot {
         it is PackCs2 || it is UnpackDefaultCs2 || it is PackIfType ||
-            it is PackModels || it is PackSprites || it is PackWorldMap
+            it is PackModels || it is PackSprites || it is PackWorldMap ||
+            it is ClientCacheTask
     }
     val serverOnly = listOf(
         PackServerConfig(
             revision.first,
             File("../.data/raw-cache/server"),
-            extraDirectories = packs.configDirectories(),
+            extraDirectories = packs.serverConfigDirectories(),
         ),
         MapPackers(),
     )
@@ -200,7 +209,7 @@ fun tablesToPack(): List<DBTable> = listOf(
     StatComponents.statsComponents(),
     PickableObjects.pickableObjects(),
     Mining.rocks(),
-    Motherlode.payDirt(),
+    Construction.furniture(),
     Cooking.foods(),
     Cooking.ales(),
     Herblore.unfinishedPotions(),
@@ -213,6 +222,18 @@ fun tablesToPack(): List<DBTable> = listOf(
     Smithing.cannonBalls(),
     Smithing.dragonForge(),
     Smithing.crystalSinging(),
+    Fishing.catches(),
+    Fletching.carving(),
+    Fletching.stringing(),
+    Fletching.arrows(),
+    Fletching.specialAssembly(),
+    Fletching.javelins(),
+    Fletching.darts(),
+    Fletching.bolts(),
+    Fletching.crossbows(),
+    Fletching.boltTips(),
+    Fletching.tippedBolts(),
+    Fletching.broadAmmo(),
     Slayer.masters(),
     Runecrafting.altars(),
     Runecrafting.runes(),

@@ -425,6 +425,8 @@ default = "West to the Kingdom of Zeah.|South to the City of Lumbridge.|North to
 53431454 = "West to Lumbridge.|The River Lum lies to the south.|North to farms and Varrock.|East to Al Kharid - toll gate; bring some money."
 50908384 = "West to Port Sarim, Falador and Rimmington.|South to Draynor Village and the Wizards' Tower.|North to Draynor Manor.|East to Lumbridge."
 48876750 = "Follow the path west to the Crafting Guild.|Follow the path south to Rimmington.|North to the glorious White Knights' city of Falador.|Follow the path east to Port Sarim and Draynor Village."
+53546244 = "West to Lumbridge.|South to Al Kharid.|North to Varrock.|East to the Digsite."
+53792005 = "West to Lumbridge.|South to Al Kharid.|North to Varrock.|East to the Digsite."
 
 [[enum]]
 isServerOnly = true
@@ -600,21 +602,40 @@ id = "enum.regular_tree_axes"
 keyType = "OBJ"
 valueType = "INT"
 
+# Inactive crystal axes use dragon-axe success rates despite requiring level 71.
+# https://oldschool.runescape.wiki/w/Crystal_axe#Degradation
 [enum.values]
 "obj.bronze_axe" = 4194504
+"obj.bronze_axe_2h" = 4194504
 "obj.iron_axe" = 6291756
+"obj.iron_axe_2h" = 6291756
 "obj.steel_axe" = 8389008
+"obj.steel_axe_2h" = 8389008
 "obj.black_axe" = 9437634
+"obj.black_axe_2h" = 9437634
 "obj.mithril_axe" = 10486260
+"obj.mithril_axe_2h" = 10486260
 "obj.adamant_axe" = 12583512
+"obj.adamant_axe_2h" = 12583512
 "obj.rune_axe" = 14680764
+"obj.rune_axe_2h" = 14680764
 "obj.trail_gilded_axe" = 14680764
 "obj.dragon_axe" = 15729390
+"obj.trailblazer_reloaded_axe" = 15729390
+"obj.trailblazer_reloaded_axe_empty" = 15729390
+"obj.trailblazer_reloaded_axe_no_infernal" = 15729390
+"obj.dragon_axe_2h" = 15729390
 "obj.trailblazer_axe_no_infernal" = 15729390
 "obj.3a_axe" = 15729390
+"obj.3a_axe_2h" = 15729390
 "obj.infernal_axe" = 15729390
+"obj.infernal_axe_empty" = 15729390
 "obj.trailblazer_axe" = 15729390
+"obj.trailblazer_axe_empty" = 15729390
 "obj.crystal_axe" = 16384800
+"obj.crystal_axe_inactive" = 15729390
+"obj.crystal_axe_2h" = 16384800
+"obj.crystal_axe_2h_inactive" = 15729390
 
 [[enum]]
 isServerOnly = true
@@ -624,19 +645,36 @@ valueType = "INT"
 
 [enum.values]
 "obj.bronze_axe" = 2097252
+"obj.bronze_axe_2h" = 2097252
 "obj.iron_axe" = 3145878
+"obj.iron_axe_2h" = 3145878
 "obj.steel_axe" = 4194504
+"obj.steel_axe_2h" = 4194504
 "obj.black_axe" = 4718817
+"obj.black_axe_2h" = 4718817
 "obj.mithril_axe" = 5243130
+"obj.mithril_axe_2h" = 5243130
 "obj.adamant_axe" = 6291756
+"obj.adamant_axe_2h" = 6291756
 "obj.rune_axe" = 7340382
+"obj.rune_axe_2h" = 7340382
 "obj.trail_gilded_axe" = 7340382
 "obj.dragon_axe" = 7864695
+"obj.trailblazer_reloaded_axe" = 7864695
+"obj.trailblazer_reloaded_axe_empty" = 7864695
+"obj.trailblazer_reloaded_axe_no_infernal" = 7864695
+"obj.dragon_axe_2h" = 7864695
 "obj.trailblazer_axe_no_infernal" = 7864695
 "obj.3a_axe" = 7864695
+"obj.3a_axe_2h" = 7864695
 "obj.infernal_axe" = 7864695
+"obj.infernal_axe_empty" = 7864695
 "obj.trailblazer_axe" = 7864695
+"obj.trailblazer_axe_empty" = 7864695
 "obj.crystal_axe" = 7864695
+"obj.crystal_axe_inactive" = 7864695
+"obj.crystal_axe_2h" = 7864695
+"obj.crystal_axe_2h_inactive" = 7864695
 
 [[enum]]
 isServerOnly = true
@@ -646,19 +684,36 @@ valueType = "INT"
 
 [enum.values]
 "obj.bronze_axe" = 1048626
+"obj.bronze_axe_2h" = 1048626
 "obj.iron_axe" = 1572939
+"obj.iron_axe_2h" = 1572939
 "obj.steel_axe" = 2097252
+"obj.steel_axe_2h" = 2097252
 "obj.black_axe" = 2359408
+"obj.black_axe_2h" = 2359408
 "obj.mithril_axe" = 2621565
+"obj.mithril_axe_2h" = 2621565
 "obj.adamant_axe" = 3145878
+"obj.adamant_axe_2h" = 3145878
 "obj.rune_axe" = 3670191
+"obj.rune_axe_2h" = 3670191
 "obj.trail_gilded_axe" = 3670191
 "obj.dragon_axe" = 3932347
+"obj.trailblazer_reloaded_axe" = 3932347
+"obj.trailblazer_reloaded_axe_empty" = 3932347
+"obj.trailblazer_reloaded_axe_no_infernal" = 3932347
+"obj.dragon_axe_2h" = 3932347
 "obj.trailblazer_axe_no_infernal" = 3932347
 "obj.3a_axe" = 3932347
+"obj.3a_axe_2h" = 3932347
 "obj.infernal_axe" = 3932347
+"obj.infernal_axe_empty" = 3932347
 "obj.trailblazer_axe" = 3932347
+"obj.trailblazer_axe_empty" = 3932347
 "obj.crystal_axe" = 3932347
+"obj.crystal_axe_inactive" = 3932347
+"obj.crystal_axe_2h" = 3932347
+"obj.crystal_axe_2h_inactive" = 3932347
 
 [[enum]]
 isServerOnly = true
@@ -668,19 +723,36 @@ valueType = "INT"
 
 [enum.values]
 "obj.bronze_axe" = 983086
+"obj.bronze_axe_2h" = 983086
 "obj.iron_axe" = 1507398
+"obj.iron_axe_2h" = 1507398
 "obj.steel_axe" = 2031709
+"obj.steel_axe_2h" = 2031709
 "obj.black_axe" = 2293862
+"obj.black_axe_2h" = 2293862
 "obj.mithril_axe" = 2556021
+"obj.mithril_axe_2h" = 2556021
 "obj.adamant_axe" = 3080332
+"obj.adamant_axe_2h" = 3080332
 "obj.rune_axe" = 3604644
+"obj.rune_axe_2h" = 3604644
 "obj.trail_gilded_axe" = 3604644
 "obj.dragon_axe" = 3932350
+"obj.trailblazer_reloaded_axe" = 3932350
+"obj.trailblazer_reloaded_axe_empty" = 3932350
+"obj.trailblazer_reloaded_axe_no_infernal" = 3932350
+"obj.dragon_axe_2h" = 3932350
 "obj.trailblazer_axe_no_infernal" = 3932350
 "obj.3a_axe" = 3932350
+"obj.3a_axe_2h" = 3932350
 "obj.infernal_axe" = 3932350
+"obj.infernal_axe_empty" = 3932350
 "obj.trailblazer_axe" = 3932350
+"obj.trailblazer_axe_empty" = 3932350
 "obj.crystal_axe" = 3932360
+"obj.crystal_axe_inactive" = 3932350
+"obj.crystal_axe_2h" = 3932360
+"obj.crystal_axe_2h_inactive" = 3932350
 
 [[enum]]
 isServerOnly = true
@@ -690,19 +762,36 @@ valueType = "INT"
 
 [enum.values]
 "obj.bronze_axe" = 524313
+"obj.bronze_axe_2h" = 524313
 "obj.iron_axe" = 786469
+"obj.iron_axe_2h" = 786469
 "obj.steel_axe" = 1048626
+"obj.steel_axe_2h" = 1048626
 "obj.black_axe" = 1179704
+"obj.black_axe_2h" = 1179704
 "obj.mithril_axe" = 1310782
+"obj.mithril_axe_2h" = 1310782
 "obj.adamant_axe" = 1572939
+"obj.adamant_axe_2h" = 1572939
 "obj.rune_axe" = 1835095
+"obj.rune_axe_2h" = 1835095
 "obj.trail_gilded_axe" = 1835095
 "obj.dragon_axe" = 1966173
+"obj.trailblazer_reloaded_axe" = 1966173
+"obj.trailblazer_reloaded_axe_empty" = 1966173
+"obj.trailblazer_reloaded_axe_no_infernal" = 1966173
+"obj.dragon_axe_2h" = 1966173
 "obj.trailblazer_axe_no_infernal" = 1966173
 "obj.3a_axe" = 1966173
+"obj.3a_axe_2h" = 1966173
 "obj.infernal_axe" = 1966173
+"obj.infernal_axe_empty" = 1966173
 "obj.trailblazer_axe" = 1966173
+"obj.trailblazer_axe_empty" = 1966173
 "obj.crystal_axe" = 1966173
+"obj.crystal_axe_inactive" = 1966173
+"obj.crystal_axe_2h" = 1966173
+"obj.crystal_axe_2h_inactive" = 1966173
 
 [[enum]]
 isServerOnly = true
@@ -712,19 +801,36 @@ valueType = "INT"
 
 [enum.values]
 "obj.bronze_axe" = 393246
+"obj.bronze_axe_2h" = 393246
 "obj.iron_axe" = 524332
+"obj.iron_axe_2h" = 524332
 "obj.steel_axe" = 720956
+"obj.steel_axe_2h" = 720956
 "obj.black_axe" = 852035
+"obj.black_axe_2h" = 852035
 "obj.mithril_axe" = 917578
+"obj.mithril_axe_2h" = 917578
 "obj.adamant_axe" = 1114202
+"obj.adamant_axe_2h" = 1114202
 "obj.rune_axe" = 1310824
+"obj.rune_axe_2h" = 1310824
 "obj.trail_gilded_axe" = 1310824
 "obj.dragon_axe" = 1376368
+"obj.trailblazer_reloaded_axe" = 1376368
+"obj.trailblazer_reloaded_axe_empty" = 1376368
+"obj.trailblazer_reloaded_axe_no_infernal" = 1376368
+"obj.dragon_axe_2h" = 1376368
 "obj.trailblazer_axe_no_infernal" = 1376368
 "obj.3a_axe" = 1376368
+"obj.3a_axe_2h" = 1376368
 "obj.infernal_axe" = 1376368
+"obj.infernal_axe_empty" = 1376368
 "obj.trailblazer_axe" = 1376368
+"obj.trailblazer_axe_empty" = 1376368
 "obj.crystal_axe" = 1376368
+"obj.crystal_axe_inactive" = 1376368
+"obj.crystal_axe_2h" = 1376368
+"obj.crystal_axe_2h_inactive" = 1376368
 
 [[enum]]
 isServerOnly = true
@@ -734,19 +840,36 @@ valueType = "INT"
 
 [enum.values]
 "obj.bronze_axe" = 524313
+"obj.bronze_axe_2h" = 524313
 "obj.iron_axe" = 786470
+"obj.iron_axe_2h" = 786470
 "obj.steel_axe" = 1048626
+"obj.steel_axe_2h" = 1048626
 "obj.black_axe" = 1179702
+"obj.black_axe_2h" = 1179702
 "obj.mithril_axe" = 1310783
+"obj.mithril_axe_2h" = 1310783
 "obj.adamant_axe" = 1638475
+"obj.adamant_axe_2h" = 1638475
 "obj.rune_axe" = 1900632
+"obj.rune_axe_2h" = 1900632
 "obj.trail_gilded_axe" = 1900632
 "obj.dragon_axe" = 2228318
+"obj.trailblazer_reloaded_axe" = 2228318
+"obj.trailblazer_reloaded_axe_empty" = 2228318
+"obj.trailblazer_reloaded_axe_no_infernal" = 2228318
+"obj.dragon_axe_2h" = 2228318
 "obj.trailblazer_axe_no_infernal" = 2228318
 "obj.3a_axe" = 2228318
+"obj.3a_axe_2h" = 2228318
 "obj.infernal_axe" = 2228318
+"obj.infernal_axe_empty" = 2228318
 "obj.trailblazer_axe" = 2228318
+"obj.trailblazer_axe_empty" = 2228318
 "obj.crystal_axe" = 2359393
+"obj.crystal_axe_inactive" = 2228318
+"obj.crystal_axe_2h" = 2359393
+"obj.crystal_axe_2h_inactive" = 2228318
 
 [[enum]]
 isServerOnly = true
@@ -756,19 +879,36 @@ valueType = "INT"
 
 [enum.values]
 "obj.bronze_axe" = 262156
+"obj.bronze_axe_2h" = 262156
 "obj.iron_axe" = 393235
+"obj.iron_axe_2h" = 393235
 "obj.steel_axe" = 524313
+"obj.steel_axe_2h" = 524313
 "obj.black_axe" = 589852
+"obj.black_axe_2h" = 589852
 "obj.mithril_axe" = 655391
+"obj.mithril_axe_2h" = 655391
 "obj.adamant_axe" = 786469
+"obj.adamant_axe_2h" = 786469
 "obj.rune_axe" = 917548
+"obj.rune_axe_2h" = 917548
 "obj.trail_gilded_axe" = 917548
 "obj.dragon_axe" = 983087
+"obj.trailblazer_reloaded_axe" = 983087
+"obj.trailblazer_reloaded_axe_empty" = 983087
+"obj.trailblazer_reloaded_axe_no_infernal" = 983087
+"obj.dragon_axe_2h" = 983087
 "obj.trailblazer_axe_no_infernal" = 983087
 "obj.3a_axe" = 983087
+"obj.3a_axe_2h" = 983087
 "obj.infernal_axe" = 983087
+"obj.infernal_axe_empty" = 983087
 "obj.trailblazer_axe" = 983087
+"obj.trailblazer_axe_empty" = 983087
 "obj.crystal_axe" = 983087
+"obj.crystal_axe_inactive" = 983087
+"obj.crystal_axe_2h" = 983087
+"obj.crystal_axe_2h_inactive" = 983087
 
 [[enum]]
 isServerOnly = true
@@ -778,19 +918,36 @@ valueType = "INT"
 
 [enum.values]
 "obj.bronze_axe" = 131078
+"obj.bronze_axe_2h" = 131078
 "obj.iron_axe" = 196617
+"obj.iron_axe_2h" = 196617
 "obj.steel_axe" = 262156
+"obj.steel_axe_2h" = 262156
 "obj.black_axe" = 327693
+"obj.black_axe_2h" = 327693
 "obj.mithril_axe" = 327695
+"obj.mithril_axe_2h" = 327695
 "obj.adamant_axe" = 393234
+"obj.adamant_axe_2h" = 393234
 "obj.rune_axe" = 458773
+"obj.rune_axe_2h" = 458773
 "obj.trail_gilded_axe" = 458773
 "obj.dragon_axe" = 458774
+"obj.trailblazer_reloaded_axe" = 458774
+"obj.trailblazer_reloaded_axe_empty" = 458774
+"obj.trailblazer_reloaded_axe_no_infernal" = 458774
+"obj.dragon_axe_2h" = 458774
 "obj.trailblazer_axe_no_infernal" = 458774
 "obj.3a_axe" = 458774
+"obj.3a_axe_2h" = 458774
 "obj.infernal_axe" = 458774
+"obj.infernal_axe_empty" = 458774
 "obj.trailblazer_axe" = 458774
+"obj.trailblazer_axe_empty" = 458774
 "obj.crystal_axe" = 458774
+"obj.crystal_axe_inactive" = 458774
+"obj.crystal_axe_2h" = 458774
+"obj.crystal_axe_2h_inactive" = 458774
 
 [[enum]]
 isServerOnly = true
@@ -800,19 +957,36 @@ valueType = "INT"
 
 [enum.values]
 "obj.bronze_axe" = 131078
+"obj.bronze_axe_2h" = 131078
 "obj.iron_axe" = 196617
+"obj.iron_axe_2h" = 196617
 "obj.steel_axe" = 262156
+"obj.steel_axe_2h" = 262156
 "obj.black_axe" = 262158
+"obj.black_axe_2h" = 262158
 "obj.mithril_axe" = 327695
+"obj.mithril_axe_2h" = 327695
 "obj.adamant_axe" = 393234
+"obj.adamant_axe_2h" = 393234
 "obj.rune_axe" = 458773
+"obj.rune_axe_2h" = 458773
 "obj.trail_gilded_axe" = 458773
 "obj.dragon_axe" = 458782
+"obj.trailblazer_reloaded_axe" = 458782
+"obj.trailblazer_reloaded_axe_empty" = 458782
+"obj.trailblazer_reloaded_axe_no_infernal" = 458782
+"obj.dragon_axe_2h" = 458782
 "obj.trailblazer_axe_no_infernal" = 458782
 "obj.3a_axe" = 458782
+"obj.3a_axe_2h" = 458782
 "obj.infernal_axe" = 458782
+"obj.infernal_axe_empty" = 458782
 "obj.trailblazer_axe" = 458782
+"obj.trailblazer_axe_empty" = 458782
 "obj.crystal_axe" = 524323
+"obj.crystal_axe_inactive" = 458782
+"obj.crystal_axe_2h" = 524323
+"obj.crystal_axe_2h_inactive" = 458782
 
 [[enum]]
 isServerOnly = true
@@ -822,19 +996,36 @@ valueType = "INT"
 
 [enum.values]
 "obj.bronze_axe" = 1179674
+"obj.bronze_axe_2h" = 1179674
 "obj.iron_axe" = 1835048
+"obj.iron_axe_2h" = 1835048
 "obj.steel_axe" = 2359350
+"obj.steel_axe_2h" = 2359350
 "obj.black_axe" = 2752569
+"obj.black_axe_2h" = 2752569
 "obj.mithril_axe" = 3014724
+"obj.mithril_axe_2h" = 3014724
 "obj.adamant_axe" = 3866705
+"obj.adamant_axe_2h" = 3866705
 "obj.rune_axe" = 4194398
+"obj.rune_axe_2h" = 4194398
 "obj.trail_gilded_axe" = 4194398
 "obj.dragon_axe" = 4391013
+"obj.trailblazer_reloaded_axe" = 4391013
+"obj.trailblazer_reloaded_axe_empty" = 4391013
+"obj.trailblazer_reloaded_axe_no_infernal" = 4391013
+"obj.dragon_axe_2h" = 4391013
 "obj.trailblazer_axe_no_infernal" = 4391013
 "obj.3a_axe" = 4391013
+"obj.3a_axe_2h" = 4391013
 "obj.infernal_axe" = 4391013
+"obj.infernal_axe_empty" = 4391013
 "obj.trailblazer_axe" = 4391013
+"obj.trailblazer_axe_empty" = 4391013
 "obj.crystal_axe" = 4391013
+"obj.crystal_axe_inactive" = 4391013
+"obj.crystal_axe_2h" = 4391013
+"obj.crystal_axe_2h_inactive" = 4391013
 
 [[enum]]
 isServerOnly = true
@@ -914,3 +1105,119 @@ valueType = "INT"
 "obj.enakh_sandstone_medium" = 4
 "obj.enakh_sandstone_small" = 2
 "obj.enakh_sandstone_tiny" = 1
+
+
+# TODO: Verify pet base chances other than shark and anglerfish.
+[[enum]]
+isServerOnly = true
+id = "enum.heron_pet_chance"
+keyType = "OBJ"
+valueType = "INT"
+
+[enum.values]
+"obj.raw_shrimp" = 870330
+"obj.raw_anchovies" = 870330
+"obj.tbwt_raw_karambwanji" = 443697
+"obj.raw_sardine" = 1056000
+"obj.raw_herring" = 1056000
+"obj.raw_mackerel" = 1147827
+"obj.raw_cod" = 1147827
+"obj.raw_bass" = 1147827
+"obj.raw_trout" = 923616
+"obj.raw_salmon" = 923616
+"obj.raw_pike" = 305792
+"obj.hunting_raw_fish_special" = 137739
+"obj.raw_tuna" = 257770
+"obj.raw_swordfish" = 257770
+"obj.raw_lobster" = 116129
+"obj.raw_cave_eel" = 257770
+"obj.raw_monkfish" = 138583
+"obj.tbwt_raw_karambwan" = 170874
+"obj.brut_spawning_trout" = 1280862
+"obj.brut_spawning_salmon" = 1280862
+"obj.brut_sturgeon" = 1280862
+"obj.raw_shark" = 82243
+"obj.infernal_eel" = 165000
+"obj.raw_anglerfish" = 78649
+"obj.minnow" = 977778
+"obj.raw_dark_crab" = 149434
+
+# TODO: Verify unsupported beaver rates.
+[[enum]]
+isServerOnly = true
+id = "enum.beaver_pet_chance"
+keyType = "OBJ"
+valueType = "INT"
+
+[enum.values]
+"obj.logs" = 317647
+"obj.achey_tree_logs" = 317647
+"obj.arctic_pine_log" = 145758
+"obj.yew_logs" = 145013
+"obj.teak_logs" = 264336
+"obj.magic_logs" = 72321
+"obj.ironwood_logs" = 72321
+"obj.redwood_logs" = 72321
+
+[[enum]]
+isServerOnly = true
+id = "enum.tackle_box_storable"
+keyType = "INT"
+valueType = "OBJ"
+
+[enum.values]
+0 = "obj.spirit_angler_hat"
+1 = "obj.spirit_angler_top"
+2 = "obj.spirit_angler_legs"
+3 = "obj.spirit_angler_boots"
+4 = "obj.mudskipper_flippers"
+5 = "obj.dark_flippers"
+6 = "obj.tiny_net"
+7 = "obj.zeah_blessing_easy"
+8 = "obj.zeah_blessing_medium"
+9 = "obj.zeah_blessing_hard"
+10 = "obj.zeah_blessing_elite"
+11 = "obj.harpoon"
+12 = "obj.hunting_barbed_harpoon"
+13 = "obj.dragon_harpoon"
+14 = "obj.infernal_harpoon"
+15 = "obj.trailblazer_harpoon"
+16 = "obj.crystal_harpoon"
+17 = "obj.crystal_harpoon_inactive"
+18 = "obj.merfolk_trident"
+19 = "obj.fishing_rod"
+20 = "obj.fly_fishing_rod"
+21 = "obj.oily_fishing_rod"
+22 = "obj.brut_fishing_rod"
+23 = "obj.fishingrod_pearl"
+24 = "obj.fishingrod_pearl_fly"
+25 = "obj.fishingrod_pearl_oily"
+26 = "obj.fishingrod_pearl_brut"
+27 = "obj.net"
+28 = "obj.big_net"
+29 = "obj.fossil_drift_net"
+30 = "obj.lobster_pot"
+31 = "obj.tbwt_karambwan_vessel"
+32 = "obj.tbwt_raw_karambwanji"
+33 = "obj.fishing_bait"
+34 = "obj.wilderness_fishing_bait"
+35 = "obj.feather"
+36 = "obj.hunting_stripy_bird_feather"
+37 = "obj.brut_fish_cuts"
+38 = "obj.sailing_fine_fish_offcuts"
+39 = "obj.shark_lure"
+40 = "obj.piscarilius_sandworms"
+41 = "obj.piscarilius_bucket_sandworms"
+42 = "obj.diabolic_worms"
+43 = "obj.spirit_flakes"
+44 = "obj.1dosefisherspotion"
+45 = "obj.2dosefisherspotion"
+46 = "obj.3dosefisherspotion"
+47 = "obj.4dosefisherspotion"
+48 = "obj.1dose2fisherspotion"
+49 = "obj.2dose2fisherspotion"
+50 = "obj.3dose2fisherspotion"
+51 = "obj.4dose2fisherspotion"
+52 = "obj.oil_lantern_lit"
+53 = "obj.bullseye_lantern_lit"
+54 = "obj.candle_lantern_lit"

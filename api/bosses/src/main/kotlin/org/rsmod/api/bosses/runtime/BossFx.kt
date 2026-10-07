@@ -15,6 +15,7 @@ import org.rsmod.game.loc.LocShape
 import org.rsmod.game.map.collision.add
 import org.rsmod.game.map.collision.remove
 import org.rsmod.game.proj.ProjAnim
+import org.rsmod.game.queue.WorldQueueList
 import org.rsmod.map.CoordGrid
 import org.rsmod.routefinder.flag.CollisionFlag
 
@@ -49,6 +50,12 @@ fun BossDeps.bossProjectile(
 }
 
 fun BossDeps.suppressAttacks(npc: Npc, ticks: Int) {
+    val encounter = encounterRegistry.of(npc)
+    encounter.lastAbilityTick = maxOf(encounter.lastAbilityTick, mapClock.cycle + ticks)
+    suppressAttacksUntil(npc, ticks)
+}
+
+fun BossDeps.suppressAttacksUntil(npc: Npc, ticks: Int) {
     val encounter = encounterRegistry.of(npc)
     encounter.busyUntil = maxOf(encounter.busyUntil, mapClock.cycle + ticks)
 }
@@ -86,16 +93,35 @@ fun BossDeps.repeatTick(
     onTick: (remaining: Int) -> Boolean,
     onStop: () -> Unit = {},
 ) {
-    fun step(remaining: Int) {
-        worldQueues.add(1) {
-            if (remaining <= 0 || !onTick(remaining)) {
+    worldQueues.repeatTick(ticks, onTick, onStop)
+}
+
+internal fun WorldQueueList.repeatTick(
+    ticks: Int,
+    onTick: (remaining: Int) -> Boolean,
+    onStop: () -> Unit = {},
+) {
+    if (ticks == Int.MAX_VALUE) {
+        fun next() {
+            addDeferred(1) {
+                if (onTick(Int.MAX_VALUE)) next() else onStop()
+            }
+        }
+        next()
+        return
+    }
+    var stopped = false
+    // A queue appended from another queue can join the current traversal. Schedule this finite
+    // sequence together so each countdown starts in the same pass and callbacks stay a tick apart.
+    val duration = ticks.coerceAtLeast(0)
+    for (elapsed in 0..duration) {
+        add(elapsed + 1) {
+            if (!stopped && (elapsed == duration || !onTick(duration - elapsed))) {
+                stopped = true
                 onStop()
-            } else {
-                step(remaining - 1)
             }
         }
     }
-    step(ticks)
 }
 
 fun BossDeps.lob(
@@ -139,7 +165,7 @@ class OwnedLoc internal constructor(val info: LocInfo, val blockPlayersOnly: Boo
 fun BossDeps.spawnOwnedLoc(npc: Npc, tile: CoordGrid, loc: String, angle: Int, blockPlayersOnly: Boolean) {
     val encounter = encounterRegistry.of(npc)
     if (encounter.ownsLocAt(tile)) return
-    val info = locRepo.add(tile, loc, Int.MAX_VALUE, LocAngle[angle], LocShape.CentrepieceStraight)
+    val info = checkNotNull(locRepo).add(tile, loc, Int.MAX_VALUE, LocAngle[angle], LocShape.CentrepieceStraight)
     if (blockPlayersOnly) {
         collision.remove(tile, CollisionFlag.LOC or CollisionFlag.LOC_ROUTE_BLOCKER)
         collision.add(tile, CollisionFlag.BLOCK_PLAYERS)
@@ -150,7 +176,7 @@ fun BossDeps.spawnOwnedLoc(npc: Npc, tile: CoordGrid, loc: String, angle: Int, b
 fun BossDeps.removeLocs(locs: Map<CoordGrid, OwnedLoc>, breakSpotanim: String? = null) {
     val spot = breakSpotanim?.let { SpotanimType(it.asRSCM(RSCMType.SPOTANIM)) }
     for ((tile, loc) in locs) {
-        locRepo.del(loc.info, Int.MAX_VALUE)
+        checkNotNull(locRepo).del(loc.info, Int.MAX_VALUE)
         if (loc.blockPlayersOnly) collision.remove(tile, CollisionFlag.BLOCK_PLAYERS)
         spot?.let { worldRepo.spotanimMap(it, tile) }
     }

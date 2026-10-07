@@ -34,6 +34,3 @@ denominator = 5013
 weight = 1
 obj = "obj.dorgesh_construction_bone_curved"
 count = 1
-
-
-# Main table pool padding uses a nothing roll (F2P drops removed and/or subtable access missing from wiki parse) (399 weight)

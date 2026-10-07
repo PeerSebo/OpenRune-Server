@@ -1,4 +1,3 @@
-## Tirannwn Sea
 
 [[spawn]]
 npc = "npc.0_33_52_rarefish"
@@ -63,4 +62,3 @@ coords = "0_33_55_30_42"
 [[spawn]]
 npc = "npc.viking_fox"
 coords = "0_33_55_40_35"
-

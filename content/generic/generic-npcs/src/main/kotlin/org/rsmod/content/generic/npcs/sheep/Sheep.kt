@@ -8,12 +8,9 @@ import org.rsmod.api.random.GameRandom
 import org.rsmod.api.repo.obj.ObjRepository
 import org.rsmod.api.repo.world.WorldRepository
 import org.rsmod.api.script.onAiContentTimer
-import org.rsmod.api.script.onAiTimer
 import org.rsmod.api.script.onNpcQueue
 import org.rsmod.api.script.onOpContentNpc1
 import org.rsmod.api.script.onOpContentNpcU
-import org.rsmod.api.script.onOpNpc1
-import org.rsmod.api.script.onOpNpcU
 import org.rsmod.game.entity.Npc
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
@@ -44,7 +41,7 @@ constructor(
     }
 
     private fun Npc.sayFlavourText() {
-        worldRepo.soundArea(coords, "synth.sheep_atmospheric1")
+        worldRepo.soundArea(coords, "synth.SHEEP_ATMOSPHERIC1")
         say("Baa!")
     }
 
@@ -55,7 +52,7 @@ constructor(
         }
         val sheared = npcParam(npc, params.next_npc_stage)
         anim("seq.human_shearing")
-        soundSynth("synth.shear_sheep", delay = 10)
+        soundSynth("synth.SHEAR_SHEEP", delay = 10)
         faceEntitySquare(npc)
         delay(1)
         npcPlayerFaceClose(npc)

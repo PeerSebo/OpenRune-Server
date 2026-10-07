@@ -5,10 +5,10 @@ import dtx.core.RollResult
 import dtx.core.Rollable
 import dtx.core.singleRollable
 import dtx.impl.chain.ChainEnd
-import dtx.impl.chain.ChainRollableImpl
 import dtx.impl.chain.ChainRollableHooksBuilder
-import dtx.impl.chain.ChainedTableImpl
+import dtx.impl.chain.ChainRollableImpl
 import dtx.impl.chain.ChainedTableHooksBuilder
+import dtx.impl.chain.ChainedTableImpl
 import kotlin.random.Random
 
 // Example A: Loot chest with luck, pity, and anti-duplication
@@ -111,7 +111,7 @@ private val rareHooks = ChainRollableHooksBuilder<PlayerContext, Drop>().apply {
     // ChainRollableHooks
     adjustChance { player, base, outOf ->
         val pityBoost = (player.pityRare / 5) // +1 base per 5 pity
-        val luckBoost = (player.luck / 10)    // +1 base per 10 luck
+        val luckBoost = (player.luck / 10) // +1 base per 10 luck
         val adjusted = (base + pityBoost + luckBoost) to outOf
         println("[rare:adjustChance] ($base/$outOf) -> (${adjusted.first}/${adjusted.second})")
         adjusted

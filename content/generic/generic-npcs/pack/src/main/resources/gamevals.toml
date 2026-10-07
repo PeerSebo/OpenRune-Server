@@ -1,0 +1,24 @@
+[gamevals.dbtable]
+museum_workman_route = 63940
+edgeville_bankers = 63953
+
+[gamevals.dbrow]
+museum_workman_route = 61801
+edgeville_banker_0 = 62986
+edgeville_banker_1 = 62987
+edgeville_banker_2 = 62988
+edgeville_banker_3 = 62989
+
+[gamevals.varn]
+museum_workman_waypoint = 63000
+museum_workman_pause = 63001
+museum_workman_squeak = 63002
+museum_workman_greeted = 63003
+museum_workman_gate_close_delay = 63004
+
+[gamevals.loc]
+museum_workman_fencegate_open_l = 65010
+museum_workman_fencegate_open_r = 65011
+
+[gamevals.seq]
+varrock_female_trainee_ready = 63000

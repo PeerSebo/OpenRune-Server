@@ -1,0 +1,68 @@
+[gamevals.varp]
+ernest_piranhas_dead = 63754
+ernest_piranhas_dead_migrated = 63755
+diango_claimed_banana_hat = 64055
+diango_banana_hat_migrated = 64056
+chronicle_charges = 64062
+diango_oculus_reset = 64063
+diango_holiday_items_1 = 50010
+diango_holiday_items_2 = 50011
+diango_holiday_items_3 = 50012
+diango_holiday_items_4 = 50013
+diango_holiday_items_5 = 50014
+diango_holiday_items_6 = 50015
+diango_holiday_items_7 = 50016
+diango_holiday_items_8 = 50017
+
+[gamevals.enum]
+wom_recycling_tabs = 2070
+wom_recycling_free_quests = 2074
+wom_recycling_members_quests = 2075
+
+[gamevals.queue]
+chronicle_teleport_land = 2003
+
+[gamevals.dbtable]
+ava_devices = 64020
+diango_toys = 63943
+draynor_bankers = 63944
+draynor_sewer_routes = 63945
+diango_scarf_styles = 63946
+diango_handeggs = 63947
+
+[gamevals.dbrow]
+ava_device_attractor = 62913
+ava_device_accumulator = 62914
+diango_toy_horsey_brown = 61808
+diango_toy_horsey_white = 61809
+diango_toy_horsey_black = 61810
+diango_toy_horsey_grey = 61811
+diango_toy_wwf_toy_lion = 61812
+diango_toy_wwf_toy_tiger = 61813
+diango_toy_wwf_toy_snow_leopard = 61814
+diango_toy_wwf_toy_amur_leopard = 61815
+diango_toy_af15_dragon_claws = 61816
+diango_toy_spinning_plate = 61817
+draynor_banker_0 = 61820
+draynor_banker_1 = 61821
+draynor_banker_2 = 61822
+draynor_banker_3 = 61823
+draynor_sewer_up = 61824
+draynor_sewer_down = 61825
+diango_scarf_rainbow = 61826
+diango_scarf_bisexual = 61827
+diango_scarf_asexual = 61828
+diango_scarf_transgender = 61829
+diango_scarf_pansexual = 61830
+diango_scarf_nonbinary = 61831
+diango_scarf_genderqueer = 61832
+diango_scarf_lesbian = 61833
+diango_scarf_gay = 61834
+diango_handegg_light = 61835
+diango_handegg_balance = 61836
+diango_handegg_chaos = 61837
+[gamevals.area]
+diango_disk_mines = 32762
+
+[gamevals.timer]
+draynor_crypt_candles = 2014

@@ -5,11 +5,6 @@ import dtx.rs.rsWeightedTable
 import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.game.entity.Player
 
-/**
- * OSRS rare seed drop table (shared subtable).
- *
- * Weights derived from [[Rare seed drop table]] wiki rarities (1/5.046 … 1/121.1).
- */
 public val rareSeedDropTable: RSWeightedTable<Player, DropRollItem> = rsWeightedTable {
     name("Rare seed drop table")
     119 weight DropRollItem("obj.toadflax_seed", 1)

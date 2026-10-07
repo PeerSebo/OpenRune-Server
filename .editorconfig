@@ -21,30 +21,23 @@ max_line_length = 100
 indent_size = 4
 ij_continuation_indent_size = 4
 
-# Spotless runs ktlint over Kotlin sources. The standard ruleset is switched off
-# and only the hygiene rules below are switched back on, so line breaks, wrapping
-# and line length are left as written. An allow-list also keeps a later ktlint
-# release from adding an opinion. Everything here is auto-correctable.
+# Enable only hygiene rules so formatters preserve deliberate wrapping.
 ktlint_code_style = intellij_idea
 ktlint_standard = disabled
 
-# Imports.
 ktlint_standard_no-unused-imports = enabled
 ktlint_standard_import-ordering = enabled
 
-# Blank lines.
 ktlint_standard_no-consecutive-blank-lines = enabled
 ktlint_standard_no-blank-line-before-rbrace = enabled
 ktlint_standard_no-blank-lines-in-chained-method-calls = enabled
 ktlint_standard_spacing-between-declarations-with-annotations = enabled
 ktlint_standard_spacing-between-declarations-with-comments = enabled
 
-# Stray whitespace.
 ktlint_standard_no-trailing-spaces = enabled
 ktlint_standard_final-newline = enabled
 ktlint_standard_no-multi-spaces = enabled
 
-# Spacing around tokens.
 ktlint_standard_annotation-spacing = enabled
 ktlint_standard_colon-spacing = enabled
 ktlint_standard_comma-spacing = enabled
@@ -68,19 +61,15 @@ ktlint_standard_type-argument-list-spacing = enabled
 ktlint_standard_type-parameter-list-spacing = enabled
 ktlint_standard_unary-op-spacing = enabled
 
-# Comments.
 ktlint_standard_comment-spacing = enabled
 ktlint_standard_block-comment-initial-star-alignment = enabled
 
-# Redundant syntax.
 ktlint_standard_no-semi = enabled
 ktlint_standard_no-unit-return = enabled
 ktlint_standard_no-empty-class-body = enabled
 ktlint_standard_unnecessary-parentheses-before-trailing-lambda = enabled
 ktlint_standard_modifier-order = enabled
 
-# IntelliJ's own Kotlin formatter. ktlint does not read these; they decide only
-# what the IDE produces when you reformat.
 ij_java_names_count_to_use_import_on_demand = 9999
 ij_kotlin_align_in_columns_case_branch = false
 ij_kotlin_align_multiline_binary_operation = false

@@ -1,0 +1,22 @@
+[gamevals.content]
+farming_tool_leprechaun = 86
+
+
+[gamevals.queue]
+farming_rake = 84
+farming_plant = 85
+farming_harvest = 86
+farming_water = 87
+farming_cure = 88
+farming_clear = 89
+farming_compost = 90
+farming_check_health = 91
+farming_chop = 92
+farming_seedling_grow = 93
+farming_fill_pot = 94
+farming_water_seedling = 95
+
+farming_bin_take = 145
+
+[gamevals.varp]
+farming_seedling_ready = 65462

@@ -2,17 +2,14 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.content.drops.tables.shared.SharedDropTables
-import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.content.drops.brimstoneKeyRoll
-import org.rsmod.content.drops.hasCompletedQuest
-import org.rsmod.content.drops.isOnQuest
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.content.drops.isOnQuest
+import org.rsmod.content.drops.tables.shared.SharedDropTables
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -43,7 +40,7 @@ public val basiliskKnightDropTable: RSDropTable<Player, DropRollItem> = RSDropTa
     },
     tertiaries = rsPlayerTertiaryTable {
         1 outOf 1 weight "obj.trail_elite_emote_exp1" count 1 condition { player ->
-            // Drops Need Manual: The elite clue scroll and casket are only dropped when completing an Treasure Trails/Full guide/Elite#Cryptic clues
+            // TODO: The elite clue scroll and casket are only dropped when completing an Treasure Trails/Full guide/Elite#Cryptic clues
              true
         }
         1 outOf 1 weight "obj.trail_reward_casket_elite" count 1
@@ -54,7 +51,7 @@ public val basiliskKnightDropTable: RSDropTable<Player, DropRollItem> = RSDropTa
         1 outOf 256 weight "obj.mystic_hat_light" count 1
         1 outOf 1000 weight "obj.poh_trophydrop_basilisk" count 1
         1 outOf 400 weight "obj.dorgesh_construction_bone" count 1
-        // Drops Need Manual (rate): The drop rate of a basilisk jaw is increased to 1/1,000 while on a basilisk Slayer task.
+        // TODO: The drop rate of a basilisk jaw is increased to 1/1,000 while on a basilisk Slayer task.
         1 outOf 5000 weight "obj.basilisk_jaw" count 1
         1 outOf 5013 weight "obj.dorgesh_construction_bone_curved" count 1
         1 outOf 182 weight "obj.trail_clue_hard_map001" count 1 transformObj { player ->

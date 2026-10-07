@@ -100,11 +100,11 @@ class BankTutorialScript @Inject constructor(private val eventBus: EventBus) : P
     }
 
     private fun Player.highlightNoClick() {
-        runClientScript(3406, "component.bankside:bankside_highlight".asRSCM(RSCMType.COMPONENT))
+        runClientScript("clientscript.[clientscript,highlight_noclick]", "component.bankside:bankside_highlight".asRSCM(RSCMType.COMPONENT))
     }
 
     private fun Player.highlightStart() {
-        runClientScript(3408, "component.bankmain:bank_highlight".asRSCM(RSCMType.COMPONENT))
+        runClientScript("clientscript.[clientscript,highlight_start]", "component.bankmain:bank_highlight".asRSCM(RSCMType.COMPONENT))
     }
 
     private fun Player.highlightScreen(
@@ -118,7 +118,7 @@ class BankTutorialScript @Inject constructor(private val eventBus: EventBus) : P
         hideCom7: Boolean,
     ) {
         runClientScript(
-            3409,
+            "clientscript.[clientscript,highlight_screen]",
             "component.bankmain:bank_highlight".asRSCM(RSCMType.COMPONENT),
             offX,
             offY,
@@ -135,7 +135,7 @@ class BankTutorialScript @Inject constructor(private val eventBus: EventBus) : P
         val colour = -1
         val showCom29 = true
         runClientScript(
-            3413,
+            "clientscript.[clientscript,highlight_textbox]",
             text,
             colour,
             if (isLastPage) 1 else 0,
@@ -145,12 +145,10 @@ class BankTutorialScript @Inject constructor(private val eventBus: EventBus) : P
     }
 
     private fun Player.highlightScreenHideLayer() {
-        runClientScript(3412, "component.bankmain:bank_highlight".asRSCM(RSCMType.COMPONENT))
+        runClientScript("clientscript.[clientscript,highlight_screen_hide_layer]", "component.bankmain:bank_highlight".asRSCM(RSCMType.COMPONENT))
     }
 }
 
-// Consider moving these to cache. Could use a struct, but do not want to deal with a bunch of
-// parameters for now. Might be less annoying to do once we have support for db types.
 private val pages =
     listOf(
         Page(

@@ -2,9 +2,10 @@ package org.rsmod.content.skills.smithing
 
 import org.rsmod.api.player.events.interact.HeldUEvents
 import org.rsmod.api.player.protect.ProtectedAccess
-import org.rsmod.content.skills.smithing.util.SmithingUtils.hasHammer
 import org.rsmod.api.script.onOpHeldU
 import org.rsmod.api.script.onOpLocCategoryU
+import org.rsmod.content.skills.smithing.util.SmithingUtils
+import org.rsmod.content.skills.smithing.util.SmithingUtils.hasHammer
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
@@ -77,7 +78,7 @@ class GodSwordScript : PluginScript() {
     private fun ProtectedAccess.rejectBladeCombine() {
         mes(
             "These pieces of the godsword can't be joined together like that - " +
-                "try forging them on an anvil.",
+                "try forging them on an anvil."
         )
     }
 
@@ -91,12 +92,18 @@ class GodSwordScript : PluginScript() {
 
         val product = hiltToGodsword[hiltInternal] ?: return
 
-        if (invDel(inv, hiltInternal, 1).success && invDel(inv, "obj.godwars_godsword_blade1+2+3", 1).success) {
-            invAdd(inv, product, 1)
-        }
+        tryProduce(
+            inputs = listOf(hiltInternal to 1, "obj.godwars_godsword_blade1+2+3" to 1),
+            output = product,
+            outputCount = 1,
+        )
     }
 
     private suspend fun ProtectedAccess.forgeBlade() {
+        if (!SmithingUtils.requireSmithingLevel(this, JOIN_LEVEL_REQ, "join the godsword blade")) {
+            return
+        }
+
         val counts = bladePartInternals.associateWith { inv.count(it) }
 
         val (toConsume, result) =
@@ -110,14 +117,15 @@ class GodSwordScript : PluginScript() {
 
         mesbox("You set to work, trying to fix the ancient sword...")
 
-        delay(3)
-        anim("seq.human_smithing")
-        soundSynth(3771)
-        delay(4)
+        val joins = toConsume.size - 1
+        repeat(joins) {
+            anim("seq.human_smithing")
+            delay(JOIN_TICKS)
+        }
+        resetAnim()
 
-        if (toConsume.all { invDel(inv, it, 1).success }) {
-            invAdd(inv, result, 1)
-            statAdvance("stat.smithing", 100.0)
+        if (tryProduce(toConsume.map { it to 1 }, result, outputCount = 1)) {
+            statAdvance("stat.smithing", JOIN_XP * joins)
             objbox(
                 result,
                 "Even for an experienced smith it is not an easy task, but eventually it is done.",
@@ -125,13 +133,7 @@ class GodSwordScript : PluginScript() {
         }
     }
 
-    /**
-     * Finds a combination of items whose shard sets exactly match [required].
-     */
-    private fun findConsumption(
-        required: Set<Int>,
-        counts: Map<String, Int>,
-    ): List<String>? {
+    private fun findConsumption(required: Set<Int>, counts: Map<String, Int>): List<String>? {
         if (required.isEmpty()) {
             return emptyList()
         }
@@ -155,4 +157,11 @@ class GodSwordScript : PluginScript() {
         return null
     }
 
+    private companion object {
+        private const val JOIN_LEVEL_REQ = 80
+
+        private const val JOIN_XP = 100.0
+
+        private const val JOIN_TICKS = 7
+    }
 }

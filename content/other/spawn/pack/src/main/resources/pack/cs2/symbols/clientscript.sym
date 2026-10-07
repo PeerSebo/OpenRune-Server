@@ -8,4 +8,5 @@
 45521	[clientscript,spawn_menu_search_tick]
 45524	[clientscript,spawn_menu_labels]
 45527	[proc,spawn_menu_fit]
-45530	[clientscript,spawn_menu_search_stop]
+45530	[proc,spawn_menu_search_focus]
+45533	[clientscript,spawn_menu_search_stop]

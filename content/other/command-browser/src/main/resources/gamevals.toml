@@ -1,0 +1,5 @@
+[gamevals.interface]
+command_browser = 1098
+
+[gamevals.clientscript]
+command_browser_init = 45600

@@ -15,4 +15,12 @@ dependencies {
     implementation(projects.engine.map)
     implementation(projects.engine.module)
     implementation(projects.engine.plugin)
+    testImplementation(kotlin("test"))
+}
+
+tasks.test {
+    workingDir(rootProject.projectDir)
+    inputs.dir(rootProject.file(".data/cache/SERVER"))
+    inputs.dir(rootProject.file(".data/gamevals"))
+    inputs.file(rootProject.file(".data/gamevals-binary/gamevals.dat"))
 }

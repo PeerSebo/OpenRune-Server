@@ -27,11 +27,12 @@ object BossCombat {
         deps: BossDeps,
         onLethal: ((Npc) -> Unit)? = null,
         onModifyHit: (NpcHitEvents.Modify.() -> Unit)? = null,
-        onCombatTick: (suspend StandardNpcAccess.(Player) -> Unit)? = null,
+        onCombatTick: ((Npc, Player) -> Unit)? = null,
         onHit: (NpcHitEvents.Impact.() -> Unit)? = null,
+        onCombatTickAccess: (suspend StandardNpcAccess.(Player) -> Unit)? = null,
     ) {
         requireValid(spec.npcTypes, SpecValidator.validate(spec))
-        registerSpecs(ctx, listOf(spec), spec, deps, onLethal, onModifyHit, onCombatTick, onHit)
+        registerSpecs(ctx, listOf(spec), spec, deps, onLethal, onModifyHit, onCombatTick, onHit, onCombatTickAccess)
     }
 
     /**
@@ -45,12 +46,13 @@ object BossCombat {
         deps: BossDeps,
         onLethal: ((Npc) -> Unit)? = null,
         onModifyHit: (NpcHitEvents.Modify.() -> Unit)? = null,
-        onCombatTick: (suspend StandardNpcAccess.(Player) -> Unit)? = null,
+        onCombatTick: ((Npc, Player) -> Unit)? = null,
         onHit: (NpcHitEvents.Impact.() -> Unit)? = null,
+        onCombatTickAccess: (suspend StandardNpcAccess.(Player) -> Unit)? = null,
     ) {
         val npcTypes = specs.firstOrNull()?.npcTypes.orEmpty()
         requireValid(npcTypes, SpecValidator.validateAll(specs))
-        registerSpecs(ctx, specs, null, deps, onLethal, onModifyHit, onCombatTick, onHit)
+        registerSpecs(ctx, specs, null, deps, onLethal, onModifyHit, onCombatTick, onHit, onCombatTickAccess)
     }
 
     private fun requireValid(npcTypes: List<String>, errors: List<ValidationError>) {
@@ -66,8 +68,9 @@ object BossCombat {
         deps: BossDeps,
         onLethal: ((Npc) -> Unit)?,
         onModifyHit: (NpcHitEvents.Modify.() -> Unit)?,
-        onCombatTick: (suspend StandardNpcAccess.(Player) -> Unit)?,
+        onCombatTick: ((Npc, Player) -> Unit)?,
         onHit: (NpcHitEvents.Impact.() -> Unit)?,
+        onCombatTickAccess: (suspend StandardNpcAccess.(Player) -> Unit)?,
     ) {
         val npcTypes =
             specs.first().npcTypes.map { name ->
@@ -94,8 +97,14 @@ object BossCombat {
                         onHit?.invoke(this)
                     }
                 }
-                onAiOpPlayer2(npcType) { runCombatTick(it.target, deps, onCombatTick) }
-                onAiApPlayer2(npcType) { runCombatTick(it.target, deps, onCombatTick) }
+                onAiOpPlayer2(npcType) {
+                    onCombatTick?.invoke(npc, it.target)
+                    runCombatTick(it.target, deps, onCombatTickAccess)
+                }
+                onAiApPlayer2(npcType) {
+                    onCombatTick?.invoke(npc, it.target)
+                    runCombatTick(it.target, deps, onCombatTickAccess)
+                }
                 onModifyNpcHit(npcType) {
                     val encounter = deps.encounterRegistry.of(npc)
                     hit.damage =
@@ -115,7 +124,6 @@ object BossCombat {
             }
 
             val bossIds = npcTypes.map { it.id }.toSet()
-            // Ensures phases and other states are reset
             onEvent<NpcStateEvents.Respawn> {
                 if (npc.type.id in bossIds) resetBoss(npc, deps)
             }
@@ -214,7 +222,6 @@ object BossCombat {
         for ((name, phase) in spec.phases) {
             if (name == encounter.currentPhaseName) continue
             val entryHp = phase.entryHp ?: continue
-            // Ensures that phases are only entered once
             if (name in encounter.firedPhaseEntries) continue
             val hpFraction =
                 encounter.npc.hitpoints.toDouble() / encounter.npc.baseHitpointsLvl.coerceAtLeast(1)

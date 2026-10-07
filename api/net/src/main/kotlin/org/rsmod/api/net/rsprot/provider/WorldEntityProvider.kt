@@ -11,7 +11,6 @@ object WorldEntityProvider {
 
     private object ExceptionHandler : WorldEntityAvatarExceptionHandler {
         override fun exceptionCaught(index: Int, exception: Exception) {
-            /* no-op */
         }
     }
 }

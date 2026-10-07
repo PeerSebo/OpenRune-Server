@@ -37,7 +37,6 @@ class FaladorShopkeepersScript @Inject constructor(private val shops: Shops) : P
         onCounterTalk("npc.wayne") { startDialogue(it) { wayne() } }
         onCounterTrade("npc.wayne") { player.openShop(FaladorShop.Chainmail) }
 
-        onCounterTalk("npc.herquin") { startDialogue(it) { herquin() } }
         onCounterTrade("npc.herquin") { player.openShop(FaladorShop.Gems) }
 
         for (keeper in GENERAL_STORE_STAFF) {
@@ -74,24 +73,6 @@ class FaladorShopkeepersScript @Inject constructor(private val shops: Shops) : P
             return
         }
         chatPlayer(neutral, "No thanks.")
-    }
-
-    private suspend fun Dialogue.herquin() {
-        val trade =
-            choice2(
-                "Do you wish to trade?",
-                true,
-                "Sorry I don't want to talk to you actually.",
-                false,
-            )
-        if (trade) {
-            chatPlayer(quiz, "Do you wish to trade?")
-            chatNpc(happy, "Why yes, this a jewel shop after all.")
-            player.openShop(FaladorShop.Gems)
-            return
-        }
-        chatPlayer(neutral, "Sorry I don't want to talk to you actually.")
-        chatNpc(angry, "Huh! Charming!")
     }
 
     private suspend fun Dialogue.generalStore() {

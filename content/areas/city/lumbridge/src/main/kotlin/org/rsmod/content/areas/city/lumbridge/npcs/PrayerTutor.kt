@@ -4,6 +4,7 @@ import org.rsmod.api.config.constants
 import org.rsmod.api.player.dialogue.Dialogue
 import org.rsmod.api.player.output.ClientScripts.toplevelSidebuttonSwitch
 import org.rsmod.api.player.protect.ProtectedAccess
+import org.rsmod.api.player.stat.basePrayerLvl
 import org.rsmod.api.script.onOpNpc1
 import org.rsmod.game.entity.Npc
 import org.rsmod.plugin.scripts.PluginScript
@@ -20,6 +21,10 @@ class PrayerTutor : PluginScript() {
             chatNpc(happy, "Greetings, ${player.displayName}. Can I help you with anything, today?")
             mainMenu()
         }
+
+    @Suppress("unused")
+    private val Dialogue.givesAdvancedAdvice: Boolean
+        get() = false
 
     private suspend fun Dialogue.mainMenu() {
         val choice =
@@ -40,18 +45,30 @@ class PrayerTutor : PluginScript() {
 
     private suspend fun Dialogue.prayerTraining() {
         chatPlayer(quiz, "How can I train my prayer?")
-        chatNpc(
-            happy,
-            "The most common way to train prayer is by either " +
-                "burying bones, or offering them to the gods at some " +
-                "kind of an altar.",
-        )
-        chatNpc(
-            neutral,
-            "Lots of adventurers build such altars in their own " +
-                "homes, or there are a few frequent places of worship " +
-                "around the world.",
-        )
+        if (givesAdvancedAdvice) {
+            if (player.basePrayerLvl >= MasterAdvicePrayerLvl) {
+                chatNpc(happy, "I think you should be teaching me a thing or two, shouldn't you?")
+                chatNpc(happy, "Well, if you really want my advice...")
+            }
+            chatNpc(
+                happy,
+                "The most common way to train prayer is by either " +
+                    "burying bones, or offering them to the gods at some " +
+                    "kind of an altar.",
+            )
+            chatNpc(
+                neutral,
+                "Lots of adventurers build such altars in their own " +
+                    "homes, or there are a few frequent places of worship " +
+                    "around the world.",
+            )
+        } else {
+            chatNpc(
+                happy,
+                "The most common way to train prayer is by burying " +
+                    "bones to offer them to the gods.",
+            )
+        }
         chatNpc(
             happy,
             "Different kinds of bones will help you to train faster. " +
@@ -83,16 +100,19 @@ class PrayerTutor : PluginScript() {
                 "heal more quickly, protect your belongings... There's a " +
                 "lot they can do for you!",
         )
+        // Switch to the Prayer tab before suspending for the prayer-book page.
         toplevelSidebuttonSwitch(player, constants.toplevel_prayer)
         chatNpc(happy, "You can find out more by looking in your prayer book.")
         chatPlayer(happy, "Wow! That sounds great.")
-        chatNpc(
-            neutral,
-            "You need to be careful that your prayers don't run " +
-                "out, though. You can get prayer potions to help you " +
-                "recharge, or you can pray at an altar whenever one's " +
-                "nearby.",
-        )
+        if (givesAdvancedAdvice) {
+            chatNpc(
+                neutral,
+                "You need to be careful that your prayers don't run " +
+                    "out, though. You can get prayer potions to help you " +
+                    "recharge, or you can pray at an altar whenever one's " +
+                    "nearby.",
+            )
+        }
         chatNpc(happy, "Is there anything else you would like to know?")
         val choice = choice2("How can I train my prayer?", 1, "No, thank you.", 2)
         if (choice == 1) {
@@ -105,5 +125,10 @@ class PrayerTutor : PluginScript() {
     private suspend fun Dialogue.noThanks() {
         chatPlayer(neutral, "No, thank you.")
         chatNpc(happy, "Very well. Saradomin be with you!")
+    }
+
+    private companion object {
+
+        const val MasterAdvicePrayerLvl: Int = 99
     }
 }

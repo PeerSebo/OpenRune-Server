@@ -2,16 +2,15 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.api.droptable.dropRollable
+import org.rsmod.api.droptable.nothing
 import org.rsmod.api.droptable.rsPlayerGuaranteedTable
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.api.droptable.dropRollable
-import org.rsmod.api.droptable.DropRollItem
 import org.rsmod.content.drops.brimstoneKeyRoll
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.api.droptable.nothing
-import org.rsmod.api.droptable.RegisterDropTable
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -22,7 +21,7 @@ public val kreearraDropTable: RSDropTable<Player, DropRollItem> = RSDropTable(
     guaranteed = rsPlayerGuaranteedTable {
         "obj.feather" count 1..16
         "obj.nex_frozen_key_armadyl" count 1 condition { player ->
-            // Drops Need Manual: Frozen key pieces are only dropped during The Frozen Door miniquest.
+            // TODO: Frozen key pieces are only dropped during The Frozen Door miniquest.
              true
         }
     },
@@ -35,7 +34,7 @@ public val kreearraDropTable: RSDropTable<Player, DropRollItem> = RSDropTable(
         8 weight "obj.xbows_crossbow_bolts_runite" count 20..25
         8 weight "obj.xbows_crossbow_bolts_runite_tipped_dragonstone_enchanted" count 5..10
         44 weight "obj.coins" count (19500..20000) condition { player ->
-            // Drops Need Manual: Coins come from rolls on multiple loot tables, including GDT and RDT.
+            // TODO: Coins come from rolls on multiple loot tables, including GDT and RDT.
              true
         }
         8 weight dropRollable(DropRollItem("obj.3doserangerspotion", 3, bonusDrops = listOf(
@@ -44,7 +43,7 @@ public val kreearraDropTable: RSDropTable<Player, DropRollItem> = RSDropTable(
         8 weight "obj.cert_unidentified_dwarf_weed" count 8..13
         8 weight "obj.dwarf_weed_seed" count 2
         1 weight "obj.coins" count (20500..21000) condition { player ->
-            // Drops Need Manual: Coins come from rolls on the unique tables, including the hilt table and the godsword shard table.
+            // TODO: Coins come from rolls on the unique tables, including the hilt table and the godsword shard table.
              true
         }
         1 weight "obj.crystal_key" count 1

@@ -25,8 +25,11 @@ public class PlayerQueueList {
         category: QueueCategory,
         remainingCycles: Int,
         args: Any? = null,
+        processedCycle: Int = -1,
+        closeModals: Boolean = true,
     ) {
-        val queue = Queue(type.asRSCM(RSCMType.QUEUE), category.id, remainingCycles, args)
+        val queue = Queue(type.asRSCM(RSCMType.QUEUE), category.id, remainingCycles, args,
+            processedCycle, closeModals)
         val node = Node(queue, prev = last)
         add(node)
 
@@ -50,14 +53,12 @@ public class PlayerQueueList {
         val prev = node.prev
         val next = node.next
 
-        // If `prev` is null that means `node` was the first node.
         if (prev == null) {
             first = next
         } else {
             prev.next = next
         }
 
-        // If `next` is null that means `node` was the last node.
         if (next == null) {
             last = prev
         } else {
@@ -139,6 +140,26 @@ public class PlayerQueueList {
         return false
     }
 
+    public fun anyDue(category: QueueCategory, cycle: Int): Boolean {
+        if (isEmpty) {
+            return false
+        }
+
+        var current = first
+        while (current != null) {
+            val queue = current.queue
+            if (queue.category == category.id) {
+                val remaining =
+                    if (queue.processedCycle != cycle) queue.remainingCycles - 1 else queue.remainingCycles
+                if (remaining <= 0) {
+                    return true
+                }
+            }
+            current = current.next ?: break
+        }
+        return false
+    }
+
     public fun clear() {
         iterator?.cleanUp()
 
@@ -159,6 +180,7 @@ public class PlayerQueueList {
         public var remainingCycles: Int,
         public val args: Any?,
         public var processedCycle: Int = -1,
+        public val closeModals: Boolean = true,
     )
 
     public fun iterator(): QueueIterator? {

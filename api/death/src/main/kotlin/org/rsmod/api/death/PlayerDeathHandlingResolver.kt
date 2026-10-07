@@ -28,5 +28,6 @@ constructor(
             revealDelay = PVP_REVEAL_DELAY,
             supplyPile = false,
             untradeableHandling = UntradeableHandling.DROP,
+            gravestone = false,
         )
 }

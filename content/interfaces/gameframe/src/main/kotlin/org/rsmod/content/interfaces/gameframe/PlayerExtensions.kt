@@ -13,7 +13,7 @@ import org.rsmod.game.ui.Component
 import org.rsmod.game.ui.UserInterfaceMap
 
 private const val NOTIFICATION_DISPLAY_INTERFACE = "interface.notification_display"
-private const val NOTIFICATION_END_SCRIPT = 3348
+private const val NOTIFICATION_END_SCRIPT = "clientscript.[clientscript,notification_end]"
 
 internal fun Player.openGameframe(gameframe: Gameframe, eventBus: EventBus) {
     ui.setGameframe(gameframe.mappings)

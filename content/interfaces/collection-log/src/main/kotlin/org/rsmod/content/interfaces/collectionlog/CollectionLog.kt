@@ -28,7 +28,6 @@ public object CollectionLog {
         }
     }
 
-    /** Central entry point for marking an item as obtained for the collection log */
     public fun grant(player: Player, obj: String, count: Int = 1) {
         grant(player, obj.asRSCM(RSCMType.OBJ), count)
     }
@@ -48,7 +47,6 @@ public object CollectionLog {
         }
     }
 
-    /** Runs the first time [objId] is added to [player]'s collection log. */
     private fun onNewItemObtained(player: Player, objId: Int) {
         for (slot in LATEST_ITEM_SLOT_COUNT - 1 downTo 1) {
             val previousObj = player.vars[latestItemVarp(slot - 1)]
@@ -67,7 +65,7 @@ public object CollectionLog {
         }
         val itemName = ServerCacheManager.getItem(objId)?.name ?: return
         if (chatMessageEnabled) {
-            player.mes("New item added to your collection log: $itemName")
+            player.mes("New item added to your collection log: <col=ff0000>$itemName</col>")
         }
         if (popupEnabled) {
             ClientScripts.notificationDisplay(

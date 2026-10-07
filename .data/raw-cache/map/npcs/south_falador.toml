@@ -138,7 +138,6 @@ coords = "0_45_51_42_37"
 npc = "npc.zep_multi_assistant_craft"
 coords = "0_45_51_45_39"
 
-## Crafting Guild
 
 [[spawn]]
 npc = "npc.calf"
@@ -228,7 +227,6 @@ coords = "0_45_51_37_5"
 npc = "npc.tanner"
 coords = "1_45_51_54_20"
 
-## Falador
 
 [[spawn]]
 npc = "npc.imp"
@@ -238,7 +236,6 @@ coords = "0_47_51_1_43"
 npc = "npc.man4"
 coords = "0_46_51_15_43"
 
-## Mudskipper Point
 
 [[spawn]]
 npc = "npc.mudskipper_ogre"
@@ -252,7 +249,6 @@ coords = "0_46_48_52_34"
 npc = "npc.mudskipper_ogre"
 coords = "0_46_48_61_45"
 
-## North Of Mudskipper
 
 [[spawn]]
 npc = "npc.0_46_49_saltfish"
@@ -298,7 +294,6 @@ coords = "0_46_49_50_2"
 npc = "npc.thurgo"
 coords = "0_46_49_57_8"
 
-## Port Sarim
 
 [[spawn]]
 npc = "npc.brian"
@@ -492,13 +487,11 @@ coords = "0_47_50_3_36"
 npc = "npc.wydin"
 coords = "0_47_50_6_4"
 
-## Port Sarim Bettys House
 
 [[spawn]]
 npc = "npc.betty"
 coords = "0_47_50_4_59"
 
-## Port Sarim jail
 
 [[spawn]]
 npc = "npc.jail_black_knight"
@@ -576,7 +569,6 @@ coords = "1_47_49_5_56"
 npc = "npc.wormbrain"
 coords = "0_47_49_6_53"
 
-## Rimmington
 
 [[spawn]]
 npc = "npc.artist1"
@@ -790,7 +782,6 @@ coords = "0_46_49_37_54"
 npc = "npc.uncerter_rimmington"
 coords = "0_46_50_6_12"
 
-## South Falador Farm
 
 [[spawn]]
 npc = "npc.calf"
@@ -903,18 +894,3 @@ coords = "0_47_51_11_32"
 [[spawn]]
 npc = "npc.rat"
 coords = "0_47_51_7_31"
-
-## South Falador Farm End
-
-
-[[spawn]]
-npc = "npc.sailing_intro_anne_sarim"
-coords = "0_47_50_17_9"
-
-[[spawn]]
-npc = "npc.sailing_intro_will_sarim"
-coords = "0_47_50_16_8"
-
-[[spawn]]
-npc = "npc.port_task_master_port_sarim"
-coords = "0_47_49_21_58"

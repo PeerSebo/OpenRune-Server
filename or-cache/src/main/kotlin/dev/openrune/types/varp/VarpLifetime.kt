@@ -1,9 +1,7 @@
 package dev.openrune.types.varp
 
 public enum class VarpLifetime(public val id: Int) {
-    /** Varp is not saved on log-out. */
     Temp(0),
-    /** Varp is saved on log-out. */
     Perm(1);
 
     public companion object {

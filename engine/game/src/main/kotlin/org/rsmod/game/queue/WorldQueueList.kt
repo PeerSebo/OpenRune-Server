@@ -1,8 +1,11 @@
 package org.rsmod.game.queue
 
 public class WorldQueueList {
-    public var size: Int = 0
-        private set
+    private var activeSize: Int = 0
+    private val deferred = mutableListOf<Queue>()
+
+    public val size: Int
+        get() = activeSize + deferred.size
 
     private val iterator = QueueIterator()
 
@@ -21,37 +24,41 @@ public class WorldQueueList {
         add(node)
     }
 
+    /** Starts counting on the next queue pass, including when called by another queue. */
+    public fun addDeferred(remainingCycles: Int, action: () -> Unit) {
+        require(remainingCycles > 0)
+        deferred += Queue(action, remainingCycles)
+    }
+
     private fun add(node: Node) {
-        if (isEmpty) {
+        if (activeSize == 0) {
             check(first == null)
             check(last == null)
             first = node
         }
         last?.next = node
         last = node
-        size++
+        activeSize++
     }
 
     private fun remove(node: Node) {
         val prev = node.prev
         val next = node.next
 
-        // If `prev` is null that means `node` was the first node.
         if (prev == null) {
             first = next
         } else {
             prev.next = next
         }
 
-        // If `next` is null that means `node` was the last node.
         if (next == null) {
             last = prev
         } else {
             next.prev = prev
         }
 
-        check(size > 0)
-        size--
+        check(activeSize > 0)
+        activeSize--
     }
 
     override fun toString(): String = "WorldQueueList(size=$size, first=$first, last=$last)"
@@ -61,6 +68,10 @@ public class WorldQueueList {
     public data class Queue(val action: () -> Unit, var remainingCycles: Int)
 
     public fun iterator(): QueueIterator {
+        for (queue in deferred) {
+            add(queue.remainingCycles, queue.action)
+        }
+        deferred.clear()
         iterator.reset(first)
         return iterator
     }

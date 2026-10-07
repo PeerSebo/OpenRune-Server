@@ -2,11 +2,6 @@ package org.rsmod.game.map.collision
 
 import org.rsmod.map.CoordGrid
 
-/**
- * Every tile within Chebyshev distance [radius] of [this] (a square of side `2 * radius + 1`),
- * optionally omitting [exclude]. Useful for proximity checks around a point (placement, LOS hints,
- * etc.).
- */
 public fun CoordGrid.tilesInChebyshevSquare(
     radius: Int,
     exclude: CoordGrid? = null,

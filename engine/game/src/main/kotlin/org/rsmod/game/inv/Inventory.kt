@@ -42,23 +42,6 @@ public class Inventory(public val type: InventoryServerType, public val objs: Ar
 
     public fun lastOccupiedSlot(): Int = indexOfLast { it != null } + 1
 
-    /**
-     * Maps and returns the indices (`slots`) of objs in the inventory that satisfy the given
-     * [predicate].
-     *
-     * The [predicate] function is invoked for each slot with its index and the obj at that slot as
-     * parameters.
-     *
-     * **Example Usage:** Find all slots with non-null objs
-     *
-     * ```
-     * val occupiedSlots = inventory.mapSlots { _, obj -> obj != null }
-     * ```
-     *
-     * @param predicate A lambda that takes the slot and the obj and returns `true` for slots to
-     *   map.
-     * @return A [Set] of slot indices where the objects satisfy the given [predicate].
-     */
     public fun mapSlots(predicate: (Int, InvObj?) -> Boolean): Set<Int> =
         objs.mapSlotsTo(IntOpenHashSet(), predicate)
 

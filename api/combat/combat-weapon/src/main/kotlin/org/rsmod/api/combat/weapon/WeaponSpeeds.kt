@@ -24,7 +24,6 @@ public class WeaponSpeeds @Inject constructor(private val styles: AttackStyles) 
         }
     }
 
-    // Avoids needing the [AttackStyle] dependency when calling `actual` unless explicitly required.
     public fun actual(player: Player): Int = actual(player, player.currentAttackStyle())
 
     private fun Player.currentAttackStyle(): AttackStyle? = styles.get(this)

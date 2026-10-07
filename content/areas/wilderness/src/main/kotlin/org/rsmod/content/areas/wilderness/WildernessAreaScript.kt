@@ -1,7 +1,6 @@
 package org.rsmod.content.areas.wilderness
 
 import jakarta.inject.Inject
-import org.rsmod.api.attr.AttributeKey
 import org.rsmod.api.player.isInPvpCombat
 import org.rsmod.api.player.output.MiscOutput
 import org.rsmod.api.player.ui.ifCloseOverlay
@@ -28,13 +27,14 @@ constructor(
 
     override fun ScriptContext.startup() {
         onPlayerLogin {
+            player.migrateWildernessVars()
             if (player.isSkullEquipLocked()) {
                 player.refreshSkullIcon()
                 return@onPlayerLogin
             }
             if (player.isSkulled()) {
                 player.expireForinthrySurgeIfNeeded()
-                val source = player.attr.getOrDefault(SKULL_SOURCE, SkullSource.COMBAT)
+                val source = player.wildernessSkullSource ?: SkullSource.COMBAT
                 if (source.timerTicks != Int.MAX_VALUE) {
                     player.softTimer("timer.skull_timer", source.timerTicks)
                 }
@@ -86,28 +86,24 @@ constructor(
     }
 
     companion object {
-        private val WILDERNESS_OPT_OUT = AttributeKey<Boolean>(persistenceKey = "wilderness_opt_out")
-        private val CAN_PVP = AttributeKey<Boolean>()
-        private val DUEL_FLAG = AttributeKey<Boolean>()
-
-        fun Player.hasWildernessOptOut(): Boolean = attr.getOrDefault(WILDERNESS_OPT_OUT, false)
+        fun Player.hasWildernessOptOut(): Boolean = wildernessOptOut
 
         fun Player.setWildernessOptOut(optOut: Boolean) {
             if (hasWildernessOptOut() == optOut) return
-            attr[WILDERNESS_OPT_OUT] = optOut
+            wildernessOptOut = optOut
             refreshPlayerOptions()
         }
 
-        fun Player.canPvp(): Boolean = attr.getOrDefault(CAN_PVP, false) && !hasWildernessOptOut()
+        fun Player.canPvp(): Boolean = wildernessCanPvp && !hasWildernessOptOut()
 
-        fun Player.isDueling(): Boolean = attr.getOrDefault(DUEL_FLAG, false)
+        fun Player.isDueling(): Boolean = wildernessDueling
 
         fun Player.setCanPvp(canPvp: Boolean, duel: Boolean = false) {
-            val currentPvp = attr.getOrDefault(CAN_PVP, false)
+            val currentPvp = wildernessCanPvp
             val currentDuel = isDueling()
             if (currentPvp == canPvp && currentDuel == duel) return
-            attr[CAN_PVP] = canPvp
-            attr[DUEL_FLAG] = duel
+            wildernessCanPvp = canPvp
+            wildernessDueling = duel
             refreshPlayerOptions()
         }
 

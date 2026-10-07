@@ -43,7 +43,6 @@ public class WeaponRepository @Inject constructor(private val registry: WeaponRe
         when (result) {
             WeaponRegistry.Result.Add.AlreadyAdded -> error("Weapon already mapped: $weapon")
             WeaponRegistry.Result.Add.Success -> {
-                /* no-op */
             }
         }
     }

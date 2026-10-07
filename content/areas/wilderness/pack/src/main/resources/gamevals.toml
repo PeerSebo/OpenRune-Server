@@ -1,0 +1,16 @@
+[gamevals.varp]
+wilderness_player_flags = 63500
+wilderness_skull_icon = 63501
+wilderness_session_flags = 63502
+wilderness_skull_source = 63503
+wilderness_loot_key_count = 63504
+wilderness_last_pvp_spec_tick = 63505
+wilderness_boss_fee_nowarn = 65659
+
+[gamevals.varbit]
+wilderness_is_skulled = 63500
+wilderness_skull_equip_locked = 63501
+wilderness_opt_out = 63502
+wilderness_vars_migrated = 63503
+wilderness_can_pvp = 63504
+wilderness_dueling = 63505

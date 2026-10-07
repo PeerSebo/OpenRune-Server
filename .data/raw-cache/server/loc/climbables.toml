@@ -1,0 +1,1344 @@
+# Generic ladders change only the plane; every placement of a tagged type must share that geometry.
+
+[[object]]
+id = "loc.ahoy_ghostship_laddertop"
+inherit = "loc.ahoy_ghostship_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.ahoy_ghostshipladder_top_angled"
+inherit = "loc.ahoy_ghostshipladder_top_angled"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.area_sanguine_ghetto_ladder_down"
+inherit = "loc.area_sanguine_ghetto_ladder_down"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.barbarian_laddertop_norim"
+inherit = "loc.barbarian_laddertop_norim"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.boardgames_draughts_ladderdown_experienced"
+inherit = "loc.boardgames_draughts_ladderdown_experienced"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.boardgames_ladderdown"
+inherit = "loc.boardgames_ladderdown"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.boardgames_runelink_ladderdown_experienced"
+inherit = "loc.boardgames_runelink_ladderdown_experienced"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.boardgames_runesquares_ladderdown_experienced"
+inherit = "loc.boardgames_runesquares_ladderdown_experienced"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.boardgames_runeversi_ladderdown_experienced"
+inherit = "loc.boardgames_runeversi_ladderdown_experienced"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.br_ladder_top"
+inherit = "loc.br_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.brain_mill_ladder_top"
+inherit = "loc.brain_mill_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.brain_mon_ladder_top"
+inherit = "loc.brain_mon_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.canafis_laddertop"
+inherit = "loc.canafis_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.castlewars_laddertop"
+inherit = "loc.castlewars_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.civitas_ladder_top"
+inherit = "loc.civitas_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.civitas_ladder_top_norim"
+inherit = "loc.civitas_ladder_top_norim"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.contact_ladder_top"
+inherit = "loc.contact_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.contact_ug_boss_ladder"
+inherit = "loc.contact_ug_boss_ladder"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.contact_ug_ladder_top_twofloors"
+inherit = "loc.contact_ug_ladder_top_twofloors"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dagexp_ladder1"
+inherit = "loc.dagexp_ladder1"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dagexp_ladder10"
+inherit = "loc.dagexp_ladder10"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dagexp_ladder11"
+inherit = "loc.dagexp_ladder11"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dagexp_ladder14"
+inherit = "loc.dagexp_ladder14"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dagexp_ladder15"
+inherit = "loc.dagexp_ladder15"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dagexp_ladder18"
+inherit = "loc.dagexp_ladder18"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dagexp_ladder19"
+inherit = "loc.dagexp_ladder19"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dagexp_ladder21"
+inherit = "loc.dagexp_ladder21"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dagexp_ladder24"
+inherit = "loc.dagexp_ladder24"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dagexp_ladder26"
+inherit = "loc.dagexp_ladder26"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dagexp_ladder27"
+inherit = "loc.dagexp_ladder27"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dagexp_ladder29"
+inherit = "loc.dagexp_ladder29"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dagexp_ladder3"
+inherit = "loc.dagexp_ladder3"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dagexp_ladder31"
+inherit = "loc.dagexp_ladder31"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dagexp_ladder33"
+inherit = "loc.dagexp_ladder33"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dagexp_ladder5"
+inherit = "loc.dagexp_ladder5"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dagexp_ladder7"
+inherit = "loc.dagexp_ladder7"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.deal_laddertop"
+inherit = "loc.deal_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dk_laddertop"
+inherit = "loc.dk_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dk_meeting_laddertop"
+inherit = "loc.dk_meeting_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dorgesh_caves_ladder_down"
+inherit = "loc.dorgesh_caves_ladder_down"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dorgesh_rich_ladder_top"
+inherit = "loc.dorgesh_rich_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dorgesh_rich_ladder_top_lower"
+inherit = "loc.dorgesh_rich_ladder_top_lower"
+contentGroup = "content.ladder_down"
+
+# DragonSlayerScenery owns the ship ladder: its destination changes z and leaves the plane unchanged.
+
+[[object]]
+id = "loc.dragonslayer_melzar_exit_laddertop"
+inherit = "loc.dragonslayer_melzar_exit_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.ds2_guild_ladder_top"
+inherit = "loc.ds2_guild_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.ds2_tomb_ladder_top"
+inherit = "loc.ds2_tomb_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.ds2_tomb_ladder_top_left"
+inherit = "loc.ds2_tomb_ladder_top_left"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.ds2_tomb_ladder_top_right"
+inherit = "loc.ds2_tomb_ladder_top_right"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.dt2_lassar_church_ladder_top"
+inherit = "loc.dt2_lassar_church_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.elf_village_ladder_top"
+inherit = "loc.elf_village_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.elid_ladder_top"
+inherit = "loc.elid_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.elid_laddertop"
+inherit = "loc.elid_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.enakh_temple_ladderdown"
+inherit = "loc.enakh_temple_ladderdown"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.enakh_temple_pillar_ladder_top"
+inherit = "loc.enakh_temple_pillar_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.fai_falador_castle_laddertop"
+inherit = "loc.fai_falador_castle_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.fai_falador_ladder_top"
+inherit = "loc.fai_falador_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.fai_falador_ladder_top_forceapproach_north"
+inherit = "loc.fai_falador_ladder_top_forceapproach_north"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.fairy_ladder_wind_down"
+inherit = "loc.fairy_ladder_wind_down"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.feud_laddertop_norim"
+inherit = "loc.feud_laddertop_norim"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.fever_ship_laddertop"
+inherit = "loc.fever_ship_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.fever_shipladder_top_angled"
+inherit = "loc.fever_shipladder_top_angled"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.frisb_palisade_ladder_top"
+inherit = "loc.frisb_palisade_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.frisb_watchtower_ladder_top_twofloors"
+inherit = "loc.frisb_watchtower_ladder_top_twofloors"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.frisd_izso_ladder_top"
+inherit = "loc.frisd_izso_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.kebos_farming_guild_redwood_ladder_top"
+inherit = "loc.kebos_farming_guild_redwood_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.kr_cam_laddertop"
+inherit = "loc.kr_cam_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.kr_laddertop"
+inherit = "loc.kr_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.kr_laddertop_directional"
+inherit = "loc.kr_laddertop_directional"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.laddertop_directional"
+inherit = "loc.laddertop_directional"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.laddertop_norim"
+inherit = "loc.laddertop_norim"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.laddertop2"
+inherit = "loc.laddertop2"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.lassar_laddertop"
+inherit = "loc.lassar_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.lovaquest_tower_ladder_down"
+inherit = "loc.lovaquest_tower_ladder_down"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.luc2_darksquall_laddertop"
+inherit = "loc.luc2_darksquall_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.lunar_moonclan_ladder_top"
+inherit = "loc.lunar_moonclan_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.mm_bamboo_ladder_top"
+inherit = "loc.mm_bamboo_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.mm_bamboo_ladder_top_reverse"
+inherit = "loc.mm_bamboo_ladder_top_reverse"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.mm_bamboo_ladder_top_watchtower_east"
+inherit = "loc.mm_bamboo_ladder_top_watchtower_east"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.mm_bamboo_ladder_top_watchtower_west"
+inherit = "loc.mm_bamboo_ladder_top_watchtower_west"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.mm2_shipyard_ladder_top"
+inherit = "loc.mm2_shipyard_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.mourning_temple_ladder_wall_top"
+inherit = "loc.mourning_temple_ladder_wall_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.myarm_shipladdertop"
+inherit = "loc.myarm_shipladdertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.myq3_ladder_down"
+inherit = "loc.myq3_ladder_down"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.myq3_ladder_down_2"
+inherit = "loc.myq3_ladder_down_2"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.paramayaladderdown"
+inherit = "loc.paramayaladderdown"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.pog_sewer_ladder_top"
+inherit = "loc.pog_sewer_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.prison_laddertop"
+inherit = "loc.prison_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.qip_cook_ladder_top"
+inherit = "loc.qip_cook_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.qip_watchtower_ladder_top"
+inherit = "loc.qip_watchtower_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.ranging_ladder_down"
+inherit = "loc.ranging_ladder_down"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.seaslug_ladder_top"
+inherit = "loc.seaslug_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.shayzien_laddertop"
+inherit = "loc.shayzien_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.shayzien_wooden_laddertop"
+inherit = "loc.shayzien_wooden_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.ship_laddertop"
+inherit = "loc.ship_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.ship_laddertop_no_approach"
+inherit = "loc.ship_laddertop_no_approach"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.shipladder_top_angled"
+inherit = "loc.shipladder_top_angled"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.slug2_baitshop_laddertop"
+inherit = "loc.slug2_baitshop_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.slug2_laddertop"
+inherit = "loc.slug2_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.soc_laddertop"
+inherit = "loc.soc_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.sorceress_ladder_top"
+inherit = "loc.sorceress_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.tourtrap_qip_ladder_top"
+inherit = "loc.tourtrap_qip_ladder_top"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.trawler_laddertop"
+inherit = "loc.trawler_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.viking_warrior_ladder_down"
+inherit = "loc.viking_warrior_ladder_down"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.watchladderdown"
+inherit = "loc.watchladderdown"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.wgs_taverley_laddertop"
+inherit = "loc.wgs_taverley_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.brain_mill_ladder_middle"
+inherit = "loc.brain_mill_ladder_middle"
+contentGroup = "content.ladder_option"
+
+[[object]]
+id = "loc.civitas_ladder_middle"
+inherit = "loc.civitas_ladder_middle"
+contentGroup = "content.ladder_option"
+
+[[object]]
+id = "loc.civitas_ladder_middle_tall"
+inherit = "loc.civitas_ladder_middle_tall"
+contentGroup = "content.ladder_option"
+
+[[object]]
+id = "loc.ds2_guild_ladder_mid"
+inherit = "loc.ds2_guild_ladder_mid"
+contentGroup = "content.ladder_option"
+
+[[object]]
+id = "loc.elf_village_ladder_mid"
+inherit = "loc.elf_village_ladder_mid"
+contentGroup = "content.ladder_option"
+
+[[object]]
+id = "loc.lassar_ladder_middle"
+inherit = "loc.lassar_ladder_middle"
+contentGroup = "content.ladder_option"
+
+[[object]]
+id = "loc.qip_cook_ladder_middle"
+inherit = "loc.qip_cook_ladder_middle"
+contentGroup = "content.ladder_option"
+
+[[object]]
+id = "loc.wild_ladder_middle"
+inherit = "loc.wild_ladder_middle"
+contentGroup = "content.ladder_option"
+
+[[object]]
+id = "loc.ahoy_ghostship_ladder"
+inherit = "loc.ahoy_ghostship_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.ahoy_ghostshipladder_angled"
+inherit = "loc.ahoy_ghostshipladder_angled"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.area_sanguine_ghetto_ladder_up"
+inherit = "loc.area_sanguine_ghetto_ladder_up"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.blast_mining_ladder_up"
+inherit = "loc.blast_mining_ladder_up"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.boardgames_draughts_ladderup_experienced"
+inherit = "loc.boardgames_draughts_ladderup_experienced"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.boardgames_ladderup"
+inherit = "loc.boardgames_ladderup"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.boardgames_runelink_ladderup_experienced"
+inherit = "loc.boardgames_runelink_ladderup_experienced"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.boardgames_runesquares_ladderup_experienced"
+inherit = "loc.boardgames_runesquares_ladderup_experienced"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.boardgames_runeversi_ladderup_experienced"
+inherit = "loc.boardgames_runeversi_ladderup_experienced"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.br_ladder"
+inherit = "loc.br_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.brain_mill_ladder"
+inherit = "loc.brain_mill_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.brain_mon_ladder_bottom"
+inherit = "loc.brain_mon_ladder_bottom"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.burgh_ladder_hatch_up"
+inherit = "loc.burgh_ladder_hatch_up"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.canafis_ladder_up"
+inherit = "loc.canafis_ladder_up"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.civitas_ladder"
+inherit = "loc.civitas_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.civitas_ladder_tall"
+inherit = "loc.civitas_ladder_tall"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.contact_boss_ug_ladder"
+inherit = "loc.contact_boss_ug_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.contact_ladder"
+inherit = "loc.contact_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.contact_ug_ladder_twofloors"
+inherit = "loc.contact_ug_ladder_twofloors"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.dagexp_ladder12"
+inherit = "loc.dagexp_ladder12"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.dagexp_ladder13"
+inherit = "loc.dagexp_ladder13"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.dagexp_ladder16"
+inherit = "loc.dagexp_ladder16"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.dagexp_ladder17"
+inherit = "loc.dagexp_ladder17"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.dagexp_ladder2"
+inherit = "loc.dagexp_ladder2"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.dagexp_ladder20"
+inherit = "loc.dagexp_ladder20"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.dagexp_ladder22"
+inherit = "loc.dagexp_ladder22"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.dagexp_ladder23"
+inherit = "loc.dagexp_ladder23"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.dagexp_ladder25"
+inherit = "loc.dagexp_ladder25"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.dagexp_ladder28"
+inherit = "loc.dagexp_ladder28"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.dagexp_ladder30"
+inherit = "loc.dagexp_ladder30"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.dagexp_ladder32"
+inherit = "loc.dagexp_ladder32"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.dagexp_ladder34"
+inherit = "loc.dagexp_ladder34"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.dagexp_ladder4"
+inherit = "loc.dagexp_ladder4"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.dagexp_ladder6"
+inherit = "loc.dagexp_ladder6"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.dagexp_ladder8"
+inherit = "loc.dagexp_ladder8"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.dagexp_ladder9"
+inherit = "loc.dagexp_ladder9"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.deal_ladder_up"
+inherit = "loc.deal_ladder_up"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.dk_ladder"
+inherit = "loc.dk_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.dk_meeting_ladder"
+inherit = "loc.dk_meeting_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.dorgesh_rich_ladder_base"
+inherit = "loc.dorgesh_rich_ladder_base"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.ds2_guild_ladder"
+inherit = "loc.ds2_guild_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.ds2_tomb_ladder"
+inherit = "loc.ds2_tomb_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.ds2_tomb_ladder_left"
+inherit = "loc.ds2_tomb_ladder_left"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.ds2_tomb_ladder_right"
+inherit = "loc.ds2_tomb_ladder_right"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.dt2_lassar_church_ladder"
+inherit = "loc.dt2_lassar_church_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.elf_village_ladder"
+inherit = "loc.elf_village_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.elid_ladder_bottom"
+inherit = "loc.elid_ladder_bottom"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.elid_ladder_up"
+inherit = "loc.elid_ladder_up"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.enakh_temple_ladderup"
+inherit = "loc.enakh_temple_ladderup"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.enakh_temple_pillar_ladder"
+inherit = "loc.enakh_temple_pillar_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.fai_falador_castle_ladder_up"
+inherit = "loc.fai_falador_castle_ladder_up"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.fai_falador_ladder"
+inherit = "loc.fai_falador_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.fai_falador_ladder_taller"
+inherit = "loc.fai_falador_ladder_taller"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.fairy_ladder_wind_up"
+inherit = "loc.fairy_ladder_wind_up"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.fd_shadowladder"
+inherit = "loc.fd_shadowladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.feud_ladder"
+inherit = "loc.feud_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.fever_ship_ladder"
+inherit = "loc.fever_ship_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.fever_shipladder_angled"
+inherit = "loc.fever_shipladder_angled"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.fossil_dkl_trapdoor_ladder"
+inherit = "loc.fossil_dkl_trapdoor_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.frisb_palisade_ladder"
+inherit = "loc.frisb_palisade_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.frisb_watchtower_ladder_incative"
+inherit = "loc.frisb_watchtower_ladder_incative"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.frisb_watchtower_ladder_twofloors"
+inherit = "loc.frisb_watchtower_ladder_twofloors"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.frisd_izso_ladder_bottom"
+inherit = "loc.frisd_izso_ladder_bottom"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.jewellersladder"
+inherit = "loc.jewellersladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.kebos_farming_guild_redwood_ladder_bottom"
+inherit = "loc.kebos_farming_guild_redwood_ladder_bottom"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.kr_cam_ladder"
+inherit = "loc.kr_cam_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.kr_ladder"
+inherit = "loc.kr_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.kr_ladder_directional"
+inherit = "loc.kr_ladder_directional"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.ladder_directional"
+inherit = "loc.ladder_directional"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.lassar_ladder"
+inherit = "loc.lassar_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.lassar_ladder_bottom"
+inherit = "loc.lassar_ladder_bottom"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.lovaquest_tower_ladder_up"
+inherit = "loc.lovaquest_tower_ladder_up"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.luc2_darksquall_ladder"
+inherit = "loc.luc2_darksquall_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.lunar_moonclan_ladder"
+inherit = "loc.lunar_moonclan_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.mcannonladder"
+inherit = "loc.mcannonladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.mm_bamboo_ladder"
+inherit = "loc.mm_bamboo_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.mm_bamboo_ladder_reverse"
+inherit = "loc.mm_bamboo_ladder_reverse"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.mm_bamboo_ladder_watchtower_east"
+inherit = "loc.mm_bamboo_ladder_watchtower_east"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.mm_bamboo_ladder_watchtower_west"
+inherit = "loc.mm_bamboo_ladder_watchtower_west"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.mm2_shipyard_ladder_bottom"
+inherit = "loc.mm2_shipyard_ladder_bottom"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.monasteryladder"
+inherit = "loc.monasteryladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.mourning_temple_ladder_wall"
+inherit = "loc.mourning_temple_ladder_wall"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.myq3_ladder_up"
+inherit = "loc.myq3_ladder_up"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.myq3_ladder_up_2"
+inherit = "loc.myq3_ladder_up_2"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.paramayaladderup"
+inherit = "loc.paramayaladderup"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.pog_sewer_pipe_side_ladder"
+inherit = "loc.pog_sewer_pipe_side_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.prison_ladder_up"
+inherit = "loc.prison_ladder_up"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.qip_cook_ladder"
+inherit = "loc.qip_cook_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.ranging_ladder_up"
+inherit = "loc.ranging_ladder_up"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.seaslug_ladder"
+inherit = "loc.seaslug_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.shayzien_ladder"
+inherit = "loc.shayzien_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.shayzien_wooden_ladder"
+inherit = "loc.shayzien_wooden_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.ship_ladder"
+inherit = "loc.ship_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.ship_ladder_no_approach"
+inherit = "loc.ship_ladder_no_approach"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.shipladder_angled"
+inherit = "loc.shipladder_angled"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.slug2_ladder"
+inherit = "loc.slug2_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.soc_ladder"
+inherit = "loc.soc_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.sorceress_ladder"
+inherit = "loc.sorceress_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.tourtrap_qip_ladder"
+inherit = "loc.tourtrap_qip_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.towerladder"
+inherit = "loc.towerladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.trawler_ladder"
+inherit = "loc.trawler_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.watchladderup"
+inherit = "loc.watchladderup"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.wgs_taverley_ladder"
+inherit = "loc.wgs_taverley_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.wild_ladder"
+inherit = "loc.wild_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.akd_shayzien_bar_spiralstairstop"
+inherit = "loc.akd_shayzien_bar_spiralstairstop"
+contentGroup = "content.spiralstaircase_down"
+
+[[object]]
+id = "loc.canafis_spiralstairstop"
+inherit = "loc.canafis_spiralstairstop"
+contentGroup = "content.spiralstaircase_down"
+
+[[object]]
+id = "loc.dk_spiralstairstop"
+inherit = "loc.dk_spiralstairstop"
+contentGroup = "content.spiralstaircase_down"
+
+[[object]]
+id = "loc.fai_darkwiztower_spiralstairstop"
+inherit = "loc.fai_darkwiztower_spiralstairstop"
+contentGroup = "content.spiralstaircase_down"
+
+[[object]]
+id = "loc.fai_falador_castle_spiralstairstop"
+inherit = "loc.fai_falador_castle_spiralstairstop"
+contentGroup = "content.spiralstaircase_down"
+
+[[object]]
+id = "loc.fai_falador_party_room_spiralstairs_top"
+inherit = "loc.fai_falador_party_room_spiralstairs_top"
+contentGroup = "content.spiralstaircase_down"
+
+[[object]]
+id = "loc.fai_falador_party_room_spiralstairs_top_mirror"
+inherit = "loc.fai_falador_party_room_spiralstairs_top_mirror"
+contentGroup = "content.spiralstaircase_down"
+
+[[object]]
+id = "loc.fai_falador_party_room_spiralstairs_top_small"
+inherit = "loc.fai_falador_party_room_spiralstairs_top_small"
+contentGroup = "content.spiralstaircase_down"
+
+[[object]]
+id = "loc.fai_falador_party_room_spiralstairs_top_small_mirror"
+inherit = "loc.fai_falador_party_room_spiralstairs_top_small_mirror"
+contentGroup = "content.spiralstaircase_down"
+
+[[object]]
+id = "loc.fai_falador_spiralstairstop"
+inherit = "loc.fai_falador_spiralstairstop"
+contentGroup = "content.spiralstaircase_down"
+
+[[object]]
+id = "loc.fai_varrock_mill_spiralstairs_top"
+inherit = "loc.fai_varrock_mill_spiralstairs_top"
+contentGroup = "content.spiralstaircase_down"
+
+[[object]]
+id = "loc.fortis_wooden_spiralstairs_top_1_floor"
+inherit = "loc.fortis_wooden_spiralstairs_top_1_floor"
+contentGroup = "content.spiralstaircase_down"
+
+[[object]]
+id = "loc.kebos_spiralstairs_top"
+inherit = "loc.kebos_spiralstairs_top"
+contentGroup = "content.spiralstaircase_down"
+
+[[object]]
+id = "loc.kr_spiralstairstop"
+inherit = "loc.kr_spiralstairstop"
+contentGroup = "content.spiralstaircase_down"
+
+[[object]]
+id = "loc.last_light_spiralstairs_top"
+inherit = "loc.last_light_spiralstairs_top"
+contentGroup = "content.spiralstaircase_down"
+
+[[object]]
+id = "loc.murder_qip_spiralstairstop"
+inherit = "loc.murder_qip_spiralstairstop"
+contentGroup = "content.spiralstaircase_down"
+
+[[object]]
+id = "loc.sarim_spiralstairstop"
+inherit = "loc.sarim_spiralstairstop"
+contentGroup = "content.spiralstaircase_down"
+
+[[object]]
+id = "loc.spiralstairstop_m"
+inherit = "loc.spiralstairstop_m"
+contentGroup = "content.spiralstaircase_down"
+
+[[object]]
+id = "loc.spiralstairstop_wg"
+inherit = "loc.spiralstairstop_wg"
+contentGroup = "content.spiralstaircase_down"
+
+[[object]]
+id = "loc.spiralstairstop_wooden"
+inherit = "loc.spiralstairstop_wooden"
+contentGroup = "content.spiralstaircase_down"
+
+[[object]]
+id = "loc.wild6_spiralstairstop"
+inherit = "loc.wild6_spiralstairstop"
+contentGroup = "content.spiralstaircase_down"
+
+[[object]]
+id = "loc.fai_darkwiztower_spiralstairs_middle"
+inherit = "loc.fai_darkwiztower_spiralstairs_middle"
+contentGroup = "content.spiralstaircase_option"
+
+[[object]]
+id = "loc.fai_varrock_mill_spiralstairs_middle"
+inherit = "loc.fai_varrock_mill_spiralstairs_middle"
+contentGroup = "content.spiralstaircase_option"
+
+[[object]]
+id = "loc.fortis_wooden_spiralstairs_middle"
+inherit = "loc.fortis_wooden_spiralstairs_middle"
+contentGroup = "content.spiralstaircase_option"
+
+[[object]]
+id = "loc.horror_lighthouse_spiralstairs_middle"
+inherit = "loc.horror_lighthouse_spiralstairs_middle"
+contentGroup = "content.spiralstaircase_option"
+
+[[object]]
+id = "loc.last_light_spiralstairs_middle"
+inherit = "loc.last_light_spiralstairs_middle"
+contentGroup = "content.spiralstaircase_option"
+
+[[object]]
+id = "loc.spiralstairsmiddle_wooden"
+inherit = "loc.spiralstairsmiddle_wooden"
+contentGroup = "content.spiralstaircase_option"
+
+[[object]]
+id = "loc.wild6_spiralstairs_middle"
+inherit = "loc.wild6_spiralstairs_middle"
+contentGroup = "content.spiralstaircase_option"
+
+[[object]]
+id = "loc.akd_hughes_spiralstairs"
+inherit = "loc.akd_hughes_spiralstairs"
+contentGroup = "content.spiralstaircase_up"
+
+[[object]]
+id = "loc.akd_shayzien_bar_spiralstairs"
+inherit = "loc.akd_shayzien_bar_spiralstairs"
+contentGroup = "content.spiralstaircase_up"
+
+[[object]]
+id = "loc.canafis_spiralstairs"
+inherit = "loc.canafis_spiralstairs"
+contentGroup = "content.spiralstaircase_up"
+
+[[object]]
+id = "loc.dk_spiralstairs"
+inherit = "loc.dk_spiralstairs"
+contentGroup = "content.spiralstaircase_up"
+
+[[object]]
+id = "loc.draynor_spiralstairs"
+inherit = "loc.draynor_spiralstairs"
+contentGroup = "content.spiralstaircase_up"
+
+[[object]]
+id = "loc.fai_darkwiztower_spiralstairs"
+inherit = "loc.fai_darkwiztower_spiralstairs"
+contentGroup = "content.spiralstaircase_up"
+
+[[object]]
+id = "loc.fai_falador_castle_spiralstairs"
+inherit = "loc.fai_falador_castle_spiralstairs"
+contentGroup = "content.spiralstaircase_up"
+
+[[object]]
+id = "loc.fai_falador_party_room_spiralstairs_mirror_small"
+inherit = "loc.fai_falador_party_room_spiralstairs_mirror_small"
+contentGroup = "content.spiralstaircase_up"
+
+[[object]]
+id = "loc.fai_falador_party_room_spiralstairs_small"
+inherit = "loc.fai_falador_party_room_spiralstairs_small"
+contentGroup = "content.spiralstaircase_up"
+
+[[object]]
+id = "loc.fai_falador_spiralstairs"
+inherit = "loc.fai_falador_spiralstairs"
+contentGroup = "content.spiralstaircase_up"
+
+[[object]]
+id = "loc.fai_varrock_mill_spiralstairs"
+inherit = "loc.fai_varrock_mill_spiralstairs"
+contentGroup = "content.spiralstaircase_up"
+
+[[object]]
+id = "loc.fortis_wooden_spiralstairs_bottom_1_floor"
+inherit = "loc.fortis_wooden_spiralstairs_bottom_1_floor"
+contentGroup = "content.spiralstaircase_up"
+
+[[object]]
+id = "loc.kebos_spiralstairs_bottom"
+inherit = "loc.kebos_spiralstairs_bottom"
+contentGroup = "content.spiralstaircase_up"
+
+[[object]]
+id = "loc.kr_spiralstairs"
+inherit = "loc.kr_spiralstairs"
+contentGroup = "content.spiralstaircase_up"
+
+[[object]]
+id = "loc.last_light_spiralstairs_base"
+inherit = "loc.last_light_spiralstairs_base"
+contentGroup = "content.spiralstaircase_up"
+
+[[object]]
+id = "loc.murder_qip_spiralstairs"
+inherit = "loc.murder_qip_spiralstairs"
+contentGroup = "content.spiralstaircase_up"
+
+[[object]]
+id = "loc.paterdomus_spiralstairs"
+inherit = "loc.paterdomus_spiralstairs"
+contentGroup = "content.spiralstaircase_up"
+
+[[object]]
+id = "loc.paterdomus_spiralstairs_m"
+inherit = "loc.paterdomus_spiralstairs_m"
+contentGroup = "content.spiralstaircase_up"
+
+[[object]]
+id = "loc.sarim_spiralstairs"
+inherit = "loc.sarim_spiralstairs"
+contentGroup = "content.spiralstaircase_up"
+
+[[object]]
+id = "loc.spiralstairs_wooden"
+inherit = "loc.spiralstairs_wooden"
+contentGroup = "content.spiralstaircase_up"
+
+[[object]]
+id = "loc.wild6_spiralstairs"
+inherit = "loc.wild6_spiralstairs"
+contentGroup = "content.spiralstaircase_up"
+
+
+[[object]]
+id = "loc.wild_laddertop"
+inherit = "loc.wild_laddertop"
+contentGroup = "content.ladder_down"
+
+[[object]]
+id = "loc.chaos_temple_ladder"
+inherit = "loc.chaos_temple_ladder"
+contentGroup = "content.ladder_up"
+
+[[object]]
+id = "loc.chaos_temple_laddertop"
+inherit = "loc.chaos_temple_laddertop"
+contentGroup = "content.ladder_down"

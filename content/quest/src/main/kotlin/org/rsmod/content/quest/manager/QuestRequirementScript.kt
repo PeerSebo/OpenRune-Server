@@ -6,9 +6,7 @@ import org.rsmod.plugin.scripts.ScriptContext
 
 public class QuestRequirementScript
 @Inject
-constructor(
-    private val requirements: QuestRequirementResolver,
-) : PluginScript() {
+constructor(private val requirements: QuestRequirementResolver) : PluginScript() {
     override fun ScriptContext.startup() {
         QuestRequirements.install(requirements.policy)
     }

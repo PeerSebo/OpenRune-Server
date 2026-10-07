@@ -51,7 +51,7 @@ restockCycles = 20
 [[inventory.stock]]
 obj = "obj.rune_warhammer"
 count = 1
-restockCycles = -1
+restockCycles = 100
 
 [[inventory.stock]]
 obj = "obj.lovakengj_dynamite_fused"

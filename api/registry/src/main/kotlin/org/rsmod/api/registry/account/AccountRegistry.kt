@@ -4,7 +4,6 @@ import jakarta.inject.Inject
 import java.util.concurrent.ConcurrentLinkedQueue
 import org.rsmod.api.account.AccountManager
 import org.rsmod.api.account.loader.request.AccountLoadResponse
-import org.rsmod.api.account.saver.request.AccountSaveResponse
 import org.rsmod.api.registry.player.PlayerRegistry
 import org.rsmod.events.EventBus
 import org.rsmod.game.entity.Player
@@ -17,7 +16,8 @@ constructor(
     private val accountManager: AccountManager,
 ) {
     private val pendingLogins = ConcurrentLinkedQueue<QueuedLogin>()
-    private val pendingLogouts = ConcurrentLinkedQueue<QueuedLogout>()
+    private val pendingLogouts =
+        LogoutSaveQueue(accountManager::save, ::handleLogout)
 
     public fun queueLogin(
         player: Player,
@@ -29,7 +29,7 @@ constructor(
     }
 
     public fun queueLogout(player: Player) {
-        accountManager.save(player, ::queueSaveResponse)
+        pendingLogouts.save(player)
     }
 
     public fun handleLogins(count: Int = DEFAULT_LOGINS_PER_CYCLE) {
@@ -42,31 +42,13 @@ constructor(
     }
 
     public fun handleLogouts(count: Int = DEFAULT_LOGOUTS_PER_CYCLE) {
-        var left = count
-        while (left-- > 0) {
-            val next = pendingLogouts.poll() ?: break
-            val (player, callback) = next
-            callback(player)
-        }
+        pendingLogouts.process(count)
     }
 
-    private fun queueSaveResponse(response: AccountSaveResponse) {
-        val queued = QueuedLogout(response.player, ::handleLogout)
-        pendingLogouts.add(queued)
-        when (response) {
-            is AccountSaveResponse.Success -> {}
-            is AccountSaveResponse.ExcessiveRetries -> saveEmergencyBackup(response.player)
-            is AccountSaveResponse.InternalShutdownError -> saveEmergencyBackup(response.player)
-        }
-    }
+    public fun pendingLogoutPreparations(): List<Player> = pendingLogouts.pendingPreparations()
 
     private fun handleLogout(player: Player) {
         playerRegistry.del(player)
-    }
-
-    private fun saveEmergencyBackup(player: Player) {
-        // TODO: Save an emergency backup file of player when the player save service is unable to
-        //  do so.
     }
 
     private data class QueuedLogin(
@@ -74,8 +56,6 @@ constructor(
         val response: AccountLoadResponse.Ok,
         val callback: (Player, AccountLoadResponse.Ok) -> Unit,
     )
-
-    private data class QueuedLogout(val player: Player, val callback: (Player) -> Unit)
 
     private companion object {
         private const val DEFAULT_LOGINS_PER_CYCLE = 100

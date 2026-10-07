@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class ZoneGridDocTest {
-    /** @see [ZoneGrid] */
     @Test
     fun `validate Example Usage code`() {
         val zoneGrid = ZoneGrid.fromAbsolute(3220, 3205, 0)

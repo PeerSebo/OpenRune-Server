@@ -15,7 +15,6 @@ public object MapAreaDecoder {
     public fun decode(buf: InlineByteBuf): MapAreaDefinition {
         var cursor = buf.newCursor()
 
-        // Map-square areas
         cursor = buf.readUnsignedByte(cursor)
         val fullMapSqAreaCount = cursor.value
         val fullMapSqAreas: ShortSet =
@@ -30,8 +29,8 @@ public object MapAreaDecoder {
                 areas
             }
 
-        // Zone areas
-        cursor = buf.readUnsignedByte(cursor)
+        // Zone areas (up to 256 entries, so the count is a short)
+        cursor = buf.readShort(cursor)
         val zoneCount = cursor.value
         val zoneAreas: Byte2ObjectMap<ShortSet> =
             if (zoneCount == 0) {
@@ -56,7 +55,6 @@ public object MapAreaDecoder {
                 areas
             }
 
-        // Coord areas
         cursor = buf.readShort(cursor)
         val coordCount = cursor.value
         val coordAreas: Short2ObjectMap<ShortSet> =
@@ -82,7 +80,6 @@ public object MapAreaDecoder {
                 areas
             }
 
-        // Includes
         cursor = buf.readShort(cursor)
         val includeCount = cursor.value
         val includes: Short2ObjectMap<ShortSet> =
@@ -110,7 +107,6 @@ public object MapAreaDecoder {
                 map
             }
 
-        // Excludes
         cursor = buf.readShort(cursor)
         val excludeCount = cursor.value
         val excludes: Short2ObjectMap<ShortSet> =

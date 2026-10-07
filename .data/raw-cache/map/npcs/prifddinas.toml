@@ -510,13 +510,11 @@ coords = "0_51_94_41_34"
 npc = "npc.regicide_rabbit"
 coords = "0_51_94_46_24"
 
-## Branwen's Farming Shop
 
 [[spawn]]
 npc = "npc.prif_farmingstore"
 coords = "0_51_95_32_8"
 
-## Construction supplies
 
 [[spawn]]
 npc = "npc.fai_squirrel_02"
@@ -526,19 +524,16 @@ coords = "0_51_95_49_37"
 npc = "npc.prif_sawmill_operator"
 coords = "0_51_95_51_36"
 
-## Iorwerth's Arms
 
 [[spawn]]
 npc = "npc.prif_weaponstore"
 coords = "0_50_94_58_42"
 
-## Iwan's Maces
 
 [[spawn]]
 npc = "npc.prif_macestore"
 coords = "0_50_95_55_46"
 
-## Prifddinas Bank
 
 [[spawn]]
 npc = "npc.prif_bankerf2"
@@ -560,13 +555,11 @@ coords = "0_50_95_56_23"
 npc = "npc.prif_bankerm4"
 coords = "0_50_95_58_23"
 
-## Prifddinas General Store
 
 [[spawn]]
 npc = "npc.prif_generalstore"
 coords = "0_51_94_38_36"
 
-## Prifddinas Herbal Supplies
 
 [[spawn]]
 npc = "npc.prif_citizen_nimloth"
@@ -576,7 +569,6 @@ coords = "2_51_95_22_40"
 npc = "npc.prif_herbstore"
 coords = "0_51_95_23_38"
 
-## Prifddinas Interiors
 
 [[spawn]]
 npc = "npc.elena_prif"
@@ -670,7 +662,6 @@ coords = "0_51_94_31_27"
 npc = "npc.prif_singer2_multi"
 coords = "0_50_94_38_50"
 
-## Prifddinas Interiors Raised
 
 [[spawn]]
 npc = "npc.prif_citizen_tatie"
@@ -684,7 +675,6 @@ coords = "0_50_95_21_36"
 npc = "npc.prif_staffstore"
 coords = "0_50_95_17_9"
 
-## Prifddinas south bank
 
 [[spawn]]
 npc = "npc.prif_bankerf1"
@@ -697,6 +687,3 @@ coords = "0_51_94_33_44"
 [[spawn]]
 npc = "npc.prif_bankerm1"
 coords = "0_51_94_33_43"
-
-## Prifddinas south bank End
-

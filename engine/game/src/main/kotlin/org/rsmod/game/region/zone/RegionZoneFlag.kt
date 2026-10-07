@@ -2,22 +2,9 @@
 
 package org.rsmod.game.region.zone
 
-import org.rsmod.game.region.util.NormalRegionZoneMap.NormalZone
-
 /**
- * Represents a unique flag that can be assigned to a [RegionZoneCopy].
- *
- * Each `RegionZoneCopy` can store a **single** unique flag, allowing differentiation between
- * identical copied zones that serve different purposes.
- *
- * These flags are particularly useful in scenarios where multiple instances of the same copied zone
- * exist but need to be treated differently by content.
- *
- * For example, a minigame home base may copy the same zone for both a red team and a blue team, but
- * in separate map sections. Flags allow distinguishing between them.
- *
- * The total number of available flags is limited by [RegionZoneCopy.UNIQUE_FLAG_BIT_COUNT] and
- * [NormalZone.UNIQUE_FLAG_BIT_COUNT]. Currently, up to `2^3` (8) unique flags are supported.
+ * Zone flags distinguish otherwise identical copied zones; include them in matching when
+ * templates repeat a source zone.
  */
 public enum class RegionZoneFlag(private val bit: Int) {
     Flag1(bit = 0),

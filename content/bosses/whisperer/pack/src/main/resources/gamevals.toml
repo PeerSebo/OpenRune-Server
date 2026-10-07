@@ -1,0 +1,7 @@
+[gamevals.dbrow]
+instance_whisperer = 63222
+
+[gamevals.timer]
+whisperer_sanity = 2011
+whisperer_insanity = 2012
+whisperer_fade = 2013

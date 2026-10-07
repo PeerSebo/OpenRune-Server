@@ -28,12 +28,6 @@ public class ShopOperationMap(
         map[id] = value
     }
 
-    /**
-     * Registers [currency] under a `currency.rscm` [key] backed by
-     * [StandardCurrencyShopOperations].
-     *
-     * [costOf] overrides per-item base cost when the shop does not use the obj's default cost.
-     */
     public fun registerCurrency(
         key: String,
         currency: ShopCurrency,
@@ -52,12 +46,6 @@ public class ShopOperationMap(
         )
     }
 
-    /**
-     * Registers every row in `dbtable.shop_currency`.
-     *
-     * Optional Kotlin hooks: [costOf] / [sync] for currencies that need custom pricing or varbit
-     * client sync.
-     */
     public fun registerCurrenciesFromDb(
         restockProcess: ShopRestockProcess,
         marketPrices: MarketPrices,

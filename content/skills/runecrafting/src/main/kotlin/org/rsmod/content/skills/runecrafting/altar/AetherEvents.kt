@@ -7,12 +7,8 @@ import org.rsmod.content.skills.runecrafting.action.RunecraftAction.craftAether
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
-class AetherEvents @Inject constructor(
-    private val xpMods: XpModifiers,
-) : PluginScript() {
+class AetherEvents @Inject constructor(private val xpMods: XpModifiers) : PluginScript() {
     override fun ScriptContext.startup() {
-        onOpLocU("loc.archeus_altar_soul", "obj.cosmic_soul_catalyst") {
-            craftAether(xpMods)
-        }
+        onOpLocU("loc.cosmic_altar", "obj.soulrune") { craftAether(xpMods) }
     }
 }

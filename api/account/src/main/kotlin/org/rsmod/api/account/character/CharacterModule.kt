@@ -1,5 +1,7 @@
 package org.rsmod.api.account.character
 
+import org.rsmod.api.account.character.appearance.CharacterAppearanceApplier
+import org.rsmod.api.account.character.appearance.CharacterAppearancePipeline
 import org.rsmod.api.account.character.inv.CharacterInventoryApplier
 import org.rsmod.api.account.character.inv.CharacterInventoryPipeline
 import org.rsmod.api.account.character.main.CharacterAccountApplier
@@ -13,10 +15,12 @@ public object CharacterModule : ExtendedModule() {
         bindInstance<CharacterAccountRepository>()
 
         bindInstance<CharacterAccountApplier>()
+        bindInstance<CharacterAppearanceApplier>()
         bindInstance<CharacterInventoryApplier>()
         bindInstance<CharacterStatApplier>()
 
         newSetBinding<CharacterDataStage.Pipeline>()
+        addSetBinding<CharacterDataStage.Pipeline>(CharacterAppearancePipeline::class.java)
         addSetBinding<CharacterDataStage.Pipeline>(CharacterInventoryPipeline::class.java)
         addSetBinding<CharacterDataStage.Pipeline>(CharacterStatPipeline::class.java)
     }

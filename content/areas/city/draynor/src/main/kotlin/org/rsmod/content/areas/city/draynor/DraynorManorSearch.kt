@@ -1,12 +1,12 @@
 package org.rsmod.content.areas.city.draynor
 
 import jakarta.inject.Inject
-import org.rsmod.api.attr.AttributeKey
 import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.repo.loc.LocRepository
 import org.rsmod.api.script.onOpHeldU
 import org.rsmod.api.script.onOpLoc1
 import org.rsmod.api.script.onOpLocU
+import org.rsmod.api.script.onPlayerInit
 import org.rsmod.content.quest.manager.Quest
 import org.rsmod.game.entity.Player
 import org.rsmod.game.hit.HitType
@@ -20,6 +20,7 @@ import org.rsmod.plugin.scripts.ScriptContext
 class DraynorManorSearch @Inject constructor(private val locRepo: LocRepository) : PluginScript() {
 
     override fun ScriptContext.startup() {
+        onPlayerInit { ErnestFountainState.migrate(player) }
         onOpHeldU(Poison, FishFood) { poisonFishFood() }
 
         onOpLoc1(Fountain) { searchFountain() }
@@ -33,7 +34,7 @@ class DraynorManorSearch @Inject constructor(private val locRepo: LocRepository)
         for (shelf in Bookcases) {
             onOpLoc1(shelf) { openBookcase(it.loc) }
         }
-        onOpLoc1(ExitLever) { pullExitLever() }
+        onOpLoc1(ExitLever) { pullExitLever(it.loc) }
     }
 
     private suspend fun ProtectedAccess.poisonFishFood() {
@@ -61,9 +62,10 @@ class DraynorManorSearch @Inject constructor(private val locRepo: LocRepository)
         startDialogue {
             chatPlayer(neutral, "There seems to be a pressure gauge in here...")
 
-            if (!player.attr.getOrDefault(PIRANHAS_DEAD, false)) {
+            if (!ErnestFountainState.get(player)) {
                 access.mes("Something in the water bites you.")
                 access.soundSynth(BiteSound, delay = BiteSoundDelay)
+                // Strong queues reject zero-cycle delays.
                 access.queueHit(delay = 1, type = HitType.Typeless, damage = PiranhaDamage)
                 chatPlayer(sad, "Ow!")
                 chatPlayer(sad, "... and a lot of piranhas! I can't get the gauge out.")
@@ -80,7 +82,7 @@ class DraynorManorSearch @Inject constructor(private val locRepo: LocRepository)
     private suspend fun ProtectedAccess.poisonFountain() {
         arriveDelay()
 
-        if (player.attr.getOrDefault(PIRANHAS_DEAD, false)) {
+        if (ErnestFountainState.get(player)) {
             mes("The piranhas in the fountain are already dead.")
             return
         }
@@ -89,7 +91,7 @@ class DraynorManorSearch @Inject constructor(private val locRepo: LocRepository)
             return
         }
 
-        player.attr[PIRANHAS_DEAD] = true
+        ErnestFountainState.set(player, true)
         mes("You pour the poisoned fish food into the fountain.")
         soundSynth(SprinkleSound)
         delay(2)
@@ -113,6 +115,7 @@ class DraynorManorSearch @Inject constructor(private val locRepo: LocRepository)
         anim(DigAnim)
         soundSynth(DigSound)
         delay(3)
+        // Animate once for the whole dig; replaying each tick restarts the swing.
         resetAnim()
 
         if (!findClosetKey(this)) {
@@ -134,6 +137,7 @@ class DraynorManorSearch @Inject constructor(private val locRepo: LocRepository)
         soundSynth(UnlockSound)
         delay(1)
 
+        // Derive the open leaf from the door rotation, not the player approach, to preserve the hinge.
         val route = crossingRoute(door)
         val openTicks = crossingOpenTicks(crossingTiles(route))
 
@@ -168,17 +172,24 @@ class DraynorManorSearch @Inject constructor(private val locRepo: LocRepository)
     }
 
     // Use two orthogonal legs; a diagonal exit would cut through the closed shelf.
-    private suspend fun ProtectedAccess.pullExitLever() {
+    private suspend fun ProtectedAccess.pullExitLever(lever: BoundLocInfo) {
+        faceLoc(lever)
+        arriveDelay()
+        anim("seq.macro_lever_switch_down")
         mes("The lever opens the secret door!")
         soundSynth(LeverSound)
+        delay(1)
 
+        // Use one waypoint chain so the open duration covers both legs.
         val level = player.coords.level
         val route =
             listOf(
                 CoordGrid(LeverExitX, LeverExitZ, level),
                 CoordGrid(BookcaseEntryX, LeverExitZ, level),
             )
-        openBookcasePassage(crossingOpenTicks(crossingTiles(route)))
+        val openTicks = crossingOpenTicks(crossingTiles(route))
+        locRepo.change(lever, "loc.hauntedleverdown", openTicks)
+        openBookcasePassage(openTicks)
         soundSynth(BookcaseLeverSound)
 
         crossDoorway(route)
@@ -210,7 +221,7 @@ class DraynorManorSearch @Inject constructor(private val locRepo: LocRepository)
         private const val ExitLever = "loc.hauntedleverup"
         private const val OpenClosetLoc = "loc.draynorpanelleddoor_inactive"
         private const val OpenBookcaseLoc = "loc.hauntedbookcaseopen"
-        private const val LeverSound = "synth.lever"
+        private const val LeverSound = "synth.LEVER"
 
         private const val BookcaseX = 3097
         private const val BookcaseEntryX = 3098
@@ -234,19 +245,17 @@ class DraynorManorSearch @Inject constructor(private val locRepo: LocRepository)
         private const val ClosetKey = "obj.closet_key"
         private const val Spade = "obj.spade"
 
-        private const val FishSwimSound = "synth.fish_swim"
-        private const val BiteSound = "synth.human_hit_2"
+        private const val FishSwimSound = "synth.FISH_SWIM"
+        private const val BiteSound = "synth.HUMAN_HIT_02"
         private const val BiteSoundDelay = 20
         private const val PiranhaDamage = 1
-        private const val SprinkleSound = "synth.ernest_sprinkle"
+        private const val SprinkleSound = "synth.ERNEST_SPRINKLE"
         private const val DigAnim = "seq.human_dig"
-        private const val DigSound = "synth.digspade"
-        private const val UnlockSound = "synth.unlock"
-        private const val CupboardSound = "synth.cupboard_open"
-        private const val BookcaseSound = "synth.coffin_open"
-        private const val BookcaseLeverSound = "synth.bookcase_open_and_close"
-
-        private val PIRANHAS_DEAD = AttributeKey<Boolean>(persistenceKey = "ernest_piranhas_dead")
+        private const val DigSound = "synth.DIGSPADE"
+        private const val UnlockSound = "synth.UNLOCK"
+        private const val CupboardSound = "synth.CUPBOARD_OPEN"
+        private const val BookcaseSound = "synth.COFFIN_OPEN"
+        private const val BookcaseLeverSound = "synth.BOOKCASE_OPEN_AND_CLOSE"
 
         internal fun canFindPressureGauge(player: Player): Boolean =
             Quest.get(ErnestQuestKey)?.isQuestInProgress(player) == true

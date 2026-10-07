@@ -8,9 +8,6 @@ import org.rsmod.api.testing.GameTestState
 import org.rsmod.game.movement.MoveSpeed
 import org.rsmod.map.CoordGrid
 
-// These tests are mainly to ensure that the teleport functions are doing what they are intended
-// to be doing. They act more as documentation that the logic is made this way for emulation
-// purposes.
 class PlayerTeleportTest {
     @Test
     fun GameTestState.`teleport takes player to destination`() = runBasicGameTest {
@@ -66,7 +63,6 @@ class PlayerTeleportTest {
                 assertEquals(MoveSpeed.Stationary, moveSpeed)
             }
             assertTrue(jumped)
-            // After a cycle, the player will still have their move speed as stationary.
             movement.process(this)
             assertEquals(MoveSpeed.Stationary, moveSpeed)
         }

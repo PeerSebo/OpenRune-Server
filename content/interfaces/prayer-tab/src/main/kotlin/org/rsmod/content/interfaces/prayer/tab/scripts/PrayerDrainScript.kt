@@ -27,15 +27,24 @@ constructor(private val repo: PrayerRepository, private val bonuses: WornBonuses
     override fun ScriptContext.startup() {
         onPlayerSoftTimer("timer.prayer_drain") { player.drainPrayer() }
 
-        onPlayerLogin { player.updateDrainResistance() }
+        onPlayerLogin {
+            player.updateDrainResistance()
+            player.clearPrayersOnLogin()
+        }
         onWearposChange { player.updateDrainResistance() }
+    }
+
+    // Prayer varps persist but soft timers do not; clear active prayers on login to prevent drain-free prayer.
+    private fun Player.clearPrayersOnLogin() {
+        if (vars["varbit.prayer_allactive"] == 0) {
+            return
+        }
+        disablePrayers()
     }
 
     private fun Player.drainPrayer() {
         val enabledPrayers = vars["varbit.prayer_allactive"]
         if (enabledPrayers == 0) {
-            // We favor explicitness and enforce prayer drain timer to be manually cleared instead
-            // of implicitly doing so when all prayers are disabled.
             throw IllegalStateException("Prayer drain timer should have been manually cleared.")
         }
 
@@ -59,7 +68,6 @@ constructor(private val repo: PrayerRepository, private val bonuses: WornBonuses
 
     private fun calculateDrainEffect(enabledPrayers: Int): Int {
         var drainEffect = 0
-        // Micro-optimization: Using index-based loop to avoid allocating an iterator object.
         val prayers = repo.prayerList
         for (i in prayers.indices) {
             val prayer = prayers[i]
@@ -73,7 +81,7 @@ constructor(private val repo: PrayerRepository, private val bonuses: WornBonuses
     private fun Player.triggerPrayerDepletion() {
         rebuildAppearance()
         mes("You have run out of prayer points, you can recharge at an altar.")
-        soundSynth("synth.prayer_drain")
+        soundSynth("synth.PRAYER_DRAIN")
         disablePrayers()
     }
 

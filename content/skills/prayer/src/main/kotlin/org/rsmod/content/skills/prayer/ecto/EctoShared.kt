@@ -18,9 +18,10 @@ internal val ECTO_RECIPES: List<EctoRecipe> by lazy { PrayerEctofuntusBonemealRo
         id = index + 1, bones = row.input.internalName,
         bonemeal = row.output.internalName,
         bonesName = row.input.name,
-        xp = row.xp.toDouble(),
+        // Use xpTenths; the legacy integer column loses fractional bonemeal XP.
+        xp = row.xpTenths / 10.0,
         prayerLevel = row.statReq.first().t1
-    )}
+    ) }
 }
 
 internal fun findEctoRecipe(id: Int): EctoRecipe? = ECTO_RECIPES.firstOrNull { it.id == id }

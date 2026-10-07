@@ -1,0 +1,76 @@
+[gamevals.varp]
+hunter_falconry_invested = 63720
+hunter_herbiboar_count = 63721
+hunter_pursuit_ring_used = 63722
+hunter_player_state_migrated = 63723
+hunter_magic_box_count = 63724
+hunter_pitfall_count = 63725
+hunter_magic_box_banking_slot = 63798
+hunter_magic_box_banking_item = 63799
+hunter_guild_flags = 63200
+hunter_rumours_completed = 63201
+hunter_rumours_active = 63202
+hunter_rumours_last = 63203
+hunter_rumours_reroll_after = 63204
+hunter_quetzal_feed_credit = 63205
+hunter_rumour_gilman_prey = 63206
+hunter_rumour_gilman_count = 63207
+hunter_rumour_gilman_original = 63208
+hunter_rumour_gilman_original_count = 63209
+hunter_rumour_cervus_prey = 63210
+hunter_rumour_cervus_count = 63211
+hunter_rumour_cervus_original = 63212
+hunter_rumour_cervus_original_count = 63213
+hunter_rumour_ornus_prey = 63214
+hunter_rumour_ornus_count = 63215
+hunter_rumour_ornus_original = 63216
+hunter_rumour_ornus_original_count = 63217
+hunter_rumour_aco_prey = 63218
+hunter_rumour_aco_count = 63219
+hunter_rumour_aco_original = 63220
+hunter_rumour_aco_original_count = 63221
+hunter_rumour_teco_prey = 63222
+hunter_rumour_teco_count = 63223
+hunter_rumour_teco_original = 63224
+hunter_rumour_teco_original_count = 63225
+hunter_rumour_wolf_prey = 63226
+hunter_rumour_wolf_count = 63227
+hunter_rumour_wolf_original = 63228
+hunter_rumour_wolf_original_count = 63229
+hunter_falconry_returned = 63964
+
+[gamevals.varbit]
+hunter_guild_state_migrated = 63200
+hunter_rumours_unlocked = 63201
+hunter_rumours_back_to_back = 63202
+hunter_rumours_reset_lock = 63203
+hunter_basic_blueprint_claimed = 63204
+hunter_perfected_whistle_crafted = 63205
+hunter_infinite_whistle_unlocked = 63206
+hunter_enhanced_blueprint_seen = 63207
+hunter_perfected_blueprint_seen = 63208
+
+[gamevals.dbtable]
+hunter_falconry = 63610
+hunter_birdhouses = 63611
+hunter_falconry_rules = 63960
+
+[gamevals.dbrow]
+hunter_falconry_spotted = 63036
+hunter_falconry_dark = 63037
+hunter_falconry_dashing = 63038
+hunter_birdhouse_normal = 63039
+hunter_birdhouse_oak = 63040
+hunter_birdhouse_willow = 63041
+hunter_birdhouse_teak = 63042
+hunter_birdhouse_maple = 63043
+hunter_birdhouse_mahogany = 63044
+hunter_birdhouse_yew = 63045
+hunter_birdhouse_magic = 63046
+hunter_birdhouse_redwood = 63047
+hunter_falconry_rules = 62990
+
+[gamevals.enum]
+hunter_falconry_spotted_chances = 63610
+hunter_falconry_dark_chances = 63611
+hunter_falconry_dashing_chances = 63612

@@ -13,7 +13,10 @@ import org.rsmod.plugin.scripts.ScriptContext
 class AncientAltarScript @Inject constructor(private val spellbooks: MagicSpellbookManager) :
     PluginScript() {
     override fun ScriptContext.startup() {
-        onOpLoc1("loc.dt_zaros_altar") { prayAt() }
+        onOpLoc1("loc.dt_zaros_altar") {
+            faceSquare(it.loc.coords)
+            prayAt()
+        }
     }
 
     private suspend fun ProtectedAccess.prayAt() {
@@ -23,7 +26,7 @@ class AncientAltarScript @Inject constructor(private val spellbooks: MagicSpellb
             return
         }
         anim("seq.human_pray")
-        soundSynth("synth.prayer_altar_recharge")
+        soundSynth("synth.PRAYER_RECHARGE")
         statSub("stat.prayer", constant = player.prayerLvl, percent = 0)
         if (spellbooks.activeSpellbook(player) == Spellbook.Ancients) {
             spellbooks.setSpellbook(player, Spellbook.Standard)

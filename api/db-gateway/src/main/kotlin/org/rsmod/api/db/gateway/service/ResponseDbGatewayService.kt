@@ -24,53 +24,8 @@ import org.rsmod.server.services.concurrent.ScheduledService
 import org.rsmod.server.services.util.safeShutdown
 
 /**
- * A service for dispatching database requests that require a response.
- *
- * This service acts as a gateway for submitting work to the database on a separate thread pool and
- * later invoking the response callback on the game thread. It is designed for requests where the
- * result needs to be observed.
- *
- * ### Guarantees
- * - Requests are automatically retried up to [REQUEST_RETRIES_BEFORE_FAILURE] times upon timeout or
- *   exception.
- * - If a request fails after the maximum number of retries, its response callback is invoked with a
- *   [GameDbResult.Err].
- * - The response callback is **never invoked** on the worker thread; it is invoked manually from
- *   the game thread.
- * - During shutdown, remaining pending requests are either processed within a timeout window or
- *   forcibly rejected with an [GameDbResult.Err.InternalShutdownError].
- *
- * ### Example Usage:
- * ```
- * // We cache the `PlayerUid` now, so we can safely resolve the player later.
- * val playerUid = player.uid
- *
- * // Invoked on the worker thread.
- * fun getRealms(conn: DatabaseConnection): GameDbResult<List<Pair<String, Int>>> {
- *     val realms = selectRealms(conn, ...)
- *     return GameDbResult.Ok(realms)
- * }
- *
- * // Invoked on the game thread.
- * fun handleRealms(result: GameDbResult<List<Pair<String, Int>>>) {
- *     if (result.isOk()) {
- *         for ((name, id) in result.value) {
- *             // Caution: If the callback needs access to the player, prefer capturing a
- *             // `PlayerUid` and resolving the player from `PlayerList` instead of holding
- *             // a direct `Player` reference. This avoids using a stale player object if
- *             // the player logs out before the callback runs, and helps minimize GC pressure
- *             // under worst-case conditions (e.g., heavy retries or delayed shutdown).
- *             val player = playerUid.resolve(playerList)
- *             player?.mes("Realm: $name ($id)")
- *         }
- *     }
- * }
- *
- * // Submit the request to fetch realms
- * dbManager.request(::getRealms, ::handleRealms)
- * ```
- *
- * _Note: This service should not be used for fire-and-forget database operations._
+ * Workers execute database requests; only the game thread invokes responses. Retain PlayerUid
+ * rather than Player in delayed callbacks so logout cannot leave stale references.
  */
 public class ResponseDbGatewayService @Inject constructor(private val database: Database) :
     ScheduledService {
@@ -138,19 +93,7 @@ public class ResponseDbGatewayService @Inject constructor(private val database: 
         workerScope = CoroutineScope(SupervisorJob() + workerExecutor.asCoroutineDispatcher())
     }
 
-    /**
-     * Prepares the service for a fast-forward shutdown phase.
-     *
-     * This function must be invoked before starting the game's fast-forwarded loop during
-     * pre-shutdown. It ensures that all pending database requests are processed (or rejected) and
-     * that their responses are safely queued while the game thread is still active and able to
-     * dispatch them.
-     *
-     * If this method is not called, pending database responses may be queued too late to be
-     * processed by the game thread, leading to orphaned responses.
-     *
-     * @throws IllegalStateException if the service is already shutting down when called.
-     */
+    /** Begin before shutdown ticks so pending responses reach the game thread before it stops. */
     public suspend fun fastForwardShutdown() {
         val alreadyShuttingDown = shutdownInProgress.getAndSet(true)
         check(!alreadyShuttingDown) { "Response db gateway service is already shutting down." }
@@ -281,50 +224,18 @@ public class ResponseDbGatewayService @Inject constructor(private val database: 
         private const val SERVICE_THREAD_NAME = "db-response-gateway"
         private const val WORKER_THREAD_COUNT = 4
 
-        /**
-         * The time (in ms) to wait between each batch cycle when not under failure backoff. This
-         * defines the baseline processing interval.
-         */
         private const val DELAY_PER_BATCH = 250L
 
-        /** The maximum number of requests processed per service cycle ([run]). */
         private const val REQUESTS_PER_BATCH = 50
 
-        /**
-         * The number of times a request will retry before returning a failure response to the
-         * callback. The caller is responsible for any backup or recovery strategy.
-         *
-         * This is compared against [PendingRequest.attempts].
-         */
         private const val REQUEST_RETRIES_BEFORE_FAILURE = 3
 
-        /**
-         * The timeout (in ms) before a request is considered failed and its attempt count
-         * ([PendingRequest.attempts]) is incremented.
-         *
-         * If the request still has remaining retries, it will be re-queued for another attempt.
-         */
         private const val REQUEST_TIMEOUT_MS = 5000L
 
-        /**
-         * Similar to [REQUEST_TIMEOUT_MS], but used during the [shutdown] process when attempting
-         * to hastily process the pending requests.
-         */
         private const val SHUTDOWN_REQUEST_TIMEOUT_MS = 2000L
 
-        /**
-         * The delay duration (in ms) when backing off due to consecutive failures. Gives external
-         * systems time to recover (e.g., Database under load).
-         */
         private const val ERROR_BACKOFF_MS = 10_000L
 
-        /**
-         * The maximum number of consecutive batch failures before the service enters a backoff
-         * period.
-         *
-         * During backoff, the service delays each cycle using [ERROR_BACKOFF_MS]. This failure
-         * state persists until at least one request is successfully processed.
-         */
         private const val MAX_CONSECUTIVE_FAILURES = 5
 
         /**

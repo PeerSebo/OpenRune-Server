@@ -1,20 +1,20 @@
 package org.rsmod.content.other.ironman
 
 import jakarta.inject.Inject
-import org.rsmod.api.attr.AttributeKey
 import org.rsmod.api.invtx.invAdd
 import org.rsmod.api.player.dialogue.Dialogue
 import org.rsmod.api.player.ironman.PlayerGamemode
 import org.rsmod.api.player.ironman.isAnyIronman
-import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.script.onOpNpc1
 import org.rsmod.api.script.onOpNpc3
 import org.rsmod.api.script.onOpNpc4
+import org.rsmod.api.script.onPlayerInit
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
 public class IronmanTutorScript @Inject constructor() : PluginScript() {
     override fun ScriptContext.startup() {
+        onPlayerInit { IronmanTutorState.migrate(player) }
         onOpNpc1(NPC) { startDialogue(it.npc) { talk() } }
         onOpNpc3(NPC) { startDialogue(it.npc) { giveArmour() } }
         onOpNpc4(NPC) { ifOpenMainModal(SETUP) }
@@ -22,9 +22,9 @@ public class IronmanTutorScript @Inject constructor() : PluginScript() {
 
     private suspend fun Dialogue.talk() {
         when {
-            player.attr[MET] != true -> {
+            !IronmanTutorState.get(player) -> {
                 chatNpc(happy, "Hello, ${player.displayName}. I'm Adam, the Iron$iw tutor. What can I do for you?")
-                player.attr[MET] = true
+                IronmanTutorState.set(player, true)
                 menu(firstMeet = true)
             }
             player.isAnyIronman -> {
@@ -269,6 +269,5 @@ public class IronmanTutorScript @Inject constructor() : PluginScript() {
     private companion object {
         private const val NPC = "npc.ironman_tutor_1"
         private const val SETUP = "interface.ironman_setup"
-        private val MET = AttributeKey<Boolean>(persistenceKey = "ironman_tutor_adam_met")
     }
 }

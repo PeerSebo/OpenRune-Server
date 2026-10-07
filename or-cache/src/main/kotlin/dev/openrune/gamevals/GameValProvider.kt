@@ -6,8 +6,14 @@ import dev.openrune.definition.constants.UnassignedGameVal
 import dev.openrune.definition.constants.use
 import dev.openrune.rscm.RSCMType
 import java.io.File
+import java.io.IOException
 import java.io.InputStream
+import java.nio.file.FileVisitResult
+import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
+import java.nio.file.SimpleFileVisitor
+import java.nio.file.attribute.BasicFileAttributes
 import kotlin.io.use
 
 class GameValProvider : MutableMappingProvider {
@@ -27,7 +33,9 @@ class GameValProvider : MutableMappingProvider {
         fun sourceFiles(rootDir: String): Array<File> =
             arrayOf(
                 Paths.get("${rootDir}.data", "gamevals-binary", "gamevals.dat").toFile(),
-                Paths.get("${rootDir}.data", "gamevals-binary", GeneratedGameVals.FILE_NAME).toFile(),
+                Paths.get("${rootDir}.data", "gamevals-binary", GeneratedGameVals.FILE_NAME).toFile()
+                    .takeIf { it.isFile }
+                    ?: Paths.get("${rootDir}.data", "gamevals-binary", "gamevals_columns.dat").toFile(),
                 Paths.get("${rootDir}content").toFile(),
                 Paths.get("${rootDir}api").toFile(),
                 Paths.get("${rootDir}.data", "gamevals").toFile(),
@@ -52,6 +60,13 @@ class GameValProvider : MutableMappingProvider {
         unassigned.clear()
 
         decodeGameValDat(files[0])
+        // Native scripts name otherwise unnamed varps with this same fallback.
+        mappings["varp"]?.let { table ->
+            val named = table.values.toSet()
+            for (id in 0..(maxBaseID["varp"] ?: -1)) {
+                if (id !in named) table["varp.varplayer_$id"] = id
+            }
+        }
 
         generatedFile = files.getOrNull(1)
         generatedFile?.takeIf { it.exists() }?.let { decodeGameValDat(it, updateMaxBaseId = false) }
@@ -61,13 +76,23 @@ class GameValProvider : MutableMappingProvider {
         val gamevalsDir = files.getOrNull(4)?.takeIf { it.exists() && it.isDirectory }
 
         listOfNotNull(contentDir, apiDir).forEach { dir ->
-            dir.walk()
-                .filter {
-                    it.isFile &&
-                        it.name == "gamevals.toml" &&
-                        !it.isGeneratedOutputPath()
+            val sourceRoot = dir.toPath()
+            Files.walkFileTree(sourceRoot, object : SimpleFileVisitor<Path>() {
+                override fun preVisitDirectory(path: Path, attrs: BasicFileAttributes): FileVisitResult =
+                    if (sourceRoot.relativize(path).isGeneratedOutputPath()) FileVisitResult.SKIP_SUBTREE else FileVisitResult.CONTINUE
+
+                override fun visitFile(path: Path, attrs: BasicFileAttributes): FileVisitResult {
+                    if (attrs.isRegularFile && path.fileName.toString() == "gamevals.toml") {
+                        processGameValToml(path.toFile())
+                    }
+                    return FileVisitResult.CONTINUE
                 }
-                .forEach(::processGameValToml)
+
+                override fun visitFileFailed(path: Path, exc: IOException): FileVisitResult {
+                    if (sourceRoot.relativize(path).isGeneratedOutputPath()) return FileVisitResult.CONTINUE
+                    throw exc
+                }
+            })
         }
 
         gamevalsDir?.walk()
@@ -285,7 +310,10 @@ class GameValProvider : MutableMappingProvider {
                 val (key, value) = parseRSCMV2Line(line, lineNumber + 1)
                 putMapping(table, key, value, file)
             } catch (e: Exception) {
-                throw IllegalArgumentException("Failed to parse line ${lineNumber + 1} in ${file.name}: '$line'", e)
+                throw IllegalArgumentException(
+                    "Failed to parse line ${lineNumber + 1} in ${file.name}: '$line'",
+                    e,
+                )
             }
         }
     }
@@ -325,7 +353,7 @@ class GameValProvider : MutableMappingProvider {
         tableMappings.entries.find { it.value == value }?.let { existing ->
             throw IllegalArgumentException(
                 "Mapping conflict in table '$table': value '$value' is already mapped to key " +
-                    "'${existing.key}'. Values must be unique."
+                "'${existing.key}' (attempted '$fullKey'). Values must be unique."
             )
         }
 
@@ -333,24 +361,32 @@ class GameValProvider : MutableMappingProvider {
         remember()
     }
 
-    private fun parseRSCMV2Line(line: String, lineNumber: Int): Pair<String, Int> = when {
-        line.contains("=") -> {
-            val parts = line.split("=")
-            require(parts.size == 2) { "Invalid line format at $lineNumber: '$line'. Expected 'key=value'" }
-            parts[0].trim() to parts[1].trim().toInt()
+    private fun parseRSCMV2Line(line: String, lineNumber: Int): Pair<String, Int> =
+        when {
+            line.contains("=") -> {
+                val parts = line.split("=")
+                require(parts.size == 2) {
+                    "Invalid line format at $lineNumber: '$line'. Expected 'key=value'"
+                }
+                parts[0].trim() to parts[1].trim().toInt()
+            }
+            line.contains(":") -> {
+                val parts = line.split(":")
+                require(parts.size == 2) {
+                    "Invalid sub-property format at $lineNumber: '$line'. Expected 'key:subprop=value'"
+                }
+                val key = parts[0].trim()
+                val valueParts = parts[1].trim().split("=")
+                require(valueParts.size == 2) {
+                    "Invalid sub-property value format at $lineNumber: '${parts[1]}'"
+                }
+                key to valueParts[1].trim().toInt()
+            }
+            else ->
+                throw IllegalArgumentException(
+                    "Invalid line format at $lineNumber: '$line'. Expected 'key=value' or 'key:subprop=value'"
+                )
         }
-        line.contains(":") -> {
-            val parts = line.split(":")
-            require(parts.size == 2) { "Invalid sub-property format at $lineNumber: '$line'. Expected 'key:subprop=value'" }
-            val key = parts[0].trim()
-            val valueParts = parts[1].trim().split("=")
-            require(valueParts.size == 2) { "Invalid sub-property value format at $lineNumber: '${parts[1]}'" }
-            key to valueParts[1].trim().toInt()
-        }
-        else -> throw IllegalArgumentException(
-            "Invalid line format at $lineNumber: '$line'. Expected 'key=value' or 'key:subprop=value'"
-        )
-    }
 
     private fun decodeGameValDat(datFile: File, updateMaxBaseId: Boolean = true) {
         GameValDat.read(datFile).forEach { (tableName, entries) ->
@@ -386,10 +422,9 @@ class GameValProvider : MutableMappingProvider {
     }
 }
 
-private fun File.isGeneratedOutputPath(): Boolean {
-    val normalized = invariantSeparatorsPath
-    return "/build/" in normalized || "/out/" in normalized || "/target/" in normalized
-}
+private fun Path.isGeneratedOutputPath(): Boolean = any { it.toString() in GENERATED_DIRECTORIES }
+
+private val GENERATED_DIRECTORIES = setOf("build", "out", "target", ".gradle", ".git", "node_modules")
 
 private fun File.lineSeparator(): String =
     if (exists() && readText().contains("\r\n")) "\r\n" else "\n"

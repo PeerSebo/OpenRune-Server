@@ -70,4 +70,4 @@ public val lavaStrykewyrmDropTable: RSDropTable<Player, DropRollItem> = RSDropTa
     },
 )
 
-// Unknown wiki drop rates (text rarity — need data collection):
+// TODO: Resolve the unquantified drop rates below.

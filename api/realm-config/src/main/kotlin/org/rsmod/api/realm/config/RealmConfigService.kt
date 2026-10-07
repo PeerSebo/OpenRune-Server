@@ -27,14 +27,9 @@ constructor(
         }
         realm.updateConfig(config)
         clearGhostOnlineSessions(worldId)
-        logger.info { "Loaded world $worldId configuration: $config" }
+        logger.debug { "Loaded world $worldId configuration: $config" }
     }
 
-    /**
-     * Clears stale `account_characters.online_*` rows for this JVM's world id after an unclean shutdown.
-     * Runs here (not in [org.rsmod.api.db.jdbc.GameDatabaseService]) so [Realm.config] is initialized
-     * and the configured [worldId][ServerConfig.world] is known.
-     */
     private suspend fun clearGhostOnlineSessions(gameWorldId: Int) {
         try {
             database.withTransaction { connection ->

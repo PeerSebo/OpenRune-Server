@@ -2,4 +2,4 @@
 sleep = 65529
 
 [gamevals.synth]
-underwall_tunnel_crawl = 2452
+CLIMB_UNDER = 2452

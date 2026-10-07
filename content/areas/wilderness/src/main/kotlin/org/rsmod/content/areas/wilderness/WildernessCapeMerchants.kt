@@ -7,7 +7,6 @@ import org.rsmod.api.script.onOpNpc1
 import org.rsmod.api.script.onOpNpc3
 import org.rsmod.api.shops.Shops
 import org.rsmod.game.entity.Npc
-import org.rsmod.game.entity.Player
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
@@ -27,7 +26,6 @@ class WildernessCapeMerchants @Inject constructor(private val shops: Shops) : Pl
             }
             shopKeeper(npc)
         }
-
 
     private suspend fun Dialogue.shopKeeper(npc: Npc) {
         val choice = choice3(

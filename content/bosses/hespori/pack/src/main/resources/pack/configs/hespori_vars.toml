@@ -1,0 +1,53 @@
+[[varp]]
+isServerOnly = true
+id = "varp.hespori_state"
+scope = "Perm"
+transmit = "Never"
+
+[[varp]]
+isServerOnly = true
+id = "varp.hespori_planted_minute"
+scope = "Perm"
+transmit = "Never"
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.hespori_rake_progress"
+varp = "varp.hespori_state"
+startBit = 0
+endBit = 1
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.hespori_defeated"
+varp = "varp.hespori_state"
+startBit = 2
+endBit = 2
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.hespori_in_arena"
+varp = "varp.hespori_state"
+startBit = 3
+endBit = 3
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.hespori_reclaim_paid"
+varp = "varp.hespori_state"
+startBit = 4
+endBit = 4
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.hespori_planted"
+varp = "varp.hespori_state"
+startBit = 5
+endBit = 5
+
+[[varbit]]
+isServerOnly = true
+id = "varbit.hespori_state_migrated"
+varp = "varp.hespori_state"
+startBit = 6
+endBit = 6

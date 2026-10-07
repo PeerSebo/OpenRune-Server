@@ -41,7 +41,6 @@ constructor(private val eventBus: EventBus, private val protectedAccess: Protect
             return
         }
 
-        // No need to verify again if both objs belong to the same interface.
         val skipTargetVerification = selectedInterface.isType(targetInterface)
         if (!skipTargetVerification) {
             val isTargetOpenedModal = ui.containsModal(targetInterface)

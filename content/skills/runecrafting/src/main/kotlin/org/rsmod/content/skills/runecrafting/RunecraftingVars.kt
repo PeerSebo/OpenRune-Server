@@ -14,8 +14,15 @@ internal var Player.largePouchDegradeThreshold by intVarp("varp.rcu_pouch_degrad
 
 internal var Player.giantPouchDegradeThreshold by intVarp("varp.rcu_pouch_degradation_giant")
 
-internal var Player.colossalPouchDegradeThreshold by intVarBit("varbit.rcu_pouch_degradation_colossal")
+internal var Player.colossalPouchDegradeThreshold by
+    intVarBit("varbit.rcu_pouch_degradation_colossal")
 
 internal var Player.magicImbueActive by intVarBit("varbit.magic_imbue_active")
 
-internal var Player.cordeliaPouchRepairUnlocked by intVarBit("varbit.cordelia_pouch_repair_unlocked")
+internal var Player.cordeliaPouchRepairUnlocked by
+    intVarBit("varbit.cordelia_pouch_repair_unlocked")
+
+// Varp 492 drives both miniquest access and the Mage's visible multinpc child.
+internal var Player.abyssalMiniquestStage by intVarp("varp.abyssal_miniquest")
+
+internal const val ABYSS_MINIQUEST_STAGE_COMPLETE = 4

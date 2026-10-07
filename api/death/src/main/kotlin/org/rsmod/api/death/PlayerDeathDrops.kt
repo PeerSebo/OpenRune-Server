@@ -3,6 +3,7 @@ package org.rsmod.api.death
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import org.rsmod.api.config.refs.params
+import org.rsmod.api.death.grave.GraveManager
 import org.rsmod.api.market.MarketPrices
 import org.rsmod.api.player.SupplyItems
 import org.rsmod.api.player.hook.GroundItemDropContext
@@ -24,6 +25,8 @@ constructor(
     private val objRepo: ObjRepository,
     private val marketPrices: MarketPrices,
     private val groundItemDrops: GroundItemDropResolver,
+    private val graves: GraveManager,
+    private val itemStorageHooks: Set<PlayerDeathItemStorageHook> = emptySet(),
 ) {
     public fun selectDrops(
         player: Player,
@@ -135,37 +138,66 @@ constructor(
         result: DeathDropResult,
         handling: PlayerDeathHandling,
         coords: CoordGrid,
-    ) {
+    ): Boolean {
+        // Retrieval services commit persistent storage before carried items are removed. If a
+        // service rejects/throws before committing, the original inventories remain recoverable.
+        val storageItems = result.supplyPile + result.lostTradeable + result.lostUntradeable
+        val stored = storageItems.isNotEmpty() && itemStorageHooks.any { it.store(player, storageItems) }
         player.inv.fillNulls()
         player.worn.fillNulls()
+        player.rebuildAppearance()
 
         for (item in result.kept) {
             addToInvDirect(player, item)
+        }
+
+        if (stored) {
+            return false
         }
 
         for (item in result.supplyPile) {
             dropItem(player, item, coords, handling, receiver = null)
         }
 
-        for (item in result.lostTradeable) {
-            dropItem(player, item, coords, handling, handling.dropReceiver)
+        val graveBound = ArrayList<InvObj>()
+        val floorBound = ArrayList<InvObj>()
+
+        if (handling.gravestone) {
+            graveBound += result.lostTradeable
+        } else {
+            floorBound += result.lostTradeable
         }
 
         when (handling.untradeableHandling) {
             UntradeableHandling.DROP -> {
-                for (item in result.lostUntradeable) {
-                    dropItem(player, item, coords, handling, handling.dropReceiver)
+                if (handling.gravestone) {
+                    graveBound += result.lostUntradeable
+                } else {
+                    floorBound += result.lostUntradeable
                 }
             }
             UntradeableHandling.COINS -> {
                 if (result.coinsForKiller > 0) {
                     val count = result.coinsForKiller.coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
-                    dropItem(player, InvObj(COINS_OBJ, count), coords, handling, handling.dropReceiver)
+                    floorBound += InvObj(COINS_OBJ, count)
                 }
             }
             UntradeableHandling.DESTROY -> Unit
             UntradeableHandling.KEEP -> Unit
         }
+
+        var graveUsed = false
+        if (graveBound.isNotEmpty()) {
+            val overflow = graves.deposit(player, coords, graveBound)
+            graveUsed = overflow.size < graveBound.size
+            floorBound += overflow
+        }
+
+        for (item in floorBound) {
+            dropItem(player, item, coords, handling, handling.dropReceiver)
+        }
+
+        return graveUsed
     }
 
     private fun dropItem(

@@ -3,11 +3,11 @@ package dtx.impl.exhaustive
 import dtx.core.ArgMap
 import dtx.core.OnExhaust
 import dtx.core.Single
-import dtx.table.AbstractTableBuilder
 import dtx.impl.weighted.WeightedTable
 import dtx.impl.weighted.WeightedTableImpl
+import dtx.table.AbstractTableBuilder
 
-public abstract class ExhaustiveTableBuilder<T, R, Table: ExhaustiveTable<T, R>>: AbstractTableBuilder<
+public abstract class ExhaustiveTableBuilder<T, R, Table : ExhaustiveTable<T, R>> : AbstractTableBuilder<
         T,
         R,
         ExhaustiveRollable<T, R>,
@@ -48,7 +48,7 @@ public abstract class ExhaustiveTableBuilder<T, R, Table: ExhaustiveTable<T, R>>
     }
 }
 
-public open class UniformExhaustiveTableBuilder<T, R>: ExhaustiveTableBuilder<T, R, ExhaustiveTableImpl<T, R>>() {
+public open class UniformExhaustiveTableBuilder<T, R> : ExhaustiveTableBuilder<T, R, ExhaustiveTableImpl<T, R>>() {
 
     init {
         construct {
@@ -63,7 +63,7 @@ public open class UniformExhaustiveTableBuilder<T, R>: ExhaustiveTableBuilder<T,
     override val entries: MutableCollection<ExhaustiveRollable<T, R>> = mutableListOf()
 }
 
-public interface WeightedExhaustiveTable<T, R>: WeightedTable<T, R>, ExhaustiveTable<T, R> {
+public interface WeightedExhaustiveTable<T, R> : WeightedTable<T, R>, ExhaustiveTable<T, R> {
 
     public override val tableEntries: List<ExhaustiveRollable<T, R>>
 }
@@ -72,7 +72,7 @@ public open class WeightedExhaustiveTableImpl<T, R>(
     tableIdentifier: String,
     public override val tableEntries: List<ExhaustiveRollable<T, R>>,
     internal val hooks: ExhaustiveTableHooks<T, R>
-): WeightedExhaustiveTable<T, R>, WeightedTableImpl<T, R>(
+) : WeightedExhaustiveTable<T, R>, WeightedTableImpl<T, R>(
     tableIdentifier, tableEntries, hooks
 ) {
 
@@ -101,7 +101,7 @@ public open class WeightedExhaustiveTableImpl<T, R>(
     }
 }
 
-public open class WeightedExhaustiveTableBuilder<T, R>: ExhaustiveTableBuilder<T, R, WeightedExhaustiveTable<T, R>>() {
+public open class WeightedExhaustiveTableBuilder<T, R> : ExhaustiveTableBuilder<T, R, WeightedExhaustiveTable<T, R>>() {
 
     init {
         construct {
@@ -112,7 +112,6 @@ public open class WeightedExhaustiveTableBuilder<T, R>: ExhaustiveTableBuilder<T
             )
         }
     }
-
 }
 
 public fun <T, R> uniformExhaustiveTable(

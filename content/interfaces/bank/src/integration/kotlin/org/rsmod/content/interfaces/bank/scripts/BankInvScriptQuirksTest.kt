@@ -13,12 +13,6 @@ import org.rsmod.game.inv.InvObj
 /* Obj transaction system is not thread-safe. */
 @Execution(ExecutionMode.SAME_THREAD)
 @OptIn(UncheckedType::class)
-/*
- * These tests are designed to verify that the variety of bank quirks are functioning as expected.
- *
- * Though important for emulation purposes, if bank is ever re-written and purposefully changed,
- * some of these tests may become obsolete.
- */
 class BankInvScriptQuirksTest {
     @Test
     fun GameTestState.`withdraw un-certifiable obj as cert message`() =
@@ -83,7 +77,6 @@ class BankInvScriptQuirksTest {
     @Test
     fun GameTestState.`deposit over capacity message`() =
         runGameTest(BankInvScript::class) {
-            // Cert obj would uncert going from inv -> bank - easy solution is to filter them.
             val stackable = firstItemServerType { it.isStackable && !it.isCert }
             val bank = openBank(player)
             bank[0] = InvObj(stackable, 1000)
@@ -140,10 +133,6 @@ class BankInvScriptQuirksTest {
             assertMessageSent("Your items cannot be stored in the bank.")
         }
 
-    /*
-     * Dragging into "extended" slots (special slot that comes _after_ the last obj in a tab) will
-     * always act as an "insert-mode" drag (as opposed to swap-mode).
-     */
     @Test
     fun GameTestState.`drag into extended tab slots`() =
         runGameTest(BankInvScript::class) {
@@ -170,9 +159,6 @@ class BankInvScriptQuirksTest {
 
             val tab1ExtendedComsub = bank.size + bank_comsubs.tab_extended_slots_offset.first
 
-            // Dragging into extended slots should behave the same whether insertMode is on or off.
-            // That is to say, objs to the right of the `fromComsub` should be shifted to the left,
-            // and objs to the right of target slot should be shifted to the right.
             player.insertMode = false
             player.ifButtonD(
                 fromComponent = bank_components.main_inventory,
@@ -180,7 +166,6 @@ class BankInvScriptQuirksTest {
                 intoComsub = tab1ExtendedComsub,
             )
 
-            // Obj dragged into this tab should take up a new slot at the tail.
             val expectedTab1 =
                 listOf(
                     InvObj(1, 1),
@@ -191,7 +176,6 @@ class BankInvScriptQuirksTest {
                     InvObj(8, 1),
                 )
 
-            // Objs that came after the dragged obj should be shifted to the left.
             val expectedTab2 =
                 listOf(InvObj(6, 1), null, InvObj(7, 1), InvObj(9, 1), null, InvObj(10, 1))
 
@@ -203,12 +187,6 @@ class BankInvScriptQuirksTest {
             assertEquals(expectedTab2.size, player.bankTabSize2)
         }
 
-    /*
-     * Dragging into "extended" slots (special slot that comes _after_ the last obj in a tab) will
-     * always act as an "insert-mode" drag (as opposed to swap-mode).
-     *
-     * Having said that, they will similarly prioritize taking any empty slots within the tab.
-     */
     @Test
     fun GameTestState.`drag into extended tab slots taking empty slot`() =
         runGameTest(BankInvScript::class) {
@@ -236,9 +214,6 @@ class BankInvScriptQuirksTest {
 
             val tab1ExtendedComsub = bank.size + bank_comsubs.tab_extended_slots_offset.first
 
-            // Dragging into extended slots should behave the same whether insertMode is on or off.
-            // That is to say, objs to the right of the `fromComsub` should be shifted to the left,
-            // and objs to the right of target slot should be shifted to the right.
             player.insertMode = false
             player.ifButtonD(
                 fromComponent = bank_components.main_inventory,
@@ -246,7 +221,6 @@ class BankInvScriptQuirksTest {
                 intoComsub = tab1ExtendedComsub,
             )
 
-            // Obj dragged into this tab should occupy the previously-null slot.
             val expectedTab1 =
                 listOf(
                     InvObj(1, 1),
@@ -257,7 +231,6 @@ class BankInvScriptQuirksTest {
                     InvObj(5, 1),
                 )
 
-            // Objs that came after the dragged obj should be shifted to the left.
             val expectedTab2 =
                 listOf(InvObj(6, 1), null, InvObj(7, 1), InvObj(9, 1), null, InvObj(10, 1))
 
@@ -269,10 +242,6 @@ class BankInvScriptQuirksTest {
             assertEquals(expectedTab2.size, player.bankTabSize2)
         }
 
-    /*
-     * Attempting to drag an obj from a tab into the same tab will not work and is rejected, having
-     * the drag slot in bank inv resynced.
-     */
     @Test
     fun GameTestState.`drag into extended tab slot of same tab is rejected`() =
         runGameTest(BankInvScript::class) {
@@ -293,17 +262,11 @@ class BankInvScriptQuirksTest {
             tab1.toTypedArray().copyInto(bank.objs)
             player.bankTabSize1 = tab1.size
 
-            // As we are going to inspect the client input in the later assertions, we need
-            // to get rid of the `UpdateInvFull` that would be queued at this point from the
-            // initial `openBank` call. This would otherwise take priority over `UpdateInvPartial`
-            // packets that should be sent from the upcoming test.
+            // Discard the initial full inventory update so it cannot hide the partial resync under test.
             advance()
 
             val tab1ExtendedComsub = bank.size + bank_comsubs.tab_extended_slots_offset.first
 
-            // Dragging into extended slots should behave the same whether insertMode is on or off.
-            // That is to say, objs to the right of the `fromComsub` should be shifted to the left,
-            // and objs to the right of target slot should be shifted to the right.
             player.insertMode = false
             player.ifButtonD(
                 fromComponent = bank_components.main_inventory,
@@ -315,16 +278,9 @@ class BankInvScriptQuirksTest {
             assertEquals(tab1, bank.objs.copyOf(tab1.size).toList())
             assertEquals(tab1.size, player.bankTabSize1)
 
-            // The slot should be resynced when the drag attempt is rejected.
-            // Though `UpdateInvPartial` may have been triggered by another operation, we can make
-            // an educated guess that it came from the resync.
             assertTrue(client.anyOf<UpdateInvPartial> { it.inventoryId == bank.type.id })
         }
 
-    /*
-     * Shifting from e.g., tab 2 to tab 1, should always lead to the objs from and to the right of
-     * the target slot shifted one slot to the right.
-     */
     @Test
     fun GameTestState.`shift from higher to lower tab always shifts target tab objs to right`() =
         runGameTest(BankInvScript::class) {
@@ -353,8 +309,6 @@ class BankInvScriptQuirksTest {
 
             player.ifButtonD(bank_components.main_inventory, fromComsub = 9, intoComsub = 4)
 
-            // Objs from the target slot and to the right should shift to the right to make room
-            // for the dragged obj.
             val expectedTab1 =
                 listOf(
                     InvObj(1, 1),
@@ -366,7 +320,6 @@ class BankInvScriptQuirksTest {
                     InvObj(5, 1),
                 )
 
-            // Objs that came after the dragged obj should be shifted to the left.
             val expectedTab2 =
                 listOf(InvObj(6, 1), null, InvObj(7, 1), InvObj(9, 1), null, InvObj(10, 1))
 
@@ -378,10 +331,6 @@ class BankInvScriptQuirksTest {
             assertEquals(expectedTab2.size, player.bankTabSize2)
         }
 
-    /*
-     * Shifting from e.g., tab 1 to tab 2, should always lead to the objs from and to the right of
-     * the target slot shifted one slot to the right.
-     */
     @Test
     fun GameTestState.`shift from lower to higher tab always shifts target tab objs to right`() =
         runGameTest(BankInvScript::class) {
@@ -410,11 +359,8 @@ class BankInvScriptQuirksTest {
 
             player.ifButtonD(bank_components.main_inventory, fromComsub = 4, intoComsub = 9)
 
-            // Objs that came after the dragged obj should be shifted to the left.
             val expectedTab1 = listOf(InvObj(1, 1), InvObj(2, 1), InvObj(3, 1), null, InvObj(5, 1))
 
-            // Objs from the target slot and to the right should shift to the right to make room
-            // for the dragged obj.
             val expectedTab2 =
                 listOf(
                     InvObj(6, 1),
@@ -435,13 +381,6 @@ class BankInvScriptQuirksTest {
             assertEquals(expectedTab2.size, player.bankTabSize2)
         }
 
-    /*
-     * Shifting objs between slots in the same tab will shift the rest of the objs depending on the
-     * selected slot and the target slot.
-     *
-     * When selected slot is lower than target slot (going from left to right), the objs from and to
-     * the left of the target slot will shift to the left.
-     */
     @Test
     fun GameTestState.`shift within same tab from lower to higher slot shifts to left`() =
         runGameTest(BankInvScript::class) {
@@ -480,13 +419,6 @@ class BankInvScriptQuirksTest {
             assertEquals(expectedTab1, bank.objs.copyOf(expectedTab1.size).toList())
         }
 
-    /*
-     * Shifting objs between slots in the same tab will shift the rest of the objs depending on the
-     * selected slot and the target slot.
-     *
-     * When selected slot is higher than target slot (going from right to left), the objs from and
-     * to the right of the target slot will shift to the right.
-     */
     @Test
     fun GameTestState.`shift within same tab from higher to lower slot shifts to right`() =
         runGameTest(BankInvScript::class) {
@@ -525,10 +457,6 @@ class BankInvScriptQuirksTest {
             assertEquals(expectedTab1, bank.objs.copyOf(expectedTab1.size).toList())
         }
 
-    /*
-     * When new objs are deposited into a "focused" tab, the rest of the bank tabs are compressed.
-     * By new obj, this means that the obj is not already taking a slot within the bank.
-     */
     @Test
     fun GameTestState.`deposit new obj into focused tab compresses other tabs`() =
         runGameTest(BankInvScript::class) {
@@ -564,17 +492,12 @@ class BankInvScriptQuirksTest {
             check(bank[6] == InvObj(nonCert)) { "Unexpected deposit result: ${bank[3]}" }
 
             val expectedMainTab = listOf(InvObj(7, 1), InvObj(8, 1), InvObj(9, 1), InvObj(10, 1))
-            // Trim off 3 for the null slots that were compressed.
             val actualMainTab =
                 bank.objs.copyOfRange(tab1.size + 1, (tab1.size + 1) + mainTab.size - 3)
 
             assertEquals(expectedMainTab, actualMainTab.toList())
         }
 
-    /*
-     * When new objs are deposited into the main tab, the rest of the bank tabs stay as they were.
-     * By new obj, this means that the obj is not already taking a slot within the bank.
-     */
     @Test
     fun GameTestState.`deposit new obj into main tab does not compress other tabs`() =
         runGameTest(BankInvScript::class) {
@@ -609,15 +532,9 @@ class BankInvScriptQuirksTest {
             advance()
             check(bank[12] == InvObj(nonCert)) { "Unexpected deposit result: ${bank[12]}" }
 
-            // Tab1 should have stayed the same as it was on init.
             assertEquals(tab1, bank.objs.copyOf(tab1.size).toList())
         }
 
-    /*
-     * One of the more gimmicky behaviors: when shifting 2 or more slots, whether from left to right
-     * or right to left, all objs from the selected slot to the right will be shifted over to the
-     * left by one slot.
-     */
     @Test
     fun GameTestState.`shift 2+ slots in same tab shifts objs on the right side to the left`() =
         runGameTest(BankInvScript::class) {
@@ -632,27 +549,19 @@ class BankInvScriptQuirksTest {
 
             player.ifButtonD(bank_components.main_inventory, fromComsub = 5, intoComsub = 1)
 
-            // It may appear as if the dragged obj took the empty slot (slot 1), but what occurred
-            // is that the obj to the right (in slot 6) shifted to the left.
             val expectedTab1Pt1 = listOf(InvObj(1, 1), InvObj(2, 1), null, null, null, InvObj(3, 1))
 
             advance()
             assertEquals(expectedTab1Pt1, bank.objs.copyOf(expectedTab1Pt1.size).toList())
 
-            // Now drag the previously dragged obj back into the slot left of the last obj.
             player.ifButtonD(bank_components.main_inventory, fromComsub = 1, intoComsub = 4)
 
-            // Again, what happened is all objs from the right were shifted to the left by one slot.
             val expectedTab1Pt2 = listOf(InvObj(1, 1), null, null, InvObj(2, 1), InvObj(3, 1))
 
             advance()
             assertEquals(expectedTab1Pt2, bank.objs.copyOf(expectedTab1Pt2.size).toList())
         }
 
-    /*
-     * Unlike tabs 1-9, when an obj in main tab is shifted 2 or more slots, the rest of the objs
-     * stay as they were.
-     */
     @Test
     fun GameTestState.`shift 2+ slots in main tab does not shift rest of objs`() =
         runGameTest(BankInvScript::class) {
@@ -692,7 +601,6 @@ class BankInvScriptQuirksTest {
             advance()
             assertEquals(expectedMainTabPt1, bank.objs.copyOf(expectedMainTabPt1.size).toList())
 
-            // Ensure this is still the case when dragging from lower slot to higher slot.
             player.ifButtonD(bank_components.main_inventory, fromComsub = 2, intoComsub = 6)
 
             val expectedTab1Pt2 =

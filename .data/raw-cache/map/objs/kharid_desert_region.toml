@@ -1,10 +1,8 @@
-## Al Kharid
 
 [[spawn]]
 obj = "obj.bucket_empty"
 coords = "0_51_49_43_59"
 
-## Al Kharid Buildings
 
 [[spawn]]
 obj = "obj.bodyrune"
@@ -22,7 +20,6 @@ coords = "0_51_49_38_34"
 obj = "obj.leather_boots"
 coords = "0_51_49_38_54"
 
-## Al Kharid Mine
 
 [[spawn]]
 obj = "obj.firerune"
@@ -34,7 +31,6 @@ obj = "obj.waterrune"
 coords = "0_51_51_34_52"
 count = 4
 
-## Desert Mining Camp
 
 [[spawn]]
 obj = "obj.beer"
@@ -52,7 +48,6 @@ coords = "1_51_47_27_25"
 obj = "obj.papyrus"
 coords = "1_51_47_26_25"
 
-## East Al Kharid
 
 [[spawn]]
 obj = "obj.beer_glass"
@@ -134,7 +129,6 @@ coords = "0_52_49_34_31"
 obj = "obj.wooden_shield"
 coords = "0_52_49_33_18"
 
-## Kharidian Desert
 
 [[spawn]]
 obj = "obj.bcs_bottle"
@@ -176,13 +170,11 @@ coords = "0_53_43_5_50"
 obj = "obj.shortbow"
 coords = "0_52_48_61_51"
 
-## Kharidian Desert Deep
 
 [[spawn]]
 obj = "obj.hammer"
 coords = "0_53_44_43_19"
 
-## Kharidian Desert Mid
 
 [[spawn]]
 obj = "obj.bucket_empty"
@@ -196,7 +188,6 @@ coords = "0_53_45_40_48"
 obj = "obj.elid_shoes"
 coords = "0_53_45_47_33"
 
-## Necropolis
 
 [[spawn]]
 obj = "obj.bronze_pickaxe"
@@ -279,7 +270,6 @@ coords = "0_51_42_59_45"
 obj = "obj.woodplank"
 coords = "0_52_42_24_59"
 
-## Pvp Arena
 
 [[spawn]]
 obj = "obj.bronze_axe"
@@ -316,7 +306,6 @@ obj = "obj.coins"
 coords = "0_52_50_42_31"
 count = 2
 
-## River Elid
 
 [[spawn]]
 obj = "obj.beer_glass"
@@ -334,7 +323,6 @@ coords = "0_52_48_32_35"
 obj = "obj.bucket_empty"
 coords = "0_52_46_23_22"
 
-## Ruins Of Unkah
 
 [[spawn]]
 obj = "obj.fishing_rod"
@@ -364,19 +352,16 @@ coords = "0_49_44_33_20"
 obj = "obj.water_skin0"
 coords = "0_49_44_36_41"
 
-## Sophanem
 
 [[spawn]]
 obj = "obj.ics_little_bookofembalming"
 coords = "1_51_43_23_2"
 
-## Sorceress Garden House
 
 [[spawn]]
 obj = "obj.bronze_mace"
 coords = "0_51_49_56_1"
 
-## Uzer Oasis
 
 [[spawn]]
 obj = "obj.cup_of_tea"
@@ -393,6 +378,3 @@ coords = "0_54_47_29_48"
 [[spawn]]
 obj = "obj.jug_wine"
 coords = "0_54_47_55_41"
-
-## Uzer Oasis End
-

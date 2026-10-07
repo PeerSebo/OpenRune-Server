@@ -3,12 +3,14 @@ package org.rsmod.content.quest.manager
 import dev.openrune.rscm.RSCM
 import dev.openrune.rscm.RSCMType
 import org.rsmod.api.player.protect.ProtectedAccess
-import org.rsmod.api.player.vars.VarPlayerIntMapSetter
 import org.rsmod.api.script.onPlayerLogin
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
-enum class JournalState { OVERVIEW, LOG }
+enum class JournalState {
+    OVERVIEW,
+    LOG,
+}
 
 enum class QuestProgressState {
     NOT_STARTED,
@@ -34,15 +36,15 @@ enum class QuestProgressState {
     }
 }
 
-@DslMarker
-annotation class QuestJournalDsl
+@DslMarker annotation class QuestJournalDsl
 
 data class QuestReward(
     val xp: Map<String, Double> = emptyMap(),
-    val items: List<Pair<String, Int>> = emptyList(),
-    val extraText: String? = null,
-    val itemLabels: Map<String, String> = emptyMap()
+    val items: List<QuestRewardItem> = emptyList(),
+    val extraLines: List<String> = emptyList(),
 )
+
+data class QuestRewardItem(val item: String, val amount: Int, val label: String? = null)
 
 @QuestJournalDsl
 fun rewards(builder: QuestRewardBuilder.() -> Unit): QuestReward {
@@ -52,34 +54,33 @@ fun rewards(builder: QuestRewardBuilder.() -> Unit): QuestReward {
 @QuestJournalDsl
 class QuestRewardBuilder {
     private val _xp = mutableMapOf<String, Double>()
-    private val _items = mutableListOf<Pair<String, Int>>()
-    private val _itemLabels = mutableMapOf<String, String>()
-    private var _extraText: String? = null
+    private val _items = mutableListOf<QuestRewardItem>()
+    private val _extraLines = mutableListOf<String>()
 
     fun xp(skill: String, amount: Double) {
         _xp[skill] = amount
     }
 
     fun item(id: String, amount: Int = 1, label: String? = null) {
-        if (label != null) _itemLabels[id] = label
-        _items.add(id to amount)
+        _items.add(QuestRewardItem(id, amount, label))
     }
 
     fun extra(text: String) {
-        _extraText = text
+        _extraLines += text
     }
 
-    fun build(): QuestReward = QuestReward(_xp, _items, _extraText, _itemLabels)
+    fun build(): QuestReward = QuestReward(_xp, _items, _extraLines)
 }
 
+// Supply questVarbit when the backing varp contains fields besides the stage.
 abstract class QuestScript(
     val questKey: String,
     val questVarp: String,
     val rewards: QuestReward,
-    val completedQuestItemDisplay: ItemRewardDisplay,
+    val completedQuestItemDisplay: ItemRewardDisplay? = null,
     val questVarbit: String? = null,
-    val closeDialogue: QuestClose = QuestClose.OnFinished,
-    val closeScroll: QuestClose = QuestClose.Never,
+    val completionJingle: Int? = null,
+    val completionJingleLength: Int = 0,
 ) : PluginScript() {
 
     val quest =
@@ -89,8 +90,8 @@ abstract class QuestScript(
             completedQuestItemDisplay,
             rewards,
             questVarbit,
-            closeDialogue,
-            closeScroll,
+            completionJingle,
+            completionJingleLength,
         )
 
     abstract fun subTitle(): String
@@ -104,6 +105,13 @@ abstract class QuestScript(
     override fun ScriptContext.startup() {
         RSCM.requireRSCM(RSCMType.DBROW, "dbrow.${questKey}")
 
+        val stageVarbit = questVarbit
+        if (stageVarbit != null) {
+            RSCM.requireRSCM(RSCMType.VARBIT, stageVarbit)
+        }
+        quest.assertStageVarResolves()
+        quest.assertFieldsResolve()
+
         QuestJournalRegistry.register(
             quest,
             QuestJournalContent(
@@ -114,7 +122,8 @@ abstract class QuestScript(
         )
 
         onPlayerLogin {
-            VarPlayerIntMapSetter.set(player, questVarbit ?: questVarp, quest.getQuestStage(player))
+            quest.migrateFields(player)
+            quest.syncStageVar(player)
         }
 
         this.init()
@@ -122,11 +131,11 @@ abstract class QuestScript(
 
     protected fun questJournal(
         player: ProtectedAccess,
-        builder: QuestJournalBuilder.() -> Unit
+        builder: QuestJournalBuilder.() -> Unit,
     ): String = buildQuestJournal(player, quest, builder)
 
     protected fun completionJournal(
         player: ProtectedAccess,
-        builder: QuestJournalBuilder.() -> Unit
+        builder: QuestJournalBuilder.() -> Unit,
     ): String = buildCompletionJournal(player, quest, builder)
 }

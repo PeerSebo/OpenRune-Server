@@ -13,92 +13,11 @@ class WizardsTowerNpcs : PluginScript() {
     private var Player.rickOpenedShop by intVarBit("varbit.rick_has_opened_shop")
 
     override fun ScriptContext.startup() {
-        onOpNpc1("npc.traiborn") { startDialogue(it.npc) { traiborn() } }
         onOpNpc1("npc.armourmaking_wizard") { startDialogue(it.npc) { jalarast() } }
         onOpNpc3("npc.armourmaking_wizard") { startDialogue(it.npc) { jalarastShop() } }
         onOpNpc1("npc.telecrystal_wizard") { startDialogue(it.npc) { rick() } }
         onOpNpc3("npc.telecrystal_wizard") { startDialogue(it.npc) { buyCrystals() } }
         onOpNpc1("npc.aluft_gnome_mage") { startDialogue(it.npc) { onglewip() } }
-    }
-
-    private suspend fun Dialogue.traiborn() {
-        chatNpc(confused, "Ello young thingummywut.")
-        val topic =
-            menu(
-                "What's a thingummywut?" to 0,
-                "Teach me to be a mighty and powerful wizard." to 1,
-                "I'd better go." to 2,
-            )
-        when (topic) {
-            0 -> {
-                chatPlayer(quiz, "What's a thingummywut?")
-                chatNpc(confused, "A thingummywut? Where? Where?")
-                chatNpc(
-                    confused,
-                    "Those pesky thingummywuts. They get everywhere. They leave a terrible mess too.",
-                )
-                val next =
-                    menu(
-                        "Err you just called me a thingummywut." to true,
-                        "Tell me what they look like and I'll mash 'em." to false,
-                    )
-                if (next) {
-                    chatPlayer(confused, "Err you just called me thingummywut.")
-                    chatNpc(
-                        happy,
-                        "You're a thingummywut? I've never seen one up close before. They said I " +
-                            "was mad!",
-                    )
-                    chatNpc(
-                        happy,
-                        "Now you are my proof! There ARE thingummywuts in this tower. Now where can " +
-                            "I find a cage big enough to keep you?",
-                    )
-                    if (menu("Err I'd better be off really." to true, "They're right, you are mad." to false)) {
-                        chatPlayer(confused, "Err I'd better be off really.")
-                        chatNpc(
-                            happy,
-                            "Oh ok, have a good time, and watch out for sheep! They're more cunning " +
-                                "than they look.",
-                        )
-                    } else {
-                        chatPlayer(neutral, "They're right, you are mad.")
-                        chatNpc(sad, "That's a pity. I thought maybe they were winding me up.")
-                    }
-                } else {
-                    chatPlayer(angry, "Tell me what they look like and I'll mash 'em.")
-                    chatNpc(neutral, "Don't be ridiculous. No-one has ever seen one.")
-                    chatNpc(
-                        confused,
-                        "They're invisible, or a myth, or a figment of my imagination. Can't " +
-                            "remember which right now.",
-                    )
-                }
-            }
-            1 -> {
-                chatPlayer(quiz, "Teach me to be a mighty and powerful wizard.")
-                chatNpc(
-                    neutral,
-                    "Wizard eh? You don't want any truck with that sort. They're not to be trusted. " +
-                        "That's what I've heard anyways.",
-                )
-                if (menu("So aren't you a wizard?" to true, "Oh I'd better stop talking to you then." to false)) {
-                    chatPlayer(quiz, "So aren't you a wizard?")
-                    chatNpc(
-                        angry,
-                        "How dare you? Of course I'm a wizard. Now don't be so cheeky or I'll turn " +
-                            "you into a frog.",
-                    )
-                } else {
-                    chatPlayer(neutral, "Oh I'd better stop talking to you then.")
-                    chatNpc(happy, "Cheerio then. It was nice chatting to you.")
-                }
-            }
-            else -> {
-                chatPlayer(confused, "I'd better go.")
-                chatNpc(happy, "Cheerio then.")
-            }
-        }
     }
 
     private suspend fun Dialogue.jalarast() {

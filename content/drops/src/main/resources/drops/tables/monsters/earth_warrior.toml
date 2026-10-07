@@ -83,6 +83,3 @@ numerator = 1
 denominator = 5000
 obj = "obj.champions_challenge_earthwarrior"
 count = 1
-
-
-# Main table pool padding uses a nothing roll (F2P drops removed and/or subtable access missing from wiki parse) (18 weight)

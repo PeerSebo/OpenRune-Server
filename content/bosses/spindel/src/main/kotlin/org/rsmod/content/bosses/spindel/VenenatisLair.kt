@@ -69,7 +69,7 @@ constructor(private val playerList: PlayerList) : PluginScript() {
     }
 
     private fun ProtectedAccess.peekLair(entry: Entry) {
-        val count = playerList.count { entry.cfg.contains(it.coords) }
+        val count = playerList.count { !it.staffInvisible && entry.cfg.contains(it.coords) }
         if (count == 0) {
             player.mes("The lair is currently empty.")
         } else {

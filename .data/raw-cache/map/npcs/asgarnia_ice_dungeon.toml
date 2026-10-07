@@ -1,4 +1,3 @@
-## Asgarnia Ice Dungeon Normal
 
 [[spawn]]
 npc = "npc.hobgoblin_armed"
@@ -80,7 +79,6 @@ coords = "0_46_149_55_48"
 npc = "npc.pirate_aggressive"
 coords = "0_46_149_56_43"
 
-## Asgarnia Ice Dungeon Snowy
 
 [[spawn]]
 npc = "npc.icegiant_low_wanderrange"
@@ -233,6 +231,3 @@ coords = "0_47_149_50_22"
 [[spawn]]
 npc = "npc.wyvern_cave_pieve"
 coords = "0_47_149_52_23"
-
-## Asgarnia Ice Dungeon Snowy End
-

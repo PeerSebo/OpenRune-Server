@@ -1,0 +1,77 @@
+[gamevals.varp]
+sailing_helm_interaction_world = 63760
+sailing_shipyard_return_coord = 63761
+sailing_shipyard_return_saved = 63762
+sailing_shipyard_return_migrated = 63763
+
+[gamevals.clientscript]
+sailing_port_task_board_init = 8912
+sailing_port_task_info_init = 8901
+sailing_log_init = 8658
+sailing_log_redraw = 8663
+sailing_log_hide_popup = 8709
+
+[gamevals.category]
+sailing_courier_cargo = 2294
+sailing_bounty_harvest = 2295
+sailing_shipwreck_salvage = 2296
+sailing_filled_fish_crate = 2289
+sailing_repair_kit = 2280
+
+[gamevals.dbtable]
+sailing_port_reward_anchors = 64700
+sailing_bounty_rewards = 64701
+sailing_courier_rewards = 64702
+
+[gamevals.dbrow]
+sailing_reward_anchor_port_sarim = 63370
+sailing_reward_anchor_the_pandemonium = 63371
+sailing_reward_anchor_lands_end = 63372
+sailing_reward_anchor_musa_point = 63373
+sailing_reward_anchor_catherby = 63374
+sailing_reward_anchor_port_piscarilius = 63375
+sailing_reward_anchor_brimhaven = 63376
+sailing_reward_anchor_port_khazard = 63377
+sailing_reward_anchor_civitas_illa_fortis = 63378
+sailing_reward_anchor_aldarin = 63379
+sailing_reward_anchor_port_roberts = 63380
+sailing_reward_anchor_prifddinas = 63381
+sailing_reward_anchor_rimmington = 63382
+sailing_reward_anchor_hosidius = 63383
+sailing_reward_anchor_ardougne = 63384
+sailing_reward_anchor_witchaven = 63385
+sailing_reward_anchor_entrana = 63386
+sailing_reward_anchor_corsair_cove = 63387
+sailing_reward_anchor_cairn_isle = 63388
+sailing_reward_anchor_sunset_coast = 63389
+sailing_reward_anchor_ruins_of_unkah = 63390
+sailing_reward_anchor_void_knights_outpost = 63391
+sailing_reward_anchor_rellekka = 63392
+sailing_reward_anchor_etceteria = 63393
+sailing_reward_anchor_port_tyras = 63394
+sailing_reward_anchor_jatizso = 63395
+sailing_reward_anchor_neitiznot = 63396
+sailing_reward_anchor_piscatoris = 63397
+sailing_reward_anchor_lunar_isle = 63398
+sailing_bounty_reward_bull_shark = 63399
+sailing_bounty_reward_sea_mogre = 63400
+sailing_bounty_reward_sea_mogre_f = 63401
+sailing_bounty_reward_osprey = 63402
+sailing_bounty_reward_tern = 63403
+sailing_bounty_reward_eagle_ray = 63404
+sailing_bounty_reward_hammerhead_shark = 63405
+sailing_bounty_reward_butterfly_ray = 63406
+sailing_bounty_reward_frigatebird = 63407
+sailing_bounty_reward_stingray = 63408
+sailing_bounty_reward_albatross = 63409
+sailing_bounty_reward_pygmy_kraken = 63410
+sailing_bounty_reward_tiger_shark = 63411
+sailing_bounty_reward_narwhal = 63412
+sailing_bounty_reward_manta_ray = 63413
+sailing_bounty_reward_spined_kraken = 63414
+sailing_bounty_reward_armoured_kraken = 63415
+sailing_bounty_reward_great_white_shark = 63416
+sailing_bounty_reward_orca = 63417
+sailing_bounty_reward_vampyre_kraken = 63418
+sailing_bounty_reward_veiled_kraken = 63419
+sailing_courier_reward_intro = 63420

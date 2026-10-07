@@ -1,0 +1,40 @@
+[gamevals.varp]
+rocky_following_obj = 63764
+rocky_following_migrated = 63765
+rocky_resync_follower = 63766
+blackjack_pickpockets_remaining = 63620
+blackjack_target_uid = 63621
+blackjack_expires_at = 63622
+
+[gamevals.dbtable]
+thieving_pickpockets = 63630
+
+[gamevals.dbrow]
+thieving_pickpocket_man_woman = 63180
+thieving_pickpocket_villager = 63181
+thieving_pickpocket_farmer = 63182
+thieving_pickpocket_ham_member = 63183
+thieving_pickpocket_warrior = 63184
+thieving_pickpocket_rogue = 63185
+thieving_pickpocket_cave_goblin = 63186
+thieving_pickpocket_master_farmer = 63187
+thieving_pickpocket_pirate = 63188
+thieving_pickpocket_guard = 63189
+thieving_pickpocket_ham_guard = 63190
+thieving_pickpocket_bearded_bandit = 63191
+thieving_pickpocket_wealthy_citizen = 63192
+thieving_pickpocket_desert_bandit = 63193
+thieving_pickpocket_knight_of_ardougne = 63194
+thieving_pickpocket_knight_of_varlamore = 63195
+thieving_pickpocket_pollnivnian_bandit = 63196
+thieving_pickpocket_yanille_watchman = 63197
+thieving_pickpocket_menaphite_thug = 63198
+thieving_pickpocket_paladin = 63199
+thieving_pickpocket_gnome = 63200
+thieving_pickpocket_hero = 63201
+thieving_pickpocket_vyre = 63202
+thieving_pickpocket_elf = 63203
+thieving_pickpocket_prifddinas_elf = 63204
+thieving_pickpocket_tzhaar_hur = 63205
+thieving_pickpocket_fremennik_citizen = 63206
+thieving_pickpocket_digsite_workman = 63207

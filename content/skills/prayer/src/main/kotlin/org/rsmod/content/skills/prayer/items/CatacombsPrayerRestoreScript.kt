@@ -5,7 +5,7 @@ import org.rsmod.api.area.checker.AreaChecker
 import org.rsmod.api.player.events.prayer.PrayerSkillAction
 import org.rsmod.api.player.events.skilling.SkillingActionCompleteEvent
 import org.rsmod.api.player.events.skilling.SkillingActionContext
-import org.rsmod.api.player.stat.statBoost
+import org.rsmod.api.player.stat.statHeal
 import org.rsmod.api.script.onEvent
 import org.rsmod.content.skills.prayer.PrayerBuryEvents
 import org.rsmod.plugin.scripts.PluginScript
@@ -24,7 +24,8 @@ class CatacombsPrayerRestoreScript @Inject constructor(private val areas: AreaCh
             }
             if (restore <= 0) return@onEvent
             if (!areas.inArea("area.catacombs_of_kourend", player.coords)) return@onEvent
-            player.statBoost("stat.prayer", restore, 0)
+            // Restore with statHeal; statBoost can exceed the base Prayer level.
+            player.statHeal("stat.prayer", restore, 0)
         }
     }
 }

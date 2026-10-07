@@ -1,6 +1,5 @@
 package org.rsmod.api.specials.weapon
 
-import dev.openrune.types.ItemServerType
 import org.rsmod.api.enums.SaEnums.sa_descriptions
 import org.rsmod.api.enums.SaEnums.sa_energy_requirements
 import org.rsmod.api.specials.energy.SpecialAttackEnergy
@@ -9,14 +8,6 @@ public class SpecialAttackWeapons() {
     private lateinit var energyRequirements: Map<Int, Int>
     private lateinit var descriptions: Map<Int, String>
 
-    /**
-     * Returns the special attack energy requirement for [objType] from the `energy_requirements`
-     * enum.
-     *
-     * @return the special attack energy requirement for [objType] in the range of `1` to
-     *   [MAX_ENERGY] (`1000`), or `null` if [objType] does not have an associated special attack.
-     * @see [loadEnergyRequirements]
-     */
     public fun getSpecialEnergy(objType: Int): Int? = energyRequirements[objType]
 
     public fun getSpecialDescription(objType: Int): String? = descriptions[objType]

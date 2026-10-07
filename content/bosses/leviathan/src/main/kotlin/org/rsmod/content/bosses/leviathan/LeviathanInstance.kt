@@ -11,6 +11,7 @@ import org.rsmod.api.bosses.runtime.encounter
 import org.rsmod.api.instances.BossInstanceRegistry
 import org.rsmod.api.instances.InstanceArea
 import org.rsmod.api.instances.InstanceEnterTransition
+import org.rsmod.api.instances.InstanceId
 import org.rsmod.api.instances.InstanceManager
 import org.rsmod.api.instances.InstanceScript
 import org.rsmod.api.instances.InstanceSession
@@ -51,6 +52,8 @@ internal constructor(registry: BossInstanceRegistry, private val fights: Leviath
             fights.placeArenaLocs(session)
             fights.ensureTails(session)
         }
+        onInstancePlayerLeave { fights.clearPendingSpawn(player) }
+        onInstanceEnded { fights.clearSessionTails(instanceId) }
 
         onOpLoc1(LeviathanArenaLocs.HANDHOLDS_ENTER_LOC) { climb(it.loc.coords.x) }
         onOpLoc1(LeviathanArenaLocs.HANDHOLDS_EXIT_LOC) { climb(it.loc.coords.x) }
@@ -168,6 +171,10 @@ constructor(
                 npc.faceSquare(faces)
                 npc
             }
+    }
+
+    fun clearSessionTails(instanceId: InstanceId) {
+        sessionTails.remove(instanceId.value)
     }
 
     companion object {

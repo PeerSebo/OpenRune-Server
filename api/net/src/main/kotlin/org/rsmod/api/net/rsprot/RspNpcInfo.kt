@@ -1,5 +1,6 @@
 package org.rsmod.api.net.rsprot
 
+import dev.openrune.types.NpcServerType
 import net.rsprot.protocol.game.outgoing.info.npcinfo.NpcAvatar
 import org.rsmod.api.net.rsprot.ext.setFaceTarget
 import org.rsmod.game.entity.npc.NpcInfoProtocol
@@ -9,6 +10,19 @@ import org.rsmod.game.headbar.Headbar
 import org.rsmod.game.hit.Hitmark
 
 class RspNpcInfo(val rspAvatar: NpcAvatar) : NpcInfoProtocol {
+    private var lifecycleInaccessible = false
+    private var staffFollowerHidden = false
+
+    /** A separate output gate so revealing staff cannot undo an NPC death/hide operation. */
+    internal fun setStaffFollowerHidden(hidden: Boolean) {
+        staffFollowerHidden = hidden
+        updateInaccessible()
+    }
+
+    private fun updateInaccessible() {
+        rspAvatar.setInaccessible(lifecycleInaccessible || staffFollowerHidden)
+    }
+
     override fun setSequence(seq: Int, delay: Int) {
         rspAvatar.extendedInfo.setSequence(seq, delay)
     }
@@ -21,12 +35,24 @@ class RspNpcInfo(val rspAvatar: NpcAvatar) : NpcInfoProtocol {
         rspAvatar.extendedInfo.setSay(text)
     }
 
-    override fun setFacePathingEntity(slot: Int) {
-        rspAvatar.extendedInfo.setFaceTarget(EntityFaceTarget(slot))
+    override fun setName(name: String?) {
+        rspAvatar.extendedInfo.setNameChange(name)
+    }
+
+    override fun setFacePathingEntity(slot: Int, fallbackAngle: Int) {
+        rspAvatar.extendedInfo.setFaceTarget(EntityFaceTarget(slot), fallbackAngle)
     }
 
     override fun setFaceAngle(angle: Int, instant: Boolean) {
         rspAvatar.extendedInfo.setFaceAngle(angle, instant)
+    }
+
+    /**
+     * Write facing to the avatar so newly observing clients receive the spawn bearing, not only
+     * an extended-info update.
+     */
+    override fun setDirection(direction: Int) {
+        rspAvatar.setDirection(direction)
     }
 
     override fun setTransmog(type: Int) {
@@ -39,12 +65,32 @@ class RspNpcInfo(val rspAvatar: NpcAvatar) : NpcInfoProtocol {
         rspAvatar.extendedInfo.setTransmogrification(originalType)
     }
 
-    override fun setBodyModel(model: Int) {
-        rspAvatar.extendedInfo.setBodyCustomisation(listOf(model), emptyList(), emptyList())
+    override fun setBaseAnimations(type: NpcServerType) {
+        // Missing animations must use the native fallback; 65535 is a literal sequence in this block.
+        rspAvatar.extendedInfo.resetBaseAnimationSet()
+        rspAvatar.extendedInfo.setBaseAnimationSet(
+            readyAnim = type.standAnim.baseAnimationOverride(),
+            turnLeftAnim = type.rotateLeftAnim.baseAnimationOverride(),
+            turnRightAnim = type.rotateRightAnim.baseAnimationOverride(),
+            walkAnim = type.walkAnim.baseAnimationOverride(),
+            walkAnimBack = type.rotateBackAnim.baseAnimationOverride(),
+            walkAnimLeft = type.walkLeftAnim.baseAnimationOverride(),
+            walkAnimRight = type.walkRightAnim.baseAnimationOverride(),
+            runAnim = type.runSequence.baseAnimationOverride(),
+            runAnimBack = type.runBackSequence.baseAnimationOverride(),
+            runAnimLeft = type.runLeftSequence.baseAnimationOverride(),
+            runAnimRight = type.runRightSequence.baseAnimationOverride(),
+            crawlAnim = type.crawlSequence.baseAnimationOverride(),
+            crawlAnimBack = type.crawlBackSequence.baseAnimationOverride(),
+            crawlAnimLeft = type.crawlLeftSequence.baseAnimationOverride(),
+            crawlAnimRight = type.crawlRightSequence.baseAnimationOverride(),
+        )
     }
 
-    override fun setBodyModels(models: List<Int>) {
-        rspAvatar.extendedInfo.setBodyCustomisation(models, emptyList(), emptyList())
+    private fun Int.baseAnimationOverride(): Int = if (this in 0 until 65535) this else Int.MIN_VALUE
+
+    override fun setBodyModel(model: Int) {
+        rspAvatar.extendedInfo.setBodyCustomisation(listOf(model), emptyList(), emptyList())
     }
 
     override fun setBodyRecolours(recolours: List<Int>) {
@@ -127,15 +173,18 @@ class RspNpcInfo(val rspAvatar: NpcAvatar) : NpcInfoProtocol {
     }
 
     override fun disable() {
-        rspAvatar.setInaccessible(true)
+        lifecycleInaccessible = true
+        updateInaccessible()
     }
 
     override fun hide() {
-        rspAvatar.setInaccessible(true)
+        lifecycleInaccessible = true
+        updateInaccessible()
     }
 
     override fun reveal() {
-        rspAvatar.setInaccessible(false)
+        lifecycleInaccessible = false
+        updateInaccessible()
     }
 
     override fun isActive(): Boolean {

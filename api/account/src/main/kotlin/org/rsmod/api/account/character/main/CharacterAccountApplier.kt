@@ -28,7 +28,8 @@ public class CharacterAccountApplier @Inject constructor() :
         player.trustedDevices = d.trustedDevices.toMutableList()
         player.twoFactorAuth = d.twoFactorAuth
         player.lastKnownDevice = d.trustedDevices.maxByOrNull { it.verifiedAt }?.deviceId
-        player.members = c.members
+        // Membership enables client spell checks for rune pouches and combination runes.
+        player.members = true
         player.username = d.accountName
         player.displayName = c.displayName ?: ""
         player.previousDisplayName = c.previousDisplayName ?: ""

@@ -17,38 +17,29 @@ class RegionRepositoryTest {
         check(region.slot != -1)
         check(npc.isValidTarget())
 
-        // Place the player in the region to avoid it from being deleted.
         player.placeAt(region.southWest)
-        // Move the npc one zone to the right to test respawning in different zones.
         npc.telejump(deathCoord)
 
-        // Despawn the npc in the next cycle.
         advance(ticks = 1)
         npcRepo.despawn(npc, man.respawnRate)
 
-        // Ensure npc is despawned, but can still be found through `findAll`.
         advance(ticks = 1)
         assertFalse(npc.isValidTarget())
         assertEquals(npc, npcRepo.findAll(deathCoord).single())
 
-        // Move the player out of the region so it can be deleted.
         player.telejump(CoordGrid(0, 50, 50, 0, 0))
 
-        // Delete inactive regions after the player has teleported out of the region.
         advance(ticks = 1)
         check(!npc.isValidTarget()) { "Expected npc to be mid-respawn. (npc=$npc)" }
         check(npc.isSlotAssigned) { "Expected npc to still have a slot assigned. (npc=$npc)" }
         removeInactiveRegions()
 
-        // Once the region is deleted, the npc should have been deleted as well even though it was
-        // "hidden" and in the middle of a respawn state.
         advance(ticks = 1)
         check(region.slot == -1) { "Expected region to be deleted. (region=$region)" }
         assertFalse(npc.isValidTarget())
         assertEquals(emptyList<Npc>(), npcRepo.findAll(deathCoord).toList())
         assertEquals(emptyList<Npc>(), npcRepo.findAll(npc.spawnCoords).toList())
 
-        // Ensure npc does not respawn into the region.
         advance(ticks = man.respawnRate)
         assertFalse(npc.isValidTarget())
         assertEquals(emptyList<Npc>(), npcRepo.findAll(deathCoord).toList())

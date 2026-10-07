@@ -11,7 +11,8 @@ import org.rsmod.api.random.GameRandom
 import org.rsmod.api.script.onEvent
 import org.rsmod.api.table.mining.MiningRocksRow
 import org.rsmod.content.skills.mining.configs.miningXp
-import org.rsmod.game.type.getInvObj
+import org.rsmod.content.skills.mining.lastMiningPickaxe
+import org.rsmod.content.skills.mining.preSmeltOre
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
@@ -70,14 +71,8 @@ class MiningProductPrepareScript @Inject constructor(private val random: GameRan
     }
 
     private fun SkillingProductPrepareEvent.applyInfernalSmelt() {
-        val hasInfernal =
-            product.player.worn.any {
-                it != null && getInvObj(it).internalName == "obj.infernal_pickaxe"
-            } ||
-                product.player.inv.any {
-                    it != null && getInvObj(it).internalName == "obj.infernal_pickaxe"
-                }
-        if (!hasInfernal) {
+        val activePickaxe = product.player.lastMiningPickaxe
+        if (activePickaxe != "obj.infernal_pickaxe") {
             return
         }
         if (random.of(3) != 0) {
@@ -85,6 +80,8 @@ class MiningProductPrepareScript @Inject constructor(private val random: GameRan
         }
         val bar = ORE_TO_BAR[product.item] ?: return
         val smithXp = BAR_SMITH_XP[bar] ?: return
+        // Preserve pre-smelt ore identity so same-action bonus drops award ore, not bars.
+        product.player.preSmeltOre = product.item
         product.item = bar
         product.count = 1
         product.player.statAdvance("stat.smithing", smithXp)
@@ -111,10 +108,12 @@ class MiningProductPrepareScript @Inject constructor(private val random: GameRan
                 "obj.enakh_granite_medium" to 75.0,
             )
 
+        // Infernal pickaxe XP uses its published table; it is not consistently half ordinary smelting XP.
         private val ORE_TO_BAR =
             mapOf(
                 "obj.copper_ore" to "obj.bronze_bar",
                 "obj.tin_ore" to "obj.bronze_bar",
+                "obj.blurite_ore" to "obj.blurite_bar",
                 "obj.iron_ore" to "obj.iron_bar",
                 "obj.silver_ore" to "obj.silver_bar",
                 "obj.gold_ore" to "obj.gold_bar",
@@ -125,13 +124,14 @@ class MiningProductPrepareScript @Inject constructor(private val random: GameRan
 
         private val BAR_SMITH_XP =
             mapOf(
-                "obj.bronze_bar" to 6.25,
-                "obj.iron_bar" to 12.5,
-                "obj.silver_bar" to 13.67,
-                "obj.gold_bar" to 22.5,
-                "obj.mithril_bar" to 30.0,
-                "obj.adamantite_bar" to 37.5,
-                "obj.runite_bar" to 50.0,
+                "obj.bronze_bar" to 3.6,
+                "obj.blurite_bar" to 4.0,
+                "obj.iron_bar" to 5.5,
+                "obj.silver_bar" to 5.5,
+                "obj.gold_bar" to 9.0,
+                "obj.mithril_bar" to 12.0,
+                "obj.adamantite_bar" to 18.75,
+                "obj.runite_bar" to 25.0,
             )
     }
 }

@@ -59,10 +59,7 @@ public object CacheVarAreaCodec : BaseIntVarCodec<AreaType>(AreaType::class) {
 }
 
 public object CacheVarCategoryCodec : BaseIntVarCodec<CategoryType>(CategoryType::class) {
-    // Note: Not every referenced category requires a symbol name. If a category is not
-    // found in the predefined list, we create a new `CategoryType`.
-    // This behavior may change in the future if we decide to enforce that every referenced
-    // category (e.g., in enum or param types) must have a defined symbol.
+    // Referenced categories may have no symbol; retain their numeric identity.
     override fun decode(value: Int): CategoryType = CategoryType(value)
 
     override fun encode(value: CategoryType): Int = value.id
@@ -185,10 +182,7 @@ public object CacheVarStatCodec : BaseIntVarCodec<StatType>(StatType::class) {
 }
 
 public object CacheVarSynthCodec : BaseIntVarCodec<SynthType>(SynthType::class) {
-    // Note: Not every referenced synth requires a symbol name. If a synth is not found in
-    // the predefined list, we create a new `SynthType`.
-    // This behavior may change in the future if we decide to enforce that every referenced
-    // synth (e.g., in enum or param types) must have a defined symbol.
+    // Referenced synths may have no symbol; retain their numeric identity.
     override fun decode(value: Int): SynthType = SynthType(value)
 
     override fun encode(value: SynthType): Int = value.id

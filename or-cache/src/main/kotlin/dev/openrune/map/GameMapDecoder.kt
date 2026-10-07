@@ -44,18 +44,8 @@ object GameMapDecoder {
     private const val BRIDGE_FLAG_LEVEL = 1
 
     /**
-     * Resolves the plane that content authored on [level] at ([x], [z]) actually occupies.
-     *
-     * A tile flagged LINK_BELOW draws - and therefore collides - one plane lower than authored.
-     * That is what puts you on top of a bridge deck instead of in the river beneath it, and what
-     * lets a staircase span from ground level up onto a raised platform.
-     *
-     * Returns `-1` when the result falls below ground. That is the filler underneath a bridge,
-     * which has nowhere to go, so callers must skip it rather than write it: [CollisionFlagMap]
-     * masks the plane with `(level and 0x3)`, so a negative plane silently wraps to 3.
-     *
-     * [putMaps] and [putLocs] must resolve identically. If they disagree, a square's tile collision
-     * and its loc collision land on different planes.
+     * LINK_BELOW shifts content down one plane. Skip negative results before collision indexing
+     * wraps them to plane 3; tile and loc resolution must agree.
      */
     private fun bridgeLevel(mapDef: MapTileSimpleDefinition, x: Int, z: Int, level: Int): Int {
         val flags = mapDef[x, z, BRIDGE_FLAG_LEVEL].toInt()
@@ -122,7 +112,13 @@ object GameMapDecoder {
         decodedMaps
             .map { decoded ->
                 async {
-                    putLocs(builder, MapSingletons.collision, decoded.key, decoded.map, decoded.locs)
+                    putLocs(
+                        builder,
+                        MapSingletons.collision,
+                        decoded.key,
+                        decoded.map,
+                        decoded.locs,
+                    )
                 }
             }
             .awaitAll()

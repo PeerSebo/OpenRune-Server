@@ -2,6 +2,8 @@ package org.rsmod.content.interfaces.collectionlog
 
 import dev.openrune.ServerCacheManager
 import dev.openrune.definition.type.VarBitType
+import dev.openrune.rscm.RSCM.asRSCM
+import dev.openrune.rscm.RSCMType
 import dev.openrune.types.enums.enum
 import dev.openrune.types.varp.VarpServerType
 import org.rsmod.api.table.CollectionLogCategoriesRow
@@ -18,13 +20,13 @@ internal object CollectionLogCategories {
 
     private const val TAB_STRUCT_BASE = 471
     private const val TAB_COUNT = 5
-    private const val TAB_CATEGORY_LIST_PARAM = 683
+    private const val TAB_CATEGORY_LIST_PARAM = "param.collection_category_sublist"
 
     private val structIdToTabComsub: Map<Int, Pair<Int, Int>> by lazy {
         val map = mutableMapOf<Int, Pair<Int, Int>>()
         for (tab in 0 until TAB_COUNT) {
             val tabStruct = ServerCacheManager.getStruct(TAB_STRUCT_BASE + tab) ?: continue
-            val enumId = tabStruct.params?.get(TAB_CATEGORY_LIST_PARAM) as? Int ?: continue
+            val enumId = tabStruct.params?.get(TAB_CATEGORY_LIST_PARAM.asRSCM(RSCMType.PARAM)) as? Int ?: continue
             val categoryStructIds = enum<Int, Int>(enumId).backing.toSortedMap().values
             categoryStructIds.filterNotNull().forEachIndexed { comsub, structId ->
                 map[structId] = tab to comsub

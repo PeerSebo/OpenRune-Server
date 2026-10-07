@@ -2,15 +2,12 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
-import org.rsmod.api.droptable.rsPlayerTertiaryTable
-import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.content.drops.tables.shared.SharedDropTables
 import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
 import org.rsmod.api.droptable.nothing
 import org.rsmod.api.droptable.ringNothing
-import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.api.droptable.rsPlayerWeightedTable
+import org.rsmod.content.drops.tables.shared.SharedDropTables
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -37,13 +34,12 @@ public val chasmCrawlerDropTable: RSDropTable<Player, DropRollItem> = RSDropTabl
         1 weight "obj.coins" count 10
         29 weight ringNothing()
         1 outOf 729 separate "obj.varlamore_key_half_1" count 1 condition { player ->
-            // Drops Need Manual: Only dropped by those found in the Ruins of Tapoyauik.
+            // TODO: Only dropped by those found in the Ruins of Tapoyauik.
              true
         }
 
         22 weight SharedDropTables.herb
         1 weight SharedDropTables.gem
-        // Pool padding (F2P drops removed / subtable access missing from wiki parse)
         26 weight nothing()
     },
 )

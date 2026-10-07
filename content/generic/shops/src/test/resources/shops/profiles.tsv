@@ -1,0 +1,33 @@
+0	profile.shayzien_armourshop	inv.generalshop1	npc.shayzien_armourshop	Blair's Armour	inv.generalshop1	1000	600	10	false	
+1	profile.shayzien_weaponshop	inv.generalshop1	npc.shayzien_weaponshop	Briget's Weapons	inv.generalshop1	1000	600	10	false	
+2	profile.arceuus_staffshop	inv.generalshop1	npc.arceuus_staffshop	Filamina's Wares	inv.generalshop1	1000	600	1	false	
+3	profile.lovakengj_bartender	inv.generalshop1	npc.lovakengj_bartender	The Deeper Lode	inv.generalshop1	1400	550	20	false	
+4	profile.hosidius_bartender_1	inv.generalshop1	npc.hosidius_bartender_1,npc.hosidius_bartender_2	The Golden Field	inv.generalshop1	1000	550	20	false	
+5	profile.hosidius_generalstore	inv.generalshop1	npc.hosidius_generalstore	Little Shop of Horace	inv.generalshop1	1250	400	10	true	
+6	profile.piscarilius_foodshop	inv.generalshop1	npc.piscarilius_foodshop	Kenelme's Wares	inv.generalshop1	1000	600	10	false	
+7	profile.hosidius_foodstore	inv.generalshop1	npc.hosidius_foodstore	Logava Gricoller's Cooking Supplies	inv.generalshop1	1000	550	10	false	
+8	profile.lovakengj_generalstore	inv.generalshop1	npc.lovakengj_generalstore	Little Munty's Little Shop	inv.generalshop1	1100	400	10	true	
+9	profile.arceuus_generalstore	inv.generalshop1	npc.arceuus_generalstore	Regath's Wares	inv.generalshop1	1400	400	10	true	
+10	profile.arceuus_runeshop	inv.generalshop1	npc.arceuus_runeshop	Thyria's Wares	inv.generalshop1	1000	600	1	false	
+11	profile.lovakengj_sulphur_keeper	inv.generalshop1	npc.lovakengj_sulphur_keeper	Toothy's Pickaxes	inv.generalshop1	1300	550	30	false	
+12	profile.hosidius_farmingstore	inv.generalshop1	npc.hosidius_farmingstore	Vannah's Farming Stall	inv.generalshop1	1000	700	10	false	
+13	profile.prif_runestore	inv.generalshop1	npc.prif_runestore	Amlodd's Magical Supplies	inv.generalshop1	1000	550	1	false	
+14	profile.prif_armourstore	inv.generalshop1	npc.prif_armourstore	Aneirin's Armour	inv.generalshop1	1000	600	20	false	
+15	profile.prif_farmingstore	inv.generalshop1	npc.prif_farmingstore	Branwen's Farming Shop	inv.generalshop1	1000	700	10	false	
+16	profile.prif_staffstore	inv.generalshop1	npc.prif_staffstore	Elgan's Exceptional Staffs!	inv.generalshop1	1000	550	10	false	
+17	profile.piscarilius_fish_trader	inv.generalshop1	npc.piscarilius_fish_trader	Frankie's Fishing Emporium	inv.generalshop1	1000	950	10	false	
+18	profile.prif_dyestore	inv.generalshop1	npc.prif_dyestore	Guinevere's Dyes	inv.generalshop1	1300	550	10	false	
+19	profile.prif_miningstore	inv.generalshop1	npc.prif_miningstore	Gwyn's Mining Emporium	inv.generalshop1	1000	600	20	false	
+20	profile.tempoross_ishmael	inv.generalshop1	npc.tempoross_ishmael	Ishmael's Fish He Sells	inv.generalshop1	1000	700	10	false	
+21	profile.prif_lliann	inv.generalshop1	npc.prif_lliann	Lliann's Wares	inv.generalshop1	1000	550	10	false	obj.crystal_crown_ithell,obj.prif_clan_crystal_ithell,obj.prif_clan_crystal_iorwerth,obj.prif_clan_crystal_trahaearn,obj.prif_clan_crystal_cadarn,obj.prif_clan_crystal_crwys,obj.prif_clan_crystal_meilyr,obj.prif_clan_crystal_hefin,obj.prif_clan_crystal_amlodd
+22	profile.nurmof	inv.generalshop1	npc.nurmof	Nurmof's Pickaxe Shop.	inv.generalshop1	1000	600	20	false	
+23	profile.fortis_shop_general_2	inv.generalshop1	npc.fortis_shop_general_2	Outer Fortis General Store	inv.generalshop1	1300	400	30	true	
+24	profile.wcguild_axeseller	inv.generalshop1	npc.wcguild_axeseller	Perry's Chop-chop Shop	inv.generalshop1	3200	600	10	false	
+25	profile.prif_gem	inv.generalshop1	npc.prif_gem	Prifddinas Gem Stall	inv.generalshop1	1000	800	20	false	
+26	profile.prif_generalstore	inv.generalshop1	npc.prif_generalstore	Prifddinas General Store	inv.generalshop1	1300	400	30	true	
+27	profile.prif_herbstore	inv.generalshop1	npc.prif_herbstore	Prifddinas Herbal Supplies	inv.generalshop1	1000	700	10	false	
+28	profile.prif_silver	inv.generalshop1	npc.prif_silver	Prifddinas Silver Stall	inv.generalshop1	1000	700	20	false	
+29	profile.prif_spice	inv.generalshop1	npc.prif_spice	Prifddinas Spice Stall	inv.generalshop1	1000	700	20	false	
+30	profile.prif_seamstress	inv.generalshop1	npc.prif_seamstress	Prifddinas' Seamstress	inv.generalshop1	1300	400	20	false	
+31	profile.prif_rangestore	inv.generalshop1	npc.prif_rangestore	Sian's Ranged Weaponry	inv.generalshop1	1000	550	10	false	
+32	profile.warrens_shopkeeper	inv.generalshop1	npc.warrens_shopkeeper	Warrens General Store	inv.generalshop1	1300	400	30	true	

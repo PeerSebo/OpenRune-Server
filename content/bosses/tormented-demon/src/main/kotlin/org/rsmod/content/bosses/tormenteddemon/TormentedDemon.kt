@@ -57,22 +57,32 @@ constructor(deps: BossDeps, private val routeFactory: RouteFactory) : BossPlugin
 
         for (typeId in demonTypeIds) {
             onEvent<NpcStateEvents.Spawn>(typeId) {
-                npc.vars["varn.td_shield_up"] = 1
-                initializeOverheadPrayer(npc)
+                resetFight(npc)
             }
         }
         onEvent<NpcStateEvents.Respawn> {
             if (npc.id in demonTypeIds) {
-                npc.vars["varn.td_shield_up"] = 1
-                npc.resetBodyModel()
-                initializeOverheadPrayer(npc)
+                resetFight(npc)
+                if (DEFENCELESS_MODEL_SWAP_ENABLED) npc.resetBodyModel()
             }
         }
 
         deps.extensionRegistry.register("td.defenceless_model") { _, npc, _, _ ->
-            defencelessModelByType[npc.id]?.let(npc::setBodyModel)
+            if (DEFENCELESS_MODEL_SWAP_ENABLED) {
+                defencelessModelByType[npc.id]?.let(npc::setBodyModel)
+            }
         }
         deps.extensionRegistry.register("td.fire_bomb") { _, npc, target, _ -> fireBomb(npc, target) }
+    }
+
+    private fun resetFight(npc: Npc) {
+        npc.vars["varn.td_damage_since_swap"] = 0
+        npc.vars["varn.td_first_hit_taken"] = 0
+        npc.vars["varn.td_defenceless"] = 0
+        npc.vars["varn.td_defenceless_at"] = 0
+        npc.vars["varn.guaranteed_hit"] = 0
+        npc.vars["varn.td_shield_up"] = 1
+        initializeOverheadPrayer(npc)
     }
 
     private val postAttack: Effect =
@@ -211,7 +221,7 @@ constructor(deps: BossDeps, private val routeFactory: RouteFactory) : BossPlugin
 
         npc.vars["varn.td_defenceless"] = 0
         npc.vars["varn.td_defenceless_at"] = deps.mapClock.cycle + DEFENCELESS_DELAY_TICKS
-        npc.resetBodyModel()
+        if (DEFENCELESS_MODEL_SWAP_ENABLED) npc.resetBodyModel()
         dropShield(npc)
 
         val encounter = deps.encounter(npc)
@@ -367,6 +377,9 @@ constructor(deps: BossDeps, private val routeFactory: RouteFactory) : BossPlugin
         private const val DEFENCELESS_DELAY_TICKS = 30
         private const val DEFENCELESS_MODEL_1 = 55475
         private const val DEFENCELESS_MODEL_2 = 55474
+
+        // Body customisation crashes the revision-240 client decoder; leave the body model unchanged.
+        private const val DEFENCELESS_MODEL_SWAP_ENABLED = false
 
         private const val HEADICON_SLOT = 0
         private const val HEADICON_GRAPHIC = 440

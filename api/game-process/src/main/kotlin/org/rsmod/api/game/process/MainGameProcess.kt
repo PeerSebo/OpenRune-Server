@@ -3,6 +3,7 @@ package org.rsmod.api.game.process
 import com.github.michaelbull.logging.InlineLogger
 import jakarta.inject.Inject
 import org.rsmod.api.db.gateway.GameDbSynchronizer
+import org.rsmod.api.registry.account.AccountRegistry
 import org.rsmod.events.EventBus
 import org.rsmod.game.GameProcess
 import org.rsmod.game.entity.Player
@@ -15,7 +16,15 @@ constructor(
     private val eventBus: EventBus,
     private val playerList: PlayerList,
     private val dbSync: GameDbSynchronizer,
+    private val accountRegistry: AccountRegistry?,
 ) : GameProcess {
+    public constructor(
+        gameCycle: GameCycle,
+        eventBus: EventBus,
+        playerList: PlayerList,
+        dbSync: GameDbSynchronizer,
+    ) : this(gameCycle, eventBus, playerList, dbSync, null)
+
     override fun startup() {
         eventBus.publish(GameLifecycle.Startup)
     }
@@ -25,6 +34,7 @@ constructor(
     }
 
     override fun preShutdown() {
+        eventBus.publish(GameLifecycle.PreShutdown)
         setShutdownFlags()
         fastForwardServices()
         fastForwardCycles()
@@ -41,8 +51,6 @@ constructor(
         }
     }
 
-    // Delegates to services to perform fast-forward shutdown. This function may block while
-    // services complete their shutdown logic.
     private fun fastForwardServices() {
         dbSync.blockingFastForwardShutdown()
     }
@@ -54,9 +62,13 @@ constructor(
     private fun logRemainingPlayers() {
         val remaining = playerList.filterNot(Player::loggingOut)
         if (remaining.isNotEmpty()) {
-            // Log up to 250 player names to avoid creating excessively large log entries.
             val names = remaining.take(250).joinToString { "'${it.displayName}'" }
             logger.error { "${remaining.size} players were unable to logout properly: $names" }
+        }
+
+        val pendingPreparations = accountRegistry?.pendingLogoutPreparations().orEmpty()
+        if (pendingPreparations.isNotEmpty()) {
+            logger.error { logoutPreparationFailureMessage(pendingPreparations) }
         }
     }
 
@@ -71,4 +83,9 @@ constructor(
         private const val SHUTDOWN_MAX_SIMULATIONS = 1024
         private val logger = InlineLogger()
     }
+}
+
+internal fun logoutPreparationFailureMessage(players: List<Player>): String {
+    val names = players.take(250).joinToString { "'${it.displayName}'" }
+    return "${players.size} players still have unsaved logout state because save preparation failed: $names"
 }

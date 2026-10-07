@@ -1,0 +1,5 @@
+is_enabled = true
+portal_rotation_ticks = 33
+huge_remains_first_open_ticks = 261
+huge_remains_cadence_ticks = 230
+huge_remains_open_ticks = 44

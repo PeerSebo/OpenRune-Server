@@ -1,0 +1,7 @@
+[[inventory]]
+id = "inv.trail_rewardinv"
+inherit = "inv.trail_rewardinv"
+isServerOnly = true
+scope = "Temp"
+stack = "Always"
+protect = false

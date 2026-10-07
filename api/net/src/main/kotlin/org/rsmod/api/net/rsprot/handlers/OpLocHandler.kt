@@ -4,13 +4,17 @@ import com.github.michaelbull.logging.InlineLogger
 import dev.openrune.ServerCacheManager
 import jakarta.inject.Inject
 import net.rsprot.protocol.game.incoming.locs.OpLocV2
+import org.rsmod.api.player.events.PlayerWorldEntityLocOpEvent
 import org.rsmod.api.player.interact.LocInteractions
 import org.rsmod.api.player.output.clearMapFlag
+import org.rsmod.api.player.protect.ProtectedAccessLauncher
 import org.rsmod.api.player.protect.clearPendingAction
 import org.rsmod.api.player.vars.ctrlMoveSpeed
 import org.rsmod.api.registry.loc.LocRegistry
+import org.rsmod.api.registry.worldentity.WorldEntityRegistry
 import org.rsmod.events.EventBus
 import org.rsmod.game.entity.Player
+import org.rsmod.game.entity.WorldEntity
 import org.rsmod.game.interact.InteractionLocOp
 import org.rsmod.game.interact.InteractionOp
 import org.rsmod.game.loc.BoundLocInfo
@@ -23,6 +27,8 @@ constructor(
     private val eventBus: EventBus,
     private val locRegistry: LocRegistry,
     private val locInteractions: LocInteractions,
+    private val worldEntities: WorldEntityRegistry,
+    private val protectedAccess: ProtectedAccessLauncher,
 ) : MessageHandler<OpLocV2> {
     private val logger = InlineLogger()
 
@@ -42,6 +48,19 @@ constructor(
             return
         }
         val coords = CoordGrid(message.x, message.z, player.level)
+        val worldEntity = worldEntities.findByInstanceCoords(player.coords)
+        if (worldEntity != null && coords !in worldEntity) {
+            val request = resolveRootWorldLocOp(player, worldEntity, message, locRegistry, locInteractions)
+                ?: return
+            eventBus.publish(request)
+            if (!request.accepted) {
+                return
+            }
+            val event = locInteractions.opTrigger(player, request.loc, request.op) ?: return
+            player.clearPendingAction(eventBus)
+            protectedAccess.launch(player) { eventBus.publish(this, event) }
+            return
+        }
         val loc = locRegistry.findType(coords, message.id)
         if (loc == null) {
             player.clearMapFlag()
@@ -81,4 +100,26 @@ constructor(
         player.tempMoveSpeed = speed
         logger.debug { "OpLoc: op=${message.op}, loc=$boundLoc type=$type" }
     }
+}
+
+/** Root locs have the hull's projected plane; the player's plane belongs to the deck instance. */
+internal fun resolveRootWorldLocOp(
+    player: Player,
+    worldEntity: WorldEntity,
+    message: OpLocV2,
+    locRegistry: LocRegistry,
+    locInteractions: LocInteractions,
+): PlayerWorldEntityLocOpEvent? {
+    if (player.coords !in worldEntity || message.op !in 1..5) {
+        return null
+    }
+    val coords = CoordGrid(message.x, message.z, worldEntity.projectedLevel)
+    val loc = locRegistry.findType(coords, message.id) ?: return null
+    val type = ServerCacheManager.getObject(message.id) ?: return null
+    val bound = BoundLocInfo(loc, type)
+    val op = InteractionOp.entries[message.op - 1]
+    if (!locInteractions.hasOp(bound, type, player.vars, op)) {
+        return null
+    }
+    return PlayerWorldEntityLocOpEvent(player, worldEntity, bound, op)
 }

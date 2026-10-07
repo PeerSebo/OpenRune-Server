@@ -60,7 +60,7 @@ constructor(
     }
 
     private fun String.toCoordGrid(): CoordGrid {
-        val withQuotes = "\"$this\"" // Object mapper expects quotes.
+        val withQuotes = "\"$this\""
         return objectMapper.readValue(withQuotes, CoordGrid::class.java)
     }
 }

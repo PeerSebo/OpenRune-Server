@@ -1,15 +1,9 @@
 package org.rsmod.content.skills.magic.spell.attacks.standard
 
-import dev.openrune.rscm.RSCM
-import dev.openrune.rscm.RSCMType
 import dev.openrune.types.ItemServerType
-import dev.openrune.types.SequenceServerType
-import dev.openrune.types.aconverted.SpotanimType
-import dev.openrune.types.aconverted.SynthType
 import org.rsmod.api.combat.commons.CombatAttack
 import org.rsmod.api.combat.manager.MagicRuneManager.Companion.isFailure
 import org.rsmod.api.player.protect.ProtectedAccess
-import org.rsmod.api.player.stat.magicLvl
 import org.rsmod.api.spells.attack.SpellAttack
 import org.rsmod.api.spells.attack.SpellAttackManager
 import org.rsmod.api.spells.attack.SpellAttackMap
@@ -29,14 +23,6 @@ class ElementalSpells : SpellAttackMap {
     }
 
     private fun SpellAttackRepository.registerStrikes(manager: SpellAttackManager) {
-        fun getMaxHit(magicLvl: Int): Int =
-            when {
-                magicLvl >= 13 -> 8
-                magicLvl >= 9 -> 6
-                magicLvl >= 5 -> 4
-                else -> 2
-            }
-
         register(
             spell = "obj.01_wind_strike",
             attack =
@@ -47,9 +33,8 @@ class ElementalSpells : SpellAttackMap {
                     launch = "spotanim.windstrike_casting",
                     travel = "spotanim.windstrike_travel",
                     impact = "spotanim.windstrike_impact",
-                    castSound = "synth.windstrike_cast_and_fire",
-                    hitSound = "synth.windstrike_hit",
-                    getMaxHit = ::getMaxHit,
+                    castSound = "synth.WINDSTRIKE_CAST_AND_FIRE",
+                    hitSound = "synth.WINDSTRIKE_HIT",
                 ),
         )
 
@@ -63,9 +48,8 @@ class ElementalSpells : SpellAttackMap {
                     launch = "spotanim.waterstrike_casting",
                     travel = "spotanim.waterstrike_travel",
                     impact = "spotanim.waterstrike_impact",
-                    castSound = "synth.waterstrike_cast_and_fire",
-                    hitSound = "synth.waterstrike_hit",
-                    getMaxHit = ::getMaxHit,
+                    castSound = "synth.WATERSTRIKE_CAST_AND_FIRE",
+                    hitSound = "synth.WATERSTRIKE_HIT",
                 ),
         )
 
@@ -79,9 +63,8 @@ class ElementalSpells : SpellAttackMap {
                     launch = "spotanim.earthstrike_casting",
                     travel = "spotanim.earthstrike_travel",
                     impact = "spotanim.earthstrike_impact",
-                    castSound = "synth.earthstrike_cast_and_fire",
-                    hitSound = "synth.earthstrike_hit",
-                    getMaxHit = ::getMaxHit,
+                    castSound = "synth.EARTHSTRIKE_CAST_AND_FIRE",
+                    hitSound = "synth.EARTHSTRIKE_HIT",
                 ),
         )
 
@@ -95,22 +78,13 @@ class ElementalSpells : SpellAttackMap {
                     launch = "spotanim.firestrike_casting",
                     travel = "spotanim.firestrike_travel",
                     impact = "spotanim.firestrike_impact",
-                    castSound = "synth.firestrike_cast_and_fire",
-                    hitSound = "synth.firestrike_hit",
-                    getMaxHit = ::getMaxHit,
+                    castSound = "synth.FIRESTRIKE_CAST_AND_FIRE",
+                    hitSound = "synth.FIRESTRIKE_HIT",
                 ),
         )
     }
 
     private fun SpellAttackRepository.registerBolts(manager: SpellAttackManager) {
-        fun getMaxHit(magicLvl: Int): Int =
-            when {
-                magicLvl >= 35 -> 12
-                magicLvl >= 29 -> 11
-                magicLvl >= 23 -> 10
-                else -> 9
-            }
-
         register(
             spell = "obj.17_wind_bolt",
             attack =
@@ -121,9 +95,8 @@ class ElementalSpells : SpellAttackMap {
                     launch = "spotanim.windbolt_casting",
                     travel = "spotanim.windbolt_travel",
                     impact = "spotanim.windbolt_impact",
-                    castSound = "synth.windbolt_cast_and_fire",
-                    hitSound = "synth.windbolt_hit",
-                    getMaxHit = ::getMaxHit,
+                    castSound = "synth.WINDBOLT_CAST_AND_FIRE",
+                    hitSound = "synth.WINDBOLT_HIT",
                 ),
         )
 
@@ -137,9 +110,8 @@ class ElementalSpells : SpellAttackMap {
                     launch = "spotanim.waterbolt_casting",
                     travel = "spotanim.waterbolt_travel",
                     impact = "spotanim.waterbolt_impact",
-                    castSound = "synth.waterbolt_cast_and_fire",
-                    hitSound = "synth.waterbolt_hit",
-                    getMaxHit = ::getMaxHit,
+                    castSound = "synth.WATERBOLT_CAST_AND_FIRE",
+                    hitSound = "synth.WATERBOLT_HIT",
                 ),
         )
 
@@ -153,9 +125,8 @@ class ElementalSpells : SpellAttackMap {
                     launch = "spotanim.earthbolt_casting",
                     travel = "spotanim.earthbolt_travel",
                     impact = "spotanim.earthbolt_impact",
-                    castSound = "synth.earthbolt_cast_and_fire",
-                    hitSound = "synth.earthbolt_hit",
-                    getMaxHit = ::getMaxHit,
+                    castSound = "synth.EARTHBOLT_CAST_AND_FIRE",
+                    hitSound = "synth.EARTHBOLT_HIT",
                 ),
         )
 
@@ -169,22 +140,13 @@ class ElementalSpells : SpellAttackMap {
                     launch = "spotanim.firebolt_casting",
                     travel = "spotanim.firebolt_travel",
                     impact = "spotanim.firebolt_impact",
-                    castSound = "synth.firebolt_cast_and_fire",
-                    hitSound = "synth.firebolt_hit",
-                    getMaxHit = ::getMaxHit,
+                    castSound = "synth.FIREBOLT_CAST_AND_FIRE",
+                    hitSound = "synth.FIREBOLT_HIT",
                 ),
         )
     }
 
     private fun SpellAttackRepository.registerBlasts(manager: SpellAttackManager) {
-        fun getMaxHit(magicLvl: Int): Int =
-            when {
-                magicLvl >= 59 -> 16
-                magicLvl >= 53 -> 15
-                magicLvl >= 47 -> 14
-                else -> 13
-            }
-
         register(
             spell = "obj.41_wind_blast",
             attack =
@@ -195,9 +157,8 @@ class ElementalSpells : SpellAttackMap {
                     launch = "spotanim.windblast_casting",
                     travel = "spotanim.windblast_travel",
                     impact = "spotanim.windblast_impact",
-                    castSound = "synth.windblast_cast_and_fire",
-                    hitSound = "synth.windblast_hit",
-                    getMaxHit = ::getMaxHit,
+                    castSound = "synth.WINDBLAST_CAST_AND_FIRE",
+                    hitSound = "synth.WINDBLAST_HIT",
                 ),
         )
 
@@ -211,9 +172,8 @@ class ElementalSpells : SpellAttackMap {
                     launch = "spotanim.waterblast_casting",
                     travel = "spotanim.waterblast_travel",
                     impact = "spotanim.waterblast_impact",
-                    castSound = "synth.waterblast_cast_and_fire",
-                    hitSound = "synth.waterblast_hit",
-                    getMaxHit = ::getMaxHit,
+                    castSound = "synth.WATERBLAST_CAST_AND_FIRE",
+                    hitSound = "synth.WATERBLAST_HIT",
                 ),
         )
 
@@ -227,9 +187,8 @@ class ElementalSpells : SpellAttackMap {
                     launch = "spotanim.earthblast_casting",
                     travel = "spotanim.earthblast_travel",
                     impact = "spotanim.earthblast_impact",
-                    castSound = "synth.earthblast_cast_and_fire",
-                    hitSound = "synth.earthblast_hit",
-                    getMaxHit = ::getMaxHit,
+                    castSound = "synth.EARTHBLAST_CAST_AND_FIRE",
+                    hitSound = "synth.EARTHBLAST_HIT",
                 ),
         )
 
@@ -243,22 +202,13 @@ class ElementalSpells : SpellAttackMap {
                     launch = "spotanim.fireblast_casting",
                     travel = "spotanim.fireblast_travel",
                     impact = "spotanim.fireblast_impact",
-                    castSound = "synth.fireblast_cast_and_fire",
-                    hitSound = "synth.fireblast_hit",
-                    getMaxHit = ::getMaxHit,
+                    castSound = "synth.FIREBLAST_CAST_AND_FIRE",
+                    hitSound = "synth.FIREBLAST_HIT",
                 ),
         )
     }
 
     private fun SpellAttackRepository.registerWaves(manager: SpellAttackManager) {
-        fun getMaxHit(magicLvl: Int): Int =
-            when {
-                magicLvl >= 75 -> 20
-                magicLvl >= 70 -> 19
-                magicLvl >= 65 -> 18
-                else -> 17
-            }
-
         register(
             spell = "obj.62_wind_wave",
             attack =
@@ -269,9 +219,8 @@ class ElementalSpells : SpellAttackMap {
                     launch = "spotanim.windwave_casting",
                     travel = "spotanim.windwave_travel",
                     impact = "spotanim.windwave_impact",
-                    castSound = "synth.windwave_cast_and_fire",
-                    hitSound = "synth.windwave_hit",
-                    getMaxHit = ::getMaxHit,
+                    castSound = "synth.WINDWAVE_CAST_AND_FIRE",
+                    hitSound = "synth.WINDWAVE_HIT",
                 ),
         )
 
@@ -285,9 +234,8 @@ class ElementalSpells : SpellAttackMap {
                     launch = "spotanim.waterwave_casting",
                     travel = "spotanim.waterwave_travel",
                     impact = "spotanim.waterwave_impact",
-                    castSound = "synth.waterwave_cast_and_fire",
-                    hitSound = "synth.waterwave_hit",
-                    getMaxHit = ::getMaxHit,
+                    castSound = "synth.WATERWAVE_CAST_AND_FIRE",
+                    hitSound = "synth.WATERWAVE_HIT",
                 ),
         )
 
@@ -301,9 +249,8 @@ class ElementalSpells : SpellAttackMap {
                     launch = "spotanim.earthwave_casting",
                     travel = "spotanim.earthwave_travel",
                     impact = "spotanim.earthwave_impact",
-                    castSound = "synth.earthwave_cast_and_fire",
-                    hitSound = "synth.earthwave_hit",
-                    getMaxHit = ::getMaxHit,
+                    castSound = "synth.EARTHWAVE_CAST_AND_FIRE",
+                    hitSound = "synth.EARTHWAVE_HIT",
                 ),
         )
 
@@ -317,22 +264,13 @@ class ElementalSpells : SpellAttackMap {
                     launch = "spotanim.firewave_casting",
                     travel = "spotanim.firewave_travel",
                     impact = "spotanim.firewave_impact",
-                    castSound = "synth.firewave_cast_and_fire",
-                    hitSound = "synth.firewave_hit",
-                    getMaxHit = ::getMaxHit,
+                    castSound = "synth.FIREWAVE_CAST_AND_FIRE",
+                    hitSound = "synth.FIREWAVE_HIT",
                 ),
         )
     }
 
     private fun SpellAttackRepository.registerSurges(manager: SpellAttackManager) {
-        fun getMaxHit(magicLvl: Int): Int =
-            when {
-                magicLvl >= 95 -> 24
-                magicLvl >= 90 -> 23
-                magicLvl >= 85 -> 22
-                else -> 21
-            }
-
         register(
             spell = "obj.81_wind_surge",
             attack =
@@ -343,9 +281,8 @@ class ElementalSpells : SpellAttackMap {
                     launch = "spotanim.windsurge_casting",
                     travel = "spotanim.windsurge_travel",
                     impact = "spotanim.windsurge_impact",
-                    castSound = "synth.windsurge_cast_and_fire",
-                    hitSound = "synth.windsurge_hit",
-                    getMaxHit = ::getMaxHit,
+                    castSound = "synth.WINDSURGE_CAST_AND_FIRE",
+                    hitSound = "synth.WINDSURGE_HIT",
                 ),
         )
 
@@ -359,9 +296,8 @@ class ElementalSpells : SpellAttackMap {
                     launch = "spotanim.watersurge_casting",
                     travel = "spotanim.watersurge_travel",
                     impact = "spotanim.watersurge_impact",
-                    castSound = "synth.watersurge_cast_and_fire",
-                    hitSound = "synth.watersurge_hit",
-                    getMaxHit = ::getMaxHit,
+                    castSound = "synth.WATERSURGE_CAST_AND_FIRE",
+                    hitSound = "synth.WATERSURGE_HIT",
                 ),
         )
 
@@ -375,9 +311,8 @@ class ElementalSpells : SpellAttackMap {
                     launch = "spotanim.earthsurge_casting",
                     travel = "spotanim.earthsurge_travel",
                     impact = "spotanim.earthsurge_impact",
-                    castSound = "synth.earthsurge_cast_and_fire",
-                    hitSound = "synth.earthsurge_hit",
-                    getMaxHit = ::getMaxHit,
+                    castSound = "synth.EARTHSURGE_CAST_AND_FIRE",
+                    hitSound = "synth.EARTHSURGE_HIT",
                 ),
         )
 
@@ -391,9 +326,8 @@ class ElementalSpells : SpellAttackMap {
                     launch = "spotanim.firesurge_casting",
                     travel = "spotanim.firesurge_travel",
                     impact = "spotanim.firesurge_impact",
-                    castSound = "synth.firesurge_cast_and_fire",
-                    hitSound = "synth.firesurge_hit",
-                    getMaxHit = ::getMaxHit,
+                    castSound = "synth.FIRESURGE_CAST_AND_FIRE",
+                    hitSound = "synth.FIRESURGE_HIT",
                 ),
         )
     }
@@ -407,7 +341,6 @@ class ElementalSpells : SpellAttackMap {
         private val impact: String,
         private val castSound: String,
         private val hitSound: String,
-        private val getMaxHit: (Int) -> Int,
     ) : SpellAttack {
         override suspend fun ProtectedAccess.attack(target: Npc, attack: CombatAttack.Spell) {
             cast(target, attack)
@@ -440,7 +373,7 @@ class ElementalSpells : SpellAttackMap {
                 return
             }
 
-            val baseMaxHit = getMaxHit(player.magicLvl)
+            val baseMaxHit = attack.spell.maxHit
             val damage = manager.rollMaxHit(this, target, attack, castResult, baseMaxHit)
             manager.playHitFx(
                 source = this,

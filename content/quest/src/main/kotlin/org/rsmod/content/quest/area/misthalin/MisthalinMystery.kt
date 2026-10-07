@@ -11,7 +11,6 @@ import org.rsmod.api.repo.obj.ObjRepository
 import org.rsmod.api.repo.player.PlayerRepository
 import org.rsmod.api.repo.region.RegionRepository
 import org.rsmod.api.repo.world.WorldRepository
-import org.rsmod.api.script.onEvent
 import org.rsmod.api.script.onGameStartup
 import org.rsmod.api.script.onOpLoc1
 import org.rsmod.api.script.onOpNpc1
@@ -21,7 +20,6 @@ import org.rsmod.content.quest.manager.QuestScript
 import org.rsmod.content.quest.manager.rewards
 import org.rsmod.game.entity.Npc
 import org.rsmod.game.entity.Player
-import org.rsmod.game.entity.player.SessionStateEvent
 import org.rsmod.map.CoordGrid
 import org.rsmod.map.zone.ZoneKey
 import org.rsmod.plugin.scripts.ScriptContext
@@ -76,7 +74,6 @@ constructor(
         }
 
         cutscenes.assertSceneCoords()
-        onEvent<SessionStateEvent.PrepareLogin> { restoreMisthalinLogin(player) }
 
         with(cutscenes) { register() }
 
@@ -344,6 +341,8 @@ constructor(
         access.mistmystXpAwarded = true
 
         quest.completeQuest(access)
+
+        access.midiJingle(CompletionJingle)
     }
 
     private companion object {
@@ -353,6 +352,8 @@ constructor(
 
         /** Ticks to let a 50-client-cycle (1s) fade finish before closing the overlay. */
         private const val FadeTicks = 2
+
+        private const val CompletionJingle = 153
 
         private val ShadyFigureX = 1610..1632
         private val ShadyFigureZ = 4805..4822

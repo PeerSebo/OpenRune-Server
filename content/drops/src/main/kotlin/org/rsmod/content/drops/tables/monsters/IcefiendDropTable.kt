@@ -2,16 +2,14 @@ package org.rsmod.content.drops.tables.monsters
 
 import dtx.rs.RSDropTable
 import dtx.rs.npcs
-import dtx.rs.areas
-import org.rsmod.api.droptable.rsPlayerGuaranteedTable
+import org.rsmod.api.droptable.DropRollItem
+import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.api.droptable.ringNothing
 import org.rsmod.api.droptable.rsPlayerTertiaryTable
 import org.rsmod.api.droptable.rsPlayerWeightedTable
-import org.rsmod.content.drops.tables.shared.SharedDropTables
-import org.rsmod.api.droptable.DropRollItem
-import org.rsmod.content.drops.shouldDropLootingBag
 import org.rsmod.content.drops.clueScrollTransformObj
-import org.rsmod.api.droptable.ringNothing
-import org.rsmod.api.droptable.RegisterDropTable
+import org.rsmod.content.drops.shouldDropLootingBag
+import org.rsmod.content.drops.tables.shared.SharedDropTables
 import org.rsmod.game.entity.Player
 
 @field:RegisterDropTable
@@ -35,10 +33,10 @@ public val icefiendDropTable: RSDropTable<Player, DropRollItem> = RSDropTable(
         }
         1 outOf 1373 weight "obj.varlamore_key_half_1" count 1
         1 outOf 150 weight "obj.frozen_tear" count 5 condition { player ->
-            // Drops Need Manual: Only dropped in Ruins of Tapoyauik
+            // TODO: Only dropped in Ruins of Tapoyauik
              true
         }
-        // Drops Need Manual (rate): The easy clue scroll drop rate inceases to 1/64 if a Ring of wealth (i) is worn and fought in the Wilderness.
+        // TODO: The easy clue scroll drop rate inceases to 1/64 if a Ring of wealth (i) is worn and fought in the Wilderness.
         1 outOf 121 weight "obj.trail_clue_easy_simple001" count 1 transformObj { player ->
              player.clueScrollTransformObj("obj.trail_clue_easy_simple001")
         }

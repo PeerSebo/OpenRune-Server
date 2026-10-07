@@ -1494,7 +1494,6 @@ coords = "0_38_54_47_3"
 npc = "npc.zep_multi_assistant_gno"
 coords = "0_38_54_48_2"
 
-## Gnome Ball
 
 [[spawn]]
 npc = "npc.gnomeballer_green"
@@ -1563,6 +1562,3 @@ coords = "0_37_54_23_36"
 [[spawn]]
 npc = "npc.gnomereferee"
 coords = "0_37_54_16_32"
-
-## Gnome Ball End
-

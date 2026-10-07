@@ -6,7 +6,6 @@ coords = "1_40_48_33_31"
 obj = "obj.jug_water"
 coords = "0_40_48_8_30"
 
-## Wizards' Guild
 
 [[spawn]]
 obj = "obj.vial_empty"
@@ -16,7 +15,6 @@ coords = "2_40_48_27_18"
 obj = "obj.vial_empty"
 coords = "2_40_48_28_18"
 
-## Yanille Dungeon
 
 [[spawn]]
 obj = "obj.herring"
@@ -26,11 +24,7 @@ coords = "0_40_148_3_39"
 obj = "obj.knife"
 coords = "0_40_148_7_54"
 
-## Yanille Watchtower Bottom
 
 [[spawn]]
 obj = "obj.lit_candle"
 coords = "0_39_48_51_42"
-
-## Yanille Watchtower Bottom End
-

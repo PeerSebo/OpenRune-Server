@@ -1,0 +1,8 @@
+# Dungeon-ladder tags translate the player by +/-6400 z; this must hold for every placement.
+
+# MiningGuildEntrance owns the guild ladder and enforces 60 Mining.
+
+[[object]]
+id = "loc.ladder_outside_to_underground"
+inherit = "loc.ladder_outside_to_underground"
+contentGroup = "content.dungeonladder_down"

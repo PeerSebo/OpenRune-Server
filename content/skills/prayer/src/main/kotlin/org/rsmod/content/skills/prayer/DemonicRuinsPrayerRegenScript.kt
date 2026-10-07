@@ -1,9 +1,9 @@
 package org.rsmod.content.skills.prayer
 
-import org.rsmod.api.player.stat.basePrayerLvl
-import org.rsmod.api.player.stat.prayerLvl
 import org.rsmod.api.player.output.mes
 import org.rsmod.api.player.protect.ProtectedAccess
+import org.rsmod.api.player.stat.basePrayerLvl
+import org.rsmod.api.player.stat.prayerLvl
 import org.rsmod.api.script.onArea
 import org.rsmod.api.script.onAreaExit
 import org.rsmod.api.script.onPlayerQueue

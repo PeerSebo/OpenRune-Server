@@ -1,0 +1,14 @@
+[[params]]
+isServerOnly = true
+id = "param.boss_hp_bar_colour_back"
+type = "INT"
+
+[[params]]
+isServerOnly = true
+id = "param.boss_hp_bar_colour_sliding"
+type = "INT"
+
+[[params]]
+isServerOnly = true
+id = "param.boss_hp_bar_colour_remaining"
+type = "INT"

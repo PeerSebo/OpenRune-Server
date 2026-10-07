@@ -258,10 +258,7 @@ coords = "0_50_54_46_2"
 npc = "npc.imp"
 coords = "0_50_54_61_58"
 
-[[spawn]]
-npc = "npc.juliet"
-coords = "1_49_53_23_34"
-
+# Spawn the Juliet parent only; a bare npc.juliet would remain visible while the parent hides her.
 [[spawn]]
 npc = "npc.juliet_multi_visible"
 coords = "1_49_53_22_33"
@@ -474,13 +471,11 @@ coords = "0_51_54_35_24"
 npc = "npc.zep_multi_assistant_varr"
 coords = "0_51_54_34_27"
 
-## Aubury
 
 [[spawn]]
 npc = "npc.aubury"
 coords = "0_50_53_53_10"
 
-## Grand Exchange Clerk
 
 [[spawn]]
 npc = "npc.banker1_east"
@@ -514,7 +509,6 @@ coords = "0_49_54_29_35"
 npc = "npc.ge_clerk_4"
 coords = "0_49_54_28_35"
 
-## Lumber Yard
 
 [[spawn]]
 npc = "npc.gertrudescat"
@@ -548,19 +542,16 @@ coords = "0_51_54_51_59"
 npc = "npc.poh_sawmill_opp"
 coords = "0_51_54_38_36"
 
-## Mahogany Homes
 
 [[spawn]]
 npc = "npc.con_contract_client_2"
 coords = "0_50_53_42_60"
 
-## Varrock Anvils
 
 [[spawn]]
 npc = "npc.aide_tutor_smithing_master"
 coords = "0_49_53_51_31"
 
-## Varrock Blue Moon Inn Kitchen
 
 [[spawn]]
 npc = "npc.dog_stray2"
@@ -570,7 +561,6 @@ coords = "0_50_53_33_2"
 npc = "npc.fai_varrock_bluemoon_chef"
 coords = "0_50_53_30_9"
 
-## Varrock Building Ruins
 
 [[spawn]]
 npc = "npc.bioguard1"
@@ -580,7 +570,6 @@ coords = "0_50_53_63_15"
 npc = "npc.dog_stray"
 coords = "0_50_53_62_18"
 
-## Varrock Castle
 
 [[spawn]]
 npc = "npc.aluft_gnome_diplomat_varrock"
@@ -718,7 +707,6 @@ coords = "0_50_54_2_31"
 npc = "npc.warrior_woman_variant01"
 coords = "0_50_54_5_31"
 
-## Varrock Champions Guild
 
 [[spawn]]
 npc = "npc.guildmaster"
@@ -732,7 +720,6 @@ coords = "1_49_52_55_23"
 npc = "npc.valaine"
 coords = "1_49_52_57_33"
 
-## Varrock East Bank
 
 [[spawn]]
 npc = "npc.banker1_new"
@@ -758,13 +745,11 @@ coords = "0_50_53_56_26"
 npc = "npc.deadman_banker_blue_north"
 coords = "0_50_53_51_26"
 
-## Varrock East Bank Center
 
 [[spawn]]
 npc = "npc.deadman_guard_varrock"
 coords = "0_50_53_51_29"
 
-## Varrock General Store
 
 [[spawn]]
 npc = "npc.generalassistant2"
@@ -774,7 +759,6 @@ coords = "0_50_53_17_19"
 npc = "npc.generalshopkeeper2"
 coords = "0_50_53_18_23"
 
-## Varrock Grand Exchange Roof
 
 [[spawn]]
 npc = "npc.ge_expert_combat"
@@ -792,7 +776,6 @@ coords = "0_49_54_37_42"
 npc = "npc.ge_expert_runes"
 coords = "0_49_54_37_25"
 
-## Varrock Guard Posts
 
 [[spawn]]
 npc = "npc.fai_varrock_guard02_variant01"
@@ -802,7 +785,6 @@ coords = "0_50_54_40_44"
 npc = "npc.fai_varrock_guard02_variant01"
 coords = "0_51_53_11_30"
 
-## Varrock Hairdresser
 
 [[spawn]]
 npc = "npc.hairdresser_boutique"
@@ -812,13 +794,11 @@ coords = "0_50_54_56_5"
 npc = "npc.tailor_boutique"
 coords = "0_50_54_59_7"
 
-## Varrock Horviks Anvil
 
 [[spawn]]
 npc = "npc.horvik_the_armourer"
 coords = "0_50_53_29_46"
 
-## Varrock House 2
 
 [[spawn]]
 npc = "npc.con_contract_client_3"
@@ -828,7 +808,6 @@ coords = "0_50_52_35_55"
 npc = "npc.man2"
 coords = "1_50_52_34_57"
 
-## Varrock House Poor Houses
 
 [[spawn]]
 npc = "npc.daddyshome_daddy"
@@ -850,7 +829,6 @@ coords = "0_50_53_43_1"
 npc = "npc.spider"
 coords = "0_50_53_38_0"
 
-## Varrock House Very Poor Houses
 
 [[spawn]]
 npc = "npc.fai_varrock_guard02"
@@ -876,11 +854,6 @@ coords = "0_50_53_61_10"
 npc = "npc.weaponsmaster"
 coords = "1_50_52_46_56"
 
-[[spawn]]
-npc = "npc.weaponsmaster_vis"
-coords = "1_50_52_46_56"
-
-## Varrock Jolly Boar Inn
 
 [[spawn]]
 npc = "npc.black_knight"
@@ -918,7 +891,6 @@ coords = "0_51_54_15_40"
 npc = "npc.woman2"
 coords = "0_51_54_14_46"
 
-## Varrock Juliets House
 
 [[spawn]]
 npc = "npc.draul_leptoc"
@@ -932,7 +904,6 @@ coords = "0_49_53_18_36"
 npc = "npc.phillipa"
 coords = "1_49_53_26_38"
 
-## Varrock Moon Inn Floor
 
 [[spawn]]
 npc = "npc.barbarianwoman_varrock"
@@ -962,7 +933,6 @@ coords = "1_50_53_31_3"
 npc = "npc.varrock_woman1"
 coords = "0_50_53_18_3"
 
-## Varrock Museum
 
 [[spawn]]
 npc = "npc.curator"
@@ -1036,7 +1006,6 @@ coords = "2_50_53_61_59"
 npc = "npc.vm_timeline_historian"
 coords = "1_51_53_0_63"
 
-## Varrock Museum Basement
 
 [[spawn]]
 npc = "npc.vm_fossil_expert"
@@ -1246,7 +1215,6 @@ coords = "0_27_77_51_33"
 npc = "npc.vm_teacher_girl_multi"
 coords = "0_27_77_6_32"
 
-## Varrock Saradomin Church
 
 [[spawn]]
 npc = "npc.father_lawrence"
@@ -1264,7 +1232,6 @@ coords = "0_50_54_56_25"
 npc = "npc.varrock_granny_2"
 coords = "1_50_54_55_32"
 
-## Varrock Swordshop
 
 [[spawn]]
 npc = "npc.swordshop1"
@@ -1274,11 +1241,7 @@ coords = "0_50_53_3_5"
 npc = "npc.swordshop2"
 coords = "0_50_53_5_7"
 
-## Varrock Zamorak Temple
 
 [[spawn]]
 npc = "npc.rcu_zammy_mage1_edge"
 coords = "0_50_52_60_55"
-
-## Varrock Zamorak Temple End
-

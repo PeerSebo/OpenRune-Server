@@ -39,7 +39,7 @@ class CommanderZilyana @Inject constructor(deps: BossDeps) : BossPluginScript(de
                 ability("magic") {
                     anim("seq.godwars_saradomin_magic_attack")
                     hit {
-                        damage(10..20).roll()
+                        damage(10..20).rollWithAccuracy()
                         type(Magic)
                         spotanim("spotanim.godwars_saradomin_light_attk_spot")
                     }
@@ -49,7 +49,7 @@ class CommanderZilyana @Inject constructor(deps: BossDeps) : BossPluginScript(de
                 ability("melee") {
                     anim("seq.godwars_saradomin_attack")
                     hit {
-                        damage(0..27).roll()
+                        damage(0..27).rollWithAccuracy()
                         type(Melee)
                     }
                 }

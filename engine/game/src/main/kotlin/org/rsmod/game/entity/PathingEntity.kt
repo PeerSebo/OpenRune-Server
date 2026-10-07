@@ -57,30 +57,8 @@ public sealed class PathingEntity {
     public var currentMapClock: Int = -1
 
     /**
-     * The map clock value when this entity was last "processed" in the game loop. Unlike
-     * [currentMapClock], this value is used for certain flags, such as [isDelayed].
-     *
-     * ### Why this is needed:
-     * Client input processing occurs before suspended coroutines (e.g., delayed actions) are
-     * processed. This can lead to scenarios where a player can cancel a suspended coroutine before
-     * it resumes.
-     *
-     * ### Example Problem:
-     * 1. **Player Action**:
-     *     - Player clicks a ladder on map clock 49.
-     *     - The ladder script calls `delay(1); telejump(new_coords);`.
-     *     - Player is delayed until map clock 50 (their `delay` is set to 50).
-     * 2. **Next Tick**:
-     *     - Map clock increments to 50.
-     *     - Player clicks away from the ladder.
-     *     - The `MoveGameClick` packet handler processes the player's input and checks if they are
-     *       delayed.
-     *     - Since `delay` is 50 and `currentMapClock` is also 50, the player appears "not delayed."
-     *     - The player moves and cancels their coroutine.
-     * 3. **Later in the Tick**:
-     *     - During player processing, the player's `activeCoroutine` would normally advance.
-     *     - However, it has already been cancelled during client input processing by the
-     *       `MoveGameClick` handler.
+     * Delay checks use the last processed clock so next-tick input cannot cancel a delayed
+     * coroutine before it resumes.
      */
     public var processedMapClock: Int = -1
 
@@ -104,10 +82,12 @@ public sealed class PathingEntity {
     public val routeDestination: RouteDestination = RouteDestination()
     public var routeRequest: RouteRequest? = null
 
-    /** Collision bypass for a scripted crossing; cleared when its route is aborted. */
+    /**
+     * Scripted routes may ignore collision; reset the override when the route ends or is
+     * cancelled.
+     */
     public var forcedRoute: Boolean = false
 
-    // Used for setting temporary move speed for single requests, aka ctrl run mode.
     public var tempMoveSpeed: MoveSpeed? = null
     public var moveSpeed: MoveSpeed = MoveSpeed.Stationary
     public var cachedMoveSpeed: MoveSpeed = MoveSpeed.Stationary
@@ -123,7 +103,25 @@ public sealed class PathingEntity {
     public var faceEntity: EntityFaceTarget = EntityFaceTarget.NULL
     public var lastFaceEntity: Int = Int.MIN_VALUE
 
+    /**
+     * Fallback bearing is used while the facing target is outside the observer's
+     * high-resolution set.
+     */
+    public var faceEntityFallbackAngle: Int = 0
+
     public var pendingFaceAngle: EntityFaceAngle = EntityFaceAngle.NULL
+
+    /**
+     * Last face angle actually handed to the info protocol, used to suppress re-sending an
+     * unchanged angle on every cycle. Only the facing-lock path consults this: live re-asserts a
+     * held facing at most twice in a row, where an unguarded lock emits a FACING block every
+     * single tick for as long as it is held.
+     */
+    public var lastTransmittedFaceAngle: Int = Int.MIN_VALUE
+
+    // The angle the entity is currently facing, synced to new observers. (0 = south, matching the
+    // log-in default)
+    public var faceAngle: Int = 0
 
     public var pendingFaceSquare: CoordGrid = CoordGrid.NULL
     public var pendingFaceWidth: Int = 1
@@ -148,10 +146,10 @@ public sealed class PathingEntity {
         get() = slotId != INVALID_SLOT
 
     public val isInvisible: Boolean
-        get() = hidden
+        get() = hidden || (this is Player && staffInvisible)
 
     public val isVisible: Boolean
-        get() = !hidden
+        get() = !isInvisible
 
     public val size: Int
         get() = avatar.size
@@ -222,17 +220,8 @@ public sealed class PathingEntity {
     }
 
     /**
-     * Runs [block] in its own coroutine, leaving [activeCoroutine] and [delay] untouched.
-     *
-     * [launch] cancels the active coroutine before the new block gets to decide whether it is even
-     * allowed to run, so any protection check inside that block is evaluated after the script it
-     * was guarding has already been destroyed. This entry point exists for input that must be
-     * answered on the same cycle it arrives without disturbing a suspended script.
-     *
-     * Only [activeCoroutine] is advanced by the game loop, so a [block] that suspends is cancelled
-     * rather than left stranded.
-     *
-     * @return `false` if [block] suspended and had to be cancelled.
+     * Overlay input must not cancel a suspended action before its protection checks run. Only
+     * [activeCoroutine] is advanced by the game loop, so a suspended side action is cancelled.
      */
     public fun launchBeside(block: suspend GameCoroutine.() -> Unit): Boolean {
         val coroutine = GameCoroutine()
@@ -244,11 +233,16 @@ public sealed class PathingEntity {
         return true
     }
 
+    public fun launchNonInterrupting(block: suspend GameCoroutine.() -> Unit) {
+        check(launchBeside(block)) {
+            "`launchNonInterrupting` block must not suspend. entity=$this"
+        }
+    }
+
     public fun advanceActiveCoroutine() {
         try {
             activeCoroutine?.advance()
         } catch (_: ProtectedAccessLostException) {
-            /* no-op: not out of the ordinary to occur */
         }
         if (activeCoroutine?.isIdle == true) {
             activeCoroutine = null
@@ -259,7 +253,6 @@ public sealed class PathingEntity {
         try {
             activeCoroutine?.resumeWith(withValue)
         } catch (_: ProtectedAccessLostException) {
-            /* no-op: not out of the ordinary to occur */
         }
         if (activeCoroutine?.isIdle == true) {
             activeCoroutine = null
@@ -275,6 +268,9 @@ public sealed class PathingEntity {
         routeRequest = null
         tempMoveSpeed = null
         routeDestination.clear()
+        // Belt-and-braces: a scripted walk cannot outlive the route it was granted for. Its
+        // caller clears this in a `finally`, but a leaked flag would let the player walk through
+        // walls, so the shared teardown clears it too.
         forcedRoute = false
     }
 
@@ -283,62 +279,37 @@ public sealed class PathingEntity {
     }
 
     public abstract fun anim(
-        seq: String, delay: Int = 0, priority: Int = ServerCacheManager.getAnim(seq.asRSCM(RSCMType.SEQ))!!.priority
+        seq: String,
+        delay: Int = 0,
+        priority: Int = ServerCacheManager.getAnim(seq.asRSCM(RSCMType.SEQ))!!.priority,
     )
 
     public abstract fun resetAnim()
 
     public abstract fun spotanim(spot: String, delay: Int = 0, height: Int = 0, slot: Int = 0)
 
-    /**
-     * Sets the [pendingFaceSquare] for [target] to face as soon as this [PathingEntity] is not
-     * moving, whenever that may be.
-     */
     public fun faceSquare(target: CoordGrid, targetWidth: Int = 1, targetLength: Int = 1) {
         pendingFaceSquare = target
         pendingFaceWidth = targetWidth
         pendingFaceLength = targetLength
     }
 
-    /** @see [faceSquare] */
     public fun faceDirection(direction: Direction) {
         val target = coords.translate(direction.xOff, direction.zOff)
         faceSquare(target, targetWidth = 1, targetLength = 1)
     }
 
-    /**
-     * This function calls [faceSquare] with the coordinates and adjusted dimensions of the provided
-     * [loc]. The [loc] parameter is an instance of [BoundLocInfo], which contains precomputed
-     * values for width and length adjusted for the loc's angle. This method ensures that the
-     * PathingEntity faces the correct angle based on the loc's adjusted dimensions.
-     *
-     * @see [faceSquare]
-     */
     public fun faceLoc(loc: BoundLocInfo) {
         faceSquare(loc.coords, loc.adjustedWidth, loc.adjustedLength)
     }
 
-    /**
-     * This function will call [faceSquare] with arguments based on the provided [loc] and its
-     * dimensions ([width] and [length]). The dimensions should be the unmodified values from the
-     * [dev.openrune.types.ObjectServerType] of the loc. This method automatically adjusts the
-     * dimensions according to the loc's angle to ensure that the PathingEntity faces the correct
-     * angle.
-     *
-     * @see [faceSquare]
-     */
+    /** Width and length must already reflect the loc's rotation. */
     public fun faceLoc(loc: LocInfo, width: Int, length: Int) {
         val rotatedWidth = Rotations.rotate(loc.angleId, width, length)
         val rotatedLength = Rotations.rotate(loc.angleId, length, width)
         faceSquare(loc.coords, rotatedWidth, rotatedLength)
     }
 
-    /**
-     * This function will call [faceSquare] with arguments based on the provided [target]'s
-     * coordinates and size. The [size] is used for both width and length.
-     *
-     * @see [faceSquare]
-     */
     public fun facePathingEntitySquare(target: PathingEntity) {
         faceSquare(target.coords, target.size, target.size)
     }
@@ -349,40 +320,15 @@ public sealed class PathingEntity {
         pendingFaceWidth = 1
     }
 
-    /**
-     * Alias for [PathingEntityAvatar.distanceTo].
-     *
-     * @see [PathingEntityAvatar.distanceTo]
-     */
     public fun distanceTo(target: CoordGrid, width: Int = 1, length: Int = 1): Int =
         avatar.distanceTo(Bounds(target, width, length))
 
-    /**
-     * Alias for [PathingEntityAvatar.distanceTo].
-     *
-     * @see [PathingEntityAvatar.distanceTo]
-     */
     public fun distanceTo(other: PathingEntity): Int = avatar.distanceTo(other.bounds())
 
-    /**
-     * Alias for [PathingEntityAvatar.distanceTo].
-     *
-     * @see [PathingEntityAvatar.distanceTo]
-     */
     public fun distanceTo(other: Controller): Int = avatar.distanceTo(other.bounds())
 
-    /**
-     * Alias for [PathingEntityAvatar.distanceTo].
-     *
-     * @see [PathingEntityAvatar.distanceTo]
-     */
     public fun distanceTo(loc: BoundLocInfo): Int = avatar.distanceTo(loc.bounds())
 
-    /**
-     * Alias for [PathingEntityAvatar.isWithinDistance].
-     *
-     * @see [PathingEntityAvatar.isWithinDistance]
-     */
     public fun isWithinDistance(
         target: CoordGrid,
         distance: Int,
@@ -390,32 +336,22 @@ public sealed class PathingEntity {
         length: Int = 1,
     ): Boolean = avatar.isWithinDistance(Bounds(target, width, length), distance)
 
-    /**
-     * Alias for [PathingEntityAvatar.isWithinDistance].
-     *
-     * @see [PathingEntityAvatar.isWithinDistance]
-     */
     public fun isWithinDistance(other: PathingEntity, distance: Int): Boolean =
         avatar.isWithinDistance(other.bounds(), distance)
 
-    /**
-     * Alias for [PathingEntityAvatar.isWithinDistance].
-     *
-     * @see [PathingEntityAvatar.isWithinDistance]
-     */
     public fun isWithinDistance(other: Controller, distance: Int): Boolean =
         avatar.isWithinDistance(other.bounds(), distance)
 
-    /**
-     * Alias for [PathingEntityAvatar.isWithinDistance].
-     *
-     * @see [PathingEntityAvatar.isWithinDistance]
-     */
     public fun isWithinDistance(loc: BoundLocInfo, distance: Int): Boolean =
         avatar.isWithinDistance(loc.bounds(), distance)
 
     public fun isWithinArea(southWest: CoordGrid, northEast: CoordGrid): Boolean {
-        require(southWest.level == northEast.level && southWest.level == level)
+        require(southWest.level == northEast.level) {
+            "`southWest` and `northEast` must be on same level. (sw=$southWest, ne=$northEast)"
+        }
+        if (level != southWest.level) {
+            return false
+        }
         return x in southWest.x..northEast.x && z in southWest.z..northEast.z
     }
 
@@ -462,23 +398,13 @@ public sealed class PathingEntity {
     }
 
     /**
-     * Attempts to set [walkTrigger] to [trigger], ensuring that walk trigger priority rules are
-     * respected.
-     *
-     * If the existing walk trigger cannot be overwritten due to its priority, the update is
-     * **rejected**, and this function returns `false`. Otherwise, the trigger is updated, and
-     * `true` is returned.
-     *
-     * **See:** Documentation in [WalkTriggerPriority] for priority rules.
-     *
-     * @see [WalkTriggerPriority.None]
-     * @see [WalkTriggerPriority.Low]
-     * @see [WalkTriggerPriority.High]
+     * Returns false when [WalkTriggerPriority] prevents replacing the current trigger.
      */
     public fun walkTrigger(trigger: String): Boolean {
 
-        val triggerType = ServerCacheManager.getWalkTrigger(trigger.asRSCM(RSCMType.WALKTRIGGER))
-            ?: error("Invalid walk trigger: $trigger")
+        val triggerType =
+            ServerCacheManager.getWalkTrigger(trigger.asRSCM(RSCMType.WALKTRIGGER))
+                ?: error("Invalid walk trigger: $trigger")
 
         val previous = walkTrigger?.priority
         if (!triggerType.priority.canOverwrite(previous)) {
@@ -538,11 +464,6 @@ public sealed class PathingEntity {
         return interaction != null
     }
 
-    /**
-     * This method is responsible for cleaning up any ongoing tasks that the entity may be
-     * responsible for. This includes things such as coroutines; ex: [activeCoroutine]. If these
-     * coroutines are not canceled properly, they may linger in memory and run indefinitely.
-     */
     public fun destroy() {
         cancelActiveCoroutine()
     }

@@ -1,0 +1,9 @@
+[gamevals.varp]
+player_special_attack_cost_divisor = 63782
+player_stun_movement_until = 63815
+player_stun_action_until = 63816
+player_stun_message_cycle = 63817
+player_absorption_points = 63818
+player_next_death_safe = 63819
+player_last_pvp_hit_cycle = 63820
+player_death_drops_bypass_admin = 63821

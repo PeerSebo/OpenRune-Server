@@ -3,8 +3,9 @@ package org.rsmod.content.quest.manager
 import org.rsmod.game.entity.Player
 
 public object QuestRequirements {
-    @Volatile
-    private var policy: QuestRequirementPolicy = QuestRequirementPolicy()
+    private const val QuestPointsVarp = "varp.qp"
+
+    @Volatile private var policy: QuestRequirementPolicy = QuestRequirementPolicy()
 
     public fun install(policy: QuestRequirementPolicy) {
         this.policy = policy
@@ -21,11 +22,46 @@ public object QuestRequirements {
     public fun hasNotCompleted(player: Player, quest: String): Boolean =
         satisfies(player, quest, QuestRequirement.NotCompleted)
 
+    public fun canStart(player: Player, quest: String): Boolean {
+        val required = Quest.get(quest)?.requiredQuestPoints ?: return true
+        return hasQuestPoints(player, required)
+    }
+
+    public fun hasQuestPoints(player: Player, required: Int): Boolean {
+        if (required <= 0) {
+            return true
+        }
+        return when (policy.mode) {
+            QuestRequirementMode.AssumeCompleted, QuestRequirementMode.Optional -> true
+            QuestRequirementMode.RespectProgress -> earnedQuestPoints(player) >= required
+            QuestRequirementMode.VirtualCompletions -> effectiveQuestPoints(player) >= required
+        }
+    }
+
+    public fun earnedQuestPoints(player: Player): Int = player.vars[QuestPointsVarp]
+
+    private fun effectiveQuestPoints(player: Player): Int {
+        val active = policy
+        val virtual =
+            Quest.all().sumOf { quest ->
+                val alreadyEarned = quest.questState(player).isCompleted
+                if (!alreadyEarned && active.isVirtuallyCompleted(quest.key)) {
+                    quest.questPoints
+                } else {
+                    0
+                }
+            }
+        return earnedQuestPoints(player) + virtual
+    }
+
     public fun satisfies(player: Player, quest: String, requirement: QuestRequirement): Boolean {
         val active = policy
         return when (active.mode) {
-            QuestRequirementMode.RespectProgress -> realProgressSatisfies(player, quest, requirement)
+            QuestRequirementMode.RespectProgress ->
+                realProgressSatisfies(player, quest, requirement)
             QuestRequirementMode.AssumeCompleted -> requirement == QuestRequirement.Completed
+            QuestRequirementMode.Optional ->
+                requirement == QuestRequirement.Completed || realProgressSatisfies(player, quest, requirement)
             QuestRequirementMode.VirtualCompletions ->
                 if (active.isVirtuallyCompleted(quest)) {
                     requirement == QuestRequirement.Completed
@@ -48,4 +84,3 @@ public object QuestRequirements {
         }
     }
 }
-

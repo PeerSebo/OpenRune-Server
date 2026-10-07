@@ -1,0 +1,54 @@
+[[varp]]
+id = "varp.barrows_state"
+isServerOnly = true
+scope = "Perm"
+transmit = "Never"
+
+[[varbit]]
+id = "varbit.barrows_hidden_brother"
+isServerOnly = true
+varp = "varp.barrows_state"
+startBit = 0
+endBit = 2
+
+[[varbit]]
+id = "varbit.barrows_corner"
+isServerOnly = true
+varp = "varp.barrows_state"
+startBit = 3
+endBit = 4
+
+[[varbit]]
+id = "varbit.barrows_looted"
+isServerOnly = true
+varp = "varp.barrows_state"
+startBit = 5
+endBit = 5
+
+[[varbit]]
+id = "varbit.barrows_puzzle_solved"
+isServerOnly = true
+varp = "varp.barrows_state"
+startBit = 6
+endBit = 6
+
+[[varbit]]
+id = "varbit.barrows_rolled"
+isServerOnly = true
+varp = "varp.barrows_state"
+startBit = 7
+endBit = 7
+
+[[varbit]]
+id = "varbit.barrows_open_corner_door"
+isServerOnly = true
+varp = "varp.barrows_state"
+startBit = 8
+endBit = 9
+
+[[varbit]]
+id = "varbit.barrows_open_center_door"
+isServerOnly = true
+varp = "varp.barrows_state"
+startBit = 10
+endBit = 11

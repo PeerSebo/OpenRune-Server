@@ -98,7 +98,6 @@ coords = "0_43_54_39_4"
 npc = "npc.woman2"
 coords = "0_44_53_1_51"
 
-## Catherby Bank
 
 [[spawn]]
 npc = "npc.banker1"
@@ -119,6 +118,3 @@ coords = "0_43_53_58_51"
 [[spawn]]
 npc = "npc.deadman_guard_catherby"
 coords = "0_43_53_55_48"
-
-## Catherby Bank End
-

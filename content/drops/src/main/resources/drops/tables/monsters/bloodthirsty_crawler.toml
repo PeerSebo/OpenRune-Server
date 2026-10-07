@@ -128,6 +128,3 @@ count = "10..15"
 weight = 10
 obj = "obj.cert_limpwurt_root"
 count = "60..150"
-
-
-# Main table pool padding uses a nothing roll (F2P drops removed and/or subtable access missing from wiki parse) (26 weight)

@@ -1,28 +1,14 @@
 package org.rsmod.api.player.cheat
 
-import org.rsmod.api.attr.AttributeKey
+import org.rsmod.api.player.vars.boolVarp
 import org.rsmod.game.entity.Player
 
-public val ADMIN_GOD_MODE_ATTR: AttributeKey<Boolean> = AttributeKey()
+public var Player.adminGodMode: Boolean by boolVarp("varp.player_admin_god_mode")
 
-public val ADMIN_MAX_HIT_ATTR: AttributeKey<Boolean> = AttributeKey()
+public var Player.adminMaxHit: Boolean by boolVarp("varp.player_admin_max_hit")
 
-public var Player.adminGodMode: Boolean
-    get() = attr[ADMIN_GOD_MODE_ATTR] == true
-    set(value) {
-        if (value) {
-            attr[ADMIN_GOD_MODE_ATTR] = true
-        } else {
-            attr.remove(ADMIN_GOD_MODE_ATTR)
-        }
-    }
+public var Player.adminOneHitKill: Boolean by boolVarp("varp.player_admin_one_hit_kill")
 
-public var Player.adminMaxHit: Boolean
-    get() = attr[ADMIN_MAX_HIT_ATTR] == true
-    set(value) {
-        if (value) {
-            attr[ADMIN_MAX_HIT_ATTR] = true
-        } else {
-            attr.remove(ADMIN_MAX_HIT_ATTR)
-        }
-    }
+public var Player.adminInfiniteRunes: Boolean by boolVarp("varp.player_admin_infinite_runes")
+
+public var Player.adminNoClip: Boolean by boolVarp("varp.player_admin_no_clip")

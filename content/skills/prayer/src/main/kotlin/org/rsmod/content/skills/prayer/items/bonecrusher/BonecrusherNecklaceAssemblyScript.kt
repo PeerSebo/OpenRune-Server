@@ -7,7 +7,6 @@ import org.rsmod.api.player.protect.ProtectedAccess
 import org.rsmod.api.player.stat.basePrayerLvl
 import org.rsmod.api.script.onOpHeldU
 import org.rsmod.game.inv.Inventory
-import org.rsmod.game.inv.isType
 import org.rsmod.plugin.scripts.PluginScript
 import org.rsmod.plugin.scripts.ScriptContext
 
@@ -95,5 +94,4 @@ public class BonecrusherNecklaceAssemblyScript : PluginScript() {
         }
         return found.takeIf { it.size == required.size }
     }
-
 }

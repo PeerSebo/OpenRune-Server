@@ -11,26 +11,21 @@ class CleaningHerbsEvents : PluginScript() {
 
     override fun ScriptContext.startup() {
         HerbloreDefinitions.cleaningHerbs.forEach { row ->
-            onOpHeld1(row.input) { startCleanHerb(row) }
+            onOpHeld1(row.input) { startCleanHerb(row, it.slot) }
         }
         onPlayerQueueWithArgs<CleanHerbTask>("queue.herblore_clean") { processCleanHerbTick(it.args) }
     }
 
-    private suspend fun ProtectedAccess.startCleanHerb(row: HerbloreCleaningRow) {
+    private suspend fun ProtectedAccess.startCleanHerb(row: HerbloreCleaningRow, slot: Int) {
         if (!meetsStatReqs(row.statReq)) {
             return
         }
 
-        if (!inv.contains(row.input.internalName)) {
+        if (inv[slot]?.id != row.input.id) {
             return
         }
 
-        if (inv.freeSpace() < 1 && !inv.contains(row.output.internalName)) {
-            mes("You don't have enough inventory space.")
-            return
-        }
-
-        weakQueue("queue.herblore_clean", 1, CleanHerbTask(row))
+        weakQueue("queue.herblore_clean", 1, CleanHerbTask(row, slot))
     }
 
     private suspend fun ProtectedAccess.processCleanHerbTick(task: CleanHerbTask) {
@@ -40,35 +35,31 @@ class CleaningHerbsEvents : PluginScript() {
             return
         }
 
-        if (
-            !inv.contains(row.input.internalName) ||
-            (inv.freeSpace() < 1 && !inv.contains(row.output.internalName))
-        ) {
+        if (inv[task.slot]?.id != row.input.id) {
             return
         }
 
-        if (invDel(inv, row.input.internalName, 1).failure) {
+        if (invReplaceSlot(inv, task.slot, 1, row.output).failure) {
             return
         }
 
-        if (invAdd(inv, row.output.internalName, 1).failure) {
-            invAdd(inv, row.input.internalName, 1)
-            mes("You don't have enough inventory space.")
-            return
-        }
+        soundSynth(random.pick(CLEAN_SOUNDS))
+        mes("You clean the ${row.input.name}.")
 
         if (row.xp > 0) {
             statAdvance("stat.herblore", row.xp.toDouble())
         }
-
-        if (
-            inv.contains(row.input.internalName) &&
-            (inv.freeSpace() >= 1 || inv.contains(row.output.internalName))
-        ) {
-            weakQueue("queue.herblore_clean", 2, task)
-        }
     }
 
-    private data class CleanHerbTask(val row: HerbloreCleaningRow)
+    private data class CleanHerbTask(val row: HerbloreCleaningRow, val slot: Int)
 
+    private companion object {
+        private val CLEAN_SOUNDS =
+            listOf(
+                "synth.HERBLORE_CLEAN_HERB_01",
+                "synth.HERBLORE_CLEAN_HERB_02",
+                "synth.HERBLORE_CLEAN_HERB_03",
+                "synth.HERBLORE_CLEAN_HERB_04",
+            )
+    }
 }

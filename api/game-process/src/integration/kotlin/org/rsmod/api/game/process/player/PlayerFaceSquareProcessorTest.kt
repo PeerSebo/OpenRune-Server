@@ -49,9 +49,6 @@ class PlayerFaceSquareProcessorTest {
                 check(pendingFaceAngle == EntityFaceAngle.NULL)
 
                 process()
-                // After processing, the player should have moved. This means the face angle should
-                // not be calculated yet, and pending face square should remain as its initial
-                // value.
                 check(routeDestination.lastOrNull() == moveDest)
                 check(hasMovedThisCycle)
                 assertEquals(EntityFaceAngle.NULL, pendingFaceAngle)
@@ -115,8 +112,6 @@ class PlayerFaceSquareProcessorTest {
                 val start = CoordGrid(0, 0, 0, 16, 16)
                 val target = start.translate(dir.xOff * 5, dir.zOff * 5)
                 withPlayer(start) {
-                    // `pendingFaceAngle` is set to zero in the player init block to emulate
-                    // the face-south behavior on log-in. We do not need that for this test.
                     pendingFaceAngle = EntityFaceAngle.NULL
 
                     val facing = PlayerFaceSquareProcessor()
@@ -127,7 +122,6 @@ class PlayerFaceSquareProcessorTest {
                         facing.process(this)
                     }
 
-                    // Set the _pending_ face square to target.
                     faceSquare(target, targetWidth = 1, targetLength = 1)
                     check(pendingFaceAngle == EntityFaceAngle.NULL)
 

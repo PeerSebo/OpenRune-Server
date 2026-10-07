@@ -1,0 +1,9 @@
+[gamevals.currency]
+marks_of_grace = 65531
+unidentified_minerals = 65530
+molch_pearls = 65529
+
+[gamevals.dbrow]
+shop_currency_marks_of_grace = 65541
+shop_currency_unidentified_minerals = 65542
+shop_currency_molch_pearls = 65543

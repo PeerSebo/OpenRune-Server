@@ -1,14 +1,11 @@
 package org.rsmod.api.npc.vars
 
-import dev.openrune.types.VarnBitType
-import dev.openrune.types.VarnType
 import kotlin.reflect.KProperty
 import org.rsmod.game.entity.Npc
 import org.rsmod.game.entity.npc.NpcUid
 import org.rsmod.game.entity.player.PlayerUid
 import org.rsmod.map.CoordGrid
 
-/* Varnpc delegates */
 public fun intVarn(varn: String): NpcVariableIntDelegate = NpcVariableIntDelegate(varn)
 
 public fun boolVarn(varn: String): NpcVariableTypeIntDelegate<Boolean> =
@@ -35,7 +32,6 @@ public fun <T> typeIntVarn(
     fromType: (T) -> Int,
 ): NpcVariableTypeIntDelegate<T> = NpcVariableTypeIntDelegate(varn, toType, fromType)
 
-/* Varnbit delegates */
 public fun intVarnBit(varnbit: String): NpcVariableIntBitsDelegate =
     NpcVariableIntBitsDelegate(varnbit)
 
@@ -48,7 +44,6 @@ public fun <T> typeIntVarnBit(
     fromType: (T) -> Int,
 ): NpcVariableTypeIntBitsDelegate<T> = NpcVariableTypeIntBitsDelegate(varnbit, toType, fromType)
 
-/* Delegate implementations */
 public class NpcVariableIntDelegate(private val varn: String) {
     public operator fun getValue(thisRef: Npc, property: KProperty<*>): Int {
         return thisRef.vars[varn]
@@ -105,7 +100,6 @@ public class NpcVariableTypeIntBitsDelegate<T>(
     }
 }
 
-/* Utility functions */
 private fun boolToInt(bool: Boolean): Int = if (bool) 1 else 0
 
 private fun boolFromInt(int: Int): Boolean = int == 1
